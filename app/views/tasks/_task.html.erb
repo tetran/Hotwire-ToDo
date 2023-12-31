@@ -1,22 +1,23 @@
-<div id="<%= dom_id task %>">
-  <p>
-    <strong>User:</strong>
-    <%= task.user.name %>
-  </p>
-
-  <p>
-    <strong>Title:</strong>
-    <%= task.title %>
-  </p>
-
-  <p>
-    <strong>Due date:</strong>
-    <%= task.due_date %>
-  </p>
-
-  <p>
-    <strong>Completed:</strong>
-    <%= task.completed %>
-  </p>
-
-</div>
+<%= turbo_frame_tag task do %>
+  <div class="task-card <%= task.completed ? "complete" : "" %>">
+    <div class="task-card__content">
+      <%= check_box_tag "task[#{task.id}][completed]", "1", task.completed, class: "complete-task" %>
+      <div class="task-card__title">
+        <%= link_to task.title, task, data: { turbo_frame: "_top" } %>
+        <% if task.has_due_date? %>
+          <div class="task-card__due-date">
+            <%= task.due_date %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <div class="task-card__actions">
+      <%= link_to edit_task_path(task), class: "", data: { turbo_frame: "_top" } do %>
+        Edit
+      <% end %>
+      <%= link_to task_path(task), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "" do %>
+        Delete
+      <% end %>
+    </div>
+  </div>
+<% end %>

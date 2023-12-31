@@ -1,0 +1,4 @@
+<%= link_to "Add task",
+            new_task_path,
+            class: "add-task",
+            data: { turbo_frame: dom_id(Task.new) }  %>

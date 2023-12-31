@@ -1,11 +1,18 @@
 <p style="color: green"><%= notice %></p>
+<div class="container">
+  <div class="header">
+  </div>
 
-<table id="tasks">
-  <% @tasks.each do |task| %>
-    <%= render partial: "task_row", locals: { task: task } %>
+  <%= turbo_frame_tag "tasks" do %>
+    <% @tasks.each do |task| %>
+      <%= render task %>
+    <% end %>
   <% end %>
-</table>
 
-<hr>
+  <hr>
 
-<%= link_to "Add task", new_task_path, class: "add-task" %>
+  <%= turbo_frame_tag Task.new do %>
+    <%= render "add_task_btn" %>
+  <% end %>
+
+</div>

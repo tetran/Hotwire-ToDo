@@ -1,22 +1,30 @@
-tbody tr:nth-child(even) {
-    background-color: inherit;
-}
-tbody tr:hover {
-    background-color: #161f27;
-}
-
-.check-complete {
-    text-align: center;
-    width: 2em;
+.task-card {
+    border-radius: 4px;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75em;
 }
 
-.task-title {
-    margin: 0;
+.task-card.complete {
+    opacity: 0.5;
 }
 
-.task-due-date {
-    margin: 0;
+.task-card__title {
+    display: inline-block;
+}
+
+.task-card__actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-self: flex-start;
+    gap: 0.5em;
+}
+
+.task-card__due-date {
     font-size: 0.8em;
+    color: #999;
 }
 
 .add-task {
@@ -31,4 +39,20 @@ tbody tr:hover {
 .add-task:hover {
     color: #aaa;
     text-decoration: none;
+}
+
+.task-form {
+    border: solid 1px var(--border);
+    border-radius: 8px;
+    padding: 1em;
+}
+.task-form__actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.5em;
+}
+.task-form__title {
+    box-sizing: border-box;
+    width: 100%;
 }

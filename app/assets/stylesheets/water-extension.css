@@ -1,0 +1,24 @@
+:root {
+    --btn-light: #ccc;
+    --btn-light-text: #1d1d1d;
+}
+
+.btn {
+    color: #1d1d1d;
+    color: var(--form-text);
+    background-color: #efefef;
+    background-color: var(--background);
+    font-family: inherit;
+    font-size: inherit;
+    margin-right: 6px;
+    margin-bottom: 6px;
+    padding: 8px;
+    border: none;
+    border-radius: 6px;
+    outline: none;
+}
+
+.btn.btn-light {
+    color: var(--btn-light-text);
+    background-color: var(--btn-light);
+}

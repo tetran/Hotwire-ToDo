@@ -1,0 +1,2 @@
+<%= turbo_stream.append "tasks", @task %>
+<%= turbo_stream.update Task.new, partial: "tasks/add_task_btn" %>
