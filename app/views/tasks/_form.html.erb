@@ -19,7 +19,7 @@
 
   <div>
     <%= form.label :due_date %>
-    <%= form.date_field :due_date %>
+    <%= form.date_field :due_date, value: task.has_due_date? ? task.due_date : "" %>
   </div>
 
   <div class="task-form__actions">

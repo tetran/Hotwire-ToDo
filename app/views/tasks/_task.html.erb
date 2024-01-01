@@ -12,7 +12,7 @@
       </div>
     </div>
     <div class="task-card__actions">
-      <%= link_to edit_task_path(task), class: "", data: { turbo_frame: "_top" } do %>
+      <%= link_to edit_task_path(task), class: "" do %>
         Edit
       <% end %>
       <%= link_to task_path(task), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "" do %>
