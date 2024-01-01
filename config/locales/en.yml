@@ -28,4 +28,7 @@
 #       enabled: "ON"
 
 en:
-  hello: "Hello world"
+  helpers:
+    submit:
+      create: "Add %{model}"
+      update: "Save %{model}"

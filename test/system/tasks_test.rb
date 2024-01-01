@@ -16,7 +16,7 @@ class TasksTest < ApplicationSystemTestCase
 
     check "Completed" if @task.completed
     fill_in "Due date", with: @task.due_date
-    fill_in "Title", with: @task.title
+    fill_in "Name", with: @task.name
     fill_in "User", with: @task.user_id
     click_on "Create Task"
 
@@ -30,7 +30,7 @@ class TasksTest < ApplicationSystemTestCase
 
     check "Completed" if @task.completed
     fill_in "Due date", with: @task.due_date
-    fill_in "Title", with: @task.title
+    fill_in "Name", with: @task.name
     fill_in "User", with: @task.user_id
     click_on "Update Task"
 

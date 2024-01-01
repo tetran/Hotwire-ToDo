@@ -1,9 +1,9 @@
 <%= turbo_frame_tag task do %>
   <div class="task-card <%= task.completed ? "complete" : "" %>">
     <div class="task-card__content">
-      <%= check_box_tag "task[#{task.id}][completed]", "1", task.completed, class: "complete-task" %>
-      <div class="task-card__title">
-        <%= link_to task.title, task, data: { turbo_frame: "_top" } %>
+      <%= check_box_tag "task[#{task.id}][completed]", "1", task.completed, class: "task-card__complete-check" %>
+      <div class="task-card__name">
+        <%= link_to task.name, task, data: { turbo_frame: "_top" } %>
         <% if task.has_due_date? %>
           <div class="task-card__due-date">
             <%= task.due_date %>
@@ -12,11 +12,11 @@
       </div>
     </div>
     <div class="task-card__actions">
-      <%= link_to edit_task_path(task), class: "" do %>
-        Edit
+      <%= link_to edit_task_path(task), class: "task-card__edit" do %>
+        <span class="material-symbols-outlined">edit</span>
       <% end %>
-      <%= link_to task_path(task), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "" do %>
-        Delete
+      <%= button_to task_path(task), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "task-card__delete" do %>
+        <span class="material-symbols-outlined">delete</span>
       <% end %>
     </div>
   </div>

@@ -1,3 +1,4 @@
+<h1>Your Tasks</h1>
 <p style="color: green"><%= notice %></p>
 <div class="container">
   <div class="header">
@@ -8,8 +9,6 @@
       <%= render task %>
     <% end %>
   <% end %>
-
-  <hr>
 
   <%= turbo_frame_tag Task.new do %>
     <%= render "add_task_btn" %>

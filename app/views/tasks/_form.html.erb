@@ -1,11 +1,9 @@
 <%= form_with(model: task, class: "task-form") do |form| %>
   <% if task.errors.any? %>
-    <div style="color: red">
-      <ul>
-        <% task.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+    <div class="task-form__errors">
+      <% task.errors.each do |error| %>
+        <div class="task-form__error"><%= error.full_message %></div>
+      <% end %>
     </div>
   <% end %>
 
@@ -13,17 +11,17 @@
   <%= form.hidden_field :user_id, value: 1 %>
 
   <div>
-    <%= form.label :title %>
-    <%= form.text_field :title, autofocus: true, class: "task-form__title" %>
+    <%= form.label :name, class: "visually-hidden" %>
+    <%= form.text_field :name, autofocus: true, class: "task-form__name", placeholder: "Task name" %>
   </div>
 
   <div>
-    <%= form.label :due_date %>
-    <%= form.date_field :due_date, value: task.has_due_date? ? task.due_date : "" %>
+    <%= form.label :due_date, class: "visually-hidden" %>
+    <%= form.date_field :due_date, value: task.has_due_date? ? task.due_date : "", min: Time.zone.today %>
   </div>
 
   <div class="task-form__actions">
-    <%= link_to "Cancel", tasks_path, class: "btn btn-light" %>
-    <%= form.submit %>
+    <%= link_to "Cancel", tasks_path, class: "btn btn-light task-form__cancel" %>
+    <%= form.submit class: "task-form__submit" %>
   </div>
 <% end %>

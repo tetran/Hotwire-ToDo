@@ -2,12 +2,12 @@
 
 one:
   user: one
-  title: MyString
+  name: MyString
   due_date: 2023-12-05
   completed: false
 
 two:
   user: two
-  title: MyString
+  name: MyString
   due_date: 2023-12-05
   completed: false

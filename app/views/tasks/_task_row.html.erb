@@ -3,8 +3,8 @@
     <%= check_box_tag "task[#{task.id}][completed]", "1", task.completed, class: "complete-task" %>
   </td>
   <td>
-    <h4 class="task-title">
-      <%= link_to task.title, task %>
+    <h4 class="task-name">
+      <%= link_to task.name, task %>
     </h4>
     <% if task.has_due_date? %>
       <div class="task-due-date">

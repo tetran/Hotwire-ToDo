@@ -1,13 +1,13 @@
 class Task < ApplicationRecord
   belongs_to :user
 
-  validates :title, presence: true, length: { maximum: 100 }
+  validates :name, presence: true, length: { maximum: 100 }
 
   before_save :set_max_due_date
 
   DEFAULT_DUE_DATE = Date.new(9999, 12, 31)
 
-  def has_due_date? = due_date < DEFAULT_DUE_DATE
+  def has_due_date? = due_date&.< DEFAULT_DUE_DATE
 
   private
 
