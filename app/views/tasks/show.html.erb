@@ -1,10 +1,25 @@
-<p style="color: green"><%= notice %></p>
-
-<%= render @task %>
-
-<div>
-  <%= link_to "Edit this task", edit_task_path(@task) %> |
-  <%= link_to "Back to tasks", tasks_path %>
-
-  <%= button_to "Destroy this task", @task, method: :delete %>
-</div>
+<%= turbo_frame_tag "modal" do %>
+  <div class="modal-base">
+    <%= tag.div data: { controller: "turbo-modal",
+                        action: "keyup@window->turbo-modal#closeWithKeyboard click@window->turbo-modal#closeBackground" },
+                class: "show-task" do %>
+      <div class="show-task__header">
+        <%= link_to "#", class: "show-task__close", data: { action: "turbo-modal#hideModal" } do %>
+          <span class="material-symbols-outlined">close</span>
+        <% end %>
+      </div>
+      <div class="show-task__content">
+        <div class="show-task__name">
+          <%= @task.name %>
+        </div>
+        <% if @task.has_due_date? %>
+          <div class="show-task__due-date">
+            <%= @task.due_date %>
+          </div>
+        <% end %>
+      </div>
+      <div class="show-task__actions">
+      </div>
+    <% end %>
+  </div>
+<% end %>

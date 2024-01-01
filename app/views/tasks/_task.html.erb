@@ -3,7 +3,7 @@
     <div class="task-card__content">
       <%= check_box_tag "task[#{task.id}][completed]", "1", task.completed, class: "task-card__complete-check" %>
       <div class="task-card__name">
-        <%= link_to task.name, task, data: { turbo_frame: "_top" } %>
+        <%= link_to task.name, task, data: { turbo_frame: "modal" } %>
         <% if task.has_due_date? %>
           <div class="task-card__due-date">
             <%= task.due_date %>

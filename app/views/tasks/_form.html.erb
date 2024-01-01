@@ -17,7 +17,7 @@
 
   <div>
     <%= form.label :due_date, class: "visually-hidden" %>
-    <%= form.date_field :due_date, value: task.has_due_date? ? task.due_date : "", min: Time.zone.today %>
+    <%= form.date_field :due_date, value: task.display_due_date, min: Time.zone.today %>
   </div>
 
   <div class="task-form__actions">

@@ -9,6 +9,8 @@ class Task < ApplicationRecord
 
   def has_due_date? = due_date&.< DEFAULT_DUE_DATE
 
+  def display_due_date = has_due_date? ? due_date : ""
+
   private
 
     def set_max_due_date

@@ -85,3 +85,43 @@ input.task-form__submit {
     padding-right: 10px;
     padding-left: 10px;
 }
+
+.modal-base {
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /*backdrop-filter: blur(1px);*/
+    background: rgba(255, 255, 255, 0.2);
+}
+.show-task {
+    --modal-width: 400px;
+    position: absolute;
+    z-index: 2;
+    top: 10%;
+    left: calc(50% - var(--modal-width) / 2);
+    width: var(--modal-width);
+    padding: 10px;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    background: var(--background);
+}
+.show-task__header {
+    display: flex;
+    justify-content: right;
+    gap: 0.5em;
+    border-bottom: solid 1px var(--border);
+}
+.show-task__close {
+    color: var(--form-text);
+    border-radius: 6px;
+    line-height: 1;
+}
+.show-task__close:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+.show-task__content {
+    padding: 10px 0;
+}
