@@ -1,7 +1,11 @@
 <%= turbo_frame_tag task do %>
   <div class="task-card <%= task.completed ? "complete" : "" %>">
     <div class="task-card__content">
-      <%= check_box_tag "task[#{task.id}][completed]", "1", task.completed, class: "task-card__complete-check" %>
+      <%= button_to "",
+                    task_complete_path(task),
+                    method: task.completed ? :delete : :post,
+                    class: "task-card__complete-check",
+                    form: { class: "task-card__complete-check-outer" } %>
       <div class="task-card__name">
         <%= link_to task.name, task, data: { turbo_frame: "modal" } %>
         <% if task.has_due_date? %>

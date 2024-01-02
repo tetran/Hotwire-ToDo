@@ -11,10 +11,34 @@
     text-decoration: line-through;
 }
 
+.task-card__content {
+    display: flex;
+    gap: 0.5em;
+    align-items: flex-start;
+}
+.task-card__complete-check-outer {
+    line-height: 14px;
+}
+.task-card__complete-check {
+    width: 14px;
+    height: 14px;
+    border: solid 1px var(--border);
+    border-radius: 50%;
+    background: none;
+    padding: 0;
+    margin: 0;
+}
 .task-card__complete-check:focus {
     outline: none;
     box-shadow: none;
 }
+.task-card__complete-check:hover {
+    background: var(--form-text);
+}
+.task-card.complete .task-card__complete-check {
+    background: var(--form-text);
+}
+
 .task-card__name {
     display: inline-block;
 }

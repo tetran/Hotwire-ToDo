@@ -11,6 +11,14 @@ class Task < ApplicationRecord
 
   def display_due_date = has_due_date? ? due_date : ""
 
+  def complete!
+    update(completed: true, completed_at: Time.current)
+  end
+
+  def uncomplete!
+    update(completed: false, completed_at: nil)
+  end
+
   private
 
     def set_max_due_date

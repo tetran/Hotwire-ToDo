@@ -9,3 +9,66 @@
     white-space: nowrap !important;
     border: 0 !important;
 }
+
+.notification {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    width: 100%;
+    opacity: 0;
+    display: flex;
+    justify-content: center;
+}
+.notification.animate {
+    animation: notification 2s ease-in-out;
+}
+
+.notification__contents {
+    padding: 20px;
+    margin: 20px;
+    max-width: 400px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.notification__contents--success {
+    background-color: #dff0d8;
+    color: #3c763d;
+}
+
+.notification__contents--error {
+    background-color: #f2dede;
+    color: #a94442;
+}
+
+.notification__contents--warning {
+    background-color: #fcf8e3;
+    color: #8a6d3b;
+}
+
+.notification__contents--info {
+    background-color: #d9edf7;
+    color: #31708f;
+}
+
+@keyframes notification {
+    0% {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+    10% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    90% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+}
