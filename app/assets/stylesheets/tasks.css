@@ -6,7 +6,7 @@
     align-items: center;
     gap: 0.75em;
 }
-.task-card.complete {
+.task-card.task-card--complete {
     opacity: 0.5;
     text-decoration: line-through;
 }
@@ -35,7 +35,7 @@
 .task-card__complete-check:hover {
     background: var(--form-text);
 }
-.task-card.complete .task-card__complete-check {
+.task-card.task-card--complete .task-card__complete-check {
     background: var(--form-text);
 }
 
@@ -71,6 +71,9 @@
 }
 .task-card__delete:hover {
     background: rgba(255, 255, 255, 0.1);
+}
+.task-card--overdue .task-card__due-date {
+    color: #fc5050;
 }
 
 .add-task {

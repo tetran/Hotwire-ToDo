@@ -19,6 +19,8 @@ class Task < ApplicationRecord
     update(completed: false, completed_at: nil)
   end
 
+  def overdue? = due_date < Date.current
+
   private
 
     def set_max_due_date
