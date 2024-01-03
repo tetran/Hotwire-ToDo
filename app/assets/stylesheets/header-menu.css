@@ -1,0 +1,57 @@
+.menu-container {
+    position: relative;
+}
+.menu-button {
+    position: relative;
+    border: none;
+    background: none;
+    padding: 10px;
+}
+.menu-button:focus {
+    outline: none;
+    box-shadow: none;
+}
+.menu-button:after {
+    content: "▼";
+    font-size: 0.8em;
+    vertical-align: middle;
+    margin-left: 0.5em;
+}
+.menu-navigation {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    border-radius: 4px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    width: 200px;
+}
+
+.menu-list {
+    list-style: none;
+    padding: 4px;
+    margin: 0;
+    border-radius: 6px;
+    background: var(--background);
+}
+.menu-list li {
+    border-radius: 6px;
+}
+.menu-list li:hover {
+    background: var(--background-alt);
+}
+.menu-list li button, .menu-list li a {
+    display: block;
+    padding: 6px;
+    margin: 0;
+    border: none;
+    background: none;
+    color: var(--form-text);
+}
+.menu-list li button:focus {
+    outline: none;
+    box-shadow: none;
+}
+.menu-list li a:hover {
+    text-decoration: none;
+}

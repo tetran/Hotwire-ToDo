@@ -13,6 +13,7 @@
   </head>
 
   <body>
+    <%= render "layouts/header" if logged_in? %>
     <%= turbo_frame_tag "notification" %>
     <%= turbo_frame_tag "modal" %>
     <%= yield %>

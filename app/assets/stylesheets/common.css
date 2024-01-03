@@ -1,3 +1,7 @@
+.hidden {
+    display: none;
+}
+
 .visually-hidden {
     position: absolute !important;
     width: 1px !important;
@@ -21,7 +25,7 @@
     justify-content: center;
 }
 .notification.animate {
-    animation: notification 2s ease-in-out;
+    animation: notification 1.5s ease-in-out;
 }
 
 .notification__contents {

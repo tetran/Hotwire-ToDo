@@ -3,6 +3,10 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   root "tasks#index"
 
+  get "login" => "sessions#new", as: :login
+  post "login" => "sessions#create"
+  delete "logout" => "sessions#destroy", as: :logout
+
   resources :tasks do
     resource :complete, only: [:create, :destroy], module: :tasks
   end
