@@ -9,8 +9,11 @@
         <% end %>
       </div>
       <div class="show-task__content">
-        <div class="show-task__name">
+        <h3 class="show-task__name">
           <%= @task.name %>
+        </h3>
+        <div class="show-task__description">
+          <%= @task.description %>
         </div>
         <% if @task.has_due_date? %>
           <div class="show-task__due-date">

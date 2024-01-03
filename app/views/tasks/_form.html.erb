@@ -7,18 +7,23 @@
     </div>
   <% end %>
 
-  <div>
+  <div class="task-form__item task-form__name">
     <%= form.label :name, class: "visually-hidden" %>
-    <%= form.text_field :name, autofocus: true, class: "task-form__name", placeholder: "Task name" %>
+    <%= form.text_field :name, autofocus: true, class: "task-form__name--input", placeholder: "Task name" %>
   </div>
 
-  <div>
+  <div class="task-form__item task-form__description">
+    <%= form.label :description, class: "visually-hidden" %>
+    <%= form.rich_text_area :description, class: "task-form__description--input", placeholder: "Description" %>
+  </div>
+
+  <div class="task-form__item task-form__due-date">
     <%= form.label :due_date, class: "visually-hidden" %>
     <%= form.date_field :due_date, value: task.display_due_date, min: Time.zone.today %>
   </div>
 
   <div class="task-form__actions">
     <%= link_to "Cancel", tasks_path, class: "btn btn-light task-form__cancel" %>
-    <%= form.submit class: "task-form__submit" %>
+    <%= form.submit class: "task-form__submit primary" %>
   </div>
 <% end %>

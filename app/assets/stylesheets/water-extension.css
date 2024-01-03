@@ -1,13 +1,11 @@
 :root {
-    --btn-light: #ccc;
-    --btn-light-text: #1d1d1d;
+    --button-primary: #0096bf;
+    --button-privary-hover: #007a9d;
+    --button-primary-text: #eee;
 }
-
 .btn {
-    color: #1d1d1d;
     color: var(--form-text);
-    background-color: #efefef;
-    background-color: var(--background);
+    background-color: var(--button-base);
     font-family: inherit;
     font-size: inherit;
     margin-right: 6px;
@@ -17,8 +15,17 @@
     border-radius: 6px;
     outline: none;
 }
+.btn:hover {
+    text-decoration: none;
+    background: var(--button-hover);
+}
 
-.btn.btn-light {
-    color: var(--btn-light-text);
-    background-color: var(--btn-light);
+input[type="submit"].primary,
+button.primary {
+    background-color: var(--button-primary);
+    color: var(--button-primary-text);
+}
+input[type="submit"].primary:hover,
+button.primary:hover {
+    background-color: var(--button-privary-hover);
 }

@@ -3,7 +3,7 @@ class TasksController < ApplicationController
 
   # GET /tasks or /tasks.json
   def index
-    @tasks = current_user.tasks.order(:created_at)
+    @tasks = current_user.tasks.with_rich_text_description_and_embeds.order(:created_at)
   end
 
   # GET /tasks/1 or /tasks/1.json
@@ -41,6 +41,7 @@ class TasksController < ApplicationController
       if @task.update(task_params)
         format.html { redirect_to task_url(@task), notice: "Task was successfully updated." }
         format.json { render :show, status: :ok, location: @task }
+        format.turbo_stream
       else
         format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @task.errors, status: :unprocessable_entity }
@@ -67,6 +68,6 @@ class TasksController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def task_params
-      params.require(:task).permit(:name, :due_date, :completed)
+      params.require(:task).permit(:name, :due_date, :description)
     end
 end

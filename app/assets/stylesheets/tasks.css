@@ -51,12 +51,15 @@
     align-self: flex-start;
     gap: 0.5em;
 }
+.task-card__actions .material-symbols-outlined {
+    color: var(--text-main);
+}
 .task-card__due-date {
     font-size: 0.8em;
     color: #999;
 }
 .task-card__edit {
-    color: var(--form-text);
+    color: var(--text-main);
     border-radius: 6px;
     padding: 2px;
 }
@@ -93,9 +96,21 @@
     border-radius: 8px;
     padding: 1em;
 }
-.task-form__name {
+.task-form__item {
+    margin-bottom: 1em;
+}
+.task-form__name--input {
     box-sizing: border-box;
     width: 100%;
+}
+.task-form__description {
+    border: solid 1px var(--border);
+    padding: .5em;
+    border-radius: 6px;
+}
+.task-form__description trix-editor:focus {
+    box-shadow: 0 0 0 2px var(--focus);
+    border-color: transparent;
 }
 .task-form__errors {
     color: #fc5050;
@@ -150,5 +165,16 @@ input.task-form__submit {
     background: rgba(255, 255, 255, 0.1);
 }
 .show-task__content {
-    padding: 10px 0;
+    padding-top: 10px;
+}
+.show-task__name {
+    margin-top: 0;
+}
+.show-task__description {
+    margin-top: 0.5em;
+    font-size: 0.9em;
+}
+.show-task__due-date {
+    margin-top: 0.5em;
+    font-size: 0.8em;
 }
