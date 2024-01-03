@@ -1,2 +1,2 @@
 <%= turbo_stream.update @task, partial: "tasks/task", locals: { task: @task } %>
-<%= turbo_stream.update "notification", partial: "shared/notification", locals: { message: "The task \"#{@task.name}\" has been completed!", status: "success" } %>
+<%= turbo_stream.update "notification", partial: "shared/notification", locals: { message: "\"#{@task.name}\" has been completed!", status: "success" } %>

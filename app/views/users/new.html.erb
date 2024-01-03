@@ -1,0 +1,27 @@
+<main class="auth-form">
+  <h1 class="auth-form__title">Sign up</h1>
+  <% if @user.errors.any? %>
+    <ul class="auth-form__error">
+      <% @user.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  <% end %>
+
+  <%= form_with model: @user, url: signup_path do |form| %>
+    <div class="auth-form__field">
+      <%= form.label :email %>
+      <%= form.email_field :email, required: true, autofocus: true %>
+    </div>
+
+    <div class="auth-form__field">
+      <%= form.label :password %>
+      <%= form.password_field :password, required: true %>
+    </div>
+
+    <div class="auth-form__actions">
+      <%= form.submit "Sign up" %>
+    </div>
+  <% end %>
+  <p>Already signed up? <%= link_to "Login", login_path %></p>
+</main>

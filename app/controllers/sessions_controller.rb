@@ -8,11 +8,11 @@ class SessionsController < ApplicationController
   def create
     user = User.authenticate_by(email: params[:email], password: params[:password])
     if user
-      session[:user_id] = user.id
+      sign_in(user)
       redirect_to root_url, notice: "Logged in!"
     else
       flash.now.alert = "Email or password is invalid"
-      render "new"
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -20,10 +20,4 @@ class SessionsController < ApplicationController
     reset_session
     redirect_to login_url
   end
-
-  private
-
-    def require_logout
-      redirect_to root_url if current_user.present?
-    end
 end

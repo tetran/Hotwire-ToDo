@@ -1,4 +1,7 @@
 class ApplicationController < ActionController::Base
+  include ApplicationHelper
+  include SessionsHelper
+
   protect_from_forgery with: :exception
 
   before_action :require_login
@@ -19,5 +22,9 @@ class ApplicationController < ActionController::Base
 
     def logged_in?
       current_user.present?
+    end
+
+    def require_logout
+      redirect_to root_url if current_user.present?
     end
 end

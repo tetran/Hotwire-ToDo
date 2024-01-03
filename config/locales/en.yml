@@ -28,6 +28,13 @@
 #       enabled: "ON"
 
 en:
+  activerecord:
+    errors:
+      models:
+        user:
+          attributes:
+            email:
+              taken: "is not available"
   helpers:
     submit:
       create: "Add %{model}"

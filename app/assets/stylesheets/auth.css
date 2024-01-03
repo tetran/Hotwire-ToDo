@@ -1,0 +1,19 @@
+.auth-form {
+    width: 400px;
+    margin: 0 auto;
+    padding: 15px;
+    border-radius: 5px;
+}
+.auth-form input {
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    width: 100%;
+}
+.auth-form__error {
+    color: #fc5050;
+    padding-left: 0;
+}
+.auth-form__error li {
+    list-style: none;
+    margin-bottom: 6px;
+}

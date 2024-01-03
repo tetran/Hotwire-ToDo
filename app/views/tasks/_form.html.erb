@@ -7,9 +7,6 @@
     </div>
   <% end %>
 
-  <%# TEMPORARY USER ID %>
-  <%= form.hidden_field :user_id, value: 1 %>
-
   <div>
     <%= form.label :name, class: "visually-hidden" %>
     <%= form.text_field :name, autofocus: true, class: "task-form__name", placeholder: "Task name" %>

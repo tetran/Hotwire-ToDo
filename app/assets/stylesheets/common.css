@@ -45,7 +45,7 @@
 
 .notification__contents--error {
     background-color: #f2dede;
-    color: #a94442;
+    color: #fc5050;
 }
 
 .notification__contents--warning {
