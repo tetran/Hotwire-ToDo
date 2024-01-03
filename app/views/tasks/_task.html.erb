@@ -6,10 +6,20 @@
                     method: task.completed ? :delete : :post,
                     class: "task-card__complete-check",
                     form: { class: "task-card__complete-check-outer" } %>
-      <div class="task-card__name">
-        <%= link_to task.name, task, data: { turbo_frame: "modal" } %>
+      <div>
+        <div class="task-card__name">
+          <%= link_to task.name, task, data: { turbo_frame: "modal" } %>
+        </div>
+        <% if task.description.present? %>
+          <div class="task-card__description">
+            <%= task.description.to_plain_text %>
+          </div>
+        <% end %>
         <% if task.has_due_date? %>
           <div class="task-card__due-date">
+            <% if task.overdue? %>
+              <span class="material-symbols-outlined">warning</span>
+            <% end %>
             <%= task.due_date %>
           </div>
         <% end %>

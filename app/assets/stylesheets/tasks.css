@@ -45,6 +45,16 @@
 .task-card__name a {
     color: var(--form-text);
 }
+.task-card__description {
+    font-size: 0.8em;
+    color: #999;
+    margin-top: .5em;
+}
+.task-card__due-date {
+    font-size: 0.8em;
+    color: #999;
+    margin-top: .5em;
+}
 .task-card__actions {
     display: flex;
     flex: 0 0 auto;
@@ -53,10 +63,6 @@
 }
 .task-card__actions .material-symbols-outlined {
     color: var(--text-main);
-}
-.task-card__due-date {
-    font-size: 0.8em;
-    color: #999;
 }
 .task-card__edit {
     color: var(--text-main);
@@ -75,8 +81,14 @@
 .task-card__delete:hover {
     background: rgba(255, 255, 255, 0.1);
 }
+
+/* Overdue */
 .task-card--overdue .task-card__due-date {
     color: #fc5050;
+}
+.task-card--overdue .task-card__due-date .material-symbols-outlined {
+    font-size: 1rem;
+    vertical-align: -3px;
 }
 
 .add-task {
