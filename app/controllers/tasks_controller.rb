@@ -8,6 +8,7 @@ class TasksController < ApplicationController
 
   # GET /tasks/1 or /tasks/1.json
   def show
+    @comments = @task.comments.includes(:user).order(:created_at)
   end
 
   # GET /tasks/new

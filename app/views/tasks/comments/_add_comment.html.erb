@@ -1,0 +1,3 @@
+<%= button_to new_task_comment_path(task), class: "task-comments__add", method: :get, data: { turbo_frame: dom_id(Comment.new) } do %>
+  Comment
+<% end %>

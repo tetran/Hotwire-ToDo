@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   post "signup" => "users#create"
 
   resources :tasks do
+    resources :comments, only: [:new, :create, :edit, :update, :destroy], module: :tasks
     resource :complete, only: [:create, :destroy], module: :tasks
   end
   resource :user, only: [:show, :edit, :update, :destroy]

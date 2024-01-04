@@ -20,6 +20,10 @@
     background: var(--button-hover);
 }
 
+input[type="submit"], button {
+    padding-left: 12px;
+    padding-right: 12px;
+}
 input[type="submit"].primary,
 button.primary {
     background-color: var(--button-primary);

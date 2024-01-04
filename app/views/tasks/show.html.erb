@@ -21,6 +21,26 @@
           </div>
         <% end %>
       </div>
+
+      <div class="task-comments">
+        <%= turbo_frame_tag "comments" do %>
+          <div class="task-comments__history">
+            <% if @comments.present? %>
+              <h4 class="task-comments__title">
+                Comments
+              </h4>
+              <div class="task-comments__content">
+                <%= render partial: "tasks/comments/comment", collection: @comments %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
+
+        <%= turbo_frame_tag Comment.new do %>
+          <%= render partial: "tasks/comments/add_comment", locals: { task: @task } %>
+        <% end %>
+      </div>
+
       <div class="show-task__actions">
       </div>
     <% end %>

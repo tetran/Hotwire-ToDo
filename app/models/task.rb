@@ -2,6 +2,8 @@ class Task < ApplicationRecord
   DEFAULT_DUE_DATE = Date.new(9999, 12, 31)
 
   belongs_to :user
+  has_many :comments, dependent: :destroy
+
   has_rich_text :description
 
   before_save :set_max_due_date

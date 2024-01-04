@@ -1,0 +1,7 @@
+<%= turbo_frame_tag @comment do %>
+  <% if @comment.user == current_user %>
+    <%= render "tasks/comments/form" %>
+  <% else %>
+    <%= render partial: "tasks/comments/comment", locals: { comment: @comment } %>
+  <% end %>
+<% end %>

@@ -63,7 +63,7 @@
     padding: 2px;
 }
 .task-card__edit:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.1);
 }
 .task-card__delete {
     background: none;
@@ -72,7 +72,7 @@
     margin: 0;
 }
 .task-card__delete:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.1);
 }
 
 /* Completed */
@@ -95,8 +95,6 @@
 
 .add-task {
     margin: 8px 0;
-    padding-left: 10px;
-    padding-right: 10px;
 }
 /*.add-task__icon {*/
 /*    display: inline-flex;*/
@@ -138,8 +136,6 @@
     gap: 0.5em;
 }
 input.task-form__submit {
-    padding-right: 10px;
-    padding-left: 10px;
 }
 
 .modal-base {
@@ -191,4 +187,106 @@ input.task-form__submit {
 .show-task__due-date {
     margin-top: 0.5em;
     font-size: 0.8em;
+}
+
+/* Comment Area */
+.task-comments {
+    margin-top: 1em;
+}
+.task-comments__title {
+    margin-bottom: 0;
+    border-bottom: solid 1px var(--border);
+}
+.task-comments__history {
+    margin-bottom: 1em;
+}
+.task-comments__content {
+    padding-left: .5em;
+    padding-right: .5em;
+}
+
+.comment-card {
+    padding: .5em 0 1.5em;
+}
+.comment-card__header {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.5em;
+    padding-bottom: 0.2em;
+}
+.comment-card__header__user {
+    font-size: 0.9em;
+}
+.comment-card__header__date {
+    font-size: 0.8em;
+    color: #999;
+}
+
+.task-comments__add {
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    text-align: left;
+    height: 2em;
+    border-radius: 1em;
+    border: solid 1px var(--border);
+    padding: 0 1em;
+    background: var(--background);
+}
+.task-comments__add:hover {
+    background: var(--button-base);
+}
+.task-comments__form {
+}
+.task-comments__text-area {
+    width: 100%;
+    border: solid 1px var(--border);
+}
+.task-comments__actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.5em;
+}
+input.task-comments__submit {
+}
+
+.comment-card {
+    padding: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75em;
+}
+.comment-card__actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-self: flex-start;
+    gap: 0.5em;
+    vertical-align: middle;
+    visibility: hidden;
+}
+.comment-card:hover .comment-card__actions {
+    visibility: visible;
+}
+.comment-card__actions .material-symbols-outlined {
+    color: var(--text-main);
+}
+.comment-card__edit {
+    color: var(--text-main);
+    border-radius: 6px;
+    padding: 2px;
+}
+.comment-card__edit:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+.comment-card__delete {
+    background: none;
+    border: none;
+    padding: 2px;
+    margin: 0;
+}
+.comment-card__delete:hover {
+    background: rgba(0, 0, 0, 0.1);
 }

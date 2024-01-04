@@ -1,6 +1,6 @@
 <header>
   <div class="menu-container" data-controller="menu" data-action="keyup@window->menu#closeWithKeyboard click@window->menu#closeBackground">
-    <%= button_tag user_name, type: "button", class: "menu-button", data: { action: "menu#toggleMenu" } %>
+    <%= button_tag current_user.user_name, type: "button", class: "menu-button", data: { action: "menu#toggleMenu" } %>
 
     <nav id="menu" class="menu-navigation hidden" data-menu-target="menu">
       <ul class="menu-list">
