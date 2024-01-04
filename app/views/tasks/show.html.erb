@@ -1,4 +1,5 @@
 <%= turbo_frame_tag "modal" do %>
+  <%= turbo_stream_from @task %>
   <div class="modal-base">
     <%= tag.div data: { controller: "turbo-modal",
                         action: "keyup@window->turbo-modal#closeWithKeyboard click@window->turbo-modal#closeBackground" },
@@ -20,29 +21,32 @@
             <%= @task.due_date %>
           </div>
         <% end %>
-      </div>
 
-      <div class="task-comments">
-        <%= turbo_frame_tag "comments" do %>
+        <div class="task-comments">
           <div class="task-comments__history">
             <% if @comments.present? %>
               <h4 class="task-comments__title">
                 Comments
               </h4>
-              <div class="task-comments__content">
+            <% end %>
+            <div class="task-comments__content">
+              <%= turbo_frame_tag "comments" do %>
                 <%= render partial: "tasks/comments/comment", collection: @comments %>
-              </div>
+              <% end %>
+            </div>
+          </div>
+
+          <div class="task-comments__add-comment">
+            <%= turbo_frame_tag Comment.new do %>
+              <%= render partial: "tasks/comments/add_comment", locals: { task: @task } %>
             <% end %>
           </div>
-        <% end %>
-
-        <%= turbo_frame_tag Comment.new do %>
-          <%= render partial: "tasks/comments/add_comment", locals: { task: @task } %>
-        <% end %>
+        </div>
       </div>
 
       <div class="show-task__actions">
       </div>
     <% end %>
   </div>
+  <style>.comment-card__actions[data-editable-user="<%= current_user.id %>"] { display: flex; }</style>
 <% end %>

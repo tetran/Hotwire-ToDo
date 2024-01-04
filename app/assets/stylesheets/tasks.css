@@ -149,13 +149,15 @@ input.task-form__submit {
     background: rgba(0, 0, 0, 0.3);
 }
 .show-task {
-    --modal-width: 400px;
-    position: absolute;
+    position: relative;
     z-index: 2;
-    top: 10%;
-    left: calc(50% - var(--modal-width) / 2);
-    width: var(--modal-width);
-    padding: 10px;
+    top: 3%;
+    width: 100%;
+    max-width: 600px;
+    min-width: 400px;
+    margin: 0 auto;
+    height: 90%;
+    padding: 16px;
     border-radius: 6px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     background: var(--background);
@@ -176,6 +178,9 @@ input.task-form__submit {
 }
 .show-task__content {
     padding-top: 10px;
+    height: 95%;
+    overflow: scroll;
+    scroll-behavior: smooth;
 }
 .show-task__name {
     margin-top: 0;
@@ -206,23 +211,32 @@ input.task-form__submit {
 }
 
 .comment-card {
-    padding: .5em 0 1.5em;
+    padding: 0;
+    margin-top: 1em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75em;
 }
 .comment-card__header {
     display: flex;
     justify-content: flex-start;
     align-items: center;
     gap: 0.5em;
-    padding-bottom: 0.2em;
 }
 .comment-card__header__user {
     font-size: 0.9em;
+    font-weight: bold;
 }
 .comment-card__header__date {
     font-size: 0.8em;
     color: #999;
 }
 
+.task-comments__add-comment {
+    padding-left: 1em;
+    padding-right: 1em;
+}
 .task-comments__add {
     display: block;
     box-sizing: border-box;
@@ -238,6 +252,7 @@ input.task-form__submit {
     background: var(--button-base);
 }
 .task-comments__form {
+    box-sizing: border-box;
 }
 .task-comments__text-area {
     width: 100%;
@@ -252,15 +267,8 @@ input.task-form__submit {
 input.task-comments__submit {
 }
 
-.comment-card {
-    padding: 10px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.75em;
-}
 .comment-card__actions {
-    display: flex;
+    display: none;
     flex: 0 0 auto;
     align-self: flex-start;
     gap: 0.5em;

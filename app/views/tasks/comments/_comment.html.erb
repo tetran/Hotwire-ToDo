@@ -14,15 +14,14 @@
       </div>
     </div>
 
-    <% if comment.user == current_user %>
-      <div class="comment-card__actions">
-        <%= link_to edit_task_comment_path(comment.task, comment), class: "comment-card__edit" do %>
-          <span class="material-symbols-outlined">edit</span>
-        <% end %>
-        <%= button_to task_comment_path(comment.task, comment), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "comment-card__delete" do %>
-          <span class="material-symbols-outlined">delete</span>
-        <% end %>
-      </div>
-    <% end %>
+    <%# `if comment.editable_by?(current_user)` で囲みたいが、`broadcasts_to` 経由でビューを生成するときには current_user が取得できないのでCSSで隠すことにする. %>
+    <div class="comment-card__actions" data-editable-user="<%= comment.user.id %>">
+      <%= link_to edit_task_comment_path(comment.task, comment), class: "comment-card__edit" do %>
+        <span class="material-symbols-outlined">edit</span>
+      <% end %>
+      <%= button_to task_comment_path(comment.task, comment), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "comment-card__delete" do %>
+        <span class="material-symbols-outlined">delete</span>
+      <% end %>
+    </div>
   </div>
 <% end %>
