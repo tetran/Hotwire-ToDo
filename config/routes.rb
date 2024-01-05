@@ -1,7 +1,7 @@
 # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 Rails.application.routes.draw do
   # Defines the root path route ("/")
-  root "tasks#index"
+  root "projects#index"
 
   get "login" => "sessions#new", as: :login
   post "login" => "sessions#create"
@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   get "signup" => "users#new", as: :signup
   post "signup" => "users#create"
 
+  resources :projects, only: [:index, :show, :new, :create, :edit, :update]
   resources :tasks do
     resources :comments, only: [:new, :create, :edit, :update, :destroy], module: :tasks
     resource :complete, only: [:create, :destroy], module: :tasks

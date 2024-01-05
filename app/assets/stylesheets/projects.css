@@ -1,0 +1,31 @@
+.project-header {
+    display: flex;
+    justify-content: space-between;
+}
+.project-name {
+    margin-top: 0;
+    margin-bottom: 0;
+    display: inline-block;
+}
+.project-selector .menu-navigation {
+    left: 0;
+}
+.project-selector__action {
+    padding: .5rem .25rem;
+}
+.project-selector__add-button {
+    font-size: .9rem;
+    display: inline-block;
+    box-sizing: border-box;
+    width: 100%;
+    color: var(--form-text);
+}
+.project-selector__add-button .material-symbols-outlined {
+    display: inline-flex;
+    justify-content: center;
+    vertical-align: -6px;
+    font-size: 1.4rem;
+}
+.project-selector__add-button:hover  .material-symbols-outlined {
+    font-weight: bold;
+}

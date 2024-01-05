@@ -1,9 +1,11 @@
 class TasksController < ApplicationController
   before_action :set_task, only: %i[ show edit update destroy ]
+  before_action :set_project, only: %i[ new create ]
 
   # GET /tasks or /tasks.json
   def index
     @tasks = current_user.tasks.with_rich_text_description_and_embeds.order(:created_at)
+    @new_task = current_user.inbox_project.tasks.build
   end
 
   # GET /tasks/1 or /tasks/1.json
@@ -13,7 +15,7 @@ class TasksController < ApplicationController
 
   # GET /tasks/new
   def new
-    @task = current_user.tasks.build
+    @task = @project.tasks.build
   end
 
   # GET /tasks/1/edit
@@ -22,10 +24,11 @@ class TasksController < ApplicationController
 
   # POST /tasks or /tasks.json
   def create
-    @task = current_user.tasks.build(task_params)
+    @task = @project.tasks.build(task_params.merge(created_by: current_user))
 
     respond_to do |format|
       if @task.save
+        @new_task = @task.project.tasks.build
         format.html { redirect_to task_url(@task), notice: "Task was successfully created." }
         format.json { render :show, status: :created, location: @task }
         format.turbo_stream
@@ -69,6 +72,10 @@ class TasksController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def task_params
-      params.require(:task).permit(:name, :due_date, :description)
+      params.require(:task).permit(:name, :due_date, :description, :assignee)
+    end
+
+    def set_project
+      @project = current_user.projects.find(params[:project_id])
     end
 end

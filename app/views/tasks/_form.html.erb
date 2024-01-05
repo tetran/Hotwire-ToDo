@@ -23,7 +23,8 @@
   </div>
 
   <div class="task-form__actions">
-    <%= link_to "Cancel", tasks_path, class: "btn btn-light task-form__cancel" %>
+    <%= hidden_field_tag :project_id, task.project_id %>
+    <%= link_to "Cancel", project_path(task.project_id), class: "btn btn-light task-form__cancel" %>
     <%= form.submit class: "task-form__submit primary" %>
   </div>
 <% end %>

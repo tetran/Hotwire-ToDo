@@ -1,15 +1,30 @@
 class User < ApplicationRecord
   has_secure_password
+
   normalizes :email, with: -> email { email.strip.downcase }
 
-  has_many :tasks, dependent: :destroy
-  has_many :comments, dependent: :nullify
+  has_many :comments, dependent: :restrict_with_error
+  has_many :project_members, dependent: :restrict_with_error
+  has_many :projects, through: :project_members
+  # 参加しているprojectsのタスクすべて
+  has_many :tasks, through: :projects
+  has_many :assigned_tasks, class_name: "Task", foreign_key: :assignee_id, dependent: :nullify
+  # inboxプロジェクト: owner_idが自分で、dedicatedがtrueのプロジェクト。各ユーザーに1つだけ存在する。
+  has_one :inbox_project, -> { where(dedicated: true) }, class_name: "Project", foreign_key: :owner_id, dependent: :destroy
+
+  after_create_commit :create_inbox_project
 
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, presence: true, length: { minimum: 8 }, on: [:create, :update_password]
   validates :password, confirmation: true, on: :update_password
 
   def user_name
-    name || email.split('@').first
+    name || email.split("@").first
   end
+
+  private
+
+    def create_inbox_project
+      Project.create!(name: "inbox", owner_id: id, dedicated: true)
+    end
 end

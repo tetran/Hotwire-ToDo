@@ -30,10 +30,10 @@ input[type="submit"], button {
 }
 input[type="submit"].primary,
 button.primary {
-    background-color: var(--button-primary);
-    color: var(--button-primary-text);
+    background-color: var(--button-primary) !important;
+    color: var(--button-primary-text) !important;
 }
 input[type="submit"].primary:hover,
 button.primary:hover {
-    background-color: var(--button-privary-hover);
+    background-color: var(--button-privary-hover) !important;
 }

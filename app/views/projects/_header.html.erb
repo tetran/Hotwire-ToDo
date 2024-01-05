@@ -1,0 +1,42 @@
+<header class="project-header">
+  <div class="menu-container project-selector" data-controller="menu" data-action="keyup@window->menu#closeWithKeyboard click@window->menu#closeBackground">
+    <%= button_tag type: "button", class: "menu-button", data: { action: "menu#toggleMenu" } do %>
+      <h2 class="project-name"><%= @project.display_name %></h2>
+      <span class="material-symbols-outlined">expand_more</span>
+    <% end %>
+
+    <nav class="menu-navigation hidden" data-menu-target="menu">
+      <ul class="menu-list">
+        <% @projects.each do |project| %>
+          <li>
+            <%= link_to "# #{project.display_name}", project_path(project) %>
+          </li>
+        <% end %>
+      </ul>
+      <div class="project-selector__action">
+        <%= link_to new_project_path, class: "project-selector__add-button" do %>
+          <span class="material-symbols-outlined">add</span>
+          Add project
+        <% end %>
+      </div>
+    </nav>
+  </div>
+
+  <div class="menu-container" data-controller="menu" data-action="keyup@window->menu#closeWithKeyboard click@window->menu#closeBackground">
+    <%= button_tag type: "button", class: "menu-button", data: { action: "menu#toggleMenu" } do %>
+      <span class="material-symbols-outlined">menu</span>
+    <% end %>
+
+    <nav id="menu" class="menu-navigation hidden" data-menu-target="menu">
+      <h4 class="menu-navigation__username">Hello, <%= current_user.user_name %>!</h4>
+      <ul class="menu-list">
+        <li>
+          <%= link_to "Setting", "#", class: "menu-list__setting" %>
+        </li>
+        <li>
+          <%= button_to "Logout", logout_path, method: :delete, class: "menu-list__logout-btn" %>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>

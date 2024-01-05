@@ -48,3 +48,5 @@ en:
       default: "%B %d, %Y"
       short: "%b %d"
       long: "%B %d, %Y %H:%M"
+  project:
+    inbox: "Inbox"
