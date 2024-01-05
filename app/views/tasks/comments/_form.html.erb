@@ -2,7 +2,7 @@
   <%= render_errors_for @comment %>
   <%= form_with model: [@comment.task, @comment] do |f| %>
     <%= f.text_area :content, class: "task-comments__text-area", rows: 2, placeholder: "Comment", autofocus: true %>
-    <div class="task-comments__actions">
+    <div class="form-actions task-comments__actions">
       <%= link_to "Cancel", task_path(@comment.task), class: "btn task-comments__cancel" %>
       <%= f.submit class: "task-comments__submit primary" %>
     </div>

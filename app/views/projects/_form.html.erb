@@ -1,0 +1,32 @@
+<%= turbo_frame_tag "modal" do %>
+  <div class="modal-base">
+    <%= tag.div data: { controller: "turbo-modal",
+                        action: "keyup@window->turbo-modal#closeWithKeyboard click@window->turbo-modal#closeBackground" },
+                class: "modal-content project-form" do %>
+      <div class="modal-header project-form__header">
+        <h3 class="modal-header__title project-form__title">New Project</h3>
+        <%= link_to "", class: "modal-header__close project-form__close", data: { action: "turbo-modal#hideModal" } do %>
+          <span class="material-symbols-outlined">close</span>
+        <% end %>
+      </div>
+
+      <div class="modal-body">
+        <%= form_with(model: project, data: { turbo_frame: "_top" }) do |form| %>
+          <% if project.errors.any? %>
+            <%= render_errors_for project %>
+          <% end %>
+
+          <div class="project-form__item task-form__name">
+            <%= form.label :name, class: "visually-hidden" %>
+            <%= form.text_field :name, autofocus: true, class: "project-form__name--input", placeholder: "Project name" %>
+          </div>
+
+          <div class="form-actions project-form__actions">
+            <%= link_to "Cancel", "", class: "btn btn-light project-form__cancel", data: { action: "turbo-modal#hideModal" } %>
+            <%= form.submit class: "project-form__submit primary" %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

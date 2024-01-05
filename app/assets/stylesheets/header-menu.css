@@ -22,7 +22,7 @@
     border-radius: 4px;
     background: var(--background-alt);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
+    z-index: 10;
     width: 200px;
     padding: .25rem;
 }

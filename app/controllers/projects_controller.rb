@@ -22,10 +22,10 @@ class ProjectsController < ApplicationController
       if @project.save
         format.html { redirect_to project_url(@project), notice: "Project was successfully created." }
         format.json { render :show, status: :created, location: @project }
-        format.turbo_stream
       else
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @project.errors, status: :unprocessable_entity }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("modal", partial: "projects/form", locals: { project: @project }), status: :unprocessable_entity }
       end
     end
   end
@@ -38,11 +38,10 @@ class ProjectsController < ApplicationController
       if @project.update(project_params)
         format.html { redirect_to project_url(@project), notice: "Project was successfully updated." }
         format.json { render :show, status: :ok, location: @project }
-        format.turbo_stream
       else
         format.html { render :edit, status: :unprocessable_entity }
         format.json { render json: @project.errors, status: :unprocessable_entity }
-        format.turbo_stream { render turbo_stream: turbo_stream.replace(@project, partial: "projects/form", locals: { project: @project }) }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("modal", partial: "projects/form", locals: { project: @project }), status: :unprocessable_entity }
       end
     end
   end

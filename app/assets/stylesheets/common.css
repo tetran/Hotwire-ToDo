@@ -17,15 +17,6 @@
 .error {
     color: #fc5050;
 }
-.form__error {
-    padding-left: 0;
-    margin-bottom: 0;
-}
-.form__error li {
-    color: #fc5050;
-    list-style: none;
-    margin-bottom: 6px;
-}
 
 .notification {
     position: fixed;

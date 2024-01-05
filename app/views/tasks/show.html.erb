@@ -3,13 +3,14 @@
   <div class="modal-base">
     <%= tag.div data: { controller: "turbo-modal",
                         action: "keyup@window->turbo-modal#closeWithKeyboard click@window->turbo-modal#closeBackground" },
-                class: "show-task #{@task.overdue? ? "overdue" : ""}" do %>
-      <div class="show-task__header">
-        <%= link_to "", class: "show-task__close", data: { action: "turbo-modal#hideModal" } do %>
+                class: "modal-content show-task #{@task.overdue? ? "overdue" : ""}" do %>
+      <div class="modal-header show-task__header">
+        <%= link_to "", class: "modal-header__close show-task__close", data: { action: "turbo-modal#hideModal" } do %>
           <span class="material-symbols-outlined">close</span>
         <% end %>
       </div>
-      <div class="show-task__content">
+
+      <div class="modal-body show-task__content">
         <h2 class="show-task__name">
           <%= @task.name %>
         </h2>

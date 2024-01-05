@@ -1,10 +1,6 @@
 <%= form_with(model: task, class: "task-form") do |form| %>
   <% if task.errors.any? %>
-    <div class="task-form__errors">
-      <% task.errors.each do |error| %>
-        <div class="task-form__error"><%= error.full_message %></div>
-      <% end %>
-    </div>
+    <%= render_errors_for task %>
   <% end %>
 
   <div class="task-form__item task-form__name">
@@ -22,7 +18,7 @@
     <%= form.date_field :due_date, value: task.display_due_date, min: Time.zone.today %>
   </div>
 
-  <div class="task-form__actions">
+  <div class="form-actions task-form__actions">
     <%= hidden_field_tag :project_id, task.project_id %>
     <%= link_to "Cancel", project_path(task.project_id), class: "btn btn-light task-form__cancel" %>
     <%= form.submit class: "task-form__submit primary" %>

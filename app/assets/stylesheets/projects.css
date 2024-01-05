@@ -29,3 +29,13 @@
 .project-selector__add-button:hover  .material-symbols-outlined {
     font-weight: bold;
 }
+
+.modal-content.project-form {
+    width: 400px;
+    /*height: 10rem;*/
+}
+.project-form__name--input {
+    box-sizing: border-box;
+    width: 100%;
+    margin-bottom: 1rem;
+}

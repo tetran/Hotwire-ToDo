@@ -130,62 +130,14 @@
     box-shadow: 0 0 0 2px var(--focus);
     border-color: transparent;
 }
-.task-form__errors {
-    color: #fc5050;
-    font-size: 0.9em;
-    padding: 0 0 0.5em 0.5em;
-}
-.task-form__actions {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 0.5em;
-}
-input.task-form__submit {
-}
 
-.modal-base {
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    /*backdrop-filter: blur(1px);*/
-    background: rgba(0, 0, 0, 0.3);
-}
-.show-task {
-    position: relative;
-    z-index: 2;
-    top: 3%;
-    width: 100%;
-    max-width: 600px;
-    min-width: 400px;
-    margin: 0 auto;
+.modal-content.show-task {
     height: 90%;
-    padding: 16px;
-    border-radius: 6px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    background: var(--background);
 }
-.show-task__header {
-    display: flex;
+.show-task .modal-header {
     justify-content: right;
-    gap: 0.5em;
-    border-bottom: solid 1px var(--border);
-    padding-bottom: 0.5em;
-}
-.show-task__close {
-    color: var(--form-text);
-    border-radius: 6px;
-    line-height: 1;
-}
-.show-task__close:hover {
-    background: rgba(255, 255, 255, 0.1);
 }
 .show-task__content {
-    padding-top: 10px;
-    height: 95%;
     overflow: scroll;
     scroll-behavior: smooth;
 }
@@ -270,14 +222,6 @@ input.task-form__submit {
 .task-comments__text-area {
     width: 100%;
     border: solid 1px var(--border);
-}
-.task-comments__actions {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 0.5em;
-}
-input.task-comments__submit {
 }
 
 .comment-card__actions {

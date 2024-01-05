@@ -14,7 +14,7 @@
         <% end %>
       </ul>
       <div class="project-selector__action">
-        <%= link_to new_project_path, class: "project-selector__add-button" do %>
+        <%= link_to new_project_path, class: "project-selector__add-button", data: { turbo_frame: "modal" } do %>
           <span class="material-symbols-outlined">add</span>
           Add project
         <% end %>
