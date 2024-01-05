@@ -1,5 +1,5 @@
 <%= turbo_frame_tag task do %>
-  <div class="task-card <%= task.completed ? "task-card--complete" : "" %> <%= task.overdue? ? "task-card--overdue" : "" %>">
+  <div class="task-card <%= task.completed ? "task-card--complete" : "" %> <%= task.overdue? ? "overdue" : "" %>">
     <div class="task-card__content">
       <%= button_to "",
                     task_complete_path(task),
@@ -17,10 +17,8 @@
         <% end %>
         <% if task.has_due_date? %>
           <div class="task-card__due-date">
-            <% if task.overdue? %>
-              <span class="material-symbols-outlined">warning</span>
-            <% end %>
-            <%= task.due_date %>
+            <span class="material-symbols-outlined">event</span>
+            <%= l(task.due_date, format: due_date_format(task)) %>
           </div>
         <% end %>
       </div>

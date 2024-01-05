@@ -39,3 +39,12 @@ en:
     submit:
       create: "Add %{model}"
       update: "Save %{model}"
+  date:
+    formats:
+      default: "%b %d, %Y"
+      short: "%b %d"
+  time:
+    formats:
+      default: "%B %d, %Y"
+      short: "%b %d"
+      long: "%B %d, %Y %H:%M"

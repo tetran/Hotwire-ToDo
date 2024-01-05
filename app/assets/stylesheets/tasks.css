@@ -15,9 +15,9 @@
 .task-card__complete-check-outer {
 }
 .task-card__complete-check {
-    width: 18px;
-    height: 18px;
-    border: solid 1px var(--border);
+    width: 16px;
+    height: 16px;
+    border: solid 1px var(--selection);
     border-radius: 50%;
     background: none;
     padding: 0;
@@ -44,9 +44,14 @@
     margin-top: .5em;
 }
 .task-card__due-date {
+    display: flex;
+    gap: 4px;
     font-size: 0.8em;
     color: #999;
     margin-top: .5em;
+}
+.task-card__due-date .material-symbols-outlined {
+    font-size: 1rem;
 }
 .task-card__actions {
     display: flex;
@@ -61,9 +66,13 @@
     color: var(--text-main);
     border-radius: 6px;
     padding: 2px;
+    transition: background-color 0.1s linear, border-color 0.1s linear, color 0.1s linear, box-shadow 0.1s linear, transform 0.1s ease;
 }
 .task-card__edit:hover {
     background: rgba(0, 0, 0, 0.1);
+}
+.task-card__edit:active {
+    transform: translateY(2px);
 }
 .task-card__delete {
     background: none;
@@ -85,12 +94,9 @@
 }
 
 /* Overdue */
-.task-card--overdue .task-card__due-date {
+.task-card.overdue .task-card__due-date,
+.show-task.overdue .show-task__due-date {
     color: #fc5050;
-}
-.task-card--overdue .task-card__due-date .material-symbols-outlined {
-    font-size: 1rem;
-    vertical-align: -3px;
 }
 
 .add-task {
@@ -167,6 +173,7 @@ input.task-form__submit {
     justify-content: right;
     gap: 0.5em;
     border-bottom: solid 1px var(--border);
+    padding-bottom: 0.5em;
 }
 .show-task__close {
     color: var(--form-text);
@@ -186,17 +193,23 @@ input.task-form__submit {
     margin-top: 0;
 }
 .show-task__description {
-    margin-top: 0.5em;
+    margin-top: 1em;
+    margin-bottom: 3em;
     font-size: 0.9em;
 }
 .show-task__due-date {
+    display: flex;
+    gap: 4px;
     margin-top: 0.5em;
     font-size: 0.8em;
+}
+.show-task__due-date .material-symbols-outlined {
+    font-size: 1rem;
 }
 
 /* Comment Area */
 .task-comments {
-    margin-top: 1em;
+    margin-top: 2em;
 }
 .task-comments__title {
     margin-bottom: 0;
@@ -285,9 +298,13 @@ input.task-comments__submit {
     color: var(--text-main);
     border-radius: 6px;
     padding: 2px;
+    transition: background-color 0.1s linear, border-color 0.1s linear, color 0.1s linear, box-shadow 0.1s linear, transform 0.1s ease;
 }
 .comment-card__edit:hover {
     background: rgba(0, 0, 0, 0.1);
+}
+.comment-card__edit:active {
+    transform: translateY(2px);
 }
 .comment-card__delete {
     background: none;
