@@ -1,0 +1,2 @@
+<%= turbo_stream.append "project_members", partial: "projects/member_row", locals: { member: @user, project: @project } %>
+<%= turbo_stream.update "notification", partial: "shared/notification", locals: { message: "\"#{@user.user_name}\" was added to this project!", status: "success" } %>

@@ -1,7 +1,4 @@
 class Project < ApplicationRecord
-  scope :unarchived, -> { where(archived: false) }
-  scope :archived, -> { where(archived: true) }
-
   belongs_to :owner, class_name: "User"
   has_many :tasks, dependent: :destroy
   has_many :project_members, dependent: :destroy
@@ -11,6 +8,9 @@ class Project < ApplicationRecord
 
   validates :name, presence: true, length: { maximum: 100 }
 
+  scope :unarchived, -> { where(archived: false) }
+  scope :archived, -> { where(archived: true) }
+  
   def archive!
     update!(archived: true)
   end

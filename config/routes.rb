@@ -11,6 +11,7 @@ Rails.application.routes.draw do
 
   resources :projects, only: [:index, :show, :new, :create, :edit, :update] do
     resource :archive, only: [:create, :destroy], module: :projects
+    resources :members, only: [:create, :destroy], module: :projects
   end
   resources :tasks do
     resources :comments, only: [:new, :create, :edit, :update, :destroy], module: :tasks

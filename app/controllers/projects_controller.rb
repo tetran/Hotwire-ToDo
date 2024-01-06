@@ -11,6 +11,8 @@ class ProjectsController < ApplicationController
     @tasks = @project.tasks.with_rich_text_description_and_embeds.order(:created_at)
     @new_task = @project.tasks.build
     @projects = current_user.projects.unarchived
+    # Put current user first
+    @members = @project.members.sort { |lhs, _| lhs == current_user ? -1 : 1 }
   end
 
   def new

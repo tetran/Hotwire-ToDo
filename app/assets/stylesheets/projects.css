@@ -2,6 +2,36 @@
     display: flex;
     justify-content: space-between;
 }
+.project-members .menu-navigation {
+    right: 0;
+    width: 400px;
+}
+
+/* Right menu */
+.project-header__right {
+    display: flex;
+    gap: 0;
+}
+.menu-list__member {
+    display: flex;
+    justify-content: space-between;
+    padding: .5rem .25rem;
+    margin: 0;
+    border-radius: 4px;
+}
+.menu-list__member .material-symbols-outlined {
+    font-size: 1.2rem;
+    vertical-align: -4px;
+}
+.project-members__form {
+    padding: .5rem;
+}
+.menu-list__member__actions button:hover {
+    scale: 1.2;
+    background: inherit;
+}
+
+/* Left menu */
 .project-name {
     margin-top: 0;
     margin-bottom: 0;
@@ -51,13 +81,11 @@
     color: var(--form-text);
 }
 .project-selector__add-button .material-symbols-outlined {
-    display: inline-flex;
-    justify-content: center;
-    vertical-align: -6px;
     font-size: 1.4rem;
+    vertical-align: -6px;
 }
-.project-selector__add-button:hover  .material-symbols-outlined {
-    font-weight: bold;
+.project-selector__add-button:hover .material-symbols-outlined {
+    scale: 1.2;
 }
 
 .modal-content.project-form {

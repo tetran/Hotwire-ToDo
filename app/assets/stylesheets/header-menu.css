@@ -26,11 +26,13 @@
     width: 200px;
     padding: .25rem;
 }
-.menu-navigation__username {
+.menu-navigation__header {
     margin: 0 .25rem 0;
-    padding: 1rem .5rem .5rem;
+    padding: .5rem;
     color: var(--form-text);
     border-bottom: 1px solid var(--border);
+}
+.menu-navigation__username {
 }
 
 .menu-list {

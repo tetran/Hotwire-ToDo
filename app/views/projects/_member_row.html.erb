@@ -1,0 +1,25 @@
+<%= turbo_frame_tag member do %>
+  <li class="menu-list__member">
+    <% if member == current_user %>
+      <div class="menu-list__member-info">
+        <span class="material-symbols-outlined">person</span> You
+      </div>
+      <div class="menu-list__member__actions horizontal-actions">
+        <% if @members.length > 1 %>
+          <%= button_to project_member_path(project, member), method: :delete, data: { turbo_confirm: "Are you sure to leave the project?", turbo_frame: "_top" }, class: "" do %>
+            <span class="material-symbols-outlined">exit_to_app</span>
+          <% end %>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="menu-list__member-info">
+        <span class="material-symbols-outlined">person</span> <%= member.user_name %>
+      </div>
+      <div class="menu-list__member__actions horizontal-actions">
+        <%= button_to project_member_path(project, member), method: :delete, data: { turbo_confirm: "Are you sure you want to remove #{member.user_name}?" }, class: "" do %>
+          <span class="material-symbols-outlined">delete</span>
+        <% end %>
+      </div>
+    <% end %>
+  </li>
+<% end %>
