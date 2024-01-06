@@ -1,0 +1,15 @@
+<li class="assignee-list__member">
+  <div class="assignee-list__member-info">
+    <%= button_to task_assign_path(task),
+                  params: { assignee_id: member.id },
+                  data: { turbo_frame: "_top" } do %>
+      <span class="material-symbols-outlined">person</span>
+      <%= member == current_user ? "You" : member.user_name %>
+    <% end %>
+  </div>
+  <div class="assignee-list__member-sign">
+    <% if task.assignee == member %>
+      <span class="material-symbols-outlined assignee-list__member-check">check</span>
+    <% end %>
+  </div>
+</li>

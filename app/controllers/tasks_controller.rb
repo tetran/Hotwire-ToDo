@@ -29,6 +29,8 @@ class TasksController < ApplicationController
     respond_to do |format|
       if @task.save
         @new_task = @task.project.tasks.build
+        @members = @project.members.sort { |lhs, _| lhs == current_user ? -1 : 1 }
+
         format.html { redirect_to task_url(@task), success: "Task was successfully created." }
         format.json { render :show, status: :created, location: @task }
         format.turbo_stream
@@ -43,6 +45,8 @@ class TasksController < ApplicationController
   def update
     respond_to do |format|
       if @task.update(task_params)
+        @members = @task.project.members.sort { |lhs, _| lhs == current_user ? -1 : 1 }
+
         format.html { redirect_to task_url(@task), success: "Task was successfully updated." }
         format.json { render :show, status: :ok, location: @task }
         format.turbo_stream

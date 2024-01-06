@@ -12,6 +12,7 @@
     display: flex;
     gap: 0;
 }
+
 .menu-list__member {
     display: flex;
     justify-content: space-between;

@@ -12,6 +12,7 @@ class ProjectsController < ApplicationController
     @new_task = @project.tasks.build
     @projects = current_user.projects.unarchived
     # Put current user first
+    # TODO: 共通関数にしたいが、いい名前が思いつかない
     @members = @project.members.sort { |lhs, _| lhs == current_user ? -1 : 1 }
   end
 

@@ -94,6 +94,7 @@
     color: var(--text-main);
 }
 .horizontal-actions a {
+    display: inline-block;
     color: var(--text-main);
     border-radius: 6px;
     padding: 2px;

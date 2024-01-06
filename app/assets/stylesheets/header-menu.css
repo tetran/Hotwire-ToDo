@@ -32,8 +32,6 @@
     color: var(--form-text);
     border-bottom: 1px solid var(--border);
 }
-.menu-navigation__username {
-}
 
 .menu-list {
     list-style: none;

@@ -42,7 +42,7 @@
           <span class="material-symbols-outlined">group</span>
         <% end %>
 
-        <nav id="menu" class="menu-navigation hidden" data-menu-target="menu">
+        <nav class="menu-navigation hidden" data-menu-target="menu">
           <h4 class="menu-navigation__header">Members</h4>
           <ul class="menu-list">
             <%= turbo_frame_tag "project_members" do %>
@@ -70,7 +70,7 @@
         <span class="material-symbols-outlined">menu</span>
       <% end %>
 
-      <nav id="menu" class="menu-navigation hidden" data-menu-target="menu">
+      <nav class="menu-navigation hidden" data-menu-target="menu">
         <h4 class="menu-navigation__header menu-navigation__username">Hello, <%= current_user.user_name %>!</h4>
         <ul class="menu-list">
           <li>
