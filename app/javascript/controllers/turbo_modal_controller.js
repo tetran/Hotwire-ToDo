@@ -4,7 +4,14 @@ import { Controller } from "@hotwired/stimulus"
 export default class extends Controller {
   connect() {
   }
-  hideModal() {
+
+  hideModal(e) {
+    if (e) {
+      // prevent default link behavior
+      e.preventDefault()
+      // prevent bubbling up the DOM tree to avoid triggering the click event on the window
+      e.stopPropagation()
+    }
     document.getElementById("modal").removeAttribute("src")
     document.querySelector(".modal-base").remove()
   }

@@ -45,8 +45,10 @@
 .menu-list li:hover {
     background: #ccc;
 }
-.menu-list li button, .menu-list li a {
+.menu-list>li>button, .menu-list>li>a {
     display: block;
+}
+.menu-list>li button, .menu-list>li a {
     padding: 6px;
     margin: 0;
     border: none;

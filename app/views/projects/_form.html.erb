@@ -4,13 +4,14 @@
                         action: "keyup@window->turbo-modal#closeWithKeyboard click@window->turbo-modal#closeBackground" },
                 class: "modal-content project-form" do %>
       <div class="modal-header project-form__header">
-        <h3 class="modal-header__title project-form__title">New Project</h3>
+        <h3 class="modal-header__title project-form__title"><%= project.persisted? ? "Edit" : "New" %> Project</h3>
         <%= link_to "", class: "modal-header__close project-form__close", data: { action: "turbo-modal#hideModal" } do %>
           <span class="material-symbols-outlined">close</span>
         <% end %>
       </div>
 
       <div class="modal-body">
+        <%# TODO: Turboでできたらしたい %>
         <%= form_with(model: project, data: { turbo_frame: "_top" }) do |form| %>
           <% if project.errors.any? %>
             <%= render_errors_for project %>
@@ -22,7 +23,7 @@
           </div>
 
           <div class="form-actions project-form__actions">
-            <%= link_to "Cancel", "", class: "btn btn-light project-form__cancel", data: { action: "turbo-modal#hideModal" } %>
+            <%= button_tag "Cancel", type: "button", class: "btn project-form__cancel", data: { action: "turbo-modal#hideModal" } %>
             <%= form.submit class: "project-form__submit primary" %>
           </div>
         <% end %>

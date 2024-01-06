@@ -15,6 +15,9 @@
   <body>
     <%= turbo_frame_tag "notification" %>
     <%= turbo_frame_tag "modal" %>
+    <%# TODO: Turboでできたらしたい %>
+    <%= render partial: "shared/notification", locals: { status: flash.first[0], message: flash.first[1] } if flash.present? %>
+
     <%= yield %>
   </body>
 </html>

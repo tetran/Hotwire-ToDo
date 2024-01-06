@@ -80,3 +80,34 @@
         transform: translateY(-100%);
     }
 }
+
+.horizontal-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-self: flex-start;
+    gap: 0.5em;
+}
+.horizontal-actions .material-symbols-outlined {
+    color: var(--text-main);
+}
+.horizontal-actions a {
+    color: var(--text-main);
+    border-radius: 6px;
+    padding: 2px;
+    transition: background-color 0.1s linear, border-color 0.1s linear, color 0.1s linear, box-shadow 0.1s linear, transform 0.1s ease;
+}
+.horizontal-actions a:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+.horizontal-actions a:active {
+    transform: translateY(2px);
+}
+.horizontal-actions button {
+    background: none;
+    border: none;
+    padding: 2px;
+    margin: 0;
+}
+.horizontal-actions button:hover {
+    background: rgba(0, 0, 0, 0.1);
+}

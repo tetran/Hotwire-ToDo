@@ -9,6 +9,36 @@
 }
 .project-selector .menu-navigation {
     left: 0;
+    min-width: 400px;
+}
+.project-selector__list-item {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+.project-selector__list-item__project-name {
+    box-sizing: border-box;
+    width: 90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.project-selector__list-item.current-project {
+    font-weight: bold;
+}
+.horizontal-actions.project-selector__list-item__actions {
+    gap: 0;
+}
+.horizontal-actions.project-selector__list-item__actions .material-symbols-outlined {
+    font-size: 1.2rem;
+}
+.horizontal-actions.project-selector__list-item__actions:hover a,
+.horizontal-actions.project-selector__list-item__actions:hover button {
+    background: inherit;
+}
+.horizontal-actions.project-selector__list-item__actions a:hover,
+.horizontal-actions.project-selector__list-item__actions button:hover {
+    scale: 1.2;
 }
 .project-selector__action {
     padding: .5rem .25rem;

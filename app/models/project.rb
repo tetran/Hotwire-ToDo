@@ -11,6 +11,16 @@ class Project < ApplicationRecord
 
   validates :name, presence: true, length: { maximum: 100 }
 
+  def archive!
+    update!(archived: true)
+  end
+
+  def unarchive!
+    update!(archived: false)
+  end
+
+  def inbox? = dedicated
+
   def display_name
     dedicated ? I18n.t("project.inbox") : name
   end

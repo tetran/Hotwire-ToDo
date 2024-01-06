@@ -15,7 +15,7 @@
     </div>
 
     <%# `if comment.editable_by?(current_user)` で囲みたいが、`broadcasts_to` 経由でビューを生成するときには current_user が取得できないのでCSSで隠すことにする. %>
-    <div class="comment-card__actions" data-editable-user="<%= comment.user.id %>">
+    <div class="comment-card__actions horizontal-actions" data-editable-user="<%= comment.user.id %>">
       <%= link_to edit_task_comment_path(comment.task, comment), class: "comment-card__edit" do %>
         <span class="material-symbols-outlined">edit</span>
       <% end %>

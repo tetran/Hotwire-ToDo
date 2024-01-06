@@ -9,7 +9,9 @@ Rails.application.routes.draw do
   get "signup" => "users#new", as: :signup
   post "signup" => "users#create"
 
-  resources :projects, only: [:index, :show, :new, :create, :edit, :update]
+  resources :projects, only: [:index, :show, :new, :create, :edit, :update] do
+    resource :archive, only: [:create, :destroy], module: :projects
+  end
   resources :tasks do
     resources :comments, only: [:new, :create, :edit, :update, :destroy], module: :tasks
     resource :complete, only: [:create, :destroy], module: :tasks

@@ -53,36 +53,6 @@
 .task-card__due-date .material-symbols-outlined {
     font-size: 1rem;
 }
-.task-card__actions {
-    display: flex;
-    flex: 0 0 auto;
-    align-self: flex-start;
-    gap: 0.5em;
-}
-.task-card__actions .material-symbols-outlined {
-    color: var(--text-main);
-}
-.task-card__edit {
-    color: var(--text-main);
-    border-radius: 6px;
-    padding: 2px;
-    transition: background-color 0.1s linear, border-color 0.1s linear, color 0.1s linear, box-shadow 0.1s linear, transform 0.1s ease;
-}
-.task-card__edit:hover {
-    background: rgba(0, 0, 0, 0.1);
-}
-.task-card__edit:active {
-    transform: translateY(2px);
-}
-.task-card__delete {
-    background: none;
-    border: none;
-    padding: 2px;
-    margin: 0;
-}
-.task-card__delete:hover {
-    background: rgba(0, 0, 0, 0.1);
-}
 
 /* Completed */
 .task-card.task-card--complete .task-card__name a {
@@ -102,11 +72,6 @@
 .add-task {
     margin: 8px 0;
 }
-/*.add-task__icon {*/
-/*    display: inline-flex;*/
-/*    justify-content: center;*/
-/*    vertical-align: -6px;*/
-/*}*/
 
 /* Task Form */
 .task-form {
@@ -226,36 +191,8 @@
 
 .comment-card__actions {
     display: none;
-    flex: 0 0 auto;
-    align-self: flex-start;
-    gap: 0.5em;
-    vertical-align: middle;
     visibility: hidden;
 }
 .comment-card:hover .comment-card__actions {
     visibility: visible;
-}
-.comment-card__actions .material-symbols-outlined {
-    color: var(--text-main);
-}
-.comment-card__edit {
-    color: var(--text-main);
-    border-radius: 6px;
-    padding: 2px;
-    transition: background-color 0.1s linear, border-color 0.1s linear, color 0.1s linear, box-shadow 0.1s linear, transform 0.1s ease;
-}
-.comment-card__edit:hover {
-    background: rgba(0, 0, 0, 0.1);
-}
-.comment-card__edit:active {
-    transform: translateY(2px);
-}
-.comment-card__delete {
-    background: none;
-    border: none;
-    padding: 2px;
-    margin: 0;
-}
-.comment-card__delete:hover {
-    background: rgba(0, 0, 0, 0.1);
 }

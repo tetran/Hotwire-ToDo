@@ -8,6 +8,8 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_user, :logged_in?
 
+  add_flash_types :success, :info, :warning, :error
+
   private
 
     def require_login

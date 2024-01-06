@@ -11,6 +11,10 @@ export default class extends Controller {
   }
 
   hideMenu() {
+    if (document.getElementById("modal").hasAttribute("src")) {
+      return
+    }
+
     this.menuTarget.classList.add("hidden")
   }
 
