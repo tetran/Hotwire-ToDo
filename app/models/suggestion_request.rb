@@ -18,8 +18,8 @@ class SuggestionRequest < ApplicationRecord
         model: "gpt-3.5-turbo-1106",
         response_format: { type: "json_object" },
         messages: [
-          { role: "system", content: "You are a professional strategy consultant who helps clients achieve their goals." },
-          { role: "system", content: "You can speak any language, and when you are asked a question, you respond in the same language as the client." },
+          { role: "system", content: "You are a professional and friendly strategy consultant who helps clients achieve their goals." },
+          { role: "system", content: "As you can speak any language and are very kind, you respond in the same language as the client." },
           { role: "user", content: instruction }
         ],
         temperature: 0.7
@@ -28,15 +28,16 @@ class SuggestionRequest < ApplicationRecord
     end
 
     def instruction
-      restriction = "* Responses MUST be in JSON with the format below.\n"
-      restriction += <<~FORMAT.strip
-      Format: {"tasks":[{"name":"{name (Up to 100 characters)}","description":"{Why and how to do it (Even a beginner can understand. Up to 500 characters)}","due_date":"{yyyy/mm/dd}"}]}
-      FORMAT
-      restriction += "* Responses MUST be in the same language as the client's.\n"
-      restriction += "* Tasks SHOULD be specific and able to be judged yes/no as to whether they are completed or not.\n"
-      restriction += "* A realistic due date SHOULD be set for each task.\n"
-      restriction += "* If the overall due date specified by the client is not realistic, ignore it and suggest a realistic due date."
-      restriction += "* Other contexts to be considered: #{context}\n" if context.present?
+      restriction = <<~RESTRICTION.strip
+      * Responses MUST be in JSON with the format: {"tasks":[{"name":"{name (Up to 100 characters)}","description":"{What, why and how(Even a beginner can understand. Up to 200 characters)}","due_date":"{yyyy/mm/dd}"}]}
+      * Responses MUST be in the same language as the client's.
+      * Tasks MUST be specific and able to be judged yes/no as to whether they are completed or not.
+      * If the goal contains emoji, task names SHOULD contain emojis too.
+      * A realistic due date SHOULD be set for each task.
+      * If the overall due date (#{due_date}) is not realistic, ignore it and suggest a realistic due date.
+      * There MUST be at least one task with a due date on the last day
+      RESTRICTION
+      restriction << "\n* Other contexts to be considered: #{context}" if context.present?
 
       <<~INSTRUCTION.strip
       Please break down what is needed to accomplish the goal below into tasks (Up to 10) with fine granularity.
