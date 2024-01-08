@@ -27,7 +27,9 @@ module Tasks
       end
 
       def send_chat_request
-        OpenAI::Client.new.chat(parameters: @suggestion_request.openai_params)
+        ActiveSupport::Notifications.instrument "chat.openai", request_id: @suggestion_request.id do
+          OpenAI::Client.new.chat(parameters: @suggestion_request.openai_params)
+        end
       end
   end
 end

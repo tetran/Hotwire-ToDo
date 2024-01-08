@@ -13,3 +13,8 @@ ActiveSupport::Notifications.subscribe "sql.active_record" do |*args|
   event = ActiveSupport::Notifications::Event.new(*args)
   Rails.logger.debug "[DB Access] (SQL: #{event.payload[:sql]}, Bindings: #{event.payload[:binds]}, duration: #{event.duration} ms)"
 end
+
+ActiveSupport::Notifications.subscribe "chat.openai" do |*args|
+  event = ActiveSupport::Notifications::Event.new(*args)
+  Rails.logger.debug "\e[1m\e[31m[OpenAI Chat Request] \e[35m(#{event.duration.to_i/1000}sec) \e[0m#{event.payload.to_json}"
+end
