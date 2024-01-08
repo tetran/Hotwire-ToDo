@@ -19,5 +19,7 @@
     <%= render partial: "shared/notification", locals: { status: flash.first[0], message: flash.first[1] } if flash.present? %>
 
     <%= yield %>
+
+    <div id="loader-wrapper"><div id="loader"></div></div>
   </body>
 </html>

@@ -1,0 +1,77 @@
+<div class="task-suggestion-form">
+  <%= form_with model: @suggestion_request,
+                url: tasks_suggestions_path,
+                method: :post, # Always POST. Not PATCH.
+                data: {
+                  controller: "submit",
+                  action: "turbo:submit-start->submit#showWaitingScreen turbo:submit-end->submit#hideWaitingScreen"
+                } do |form| %>
+    <%= render_errors_for(@suggestion_request) %>
+
+    <div class="task-suggestion-form__item task-suggestion-form__goal">
+      <%= form.label :goal, class: "visually-hidden" %>
+      <%= form.text_field :goal, autofocus: true, class: "task-form__name--input full-width-input", placeholder: "Your goal" %>
+    </div>
+
+    <div class="task-suggestion-form__item task-suggestion-form__context">
+      <%= form.label :context, class: "visually-hidden" %>
+      <%= form.text_area :context, class: "task-form__description--input full-width-input", placeholder: "Context" %>
+    </div>
+
+    <div class="task-suggestion-form__item task-suggestion-form__start-date">
+      <%= form.label :start_date %>
+      <%= form.date_field :start_date, min: Time.zone.today %>
+    </div>
+
+    <div class="task-suggestion-form__item task-suggestion-form__due-date">
+      <%= form.label :due_date %>
+      <%= form.date_field :due_date, min: Time.zone.today %>
+    </div>
+
+    <div class="form-actions task-suggestion-form__actions">
+      <%= form.hidden_field :project_id %>
+      <%= link_to "Cancel", project_path(@suggestion_request.project_id), class: "btn btn-light task-suggestion-form__cancel" %>
+      <%= form.submit "Suggest",
+                      class: "task-suggestion-form__submit primary",
+                      data: {
+                        confirm: "It may take a little time. Please be patient.",
+                        "submit-target": "submit"
+                      } %>
+    </div>
+  <% end %>
+
+  <% if @suggestion_request.response.present? %>
+    <div class="task-suggestions">
+      <h2 class="task-suggestions-title">Suggestions</h2>
+      <%= form_with url: tasks_batches_path, data: { turbo_frame: "_top" } do |batch_form| %>
+        <%= hidden_field_tag :project_id, @suggestion_request.project.id %>
+        <% @suggestion_request.response.suggested_tasks.each do |task| %>
+          <%= fields_for :tasks, task, index: task.id do |task_form| %>
+            <div class="task-suggestion">
+              <%# 配列形式のリクエストでタスクを送信する。属性はname,description,due_dateの3つ。ただし、各タスクについてチェックボックスで登録するかどうかをユーザーに選択させ、オフの場合は登録しないようにする。 %>
+              <%= check_box_tag "tasks[#{task.id}][checked]", "1", true, class: "task-suggestion__checkbox" %>
+              <div class="task-suggestion__main">
+                <div class="task-suggestion__name">
+                  <%= task_form.label :name, class: "visually-hidden" %>
+                  <%= task_form.text_field :name, class: "full-width-input", placeholder: "Task name" %>
+                </div>
+                <div class="task-suggestion__description">
+                  <%= task_form.label :description, class: "visually-hidden" %>
+                  <%= task_form.text_area :description, class: "full-width-input", rows: 3, placeholder: "Description" %>
+                </div>
+                <div class="task-suggestion__due-date">
+                  <%= task_form.label :due_date %>
+                  <%= task_form.date_field :due_date %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+
+        <div class="form-actions">
+          <%= batch_form.submit "Create tasks", class: "primary" %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

@@ -16,6 +16,14 @@ class TasksController < ApplicationController
   # GET /tasks/new
   def new
     @task = @project.tasks.build
+
+    @suggestion_request = SuggestionRequest.new(
+      project: @project,
+      requested_by: current_user,
+      start_date: Time.zone.today,
+      due_date: Time.zone.today + 3.months
+    )
+    @show_suggestion = false
   end
 
   # GET /tasks/1/edit

@@ -16,6 +16,23 @@ class Task < ApplicationRecord
 
   scope :inbox, -> { where(project: user.inbox_project) }
 
+  def self.create_from_suggestion(params, project_id, user)
+    tasks = []
+    transaction do
+      params.each do |_, param|
+        # insert_allを使いたいが、descriptionはActionTextなので何らかの調整が必要
+        tasks << Task.create!(
+          name: param[:name],
+          description: param[:description],
+          due_date: param[:due_date],
+          project_id: project_id,
+          created_by: user
+        )
+      end
+    end
+    tasks
+  end
+
   def has_due_date? = due_date&.< DEFAULT_DUE_DATE
 
   def display_due_date = has_due_date? ? due_date : ""

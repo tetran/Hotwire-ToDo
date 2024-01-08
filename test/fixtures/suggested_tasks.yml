@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  suggestion_response: one
+  name: MyString
+  description: MyText
+  due_date: 2024-01-08
+
+two:
+  suggestion_response: one
+  name: MyString
+  description: MyText
+  due_date: 2024-01-08

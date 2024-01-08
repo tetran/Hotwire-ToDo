@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_01_05_073532) do
+ActiveRecord::Schema[7.1].define(version: 2024_01_08_033951) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -78,6 +78,40 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_05_073532) do
     t.index ["owner_id"], name: "index_projects_on_owner_id"
   end
 
+  create_table "suggested_tasks", force: :cascade do |t|
+    t.integer "suggestion_response_id", null: false
+    t.string "name", null: false
+    t.text "description"
+    t.date "due_date"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["suggestion_response_id"], name: "index_suggested_tasks_on_suggestion_response_id"
+  end
+
+  create_table "suggestion_requests", force: :cascade do |t|
+    t.integer "project_id", null: false
+    t.integer "requested_by_id", null: false
+    t.string "goal", null: false
+    t.text "context"
+    t.date "start_date"
+    t.date "due_date"
+    t.text "raw_request"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_suggestion_requests_on_project_id"
+    t.index ["requested_by_id"], name: "index_suggestion_requests_on_requested_by_id"
+  end
+
+  create_table "suggestion_responses", force: :cascade do |t|
+    t.integer "suggestion_request_id", null: false
+    t.text "raw_response"
+    t.integer "completion_tokens", default: 0, null: false
+    t.integer "prompt_tokens", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["suggestion_request_id"], name: "index_suggestion_responses_on_suggestion_request_id"
+  end
+
   create_table "tasks", force: :cascade do |t|
     t.integer "project_id", null: false
     t.string "name", null: false
@@ -108,6 +142,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_05_073532) do
   add_foreign_key "project_members", "projects"
   add_foreign_key "project_members", "users"
   add_foreign_key "projects", "users", column: "owner_id"
+  add_foreign_key "suggested_tasks", "suggestion_responses"
+  add_foreign_key "suggestion_requests", "projects"
+  add_foreign_key "suggestion_requests", "users", column: "requested_by_id"
+  add_foreign_key "suggestion_responses", "suggestion_requests"
   add_foreign_key "tasks", "projects"
   add_foreign_key "tasks", "users", column: "assignee_id"
   add_foreign_key "tasks", "users", column: "created_by_id"

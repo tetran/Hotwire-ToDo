@@ -18,6 +18,11 @@ Rails.application.routes.draw do
     resource :complete, only: [:create, :destroy], module: :tasks
     resource :assign, only: [:create, :destroy], module: :tasks
   end
+  namespace :tasks do
+    resources :suggestions, only: [:create]
+    resources :batches, only: [:create]
+  end
+
   resource :user, only: [:show, :edit, :update, :destroy]
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

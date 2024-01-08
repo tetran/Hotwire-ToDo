@@ -12,7 +12,7 @@ class User < ApplicationRecord
   # inboxプロジェクト: owner_idが自分で、dedicatedがtrueのプロジェクト。各ユーザーに1つだけ存在する。
   has_one :inbox_project, -> { where(dedicated: true) }, class_name: "Project", foreign_key: :owner_id, dependent: :destroy
 
-  after_create_commit :create_inbox_project
+  after_create :create_inbox_project
 
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, presence: true, length: { minimum: 8 }, on: [:create, :update_password]

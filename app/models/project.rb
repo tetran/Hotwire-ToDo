@@ -4,13 +4,13 @@ class Project < ApplicationRecord
   has_many :project_members, dependent: :destroy
   has_many :members, through: :project_members, source: :user
 
-  after_create_commit :add_owner_to_members
+  after_create :add_owner_to_members
 
   validates :name, presence: true, length: { maximum: 100 }
 
   scope :unarchived, -> { where(archived: false) }
   scope :archived, -> { where(archived: true) }
-  
+
   def archive!
     update!(archived: true)
   end

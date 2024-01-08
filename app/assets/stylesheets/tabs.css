@@ -1,0 +1,19 @@
+.tab-base {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: .5rem;
+}
+.tab-tabs {
+    padding: .25rem .5rem;
+    border-bottom: 1px solid var(--border);
+}
+.tab {
+    padding: 10px;
+    cursor: pointer;
+    border: none;
+    background: none;
+}
+.tab.active {
+    background-color: #ddd;
+    box-shadow: none;
+}
