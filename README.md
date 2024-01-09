@@ -16,7 +16,13 @@ I use [rbenv](https://github.com/rbenv/rbenv) to manage ruby versions. You can i
 rbenv install 3.2
 ```
 
-### Install gems and setup database 
+### Install libvips for ActiveStorage
+See https://www.libvips.org/install.html.
+
+### Set up environment variables
+`OPENAI_ACCESS_TOKEN` and `OPENAI_ORGANIZATION_ID` are required. See [Environment variables](#environment-variables) for details.
+
+### Install gems and setup database
 ```bash
 bin/setup
 ```
