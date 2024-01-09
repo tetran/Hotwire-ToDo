@@ -18,7 +18,7 @@ rbenv install 3.2
 
 ### Install gems and setup database 
 ```bash
-bin/setpu
+bin/setup
 ```
 
 ### Start server
