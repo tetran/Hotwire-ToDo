@@ -1,0 +1,42 @@
+.show-user__item {
+    margin-top: .5rem;
+    margin-bottom: 2rem;
+}
+.show-user__item label {
+    font-weight: bold;
+}
+.show-user__item__value {
+    margin: .25rem 0;
+}
+.show-user__item__avatar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.show-user__item__avatar img {
+    clip-path: circle(50%);
+}
+
+.avatar-upload {
+    display: inline-block;
+    padding: 8px 20px;
+    background: var(--button-primary);
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.avatar-upload:hover {
+    background: var(--button-primary-hover);
+}
+
+.avatar-upload input[type="file"] {
+    display: none;
+}
+
+.show-user__notify {
+    display: none;
+    color: var(--color-error);
+}
+.show-user__notify.show {
+    display: block;
+}

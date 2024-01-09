@@ -28,9 +28,9 @@
         <div class="menu-container assignee-list <%= task.assignee.present? ? "assigned" : "" %> <%= task.assignee == current_user ? "assigned-to-me" : "" %>"
              data-controller="menu"
              data-action="keyup@window->menu#closeWithKeyboard click@window->menu#closeBackground">
-          <%= button_tag type: "button", class: "menu-button", data: { action: "menu#toggleMenu" } do %>
+          <%= button_tag type: "button", class: "menu-button menu-button--assignee", data: { action: "menu#toggleMenu" } do %>
             <% if task.assignee.present? %>
-              <span class="assignee-initial-sign"><%= task.assignee.user_name[0] %></span>
+              <%= user_icon(task.assignee) %>
             <% else %>
               <span class="material-symbols-outlined">person</span>
             <% end %>
@@ -40,7 +40,7 @@
             <ul class="menu-list">
               <li class="assignee-list__member">
                 <div class="assignee-list__unassign">
-                  <%= button_to task_assign_path(task), method: :delete, data: { turbo_frame: "_top" } do %>
+                  <%= button_to task_assign_path(task), method: :delete, class: "label-with-icon", data: { turbo_frame: "_top" } do %>
                     <span class="material-symbols-outlined">person_off</span>
                     Unassign
                   <% end %>

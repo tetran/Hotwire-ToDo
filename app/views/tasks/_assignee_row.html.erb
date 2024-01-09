@@ -3,7 +3,7 @@
     <%= button_to task_assign_path(task),
                   params: { assignee_id: member.id },
                   data: { turbo_frame: "_top" } do %>
-      <span class="material-symbols-outlined">person</span>
+      <%= user_icon(member) %>
       <%= member == current_user ? "You" : member.user_name %>
     <% end %>
   </div>

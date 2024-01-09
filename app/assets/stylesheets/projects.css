@@ -20,9 +20,14 @@
     margin: 0;
     border-radius: 4px;
 }
-.menu-list__member .material-symbols-outlined {
-    font-size: 1.2rem;
-    vertical-align: -4px;
+.menu-list__member-info {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+.menu-list__member-info .user-avatar {
+    width: 1.5rem;
+    height: 1.5rem;
 }
 .project-members__form {
     padding: .5rem;

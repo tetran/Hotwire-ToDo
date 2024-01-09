@@ -71,13 +71,21 @@
       <% end %>
 
       <nav class="menu-navigation hidden" data-menu-target="menu">
-        <h4 class="menu-navigation__header menu-navigation__username">Hello, <%= current_user.user_name %>!</h4>
+        <h4 class="menu-navigation__header menu-navigation__username">
+          Hello, <%= turbo_frame_tag "header_user_name" do %><%= current_user.user_name %><% end %> !
+        </h4>
         <ul class="menu-list">
           <li>
-            <%= link_to "Setting", "#", class: "menu-list__setting" %>
+            <%= link_to user_path, class: "menu-list__setting label-with-icon", data: { turbo_frame: "modal" } do %>
+              <span class="material-symbols-outlined">settings</span>
+              Setting
+            <% end %>
           </li>
           <li>
-            <%= button_to "Logout", logout_path, method: :delete, class: "menu-list__logout-btn" %>
+            <%= button_to logout_path, method: :delete, class: "menu-list__logout-btn label-with-icon", data: { turbo_confirm: "Logout?" } do %>
+              <span class="material-symbols-outlined">logout</span>
+              Logout
+            <% end %>
           </li>
         </ul>
       </nav>

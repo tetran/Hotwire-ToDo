@@ -1,6 +1,6 @@
 :root {
     --button-primary: #0096bf;
-    --button-privary-hover: #007a9d;
+    --button-primary-hover: #007a9d;
     --button-primary-text: #eee;
 }
 .btn {
@@ -39,5 +39,5 @@ button.primary {
 }
 input[type="submit"].primary:hover,
 button.primary:hover {
-    background-color: var(--button-privary-hover) !important;
+    background-color: var(--button-primary-hover) !important;
 }

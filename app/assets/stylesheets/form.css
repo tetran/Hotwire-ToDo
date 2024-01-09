@@ -3,6 +3,7 @@
     justify-content: flex-end;
     align-items: center;
     gap: 0.5em;
+    margin-top: 1rem;
 }
 .form-item-inline {
     display: flex;

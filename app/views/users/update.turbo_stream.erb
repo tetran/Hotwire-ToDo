@@ -1,0 +1,4 @@
+<%= turbo_stream.update "modal", partial: "users/user_display" %>
+<%= turbo_stream.update "header_user_name", current_user.user_name %>
+<%= turbo_stream.update "notification", partial: "shared/notification", locals: { message: "User Updated!", status: "success" } %>
+<%= turbo_stream.update_all ".user-avatar-#{current_user.id}", user_icon(current_user) %>

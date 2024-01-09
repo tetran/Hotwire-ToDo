@@ -205,15 +205,18 @@
 .assignee-list__member-info {
     flex-grow: 1;
 }
-.assignee-list__member-info .material-symbols-outlined {
-    font-size: 1.2rem;
-    vertical-align: -4px;
+.assignee-list__member-info .user-avatar {
+    width: 1.5rem;
+    height: 1.5rem;
 }
 .menu-list .assignee-list__member button {
     width: 100%;
     line-height: 2;
     padding: 0;
     text-align: left;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
 }
 .assignee-list__member button:hover {
     background: inherit;
@@ -226,31 +229,14 @@
 .assignee-list.assigned .menu-button:hover {
     background: inherit;
 }
-.assignee-initial-sign {
-    display: inline-block;
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 50%;
-    text-align: center;
-    line-height: 1.5rem;
-    font-size: 1rem;
-    font-weight: bold;
-    color: var(--form-text);
-    background: var(--background);
-    border: solid 1px var(--border);
-}
-.assigned-to-me .assignee-initial-sign {
+.assigned-to-me .menu-button--assignee .user-initial-sign {
     background-color: #f2dede;
 }
-.assignee-initial-sign:hover {
+.menu-button--assignee .user-initial-sign:hover {
     background: var(--button-base);
 }
 .assignee-list__unassign {
     width: 100%;
-}
-.assignee-list__unassign .material-symbols-outlined {
-    font-size: 1.2rem;
-    vertical-align: -4px;
 }
 
 .task-suggestions {

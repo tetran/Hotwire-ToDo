@@ -2,7 +2,7 @@
   <li class="menu-list__member">
     <% if member == current_user %>
       <div class="menu-list__member-info">
-        <span class="material-symbols-outlined">person</span> You
+        <%= user_icon(member) %> You
       </div>
       <div class="menu-list__member__actions horizontal-actions">
         <% if @members.length > 1 %>
@@ -13,7 +13,7 @@
       </div>
     <% else %>
       <div class="menu-list__member-info">
-        <span class="material-symbols-outlined">person</span> <%= member.user_name %>
+        <%= user_icon(member) %> <%= member.user_name %>
       </div>
       <div class="menu-list__member__actions horizontal-actions">
         <%= button_to project_member_path(project, member), method: :delete, data: { turbo_confirm: "Are you sure you want to remove #{member.user_name}?" }, class: "" do %>

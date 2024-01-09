@@ -1,0 +1,47 @@
+<div class="modal-base">
+  <%= tag.div data: { controller: "turbo-modal",
+                      action: "keyup@window->turbo-modal#closeWithKeyboard click@window->turbo-modal#closeBackground" },
+              class: "modal-content show-user" do %>
+    <div class="modal-header show-task__header">
+      <h3 class="modal-header__title">User Info</h3>
+      <%= link_to "", class: "modal-header__close show-user__close", data: { action: "turbo-modal#hideModal" } do %>
+        <span class="material-symbols-outlined">close</span>
+      <% end %>
+    </div>
+
+    <div class="modal-body" data-controller="user">
+      <%= form_with model: current_user, url: user_path, data: { turbo_frame: "modal" }, multipart: true do |form| %>
+        <p class="show-user__notify" data-user-target="notify">Click "Save User" to update.</p>
+        <% if current_user.errors.any? %>
+          <%= render_errors_for current_user %>
+        <% end %>
+
+        <div class="show-user__item">
+          <%= form.label :name %>
+          <%= form.text_field :name, placeholder: "User name", class: "full-width-input", data: { action: "user#enableActions" } %>
+        </div>
+
+        <div class="show-user__item">
+          <%= form.label :avatar %>
+          <div class="show-user__item__avatar">
+            <%= image_tag current_user.avatar, data: { "user-target": "avatarPreview" }, width: "100px", height: "100px" %>
+            <label class="avatar-upload">
+              Select new avatar
+              <%= form.file_field :avatar, data: { "user-target": "avatarInput", action: "user#updatePreview"  } %>
+            </label>
+          </div>
+        </div>
+
+        <div class="show-user__item">
+          <%= form.label :email %>
+          <p class="show-user__item__value"><%= current_user.email %></p>
+        </div>
+
+        <div class="form-actions" data-user-target="userActions">
+          <%= button_tag "Cancel", type: "button", class: "btn", data: { action: "turbo-modal#hideModal" }, disabled: true %>
+          <%= form.submit class: "primary", disabled: true %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>

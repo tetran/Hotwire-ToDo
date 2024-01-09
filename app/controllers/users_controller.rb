@@ -7,7 +7,7 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = User.new(user_params)
+    @user = User.new(creation_params)
     if @user.save
       sign_in(@user)
       redirect_to root_url
@@ -17,12 +17,27 @@ class UsersController < ApplicationController
   end
 
   def show
-    @user = User.find(params[:id])
+  end
+
+  def update
+    respond_to do |format|
+      if current_user.update(update_params)
+        format.html { redirect_to projects_url }
+        format.json { render :show, status: :ok }
+        format.turbo_stream
+      else
+        render :show, status: :unprocessable_entity
+      end
+    end
   end
 
   private
 
-    def user_params
-      params.require(:user).permit(:name, :email, :password)
+    def creation_params
+      params.require(:user).permit(:email, :password)
+    end
+
+    def update_params
+      params.require(:user).permit(:name, :avatar)
     end
 end

@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   has_secure_password
+  has_one_attached :avatar
 
   normalizes :email, with: -> email { email.strip.downcase }
 
@@ -19,7 +20,7 @@ class User < ApplicationRecord
   validates :password, confirmation: true, on: :update_password
 
   def user_name
-    name || email.split("@").first
+    name.presence || email.split("@").first
   end
 
   private
