@@ -16,7 +16,7 @@ class TasksController < ApplicationController
   # GET /tasks/new
   def new
     @task = @project.tasks.build
-    set_suggestino_variables
+    set_suggestion_variables
   end
 
   # GET /tasks/1/edit
@@ -36,7 +36,7 @@ class TasksController < ApplicationController
         format.json { render :show, status: :created, location: @task }
         format.turbo_stream
       else
-        set_suggestino_variables
+        set_suggestion_variables
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @task.errors, status: :unprocessable_entity }
       end
@@ -85,7 +85,7 @@ class TasksController < ApplicationController
       @project = current_user.projects.find(params[:project_id])
     end
 
-    def set_suggestino_variables
+    def set_suggestion_variables
       @suggestion_request = SuggestionRequest.new(
         project: @project,
         requested_by: current_user,
