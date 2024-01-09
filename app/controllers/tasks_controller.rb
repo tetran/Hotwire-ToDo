@@ -16,14 +16,7 @@ class TasksController < ApplicationController
   # GET /tasks/new
   def new
     @task = @project.tasks.build
-
-    @suggestion_request = SuggestionRequest.new(
-      project: @project,
-      requested_by: current_user,
-      start_date: Time.zone.today,
-      due_date: Time.zone.today + 3.months
-    )
-    @show_suggestion = false
+    set_suggestion_variables
   end
 
   # GET /tasks/1/edit
@@ -43,6 +36,7 @@ class TasksController < ApplicationController
         format.json { render :show, status: :created, location: @task }
         format.turbo_stream
       else
+        set_suggestion_variables
         format.html { render :new, status: :unprocessable_entity }
         format.json { render json: @task.errors, status: :unprocessable_entity }
       end
@@ -89,5 +83,15 @@ class TasksController < ApplicationController
 
     def set_project
       @project = current_user.projects.find(params[:project_id])
+    end
+
+    def set_suggestion_variables
+      @suggestion_request = SuggestionRequest.new(
+        project: @project,
+        requested_by: current_user,
+        start_date: Time.zone.today,
+        due_date: Time.zone.today + 3.months
+      )
+      @show_suggestion = false
     end
 end
