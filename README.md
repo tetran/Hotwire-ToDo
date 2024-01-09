@@ -1,24 +1,35 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## What is this?
+This is a sample todo list application to try Rails 7 & Hotwire.
 
-Things you may want to cover:
+## Requirements
+* Ruby version: 3.2
+* Rails version: 7.1
 
-* Ruby version
+## How to run
+### Clone this repository
 
-* System dependencies
+### Install ruby 3.2.x
+I use [rbenv](https://github.com/rbenv/rbenv) to manage ruby versions. You can install ruby 3.2.x with rbenv like this:
+```bash
+rbenv install 3.2
+```
 
-* Configuration
+### Install gems and setup database 
+```bash
+bin/setpu
+```
 
-* Database creation
+### Start server
+```bash
+bin/rails s
+```
 
-* Database initialization
+Then open http://localhost:3000
 
-* How to run the test suite
+## Environment variables
+This application uses OpenAI API to generate todo list items. You need to set the following environment variables to use OpenAI API.
 
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+* OPENAI_ACCESS_TOKEN: OpenAI API access token
+* OPENAI_ORGANIZATION_ID: OpenAI organization ID
