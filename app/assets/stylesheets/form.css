@@ -2,14 +2,14 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    gap: 0.5em;
+    gap: 0.5rem;
     margin-top: 1rem;
 }
 .form-item-inline {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.5em;
+    gap: 0.5rem;
     width: 100%;
 }
 /*
@@ -35,8 +35,8 @@
     color: #fc5050;
     list-style: none;
     margin-bottom: 6px;
-    font-size: 0.9em;
-    padding: 0 0 0.5em 0.5em;
+    font-size: 0.9rem;
+    padding: 0 0 0.5rem 0.5rem;
 }
 
 .full-width-input {

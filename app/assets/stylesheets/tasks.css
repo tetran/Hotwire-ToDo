@@ -4,12 +4,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 0.75em;
+    gap: 0.75rem;
 }
 
 .task-card__content {
     display: flex;
-    gap: 0.5em;
+    gap: 0.5rem;
     align-items: flex-start;
 }
 .task-card__complete-check-outer {
@@ -39,16 +39,16 @@
     color: var(--form-text);
 }
 .task-card__description {
-    font-size: 0.8em;
+    font-size: 0.8rem;
     color: #999;
-    margin-top: .5em;
+    margin-top: .5rem;
 }
 .task-card__due-date {
     display: flex;
     gap: 4px;
-    font-size: 0.8em;
+    font-size: 0.8rem;
     color: #999;
-    margin-top: .5em;
+    margin-top: .5rem;
 }
 .task-card__due-date .material-symbols-outlined {
     font-size: 1rem;
@@ -76,17 +76,17 @@
 /* Task Form */
 .task-form, .task-suggestion-form {
     border-radius: 8px;
-    padding: 1em;
+    padding: 1rem;
 }
 .edit-task .task-form {
     border: solid 1px var(--border);
 }
 .task-form__item {
-    margin-bottom: 1em;
+    margin-bottom: 1rem;
 }
 .task-form__description {
     border: solid 1px var(--border);
-    padding: .5em;
+    padding: .5rem;
     border-radius: 6px;
 }
 .task-form__description trix-editor:focus {
@@ -108,15 +108,20 @@
     margin-top: 0;
 }
 .show-task__description {
-    margin-top: 1em;
-    margin-bottom: 3em;
-    font-size: 0.9em;
+    margin-top: 1rem;
+    margin-bottom: 3rem;
+    font-size: 0.9rem;
+}
+.show-task__description .trix-content ol,
+.show-task__description .trix-content ul {
+    margin-left: 1rem;
+    margin-right: 1rem;
 }
 .show-task__due-date {
     display: flex;
     gap: 4px;
-    margin-top: 0.5em;
-    font-size: 0.8em;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
 }
 .show-task__due-date .material-symbols-outlined {
     font-size: 1rem;
@@ -124,56 +129,56 @@
 
 /* Comment Area */
 .task-comments {
-    margin-top: 2em;
+    margin-top: 2rem;
 }
 .task-comments__title {
     margin-bottom: 0;
     border-bottom: solid 1px var(--border);
 }
 .task-comments__history {
-    margin-bottom: 1em;
+    margin-bottom: 1rem;
 }
 .task-comments__content {
-    padding-left: .5em;
-    padding-right: .5em;
+    padding-left: .5rem;
+    padding-right: .5rem;
 }
 
 .comment-card {
     padding: 0;
-    margin-top: 1em;
+    margin-top: 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 0.75em;
+    gap: 0.75rem;
 }
 .comment-card__header {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    gap: 0.5em;
+    gap: 0.5rem;
 }
 .comment-card__header__user {
-    font-size: 0.9em;
+    font-size: 0.9rem;
     font-weight: bold;
 }
 .comment-card__header__date {
-    font-size: 0.8em;
+    font-size: 0.8rem;
     color: #999;
 }
 
 .task-comments__add-comment {
-    padding-left: 1em;
-    padding-right: 1em;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 .task-comments__add {
     display: block;
     box-sizing: border-box;
     width: 100%;
     text-align: left;
-    height: 2em;
-    border-radius: 1em;
+    height: 2rem;
+    border-radius: 1rem;
     border: solid 1px var(--border);
-    padding: 0 1em;
+    padding: 0 1rem;
     background: var(--background);
 }
 .task-comments__add:hover {
