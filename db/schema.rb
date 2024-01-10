@@ -132,6 +132,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_08_033951) do
     t.string "password_digest", null: false
     t.string "time_zone", default: "UTC", null: false
     t.string "locale", default: "en", null: false
+    t.boolean "verified", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
