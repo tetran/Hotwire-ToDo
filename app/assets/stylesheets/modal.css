@@ -23,9 +23,9 @@
 .modal-header {
     display: flex;
     justify-content: space-between;
-    gap: 0.5em;
+    gap: 0.5rem;
     border-bottom: solid 1px var(--border);
-    padding-bottom: 0.5em;
+    padding-bottom: 0.5rem;
 }
 .modal-header__title {
     margin: 0;
