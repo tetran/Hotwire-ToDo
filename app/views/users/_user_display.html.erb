@@ -1,65 +1,50 @@
-<div class="modal-base">
-  <%= tag.div data: { controller: "turbo-modal",
-                      action: "keyup@window->turbo-modal#closeWithKeyboard click@window->turbo-modal#closeBackground" },
-              class: "modal-content show-user" do %>
-    <div class="modal-header show-task__header">
-      <h3 class="modal-header__title">User Info</h3>
-      <%= link_to "", class: "modal-header__close show-user__close", data: { action: "turbo-modal#hideModal" } do %>
-        <span class="material-symbols-outlined">close</span>
-      <% end %>
+<%= render "shared/modal", options: { base_class: "show-user", header_title: "User info", body_controller: "user" } do %>
+  <%= form_with model: current_user, url: user_path, data: { turbo_frame: "modal", "user-target": "form" }, multipart: true do |form| %>
+    <p class="show-user__notify" data-user-target="notify">Click "Save User" to update.</p>
+    <% if current_user.errors.any? %>
+      <%= render_errors_for current_user %>
+    <% end %>
+
+    <div class="show-user__item">
+      <%= form.label :name %>
+      <%= form.text_field :name, placeholder: "User name", class: "full-width-input", data: { action: "user#fieldModified", "user-target": "field" } %>
     </div>
 
-    <div class="modal-body" data-controller="user">
-      <%= form_with model: current_user, url: user_path, data: { turbo_frame: "modal", "user-target": "form" }, multipart: true do |form| %>
-        <p class="show-user__notify" data-user-target="notify">Click "Save User" to update.</p>
-        <% if current_user.errors.any? %>
-          <%= render_errors_for current_user %>
-        <% end %>
+    <div class="show-user__item">
+      <%= form.label :avatar %>
+      <div class="show-user__item--avatar">
+        <%= image_tag current_user.avatar.attached? ? current_user.avatar : "user.png", data: { "user-target": "avatarPreview" }, width: "100px", height: "100px" %>
+        <label class="avatar-upload">
+          Select new avatar
+          <%= form.file_field :avatar, data: { "user-target": "avatarInput field", action: "user#updatePreview" } %>
+        </label>
+      </div>
+    </div>
 
-        <div class="show-user__item">
-          <%= form.label :name %>
-          <%= form.text_field :name, placeholder: "User name", class: "full-width-input", data: { action: "user#fieldModified", "user-target": "field" } %>
-        </div>
+    <div class="show-user__item show-user__item--email">
+      <%= form.label :email %>
+      <p><%= current_user.email %></p>
+      <p><%= link_to "Change email", edit_email_path, class: "btn" %></p>
+    </div>
 
-        <div class="show-user__item">
-          <%= form.label :avatar %>
-          <div class="show-user__item__avatar">
-            <%= image_tag current_user.avatar.attached? ? current_user.avatar : "user.png", data: { "user-target": "avatarPreview" }, width: "100px", height: "100px" %>
-            <label class="avatar-upload">
-              Select new avatar
-              <%= form.file_field :avatar, data: { "user-target": "avatarInput field", action: "user#updatePreview" } %>
-            </label>
-          </div>
-        </div>
+    <div class="show-user__item">
+      <%= form.label :time_zone %>
+      <%= form.time_zone_select :time_zone, nil, { include_blank: false }, data: { action: "user#fieldModified", "user-target": "field" } %>
+    </div>
 
-        <div class="show-user__item">
-          <%= form.label :email %>
-          <p class="show-user__item__value">
-            <%= current_user.email %>
-            <%= link_to "Change email", edit_email_path %>
-          </p>
-        </div>
+    <div class="show-user__item">
+      <%= form.label :locale %>
+      <%= form.select :locale, I18n.available_locales, { include_blank: false }, data: { action: "user#fieldModified", "user-target": "field" } %>
+    </div>
 
-        <div class="show-user__item">
-          <%= form.label :time_zone %>
-          <%= form.time_zone_select :time_zone, nil, { include_blank: false }, data: { action: "user#fieldModified", "user-target": "field"  } %>
-        </div>
+    <div class="form-actions" data-user-target="userActions">
+      <%= form.hidden_field :name_current, value: current_user.name %>
+      <%= form.hidden_field :time_zone_current, value: current_user.time_zone %>
+      <%= form.hidden_field :locale_current, value: current_user.locale %>
+      <%= form.hidden_field :avatar_current, value: current_user.avatar.filename %>
 
-        <div class="show-user__item">
-          <%= form.label :locale %>
-          <%= form.select :locale, I18n.available_locales, { include_blank: false }, data: { action: "user#fieldModified", "user-target": "field"  } %>
-        </div>
-
-        <div class="form-actions" data-user-target="userActions">
-          <%= form.hidden_field :name_current, value: current_user.name %>
-          <%= form.hidden_field :time_zone_current, value: current_user.time_zone %>
-          <%= form.hidden_field :locale_current, value: current_user.locale %>
-          <%= form.hidden_field :avatar_current, value: current_user.avatar.filename %>
-
-          <%= button_tag "Cancel", type: "button", class: "btn", data: { action: "turbo-modal#hideModal" } %>
-          <%= form.submit class: "primary", disabled: true %>
-        </div>
-      <% end %>
+      <%= button_tag "Cancel", type: "button", class: "btn", data: { action: "turbo-modal#hideModal" } %>
+      <%= form.submit class: "primary", disabled: true %>
     </div>
   <% end %>
-</div>
+<% end %>

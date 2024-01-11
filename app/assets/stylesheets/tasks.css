@@ -100,7 +100,7 @@
 .show-task .modal-header {
     justify-content: right;
 }
-.show-task__content {
+.show-task .modal-body {
     overflow: scroll;
     scroll-behavior: smooth;
 }

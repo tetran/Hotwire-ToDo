@@ -1,56 +1,39 @@
-<%= turbo_frame_tag "modal" do %>
-  <%= turbo_stream_from @task %>
-  <div class="modal-base">
-    <%= tag.div data: { controller: "turbo-modal",
-                        action: "keyup@window->turbo-modal#closeWithKeyboard click@window->turbo-modal#closeBackground" },
-                class: "modal-content show-task #{@task.overdue? ? "overdue" : ""}" do %>
-      <div class="modal-header show-task__header">
-        <%= link_to "", class: "modal-header__close show-task__close", data: { action: "turbo-modal#hideModal" } do %>
-          <span class="material-symbols-outlined">close</span>
+<%= turbo_stream_from @task %>
+<style>.comment-card__actions[data-editable-user="<%= current_user.id %>"] { display: flex; }</style>
+<%= render "shared/modal", options: { base_class: "show-task #{@task.overdue? ? "overdue" : ""}" } do %>
+  <h2 class="show-task__name">
+    <%= @task.name %>
+  </h2>
+  <% if @task.description.present? %>
+    <div class="show-task__description">
+      <%= @task.description %>
+    </div>
+  <% end %>
+  <% if @task.has_due_date? %>
+    <div class="show-task__due-date">
+      <span class="material-symbols-outlined">event</span>
+      <%= l(@task.due_date, format: due_date_format(@task)) %>
+    </div>
+  <% end %>
+
+  <div class="task-comments">
+    <div class="task-comments__history">
+      <% if @comments.present? %>
+        <h4 class="task-comments__title">
+          Comments
+        </h4>
+      <% end %>
+      <div class="task-comments__content">
+        <%= turbo_frame_tag "comments" do %>
+          <%= render partial: "tasks/comments/comment", collection: @comments %>
         <% end %>
       </div>
+    </div>
 
-      <div class="modal-body show-task__content">
-        <h2 class="show-task__name">
-          <%= @task.name %>
-        </h2>
-        <% if @task.description.present? %>
-          <div class="show-task__description">
-            <%= @task.description %>
-          </div>
-        <% end %>
-        <% if @task.has_due_date? %>
-          <div class="show-task__due-date">
-            <span class="material-symbols-outlined">event</span>
-            <%= l(@task.due_date, format: due_date_format(@task)) %>
-          </div>
-        <% end %>
-
-        <div class="task-comments">
-          <div class="task-comments__history">
-            <% if @comments.present? %>
-              <h4 class="task-comments__title">
-                Comments
-              </h4>
-            <% end %>
-            <div class="task-comments__content">
-              <%= turbo_frame_tag "comments" do %>
-                <%= render partial: "tasks/comments/comment", collection: @comments %>
-              <% end %>
-            </div>
-          </div>
-
-          <div class="task-comments__add-comment">
-            <%= turbo_frame_tag Comment.new do %>
-              <%= render partial: "tasks/comments/add_comment", locals: { task: @task } %>
-            <% end %>
-          </div>
-        </div>
-      </div>
-
-      <div class="show-task__actions">
-      </div>
-    <% end %>
+    <div class="task-comments__add-comment">
+      <%= turbo_frame_tag Comment.new do %>
+        <%= render partial: "tasks/comments/add_comment", locals: { task: @task } %>
+      <% end %>
+    </div>
   </div>
-  <style>.comment-card__actions[data-editable-user="<%= current_user.id %>"] { display: flex; }</style>
 <% end %>

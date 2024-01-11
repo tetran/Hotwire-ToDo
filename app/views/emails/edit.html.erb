@@ -1,38 +1,22 @@
-<%= turbo_frame_tag "modal" do %>
-  <div class="modal-base">
-    <%= tag.div data: { controller: "turbo-modal",
-                        action: "keyup@window->turbo-modal#closeWithKeyboard click@window->turbo-modal#closeBackground" },
-                class: "modal-content show-user" do %>
-      <div class="modal-header show-task__header">
-        <h3 class="modal-header__title">Change email</h3>
-        <%= link_to "", class: "modal-header__close show-user__close", data: { action: "turbo-modal#hideModal" } do %>
-          <span class="material-symbols-outlined">close</span>
-        <% end %>
-      </div>
-
-      <div class="modal-body" data-controller="user">
-        <%= form_with model: current_user, url: email_path, data: { turbo_frame: "modal" } do |form| %>
-          <p class="show-user__notify" data-user-target="notify">Click "Save User" to update.</p>
-          <% if current_user.errors.any? %>
-            <%= render_errors_for current_user %>
-          <% end %>
-
-          <div class="show-user__item">
-            <%= form.label :email %>
-            <%= form.text_field :email, placeholder: "New Email", class: "full-width-input", data: { } %>
-          </div>
-
-          <div class="show-user__item">
-            <%= form.label :password_challenge %>
-            <%= form.password_field :password_challenge, placeholder: "Current Password", class: "full-width-input", data: { } %>
-          </div>
-
-          <div class="form-actions" data-user-target="userActions">
-            <%= link_to "Cancel", user_path, class: "btn", data: { } %>
-            <%= form.submit class: "primary" %>
-          </div>
-        <% end %>
-      </div>
+<%= render "shared/modal", options: { base_class: "show-user", header_title: "Change email" } do %>
+  <%= form_with model: current_user, url: email_path, data: { turbo_frame: "modal" } do |form| %>
+    <% if current_user.errors.any? %>
+      <%= render_errors_for current_user %>
     <% end %>
-  </div>
+
+    <div class="show-user__item">
+      <%= form.label :email %>
+      <%= form.text_field :email, placeholder: "New Email", class: "full-width-input", data: { } %>
+    </div>
+
+    <div class="show-user__item">
+      <%= form.label :password_challenge %>
+      <%= form.password_field :password_challenge, placeholder: "Current Password", class: "full-width-input", data: { } %>
+    </div>
+
+    <div class="form-actions">
+      <%= link_to "Cancel", user_path, class: "btn", data: { } %>
+      <%= form.submit class: "primary" %>
+    </div>
+  <% end %>
 <% end %>

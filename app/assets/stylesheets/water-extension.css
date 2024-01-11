@@ -18,7 +18,7 @@
 }
 .btn:hover {
     text-decoration: none;
-    background: #ccc;
+    background: var(--button-hover);
 }
 .btn:active {
     transform: translateY(2px);
@@ -29,7 +29,7 @@ input[type="submit"], button {
     padding-right: 12px;
 }
 input[type="submit"]:hover, button:hover {
-    background: #ccc;
+    background: var(--button-hover);
 }
 
 input[type="submit"].primary,
