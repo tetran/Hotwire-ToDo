@@ -10,6 +10,7 @@ class UsersController < ApplicationController
     @user = User.new(creation_params)
     if @user.save
       sign_in(@user)
+      send_email_verification
       redirect_to root_url, success: "Welcome! You have signed up successfully!"
     else
       render :new, status: :unprocessable_entity
@@ -45,5 +46,9 @@ class UsersController < ApplicationController
 
     def update_params
       params.require(:user).permit(:name, :avatar, :time_zone, :locale)
+    end
+
+    def send_email_verification
+      UserMailer.with(user: @user).email_verification.deliver_later
     end
 end

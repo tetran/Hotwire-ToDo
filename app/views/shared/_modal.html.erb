@@ -1,0 +1,20 @@
+<%= turbo_frame_tag "modal" do %>
+  <div class="modal-base <%= options[:base_class] %>">
+    <%= tag.div data: { controller: "turbo-modal",
+                        action: "keyup@window->turbo-modal#closeWithKeyboard click@window->turbo-modal#closeBackground" },
+                class: "modal-content" do %>
+      <div class="modal-header show-task__header">
+        <% if options[:header_title].present? %>
+          <h3 class="modal-header__title"><%= options[:header_title] %></h3>
+        <% end %>
+        <%= link_to "", class: "modal-header__close", data: { action: "turbo-modal#hideModal" } do %>
+          <span class="material-symbols-outlined">close</span>
+        <% end %>
+      </div>
+
+      <div class="modal-body" data-controller="<%= options[:body_controller] %>">
+        <%= yield %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

@@ -1,5 +1,8 @@
 class User < ApplicationRecord
   has_secure_password
+
+  generates_token_for :email_verification, expires_in: 15.minutes { email }
+
   has_one_attached :avatar
 
   normalizes :email, with: -> email { email.strip.downcase }
