@@ -1,25 +1,24 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["avatarPreview", "avatarInput", "userActions", "notify", "field", "form"]
+  static targets = ["avatarPreview", "avatarInput", "notify", "field", "reloadField", "form", "submit"]
 
   connect() {}
 
   fieldModified() {
-    const modifiedFields = this.fieldTargets.filter(element => document.getElementById(element.id + "_current")?.value !== element.value);
-    const isModified = modifiedFields.length > 0;
-    const isLocaleModified = modifiedFields.some(element => element.id === "user_locale");
+    const getModifiedFields = (targets) =>
+      this[`${targets}Targets`].filter(element => element.value !== element.dataset.initial).map(element => element.name);
 
-    this.toggleElements(this.userActionsTarget.querySelectorAll("input,button"), !isModified);
+    const modifiedFields = getModifiedFields('field');
+    const modifiedReloadFields = getModifiedFields('reloadField');
+    const isModified = modifiedFields.length > 0 || modifiedReloadFields.length > 0 || this.avatarInputTarget.value !== "";
+
+    this.submitTarget.disabled = !isModified;
     this.notifyTarget.classList.toggle("show", isModified);
-    this.formTarget.setAttribute("data-turbo-frame", isLocaleModified ? "_top" : "modal");
+    this.formTarget.setAttribute("data-turbo-frame", modifiedReloadFields ? "_top" : "modal");
   }
 
-  toggleElements(elements, isDisabled) {
-    elements.forEach(element => element.disabled = isDisabled);
-  }
-
-  updatePreview(event) {
+  updateAvatar(event) {
     const file = event.target.files[0];
     if (!file) return;
 
