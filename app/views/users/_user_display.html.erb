@@ -34,7 +34,10 @@
 
         <div class="show-user__item">
           <%= form.label :email %>
-          <p class="show-user__item__value"><%= current_user.email %></p>
+          <p class="show-user__item__value">
+            <%= current_user.email %>
+            <%= link_to "Change email", edit_email_path %>
+          </p>
         </div>
 
         <div class="show-user__item">
