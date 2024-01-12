@@ -29,6 +29,9 @@
 
 en:
   activerecord:
+    attributes:
+      user:
+        password_challenge: "Current Password"
     errors:
       models:
         user:

@@ -29,12 +29,26 @@
 
 ja:
   activerecord:
+    attributes:
+      user:
+        email: "メールアドレス"
+        password_challenge: "現在のパスワード"
+        password: "パスワード"
+        password_confirmation: "パスワード（確認）"
     errors:
+      messages:
+        invalid: "が不正です"
+        blank: "を入力してください"
       models:
         user:
           attributes:
             email:
               taken: " は使用できません"
+              invalid: "が不正です"
+            password_challenge:
+              invalid: "が間違っています"
+            password_confirmation:
+              confirmation: "が一致しません"
   helpers:
     submit:
       create: "登録"
