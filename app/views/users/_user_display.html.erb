@@ -7,7 +7,7 @@
 
     <div class="show-user__item">
       <%= form.label :name %>
-      <%= form.text_field :name, placeholder: "User name", class: "full-width-input", data: { action: "user#fieldModified", "user-target": "field" } %>
+      <%= form.text_field :name, placeholder: "User name", class: "full-width-input", data: { action: "user#fieldModified", "user-target": "field", initial: current_user.name } %>
     </div>
 
     <div class="show-user__item">
@@ -16,7 +16,7 @@
         <%= image_tag current_user.avatar.attached? ? current_user.avatar : "user.png", data: { "user-target": "avatarPreview" }, width: "100px", height: "100px" %>
         <label class="avatar-upload">
           Select new avatar
-          <%= form.file_field :avatar, data: { "user-target": "avatarInput field", action: "user#updatePreview" } %>
+          <%= form.file_field :avatar, data: { "user-target": "avatarInput", action: "user#updateAvatar" } %>
         </label>
       </div>
     </div>
@@ -27,24 +27,24 @@
       <p><%= link_to "Change email", edit_email_path, class: "btn" %></p>
     </div>
 
+    <div class="show-user__item show-user__item--password">
+      <%= form.label :password %>
+      <p><%= link_to "Change password", edit_password_path, class: "btn" %></p>
+    </div>
+
     <div class="show-user__item">
       <%= form.label :time_zone %>
-      <%= form.time_zone_select :time_zone, nil, { include_blank: false }, data: { action: "user#fieldModified", "user-target": "field" } %>
+      <%= form.time_zone_select :time_zone, nil, { include_blank: false }, data: { action: "user#fieldModified", "user-target": "field", initial: current_user.time_zone } %>
     </div>
 
     <div class="show-user__item">
       <%= form.label :locale %>
-      <%= form.select :locale, I18n.available_locales, { include_blank: false }, data: { action: "user#fieldModified", "user-target": "field" } %>
+      <%= form.select :locale, I18n.available_locales, { include_blank: false }, data: { action: "user#fieldModified", "user-target": "reloadField", initial: current_user.locale } %>
     </div>
 
-    <div class="form-actions" data-user-target="userActions">
-      <%= form.hidden_field :name_current, value: current_user.name %>
-      <%= form.hidden_field :time_zone_current, value: current_user.time_zone %>
-      <%= form.hidden_field :locale_current, value: current_user.locale %>
-      <%= form.hidden_field :avatar_current, value: current_user.avatar.filename %>
-
+    <div class="form-actions">
       <%= button_tag "Cancel", type: "button", class: "btn", data: { action: "turbo-modal#hideModal" } %>
-      <%= form.submit class: "primary", disabled: true %>
+      <%= form.submit class: "primary", disabled: true, data: { "user-target": "submit" } %>
     </div>
   <% end %>
 <% end %>

@@ -26,6 +26,7 @@ Rails.application.routes.draw do
   resource :user, only: [:show, :update, :destroy]
   resource :email_verification, only: [:show]
   resource :email, only: [:edit, :update]
+  resource :password, only: [:edit, :update]
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
