@@ -1,0 +1,16 @@
+<main class="auth-form">
+  <h1 class="auth-form__title">Password Reset</h1>
+  <%= form_with model: @password_reset, url: password_resets_path, data: { } do |form| %>
+    <%= render_errors_for @password_reset if @password_reset.errors.any? %>
+
+    <div class="auth-form__field">
+      <%= form.label :email %>
+      <%= form.email_field :email, required: true, autofocus: true %>
+    </div>
+
+    <div class="auth-form__actions">
+      <%= form.submit "Reset Password", class: "primary" %>
+    </div>
+  <% end %>
+  <p><%= link_to "Back to login", login_path %></p>
+</main>

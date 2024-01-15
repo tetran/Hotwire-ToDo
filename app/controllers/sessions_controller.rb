@@ -9,10 +9,9 @@ class SessionsController < ApplicationController
     user = User.authenticate_by(email: params[:email], password: params[:password])
     if user
       sign_in(user)
-      redirect_to root_url, notice: "Logged in!"
+      redirect_to root_url, success: "Logged in!"
     else
-      flash.now.alert = "Email or password is invalid"
-      render :new, status: :unprocessable_entity
+      redirect_to login_path(email_hint: params[:email]), error: "Email or password is invalid"
     end
   end
 

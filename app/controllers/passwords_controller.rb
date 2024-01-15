@@ -4,7 +4,8 @@ class PasswordsController < ApplicationController
 
   def update
     respond_to do |format|
-      if current_user.update(update_params)
+      current_user.assign_attributes(update_params)
+      if current_user.save(context: :update_password)
         @message = "Password updated successfully."
         format.turbo_stream
       else
