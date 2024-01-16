@@ -39,6 +39,7 @@ ja:
       messages:
         invalid: "が不正です"
         blank: "を入力してください"
+        too_short: "は%{count}文字以上で入力してください"
       models:
         user:
           attributes:

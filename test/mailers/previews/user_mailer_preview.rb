@@ -3,4 +3,8 @@ class UserMailerPreview < ActionMailer::Preview
   def email_verification
     UserMailer.with(user: User.first).email_verification
   end
+
+  def password_reset
+    UserMailer.with(user: User.first).password_reset
+  end
 end
