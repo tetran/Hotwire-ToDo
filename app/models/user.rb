@@ -32,6 +32,7 @@ class User < ApplicationRecord
 
   def regenerate_totp_secret!
     generate_totp_secret
+    self.totp_enabled = false
     save!
   end
 

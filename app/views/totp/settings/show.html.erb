@@ -1,51 +1,49 @@
-<%= render "shared/modal", options: { base_class: "show-user", header_title: "Change password" } do %>
+<%= render "shared/modal", options: { base_class: "show-user", header_title: "Two-factor Authentication" } do %>
   <% if current_user.totp_enabled? %>
-    <h1>Want to replace your existing 2FA setup?</h1>
+    <h1>Replace your existing 2FA setup?</h1>
 
     <p>Your account is already protected with two-factor authentication. You can replace that setup if you want to switch to a new phone or authenticator app.</p>
 
     <p><strong>Do you want to continue? Your existing 2FA setup will no longer work.</strong></p>
 
     <%= button_to "Yes, replace my 2FA setup", totp_setting_path, method: :patch %>
+  <% else %>
+    <h1>Upgrade your security with 2FA</h1>
 
-    <hr>
-  <% end %>
+    <h2>Step 1: Get an Authenticator App</h2>
+    <p>First, you'll need a 2FA authenticator app on your phone. <strong>If you already have one, skip to step 2.</strong></p>
+    <p>
+      <strong>If you don't have one, or you aren't sure, we recommend Microsoft Authenticator</strong>.
+      [<%= link_to "iOS", "https://apps.apple.com/jp/app/microsoft-authenticator/id983156458" %>]
+      [<%= link_to "Android", "https://play.google.com/store/apps/details?id=com.azure.authenticator" %>]
+    </p>
 
-  <h1>Upgrade your security with 2FA</h1>
+    <h2>Step 2: Scan + Enter the Code</h2>
+    <p>Next, open the authenticator app, tap "Scan QR code" or "+", and, when it asks, point your phone's camera at this QR code picture below.</p>
 
-  <h2>Step 1: Get an Authenticator App</h2>
-  <p>First, you'll need a 2FA authenticator app on your phone. <strong>If you already have one, skip to step 2.</strong></p>
-  <p>
-    <strong>If you don't have one, or you aren't sure, we recommend Microsoft Authenticator</strong>.
-    [<%= link_to "iOS", "https://apps.apple.com/jp/app/microsoft-authenticator/id983156458" %>]
-    [<%= link_to "Android", "https://play.google.com/store/apps/details?id=com.azure.authenticator" %>]
-  </p>
+    <figure>
+      <%= image_tag @qr_code.as_png(resize_exactly_to: 200).to_data_url%>
+      <figcaption>Point your camera here</figcaption>
+    </figure>
+    <%= debug_block do %>
+      <p><%= @provisioning_uri %></p>
+    <% end %>
 
-  <h2>Step 2: Scan + Enter the Code</h2>
-  <p>Next, open the authenticator app, tap "Scan QR code" or "+", and, when it asks, point your phone's camera at this QR code picture below.</p>
+    <%= form_with(url: totp_setting_path) do |form| %>
+      <div>
+        <%= form.label :code, "After scanning with your camera, the app will generate a six-digit code. Enter it here:", style: "display: block" %>
+        <% if @err_message.present? %>
+          <ul class="form__error">
+            <li><%= @err_message %></li>
+          </ul>
+        <% end %>
+        <%= form.text_field :code, required: true, autocomplete: :off %>
+      </div>
 
-  <figure>
-    <%= image_tag @qr_code.as_png(resize_exactly_to: 200).to_data_url%>
-    <figcaption>Point your camera here</figcaption>
-  </figure>
-  <%= debug_block do %>
-    <p><%= @provisioning_uri %></p>
-  <% end %>
-
-  <%= form_with(url: totp_setting_path) do |form| %>
-    <div>
-      <%= form.label :code, "After scanning with your camera, the app will generate a six-digit code. Enter it here:", style: "display: block" %>
-      <% if @err_message.present? %>
-        <ul class="form__error">
-          <li><%= @err_message %></li>
-        </ul>
-      <% end %>
-      <%= form.text_field :code, required: true, autocomplete: :off %>
-    </div>
-
-    <div class="form-actions">
-      <%= link_to "Cancel", user_path, class: "btn", data: { } %>
-      <%= form.submit class: "primary" %>
-    </div>
+      <div class="form-actions">
+        <%= link_to "Cancel", user_path, class: "btn", data: { } %>
+        <%= form.submit class: "primary" %>
+      </div>
+    <% end %>
   <% end %>
 <% end %>

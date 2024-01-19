@@ -21,8 +21,12 @@ module Totp
     end
 
     def update
-      current_user.regenerate_totp_secret!
-      redirect_to totp_setting_path
+      respond_to do |format|
+        current_user.regenerate_totp_secret!
+
+        @message = "Your two-factor authentication setting has been reset successfully."
+        format.turbo_stream
+      end
     end
 
     private
