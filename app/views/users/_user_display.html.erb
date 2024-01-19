@@ -33,6 +33,11 @@
     </div>
 
     <div class="show-user__item">
+      <%= form.label :totp %>
+      <p><%= link_to "2FA Setting", totp_setting_path, class: "btn" %></p>
+    </div>
+
+    <div class="show-user__item">
       <%= form.label :time_zone %>
       <%= form.time_zone_select :time_zone, nil, { include_blank: false }, data: { action: "user#fieldModified", "user-target": "field", initial: current_user.time_zone } %>
     </div>

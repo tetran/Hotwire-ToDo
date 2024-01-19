@@ -35,6 +35,7 @@ ja:
         password_challenge: "現在のパスワード"
         password: "パスワード"
         password_confirmation: "パスワード（確認）"
+        totp: "二要素認証"
     errors:
       messages:
         invalid: "が不正です"
