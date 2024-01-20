@@ -7,11 +7,16 @@ class SessionsController < ApplicationController
 
   def create
     user = User.authenticate_by(email: params[:email], password: params[:password])
-    if user
+    unless user
+      redirect_to login_path(email_hint: params[:email]), error: "Email or password is invalid"
+      return
+    end
+
+    if user.totp_enabled?
+      redirect_to new_totp_challenge_path(token: user.generate_token_for(:totp_verification))
+    else
       sign_in(user)
       redirect_to root_url, success: "Logged in!"
-    else
-      redirect_to login_path(email_hint: params[:email]), error: "Email or password is invalid"
     end
   end
 

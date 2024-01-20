@@ -5,6 +5,7 @@ class User < ApplicationRecord
   generates_token_for :password_reset, expires_in: 15.minutes do
     password_salt.last(10)
   end
+  generates_token_for :totp_verification, expires_in: 15.minutes { email }
 
   has_one_attached :avatar
 

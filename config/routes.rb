@@ -30,6 +30,7 @@ Rails.application.routes.draw do
   resources :password_resets, only: [:new, :create, :edit, :update]
   namespace :totp do
     resource :setting, only: [:show, :create, :update]
+    resource :challenge, only: [:new, :create]
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
