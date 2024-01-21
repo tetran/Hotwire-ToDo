@@ -32,6 +32,7 @@ en:
     attributes:
       user:
         password_challenge: "Current Password"
+        totp: "Two-factor Authentication"
     errors:
       models:
         user:

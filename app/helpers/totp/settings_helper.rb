@@ -1,0 +1,2 @@
+module Totp::SettingsHelper
+end

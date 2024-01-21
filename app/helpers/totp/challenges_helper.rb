@@ -1,0 +1,2 @@
+module Totp::ChallengesHelper
+end

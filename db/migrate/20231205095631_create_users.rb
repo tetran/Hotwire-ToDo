@@ -7,6 +7,8 @@ class CreateUsers < ActiveRecord::Migration[7.1]
       t.string :time_zone, null: false, default: 'UTC'
       t.string :locale, null: false, default: 'en'
       t.boolean :verified, null: false, default: false
+      t.string :totp_secret, null: false
+      t.boolean :totp_enabled, null: false, default: false
 
       t.timestamps
     end

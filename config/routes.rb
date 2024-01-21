@@ -28,6 +28,10 @@ Rails.application.routes.draw do
   resource :email, only: [:edit, :update]
   resource :password, only: [:edit, :update]
   resources :password_resets, only: [:new, :create, :edit, :update]
+  namespace :totp do
+    resource :setting, only: [:show, :create, :update]
+    resource :challenge, only: [:new, :create]
+  end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.

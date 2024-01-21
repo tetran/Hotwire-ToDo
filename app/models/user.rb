@@ -5,6 +5,7 @@ class User < ApplicationRecord
   generates_token_for :password_reset, expires_in: 15.minutes do
     password_salt.last(10)
   end
+  generates_token_for :totp_verification, expires_in: 15.minutes { email }
 
   has_one_attached :avatar
 
@@ -19,6 +20,7 @@ class User < ApplicationRecord
   # inboxプロジェクト: owner_idが自分で、dedicatedがtrueのプロジェクト。各ユーザーに1つだけ存在する。
   has_one :inbox_project, -> { where(dedicated: true) }, class_name: "Project", foreign_key: :owner_id, dependent: :destroy
 
+  before_validation :generate_totp_secret, on: :create
   after_create :create_inbox_project
 
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
@@ -29,7 +31,17 @@ class User < ApplicationRecord
     name.presence || email.split("@").first
   end
 
+  def regenerate_totp_secret!
+    generate_totp_secret
+    self.totp_enabled = false
+    save!
+  end
+
   private
+
+    def generate_totp_secret
+      self.totp_secret = ROTP::Base32.random
+    end
 
     def create_inbox_project
       Project.create!(name: "inbox", owner_id: id, dedicated: true)

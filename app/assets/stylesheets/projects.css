@@ -94,9 +94,11 @@
     scale: 1.2;
 }
 
-.modal-content.project-form {
-    width: 400px;
-    /*height: 10rem;*/
+.modal-base.project-form .modal-body {
+    padding: 1rem 0;
+}
+.project-form__item {
+    padding: 0 1rem;
 }
 .project-form__name--input {
     box-sizing: border-box;

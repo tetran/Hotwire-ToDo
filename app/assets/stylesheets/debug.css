@@ -1,0 +1,24 @@
+.debug-block {
+  background-color: #fcf8e3;
+  color: var(--color-warning);
+  position: relative;
+  padding: .5rem;
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  margin: 1rem 0;
+}
+.debug-block:before {
+  content: 'DEV';
+  font-size: .8;
+  font-weight: bold;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: .2rem;
+  background-color: var(--color-warning);
+  color: #fff;
+  border-radius: 4px;
+}
+.debug-block p {
+  margin: 0;
+}
