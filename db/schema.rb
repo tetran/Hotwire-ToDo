@@ -11,6 +11,9 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[7.1].define(version: 2024_01_08_033951) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -50,8 +53,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_08_033951) do
   end
 
   create_table "comments", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "task_id", null: false
+    t.bigint "user_id", null: false
+    t.bigint "task_id", null: false
     t.text "content"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -60,8 +63,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_08_033951) do
   end
 
   create_table "project_members", force: :cascade do |t|
-    t.integer "project_id", null: false
-    t.integer "user_id", null: false
+    t.bigint "project_id", null: false
+    t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["project_id"], name: "index_project_members_on_project_id"
@@ -72,14 +75,14 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_08_033951) do
     t.string "name", null: false
     t.boolean "archived", default: false, null: false
     t.boolean "dedicated", default: false, null: false
-    t.integer "owner_id", null: false
+    t.bigint "owner_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["owner_id"], name: "index_projects_on_owner_id"
   end
 
   create_table "suggested_tasks", force: :cascade do |t|
-    t.integer "suggestion_response_id", null: false
+    t.bigint "suggestion_response_id", null: false
     t.string "name", null: false
     t.text "description"
     t.date "due_date"
@@ -89,8 +92,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_08_033951) do
   end
 
   create_table "suggestion_requests", force: :cascade do |t|
-    t.integer "project_id", null: false
-    t.integer "requested_by_id", null: false
+    t.bigint "project_id", null: false
+    t.bigint "requested_by_id", null: false
     t.string "goal", null: false
     t.text "context"
     t.date "start_date"
@@ -103,7 +106,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_08_033951) do
   end
 
   create_table "suggestion_responses", force: :cascade do |t|
-    t.integer "suggestion_request_id", null: false
+    t.bigint "suggestion_request_id", null: false
     t.text "raw_response"
     t.integer "completion_tokens", default: 0, null: false
     t.integer "prompt_tokens", default: 0, null: false
@@ -113,12 +116,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_08_033951) do
   end
 
   create_table "tasks", force: :cascade do |t|
-    t.integer "project_id", null: false
+    t.bigint "project_id", null: false
     t.string "name", null: false
     t.date "due_date", null: false
     t.boolean "completed", default: false, null: false
-    t.integer "created_by_id"
-    t.integer "assignee_id"
+    t.bigint "created_by_id"
+    t.bigint "assignee_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["assignee_id"], name: "index_tasks_on_assignee_id"
