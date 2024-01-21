@@ -6,6 +6,7 @@ This is a sample todo list application to try Rails 7 & Hotwire.
 ## Requirements
 * Ruby version: 3.2
 * Rails version: 7.1
+* Database: PostgreSQL
 
 ## How to run
 ### Clone this repository
