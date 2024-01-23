@@ -16,6 +16,8 @@ class Task < ApplicationRecord
 
   scope :inbox, -> { where(project: user.inbox_project) }
 
+  broadcasts_to :project, partial: "tasks/task"
+
   def self.create_from_suggestion(params, project_id, user)
     tasks = []
     transaction do

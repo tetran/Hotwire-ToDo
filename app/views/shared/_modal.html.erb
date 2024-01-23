@@ -12,7 +12,7 @@
         <% end %>
       </div>
 
-      <div class="modal-body" data-controller="<%= options[:body_controller] %>">
+      <div class="modal-body <%= 'scrollable' if options[:scrollable] %>" data-controller="<%= options[:body_controller] %>">
         <%= yield %>
       </div>
     <% end %>

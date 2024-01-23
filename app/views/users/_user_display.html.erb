@@ -1,4 +1,4 @@
-<%= render "shared/modal", options: { base_class: "show-user", header_title: "User info", body_controller: "user" } do %>
+<%= render "shared/modal", options: { base_class: "show-user", header_title: "User info", body_controller: "user", scrollable: true } do %>
   <%= form_with model: current_user, url: user_path, data: { turbo_frame: "modal", "user-target": "form" }, multipart: true do |form| %>
     <p class="show-user__notify" data-user-target="notify">Click "Save User" to update.</p>
     <% if current_user.errors.any? %>
@@ -7,7 +7,7 @@
 
     <div class="show-user__item">
       <%= form.label :name %>
-      <%= form.text_field :name, placeholder: "User name", class: "full-width-input", data: { action: "user#fieldModified", "user-target": "field", initial: current_user.name } %>
+      <%= form.text_field :name, placeholder: "User name", class: "full-width-input", data: { action: "user#fieldModified", "user-target": "field", initial: current_user.name || "" } %>
     </div>
 
     <div class="show-user__item">
