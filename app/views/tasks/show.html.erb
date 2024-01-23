@@ -1,6 +1,6 @@
-<%= turbo_stream_from @task %>
-<style>.comment-card__actions[data-editable-user="<%= current_user.id %>"] { display: flex; }</style>
-<%= render "shared/modal", options: { base_class: "show-task #{@task.overdue? ? "overdue" : ""}" } do %>
+<%= render "shared/modal", options: { base_class: "show-task #{@task.overdue? ? "overdue" : ""}", scrollable: true } do %>
+  <%= turbo_stream_from @task %>
+  <style>.comment-card__actions[data-editable-user="<%= current_user.id %>"] { display: flex; }</style>
   <h2 class="show-task__name">
     <%= @task.name %>
   </h2>
