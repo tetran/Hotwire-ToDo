@@ -1,6 +1,6 @@
 module Projects
   class MembersController < ApplicationController
-    before_action :set_project
+    include ProjectDependent
 
     def create
       @user = User.find_by(email: params[:email])
@@ -34,11 +34,5 @@ module Projects
         end
       end
     end
-
-    private
-
-      def set_project
-        @project = current_user.projects.find(params[:project_id])
-      end
   end
 end

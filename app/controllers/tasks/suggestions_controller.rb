@@ -1,17 +1,17 @@
 module Tasks
   # タスクの提案を行う
   class SuggestionsController < ApplicationController
+
     def create
       @suggestion_request = SuggestionRequest.new(suggestion_request_params.merge(requested_by: current_user))
+      set_view_variables
       unless @suggestion_request.save
-        set_view_variables
         render "tasks/new", status: :unprocessable_entity
         return
       end
 
       SuggestionResponse.batch_create(@suggestion_request, send_chat_request)
 
-      set_view_variables
       render "tasks/new"
     end
 

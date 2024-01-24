@@ -1,6 +1,6 @@
 module Tasks
   class CommentsController < ApplicationController
-    before_action :set_task
+    include TaskDependent
 
     def new
       @comment = @task.comments.build
@@ -53,10 +53,6 @@ module Tasks
 
       def comment_params
         params.require(:comment).permit(:content)
-      end
-
-      def set_task
-        @task = Task.find(params[:task_id])
       end
   end
 end

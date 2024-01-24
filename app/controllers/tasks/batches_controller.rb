@@ -1,8 +1,10 @@
 module Tasks
   # タスクを一括で作成する
   class BatchesController < ApplicationController
+    include ProjectDependent
+
     def create
-      tasks = Task.create_from_suggestion(tasks_params, params[:project_id], current_user)
+      tasks = Task.create_from_suggestion(tasks_params, @project.id, current_user)
       redirect_to project_path(params[:project_id]), success: "#{tasks.length} tasks were created successfully."
     end
 
