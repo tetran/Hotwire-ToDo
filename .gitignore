@@ -40,3 +40,5 @@
 
 # Ignore gems.
 vendor/bundle
+
+/config/credentials/production.key
