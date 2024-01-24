@@ -28,4 +28,4 @@ production:
   <<: *default
   database: <%= ENV['POSTGRES_DATABASE'] || "hobo_production" %>
   advisory_locks: false
-  prepared_statements: true
+  prepared_statements: false
