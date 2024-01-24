@@ -7,11 +7,18 @@ class SuggestionRequest < ApplicationRecord
 
   before_save :set_raw_request
 
+  validate :too_many_requests
   validates :goal, presence: true, length: { maximum: 100 }
 
   def openai_params = raw_request_hash || JSON.parse(raw_request)
 
   private
+
+    # 同じユーザー(requested_by)からのリクエストは1分間に2回まで
+    MAX_REQUEST_PER_MINUTE = 2
+    def too_many_requests
+      errors.add(:base, :too_many_requests) if SuggestionRequest.where(requested_by: requested_by).where("created_at > ?", 1.minute.ago).count >= MAX_REQUEST_PER_MINUTE
+    end
 
     def set_raw_request
       @raw_request_hash = {

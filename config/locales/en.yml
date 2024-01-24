@@ -34,6 +34,8 @@ en:
         password_challenge: "Current Password"
         totp: "Two-factor Authentication"
     errors:
+      messages:
+        too_many_requests: "Too many requests. Please try again later."
       models:
         user:
           attributes:

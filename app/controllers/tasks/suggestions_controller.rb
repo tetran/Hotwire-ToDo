@@ -5,6 +5,7 @@ module Tasks
     def create
       @suggestion_request = SuggestionRequest.new(suggestion_request_params.merge(requested_by: current_user))
       set_view_variables
+
       unless @suggestion_request.save
         render "tasks/new", status: :unprocessable_entity
         return
