@@ -41,6 +41,7 @@ ja:
         invalid: "が不正です"
         blank: "を入力してください"
         too_short: "は%{count}文字以上で入力してください"
+        too_many_requests: "リクエスト数の上限に達しました。しばらく時間をおいてから再度お試しください。"
       models:
         user:
           attributes:
