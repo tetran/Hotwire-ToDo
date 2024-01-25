@@ -3,15 +3,12 @@ module Tasks
     include TaskDependent
 
     def create
-      assignee = @task.project.members.find(params[:assignee_id])
-      task.update!(assignee: assignee)
-
+      @task.assign!(params[:assignee_id])
       redirect_to @task.project
     end
 
     def destroy
-      @task.update!(assignee_id: nil)
-
+      @task.unassign!
       redirect_to @task.project
     end
   end
