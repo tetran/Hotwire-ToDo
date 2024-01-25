@@ -1,4 +1,4 @@
-<%= render "shared/modal", options: { base_class: "show-user", header_title: "Two-factor Authentication" } do %>
+<%= render "shared/modal", options: { base_class: "show-user", header_title: "Two-factor Authentication", scrollable: true } do %>
   <% if current_user.totp_enabled? %>
     <h2>Replace your existing 2FA setup?</h2>
 
