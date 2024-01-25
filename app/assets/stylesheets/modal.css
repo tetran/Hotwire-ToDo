@@ -27,6 +27,7 @@
     gap: 0.5rem;
     border-bottom: solid 1px var(--border);
     padding-bottom: 0.5rem;
+    align-items: center;
 }
 .modal-header__title {
     margin: .5rem;
