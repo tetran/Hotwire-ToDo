@@ -47,6 +47,14 @@ class Task < ApplicationRecord
     update(completed: false)
   end
 
+  def assign!(assignee_id)
+    update!(assignee: project.members.find(assignee_id))
+  end
+
+  def unassign!
+    update!(assignee: nil)
+  end
+
   def overdue? = due_date < Date.current
 
   private
