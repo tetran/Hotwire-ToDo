@@ -98,4 +98,13 @@ Rails.application.configure do
   config.colorize_logging = false
 
   # config.action_mailer.default_url_options = { host: "" }
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    user_name: ENV["SMTP_USERNAME"],
+    password: ENV["SMTP_PASSWORD"],
+    address: ENV["SMTP_ADDRESS"],
+    host: ENV["SMTP_HOST"],
+    port: "587",
+    authentication: :login
+  }
 end
