@@ -3,6 +3,11 @@ class SessionsController < ApplicationController
   before_action :require_logout, only: [:new, :create]
 
   def new
+    webauthn_id = WebAuthn.generate_user_id
+    @options = WebAuthn::Credential.options_for_create(
+      user: { id: webauthn_id, name: "" },
+    )
+    session[:webauthn_challenge] = @options.challenge
   end
 
   def create
