@@ -49,8 +49,4 @@ class UsersController < ApplicationController
     def update_params
       params.require(:user).permit(:name, :avatar, :time_zone, :locale)
     end
-
-    def send_email_verification
-      UserMailer.with(user: @user).email_verification.deliver_later
-    end
 end
