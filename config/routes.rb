@@ -24,9 +24,9 @@ Rails.application.routes.draw do
   end
 
   resource :user, only: [:show, :update, :destroy]
-  resource :email_verification, only: [:show]
   resource :email, only: [:edit, :update]
   resource :password, only: [:edit, :update]
+  resources :email_verifications, only: [:show, :create]
   resources :password_resets, only: [:new, :create, :edit, :update]
   namespace :totp do
     resource :setting, only: [:show, :create, :update]
