@@ -1,4 +1,6 @@
 class EmailsController < ApplicationController
+  include VerifyEmail
+
   def edit
   end
 
@@ -17,9 +19,5 @@ class EmailsController < ApplicationController
 
     def email_params
       params.require(:user).permit(:email, :password_challenge)
-    end
-
-    def send_email_verification
-      UserMailer.with(user: current_user).email_verification.deliver_later
     end
 end

@@ -31,7 +31,7 @@ class PasswordResetsController < ApplicationController
   private
 
     def send_password_reset
-      user = User.find_by(email: @password_reset.email, verified: true)
+      user = User.find_by(email: @password_reset.email)
       UserMailer.with(user:).password_reset.deliver_later
     end
 

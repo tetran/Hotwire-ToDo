@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  include VerifyEmail
+
   skip_before_action :require_login, only: [:new, :create]
   before_action :require_logout, only: [:new, :create]
 
@@ -10,7 +12,7 @@ class UsersController < ApplicationController
     @user = User.new(creation_params)
     if @user.save
       sign_in(@user)
-      send_email_verification
+      send_email_verification(@user)
       redirect_to root_url, success: "Welcome! You have signed up successfully!"
     else
       render :new, status: :unprocessable_entity

@@ -1,4 +1,11 @@
 <%= render "shared/modal", options: { base_class: "show-user", header_title: "Change email" } do %>
+  <% unless current_user.verified? %>
+    <p class="show-user__item__description">
+      Your email is not verified. Please verify your email.
+      <%= button_to "Verify your email", email_verifications_path, class: "", data: { } %>
+    </p>
+    <hr>
+  <% end %>
   <%= form_with model: current_user, url: email_path, data: { turbo_frame: "modal" } do |form| %>
     <% if current_user.errors.any? %>
       <%= render_errors_for current_user %>
@@ -16,7 +23,7 @@
 
     <div class="form-actions">
       <%= link_to "Cancel", user_path, class: "btn", data: { } %>
-      <%= form.submit class: "primary" %>
+      <%= form.submit "Change email", class: "primary" %>
     </div>
   <% end %>
 <% end %>
