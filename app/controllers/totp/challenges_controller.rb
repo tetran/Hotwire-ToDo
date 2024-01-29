@@ -12,7 +12,7 @@ module Totp
 
       if @totp.verify(params[:code])
         sign_in(@user)
-        redirect_to root_url, success: "Logged in!"
+        redirect_to project_url(@user.inbox_project.id), success: "Logged in!"
       else
         @token = @user.generate_token_for(:totp_verification)
         @err_message = "Invalid code"
