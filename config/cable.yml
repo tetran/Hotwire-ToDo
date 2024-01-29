@@ -5,5 +5,6 @@ test:
   adapter: test
 
 production:
-  adapter: redis
-  url: <%= ENV.fetch("REDIS_URL") %>/1
+  adapter: <%= ENV["REDIS_URL"].present? ? "redis" : "postgresql" %>
+  url: <%= ENV["REDIS_URL"] if ENV["REDIS_URL"].present? %>
+  channel_prefix: hobo_
