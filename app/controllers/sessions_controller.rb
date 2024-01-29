@@ -16,7 +16,7 @@ class SessionsController < ApplicationController
       redirect_to new_totp_challenge_path(token: user.generate_token_for(:totp_verification))
     else
       sign_in(user)
-      redirect_to root_url, success: "Logged in!"
+      redirect_to project_url(user.inbox_project.id), success: "Logged in!"
     end
   end
 

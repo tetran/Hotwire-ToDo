@@ -13,7 +13,7 @@ class UsersController < ApplicationController
     if @user.save
       sign_in(@user)
       send_email_verification(@user)
-      redirect_to root_url, success: "Welcome! You have signed up successfully!"
+      redirect_to project_url(@user.inbox_project.id), success: "Welcome! You have signed up successfully!"
     else
       render :new, status: :unprocessable_entity
     end
