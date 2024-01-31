@@ -6,7 +6,7 @@ module SessionsHelper
   def require_login
     return if current_user.present?
 
-    redirect_to login_path
+    redirect_to login_url
   end
 
   def current_user

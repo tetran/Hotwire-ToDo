@@ -2,10 +2,10 @@ class ApplicationController < ActionController::Base
   include ApplicationHelper
   include SessionsHelper
 
-  protect_from_forgery with: :exception
-
-  around_action :in_time_zone_and_locale, if: :logged_in?
   before_action :require_login
+  around_action :in_time_zone_and_locale, if: :logged_in?
+
+  protect_from_forgery with: :exception
 
   add_flash_types :success, :info, :warning, :error
 
