@@ -10,7 +10,7 @@ module ApplicationHelper
   def user_icon(user)
     turbo_frame_tag "", class: "user-avatar-#{user.id}" do
       if user.avatar.attached?
-        image_tag user.avatar, class: "user-avatar"
+        image_tag user.avatar.variant(:icon), class: "user-avatar"
       else
         tag.span user.user_name[0], class: "user-avatar user-initial-sign"
       end

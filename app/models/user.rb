@@ -7,7 +7,10 @@ class User < ApplicationRecord
   end
   generates_token_for :totp_verification, expires_in: 15.minutes { email }
 
-  has_one_attached :avatar
+  has_one_attached :avatar do |attachable|
+    attachable.variant :thumb, resize_to_limit: [120, 120], preprocessed: true
+    attachable.variant :icon, resize_to_limit: [40, 40], preprocessed: true
+  end
 
   normalizes :email, with: -> email { email.strip.downcase }
 

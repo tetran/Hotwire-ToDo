@@ -13,7 +13,8 @@
     <div class="show-user__item">
       <%= form.label :avatar %>
       <div class="show-user__item--avatar">
-        <%= image_tag current_user.avatar.attached? ? current_user.avatar : "user.png", data: { "user-target": "avatarPreview" }, width: "100px", height: "100px" %>
+        <%= image_tag current_user.avatar.attached? ? current_user.avatar.variant(:thumb) : "user.png",
+                      data: { "user-target": "avatarPreview" }, width: "100px", height: "100px" %>
         <label class="avatar-upload">
           Select new avatar
           <%= form.file_field :avatar, data: { "user-target": "avatarInput", action: "user#updateAvatar" } %>
