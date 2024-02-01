@@ -32,18 +32,24 @@
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 9999;
+    z-index: -1;
     width: 100%;
     opacity: 0;
     display: flex;
     justify-content: center;
 }
+.notification.bottom {
+    bottom: 0;
+    top: auto;
+}
 .notification.animate {
     animation: fadeInOut 1.5s ease-in-out;
+    z-index: 9999;
 }
 .notification.animate--in {
     animation: fadeIn 0.2s ease-in-out;
     animation-fill-mode: forwards;
+    z-index: 9999;
 }
 .notification.animate--out {
     animation: fadeOut 0.2s ease-in-out;
@@ -51,8 +57,8 @@
 }
 
 .notification__contents {
-    padding: 20px;
-    margin: 20px;
+    padding: .75em;
+    margin: 1em;
     max-width: 400px;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
