@@ -1,3 +1,9 @@
+.menu-container {
+    position: relative;
+}
+.menu-container--system {
+    position: inherit;
+}
 .menu-button {
     position: relative;
     border: none;
