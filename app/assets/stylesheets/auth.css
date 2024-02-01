@@ -1,5 +1,5 @@
 .auth-form {
-    width: 400px;
+    max-width: 400px;
     margin: 0 auto;
     padding: 15px;
     border-radius: 5px;

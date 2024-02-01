@@ -40,11 +40,3 @@
 .avatar-upload input[type="file"] {
     display: none;
 }
-
-.show-user__notify {
-    display: none;
-    color: var(--color-info);
-}
-.show-user__notify.show {
-    display: block;
-}

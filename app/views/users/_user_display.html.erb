@@ -1,6 +1,11 @@
 <%= render "shared/modal", options: { base_class: "show-user", header_title: "User info", body_controller: "user", scrollable: true } do %>
   <%= form_with model: current_user, url: user_path, data: { turbo_frame: "modal", "user-target": "form" }, multipart: true do |form| %>
-    <p class="show-user__notify" data-user-target="notify">Click "Save User" to update.</p>
+    <div class="notification" data-user-target="notify">
+      <div class="notification__contents notification__contents--info">
+        Click "Save User" button to persist changes.
+      </div>
+    </div>
+
     <% if current_user.errors.any? %>
       <%= render_errors_for current_user %>
     <% end %>
