@@ -1,6 +1,7 @@
 .project-header {
     display: flex;
     justify-content: space-between;
+    position: relative;
 }
 .project-members .menu-navigation {
     right: 0;
@@ -45,7 +46,7 @@
 }
 .project-selector .menu-navigation {
     left: 0;
-    min-width: 400px;
+    max-width: 67%
 }
 .project-selector__list-item {
     display: flex;

@@ -14,7 +14,9 @@ export default class extends Controller {
     const isModified = modifiedFields.length > 0 || modifiedReloadFields.length > 0 || this.avatarInputTarget.value !== "";
 
     this.submitTarget.disabled = !isModified;
-    this.notifyTarget.classList.toggle("show", isModified);
+    const notifyClass = isModified ? "animate--in" : "animate--out";
+    this.notifyTarget.classList.remove("animate--in", "animate--out")
+    this.notifyTarget.classList.add(notifyClass);
     this.formTarget.setAttribute("data-turbo-frame", modifiedReloadFields ? "_top" : "modal");
   }
 

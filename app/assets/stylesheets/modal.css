@@ -11,10 +11,9 @@
     position: relative;
     z-index: 200;
     top: 3%;
-    width: 100%;
+    width: 95%;
     max-width: 600px;
-    min-width: 400px;
-    height: 90%;
+    min-width: 300px;
     margin: 0 auto;
     padding: 1%;
     border-radius: 6px;
@@ -41,7 +40,7 @@
     background: rgba(0, 0, 0, 0.1);
 }
 .modal-body {
-    height: 92%;
+    max-height: 75vh;
     padding: 1% .2rem;
 }
 .modal-body.scrollable {
