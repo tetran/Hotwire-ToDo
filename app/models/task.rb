@@ -15,6 +15,8 @@ class Task < ApplicationRecord
   validates :name, presence: true, length: { maximum: 100 }
 
   scope :inbox, -> { where(project: user.inbox_project) }
+  scope :completed, -> { where(completed: true) }
+  scope :uncompleted, -> { where(completed: false) }
 
   broadcasts_to :project, partial: "tasks/task"
 

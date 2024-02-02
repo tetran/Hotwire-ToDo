@@ -47,9 +47,7 @@
                 </div>
               </li>
 
-              <%= turbo_frame_tag "assignees" do %>
-                <%= render partial: "tasks/assignee_row", collection: @members, as: :member, locals: { task: } %>
-              <% end %>
+              <%= render partial: "tasks/assignee_row", collection: @members, as: :member, locals: { task: } %>
             </ul>
           </nav>
         </div>
