@@ -12,14 +12,6 @@
 
     <nav class="menu-navigation hidden" data-assignees-target="menu">
       <ul class="menu-list" data-assignees-target="assigneeList">
-        <li class="assignee-list__member">
-          <div class="assignee-list__unassign assignee-list__member-info">
-            <%= button_to task_assign_path(task), method: :delete, class: "label-with-icon" do %>
-              <span class="material-symbols-outlined user-avatar">person_off</span>
-              Unassign
-            <% end %>
-          </div>
-        </li>
         <% task.project.members.each do |member| %>
           <li class="assignee-list__member" data-assignees-target="assignee" data-assignee-id="<%= member.id %>">
             <% if task.assignee == member %>
@@ -40,6 +32,17 @@
                 <% end %>
               </div>
             <% end %>
+          </li>
+        <% end %>
+        <% if task.assignee.present? %>
+          <hr>
+          <li class="assignee-list__member assignee-list__unassign">
+            <div class="assignee-list__member-info">
+              <%= button_to task_assign_path(task), method: :delete, class: "label-with-icon" do %>
+                <span class="material-symbols-outlined user-avatar">person_off</span>
+                Unassign
+              <% end %>
+            </div>
           </li>
         <% end %>
       </ul>
