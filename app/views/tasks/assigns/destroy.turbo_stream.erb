@@ -1,2 +1,1 @@
-<%= turbo_stream.update @task, partial: "tasks/task", locals: { task: @task } %>
-<%= turbo_stream.update "notification", partial: "shared/notification", locals: { message: "\"#{@task.name}\" has become incomplete.", status: "error" } %>
+<%= turbo_stream.update "assignees-#{@task.id}", partial: "tasks/assignees", locals: { task: @task } %>

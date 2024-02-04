@@ -37,7 +37,7 @@
 
   <div class="project-header__right">
     <% unless @project.inbox? %>
-      <div class="menu-container project-members" data-controller="menu" data-action="keyup@window->menu#closeWithKeyboard click@window->menu#closeBackground">
+      <div class="menu-container menu-container--header project-members" data-controller="menu" data-action="keyup@window->menu#closeWithKeyboard click@window->menu#closeBackground">
         <%= button_tag type: "button", class: "menu-button", data: { action: "menu#toggleMenu" } do %>
           <span class="material-symbols-outlined">group</span>
         <% end %>
@@ -65,7 +65,7 @@
       </div>
     <% end %>
 
-    <div class="menu-container menu-container--system" data-controller="menu" data-action="keyup@window->menu#closeWithKeyboard click@window->menu#closeBackground">
+    <div class="menu-container menu-container--header" data-controller="menu" data-action="keyup@window->menu#closeWithKeyboard click@window->menu#closeBackground">
       <%= button_tag type: "button", class: "menu-button", data: { action: "menu#toggleMenu" } do %>
         <span class="material-symbols-outlined">menu</span>
       <% end %>

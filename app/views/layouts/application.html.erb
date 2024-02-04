@@ -21,5 +21,6 @@
     <%= yield %>
 
     <div id="loader-wrapper"><div id="loader"></div></div>
+    <%= hidden_field_tag :uid, current_user&.id %>
   </body>
 </html>

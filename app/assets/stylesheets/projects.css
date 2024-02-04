@@ -5,7 +5,7 @@
 }
 .project-members .menu-navigation {
     right: 0;
-    width: 400px;
+    min-width: 200px;
 }
 
 /* Right menu */
@@ -27,8 +27,8 @@
     gap: .5rem;
 }
 .menu-list__member-info .user-avatar {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 25px;
+    height: 25px;
 }
 .project-members__form {
     padding: .5rem;

@@ -207,8 +207,8 @@
     flex-grow: 1;
 }
 .assignee-list__member-info .user-avatar {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 25px;
+    height: 25px;
 }
 .menu-list .assignee-list__member button {
     width: 100%;

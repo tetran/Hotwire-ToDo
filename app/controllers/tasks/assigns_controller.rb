@@ -4,12 +4,16 @@ module Tasks
 
     def create
       @task.assign!(params[:assignee_id])
-      redirect_to @task.project
+      respond_to do |format|
+        format.turbo_stream
+      end
     end
 
     def destroy
       @task.unassign!
-      redirect_to @task.project
+      respond_to do |format|
+        format.turbo_stream
+      end
     end
   end
 end
