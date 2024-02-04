@@ -1,5 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
-import { popupMenu } from "./mixins/popupMenu"
+import { popupMenu } from "controllers/mixins/popupMenu"
 
 export default class extends Controller {
   static targets = [ "menu" ]
