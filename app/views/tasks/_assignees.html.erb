@@ -1,0 +1,51 @@
+<%= turbo_frame_tag "assignees-#{task.id}" do %>
+  <div class="menu-container assignee-list <%= task.assignee.present? ? "assigned" : "" %> <%= task.assignee == current_user ? "assigned-to-me" : "" %>"
+      data-controller="assignees"
+      data-action="keyup@window->assignees#closeWithKeyboard click@window->assignees#closeBackground">
+    <%= button_tag type: "button", class: "menu-button menu-button--assignee", data: { action: "assignees#toggleMenu" } do %>
+      <% if task.assignee.present? %>
+        <%= user_icon(task.assignee) %>
+      <% else %>
+        <span class="material-symbols-outlined">person</span>
+      <% end %>
+    <% end %>
+
+    <nav class="menu-navigation hidden" data-assignees-target="menu">
+      <ul class="menu-list" data-assignees-target="assigneeList">
+        <% task.project.members.each do |member| %>
+          <li class="assignee-list__member" data-assignees-target="assignee" data-assignee-id="<%= member.id %>">
+            <% if task.assignee == member %>
+              <div class="assignee-list__member-info">
+                <%= button_to task_assign_path(task), params: { assignee_id: member.id }, disabled: true do %>
+                  <%= user_icon(member) %>
+                  <span class="assignee-list__member-name uname"><%= member.user_name %></span>
+                <% end %>
+              </div>
+              <div class="assignee-list__member-sign">
+                <span class="material-symbols-outlined assignee-list__member-check">check</span>
+              </div>
+            <% else %>
+              <div class="assignee-list__member-info">
+                <%= button_to task_assign_path(task), params: { assignee_id: member.id } do %>
+                  <%= user_icon(member) %>
+                  <span class="assignee-list__member-name uname"><%= member.user_name %></span>
+                <% end %>
+              </div>
+            <% end %>
+          </li>
+        <% end %>
+        <% if task.assignee.present? %>
+          <hr>
+          <li class="assignee-list__member assignee-list__unassign">
+            <div class="assignee-list__member-info">
+              <%= button_to task_assign_path(task), method: :delete, class: "label-with-icon" do %>
+                <span class="material-symbols-outlined user-avatar">person_off</span>
+                Unassign
+              <% end %>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </nav>
+  </div>
+<% end %>

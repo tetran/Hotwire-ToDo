@@ -8,13 +8,12 @@ class ProjectsController < ApplicationController
 
   def show
     session[:current_project_id] = @project.id
-    @tasks = @project.tasks.with_rich_text_description_and_embeds.order(:created_at)
+    @tasks = @project.tasks.uncompleted.with_rich_text_description_and_embeds.order(:created_at)
     @new_task = @project.tasks.build
     # Inboxを最初に表示するため`dedicated`の降順でソート
     @projects = current_user.projects.unarchived.order({ dedicated: :desc }, :created_at)
     # ログインユーザーを最初に表示
-    # TODO: 共通関数にしたいが、いい名前が思いつかない
-    @members = @project.members.sort { |lhs, _| lhs == current_user ? -1 : 1 }
+    @members = @project.members_with_priority(current_user)
   end
 
   def new

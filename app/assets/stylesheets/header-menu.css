@@ -1,7 +1,7 @@
 .menu-container {
     position: relative;
 }
-.menu-container--system {
+.menu-container--header {
     position: inherit;
 }
 .menu-button {

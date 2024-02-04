@@ -8,6 +8,7 @@ module ApplicationHelper
   end
 
   def user_icon(user)
+    # ユーザーのアバターが更新されたときに反映させるため turbo_frame_tag を使用 (See users_controller#update)
     turbo_frame_tag "", class: "user-avatar-#{user.id}" do
       if user.avatar.attached?
         image_tag url_for(user.avatar.variant(:icon)), class: "user-avatar"

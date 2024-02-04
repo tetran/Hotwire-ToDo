@@ -11,6 +11,10 @@ class Project < ApplicationRecord
   scope :unarchived, -> { where(archived: false) }
   scope :archived, -> { where(archived: true) }
 
+  def members_with_priority(user)
+    members.sort { |lhs, _| lhs == user ? -1 : 1 }
+  end
+
   def archive!
     update!(archived: true)
   end

@@ -207,12 +207,12 @@
     flex-grow: 1;
 }
 .assignee-list__member-info .user-avatar {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 25px;
+    height: 25px;
 }
 .menu-list .assignee-list__member button {
     width: 100%;
-    line-height: 2;
+    line-height: 1.5;
     padding: 0;
     text-align: left;
     display: flex;
@@ -221,6 +221,9 @@
 }
 .assignee-list__member button:hover {
     background: inherit;
+}
+.assignee-list__member button:disabled {
+    opacity: 1;
 }
 .assignee-list__member-sign .material-symbols-outlined {
     font-size: 1.4rem;
@@ -236,8 +239,13 @@
 .menu-button--assignee .user-initial-sign:hover {
     background: var(--button-base);
 }
-.assignee-list__unassign {
-    width: 100%;
+.assignee-list__unassign .assignee-list__member-info button,
+.assignee-list__unassign .assignee-list__member-info button .material-symbols-outlined {
+    color: var(--color-error);
+}
+.assignee-list__unassign .assignee-list__member-info button .material-symbols-outlined {
+    text-align: center;
+    font-size: 24px;
 }
 
 .task-suggestions {
