@@ -1,0 +1,3 @@
+<%= turbo_frame_tag "completed-tasks" do %>
+  <%= render partial: "tasks/task", collection: @completed_tasks %>
+<% end %>
