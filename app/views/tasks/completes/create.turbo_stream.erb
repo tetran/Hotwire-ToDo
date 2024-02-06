@@ -1,2 +1,4 @@
 <%= turbo_stream.remove @task %>
 <%= turbo_stream.update "notification", partial: "shared/notification", locals: { message: "\"#{@task.name}\" has been completed!", status: "success" } %>
+<%# TODO: 非表示のときに追加されないようにする方法を考える %>
+<%#= turbo_stream.prepend "completed-tasks", partial: "tasks/task", locals: { task: @task } %>

@@ -3,8 +3,9 @@
     <div class="task-card__content">
       <%= button_to "",
                     task_complete_path(task),
-                    method: task.completed ? :delete : :post,
+                    method: :post,
                     class: "task-card__complete-check",
+                    disabled: task.completed,
                     form: { class: "task-card__complete-check-outer" } %>
       <div>
         <div class="task-card__name">
