@@ -3,8 +3,9 @@
     <div class="task-card__content">
       <%= button_to "",
                     task_complete_path(task),
-                    method: task.completed ? :delete : :post,
+                    method: :post,
                     class: "task-card__complete-check",
+                    disabled: task.completed,
                     form: { class: "task-card__complete-check-outer" } %>
       <div>
         <div class="task-card__name">
@@ -23,15 +24,16 @@
         <% end %>
       </div>
     </div>
-    <div class="task-card__actions horizontal-actions">
-      <%= render partial: "tasks/assignees", locals: { task: } unless task.project.inbox? %>
-
-      <%= link_to edit_task_path(task), class: "task-card__edit" do %>
-        <span class="material-symbols-outlined">edit</span>
-      <% end %>
-      <%= button_to task_path(task), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "task-card__delete" do %>
-        <span class="material-symbols-outlined">delete</span>
-      <% end %>
-    </div>
+    <% unless task.completed %>
+      <div class="task-card__actions horizontal-actions">
+        <%= render partial: "tasks/assignees", locals: { task: } unless task.project.inbox? %>
+        <%= link_to edit_task_path(task), class: "task-card__edit" do %>
+          <span class="material-symbols-outlined">edit</span>
+        <% end %>
+        <%= button_to task_path(task), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "task-card__delete" do %>
+          <span class="material-symbols-outlined">delete</span>
+        <% end %>
+      </div>
+    <% end %>
   </div>
 <% end %>

@@ -13,14 +13,15 @@ Rails.application.routes.draw do
     resource :archive, only: [:create, :destroy], module: :projects
     resources :members, only: [:create, :destroy], module: :projects
   end
+  namespace :tasks do
+    resources :suggestions, only: [:create]
+    resources :batches, only: [:create]
+    resources :completes, only: [:index]
+  end
   resources :tasks do
     resources :comments, only: [:new, :create, :edit, :update, :destroy], module: :tasks
     resource :complete, only: [:create, :destroy], module: :tasks
     resource :assign, only: [:create, :destroy], module: :tasks
-  end
-  namespace :tasks do
-    resources :suggestions, only: [:create]
-    resources :batches, only: [:create]
   end
 
   resource :user, only: [:show, :update, :destroy]

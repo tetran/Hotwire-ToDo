@@ -11,7 +11,7 @@ class ProjectsController < ApplicationController
     @tasks = @project.tasks.uncompleted.with_rich_text_description_and_embeds.order(:created_at)
     @new_task = @project.tasks.build
     # Inboxを最初に表示するため`dedicated`の降順でソート
-    @projects = current_user.projects.unarchived.order({ dedicated: :desc }, :created_at)
+    @projects = current_user.participating_projects
     # ログインユーザーを最初に表示
     @members = @project.members_with_priority(current_user)
   end

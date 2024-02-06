@@ -2,12 +2,25 @@
 
 <%= render "header" %>
 
-<div class="container">
+<div class="tasks-container">
   <%= turbo_frame_tag "tasks" do %>
     <%= render partial: "tasks/task", collection: @tasks %>
   <% end %>
 
   <%= turbo_frame_tag @new_task do %>
     <%= render "tasks/add_task_btn" %>
+  <% end %>
+</div>
+
+<div class="tasks-container completed-tasks">
+  <%= turbo_frame_tag "completed-tasks" do %>
+    <div class="completed-tasks__show">
+      <%= link_to tasks_completes_path(project_id: @project.id),
+                  class: "completed-tasks__show-link",
+                  data: { turbo_frame: "completed-tasks" } do %>
+        <span>Completed Tasks</span>
+        <span class="material-symbols-outlined">expand_more</span>
+      <% end %>
+    </div>
   <% end %>
 </div>

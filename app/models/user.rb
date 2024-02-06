@@ -30,6 +30,10 @@ class User < ApplicationRecord
   validates :password, presence: true, length: { minimum: 8 }, on: [:create, :update_password]
   validates :password, confirmation: true, on: :update_password
 
+  def participating_projects
+    projects.unarchived.order({ dedicated: :desc }, :created_at)
+  end
+
   def user_name
     name.presence || email.split("@").first
   end
