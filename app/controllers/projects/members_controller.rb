@@ -26,8 +26,7 @@ module Projects
           return
         end
 
-        @assigned_task_ids = @project.tasks.where(assignee_id: @user.id).ids
-        @project.members.destroy(@user)
+        ProjectMember.find_by(project: @project, user: @user).destroy!
 
         if @user == current_user
           # 自身が去った場合はinboxにリダイレクト
