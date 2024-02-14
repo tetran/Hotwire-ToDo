@@ -1,0 +1,12 @@
+<div class="project-members__form">
+  <%= form_tag project_members_path(project), data: { "project-members-target": "form" } do %>
+    <%= turbo_frame_tag "project_member_error" %>
+    <div class="form-item-inline">
+      <div class="project-members__form-item form-item-inline__input">
+        <%= label_tag :email, "", class: "visually-hidden" %>
+        <%= text_field_tag :email, "", class: "project-members__form-input", placeholder: "Email" %>
+      </div>
+      <%= submit_tag "Add", class: "form-item-inline__button project-member__submit--button primary" %>
+    </div>
+  <% end %>
+</div>

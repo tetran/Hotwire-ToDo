@@ -5,7 +5,7 @@
         <%= user_icon(member) %> You
       </div>
       <div class="menu-list__member__actions horizontal-actions">
-        <% if @members.length > 1 %>
+        <% if project.members.length > 1 %>
           <%= button_to project_member_path(project, member), method: :delete, data: { turbo_confirm: "Are you sure to leave the project?", turbo_frame: "_top" }, class: "" do %>
             <span class="material-symbols-outlined">exit_to_app</span>
           <% end %>

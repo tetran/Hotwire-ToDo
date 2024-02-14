@@ -26,7 +26,9 @@
     </div>
     <% unless task.completed %>
       <div class="task-card__actions horizontal-actions">
-        <%= render partial: "tasks/assignees", locals: { task: } unless task.project.inbox? %>
+        <%= turbo_frame_tag "assignees-#{task.id}" do %>
+          <%= render partial: "tasks/assignees", locals: { task: } unless task.project.inbox? %>
+        <% end %>
         <%= link_to edit_task_path(task), class: "task-card__edit" do %>
           <span class="material-symbols-outlined">edit</span>
         <% end %>

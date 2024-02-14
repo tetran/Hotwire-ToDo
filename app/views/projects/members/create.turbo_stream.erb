@@ -1,2 +1,16 @@
+<%# 退出アイコン表示のため %>
+<%= turbo_stream.update current_user, partial: "projects/member_row", locals: { member: current_user, project: @project } %>
+
+<%# リストに追加 %>
 <%= turbo_stream.append "project_members", partial: "projects/member_row", locals: { member: @user, project: @project } %>
+
+<%# 成功時のみフォームをクリアするため %>
+<%= turbo_stream.update "project_member_form", partial: "projects/members/form", locals: { project: @project } %>
+
+<%# 通知 %>
 <%= turbo_stream.update "notification", partial: "shared/notification", locals: { message: "\"#{@user.user_name}\" was added to this project!", status: "success" } %>
+
+<%# 各タスクのassignリストを更新 %>
+<% @project.tasks.each do |task| %>
+  <%= turbo_stream.update "assignees-#{task.id}", partial: "tasks/assignees", locals: { task: } %>
+<% end %>

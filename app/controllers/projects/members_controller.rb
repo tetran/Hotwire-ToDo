@@ -27,8 +27,10 @@ module Projects
         end
 
         @project.members.destroy(@user)
-        if @project.members.exclude?(current_user)
-          format.html { redirect_to projects_path }
+
+        if @user == current_user
+          # 自身が去った場合はinboxにリダイレクト
+          format.html { redirect_to project_url(current_user.inbox_project.id) }
         else
           format.turbo_stream
         end
