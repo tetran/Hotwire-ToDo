@@ -26,7 +26,7 @@ module Projects
           return
         end
 
-        ProjectMember.find_by(project: @project, user: @user).destroy!
+        @project.members.destroy(@user)
 
         if @user == current_user
           # 自身が去った場合はinboxにリダイレクト
