@@ -26,13 +26,14 @@ module Projects
           return
         end
 
+        @assigned_task_ids = @project.tasks.where(assignee_id: @user.id).ids
         @project.members.destroy(@user)
 
-        if @project.members.include?(current_user)
-          format.turbo_stream
-        else
+        if @user == current_user
           # 自身が去った場合はinboxにリダイレクト
           format.html { redirect_to project_url(current_user.inbox_project.id) }
+        else
+          format.turbo_stream
         end
       end
     end

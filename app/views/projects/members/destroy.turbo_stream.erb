@@ -1,2 +1,8 @@
+<%# 退出アイコンを非表示にするため %>
+<%= turbo_stream.update current_user, partial: "projects/member_row", locals: { member: current_user, project: @project } if @project.members.count == 1%>
+
 <%= turbo_stream.remove @user %>
 <%= turbo_stream.update "notification", partial: "shared/notification", locals: { message: "\"#{@user.user_name}\" was removed from this project!", status: "success" } %>
+<% @project.tasks.each do |task| %>
+  <%= turbo_stream.update "assignees-#{task.id}", partial: "tasks/assignees", locals: { task: } %>
+<% end %>
