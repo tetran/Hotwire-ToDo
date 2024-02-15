@@ -4,11 +4,7 @@
       <button role="tab" data-action="click->tabs#changeTab" data-tabs-target="tab" data-panel="form1" class="tab <%= @show_suggestion ? "" : "active" %>">Manual</button>
       <button role="tab" data-action="click->tabs#changeTab" data-tabs-target="tab" data-panel="form2" class="tab <%= @show_suggestion ? "active" : "" %>">Ask AI</button>
     </div>
-    <div id="form1" class="tab-panel <%= @show_suggestion ? "hidden" : "" %>" role="tabpanel" data-tabs-target="tabPanel">
-      <%= render "tasks/form", task: @task %>
-    </div>
-    <div id="form2" class="tab-panel <%= @show_suggestion ? "" : "hidden" %>" role="tabpanel" data-tabs-target="tabPanel">
-      <%= render "tasks/ask_ai" %>
-    </div>
+    <%= render "tasks/form", task: @task %>
+    <%= render "tasks/ask_ai" %>
   </div>
 <% end %>

@@ -13,7 +13,7 @@ module Tasks
 
       SuggestionResponse.batch_create(@suggestion_request, send_chat_request)
 
-      render "tasks/new"
+      render turbo_stream: turbo_stream.replace("ask_ai", partial: "tasks/ask_ai")
     end
 
     private

@@ -4,8 +4,11 @@ module Tasks
     include ProjectDependent
 
     def create
-      tasks = Task.create_from_suggestion(tasks_params, @project.id, current_user)
-      redirect_to project_path(params[:project_id]), success: "#{tasks.length} tasks were created successfully."
+      @tasks = Task.create_from_suggestion(tasks_params, @project.id, current_user)
+      @new_task = @project.tasks.build
+      respond_to do |format|
+        format.turbo_stream
+      end
     end
 
     private
