@@ -1,0 +1,5 @@
+<% @tasks.each do |task| %>
+  <%= turbo_stream.append "tasks", partial: "tasks/task", locals: { task: } %>
+<% end %>
+<%= turbo_stream.update Task.new, partial: "tasks/add_task_btn" %>
+<%= turbo_stream.update "notification", partial: "shared/notification", locals: { message: "#{@tasks.length} tasks were created successfully.", status: "success" } %>

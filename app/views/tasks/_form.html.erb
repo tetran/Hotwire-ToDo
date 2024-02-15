@@ -1,26 +1,28 @@
-<%= form_with(model: task, class: "task-form") do |form| %>
-  <% if task.errors.any? %>
-    <%= render_errors_for task %>
+<div id="form1" class="tab-panel <%= @show_suggestion ? "hidden" : "" %>" role="tabpanel" data-tabs-target="tabPanel">
+  <%= form_with(model: task, class: "task-form") do |form| %>
+    <% if task.errors.any? %>
+      <%= render_errors_for task %>
+    <% end %>
+
+    <div class="task-form__item task-form__name">
+      <%= form.label :name, class: "visually-hidden" %>
+      <%= form.text_field :name, autofocus: true, class: "task-form__name--input full-width-input", placeholder: "Task name" %>
+    </div>
+
+    <div class="task-form__item task-form__description">
+      <%= form.label :description, class: "visually-hidden" %>
+      <%= form.rich_text_area :description, class: "task-form__description--input", placeholder: "Description" %>
+    </div>
+
+    <div class="task-form__item task-form__due-date">
+      <%= form.label :due_date, class: "" %>
+      <%= form.date_field :due_date, value: task.display_due_date, min: Time.zone.today %>
+    </div>
+
+    <div class="form-actions task-form__actions">
+      <%= hidden_field_tag :project_id, task.project_id %>
+      <%= link_to "Cancel", project_path(task.project_id), class: "btn btn-light task-form__cancel" %>
+      <%= form.submit class: "task-form__submit primary" %>
+    </div>
   <% end %>
-
-  <div class="task-form__item task-form__name">
-    <%= form.label :name, class: "visually-hidden" %>
-    <%= form.text_field :name, autofocus: true, class: "task-form__name--input full-width-input", placeholder: "Task name" %>
-  </div>
-
-  <div class="task-form__item task-form__description">
-    <%= form.label :description, class: "visually-hidden" %>
-    <%= form.rich_text_area :description, class: "task-form__description--input", placeholder: "Description" %>
-  </div>
-
-  <div class="task-form__item task-form__due-date">
-    <%= form.label :due_date, class: "" %>
-    <%= form.date_field :due_date, value: task.display_due_date, min: Time.zone.today %>
-  </div>
-
-  <div class="form-actions task-form__actions">
-    <%= hidden_field_tag :project_id, task.project_id %>
-    <%= link_to "Cancel", project_path(task.project_id), class: "btn btn-light task-form__cancel" %>
-    <%= form.submit class: "task-form__submit primary" %>
-  </div>
-<% end %>
+</div>

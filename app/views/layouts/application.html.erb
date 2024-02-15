@@ -3,6 +3,7 @@
   <head>
     <title>Hobo</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
+
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -10,6 +11,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+
+    <%= turbo_refreshes_with method: :morph, scroll: :preserve %>
+    <%= content_for :head %>
   </head>
 
   <body>
