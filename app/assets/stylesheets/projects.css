@@ -110,18 +110,18 @@
 .completed-tasks {
     padding: 1rem 0;
 }
-.completed-tasks__show {
+.completed-tasks__action {
     display: flex;
     justify-content: flex-start;
 }
-.completed-tasks__show-link {
+.completed-tasks__action-link {
     display: flex;
     align-items: center;
     color: var(--form-text);
     padding: .5rem;
     border-radius: 4px;
 }
-.completed-tasks__show-link:hover {
+.completed-tasks__action-link:hover {
     text-decoration: none;
     background-color: #ccc;
 }

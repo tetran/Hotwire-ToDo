@@ -14,13 +14,6 @@
 
 <div class="tasks-container completed-tasks">
   <%= turbo_frame_tag "completed-tasks" do %>
-    <div class="completed-tasks__show">
-      <%= link_to tasks_completes_path(project_id: @project.id),
-                  class: "completed-tasks__show-link",
-                  data: { turbo_frame: "completed-tasks" } do %>
-        <span>Completed Tasks</span>
-        <span class="material-symbols-outlined">expand_more</span>
-      <% end %>
-    </div>
+    <%= render "completed_tasks_off" %>
   <% end %>
 </div>
