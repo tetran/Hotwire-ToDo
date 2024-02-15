@@ -1,0 +1,8 @@
+<div class="completed-tasks__action">
+  <%= link_to tasks_completes_path(project_id: @project.id, show: 1),
+              class: "completed-tasks__action-link",
+              data: { turbo_frame: "completed-tasks" } do %>
+    <span>Show completed tasks</span>
+    <span class="material-symbols-outlined">expand_more</span>
+  <% end %>
+</div>

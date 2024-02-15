@@ -1,3 +1,7 @@
 <%= turbo_frame_tag "completed-tasks" do %>
-  <%= render partial: "tasks/task", collection: @completed_tasks %>
+  <% if @completed_tasks.present? %>
+    <%= render "projects/completed_tasks_on" %>
+  <% else %>
+    <%= render "projects/completed_tasks_off" %>
+  <% end %>
 <% end %>

@@ -1,0 +1,10 @@
+<%= render partial: "tasks/task", collection: @completed_tasks %>
+
+<div class="completed-tasks__action">
+  <%= link_to tasks_completes_path(project_id: @project.id),
+              class: "completed-tasks__action-link",
+              data: { turbo_frame: "completed-tasks" } do %>
+    <span>Hide completed tasks</span>
+    <span class="material-symbols-outlined">expand_less</span>
+  <% end %>
+</div>

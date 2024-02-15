@@ -7,7 +7,7 @@ module Tasks
     before_action :set_task, only: [:create, :destroy]
 
     def index
-      @completed_tasks = @project.tasks.completed.with_rich_text_description_and_embeds.order(updated_at: :desc)
+      @completed_tasks = @project.tasks.completed.with_rich_text_description_and_embeds.order(updated_at: :desc) if params[:show]
     end
 
     def create
