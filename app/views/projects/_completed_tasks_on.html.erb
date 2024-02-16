@@ -1,10 +1,14 @@
-<%= render partial: "tasks/task", collection: @completed_tasks %>
-
-<div class="completed-tasks__action">
-  <%= link_to tasks_completes_path(project_id: @project.id),
-              class: "completed-tasks__action-link",
-              data: { turbo_frame: "completed-tasks" } do %>
-    <span>Hide completed tasks</span>
-    <span class="material-symbols-outlined">expand_less</span>
-  <% end %>
-</div>
+<% if @completed_tasks.present? %>
+  <%= render partial: "tasks/task", collection: @completed_tasks %>
+  <div class="completed-tasks__action">
+    <%= link_to tasks_completes_path(project_id: @project.id),
+                class: "completed-tasks__action-link",
+                data: { turbo_frame: "completed-tasks" } do %>
+      <span>Hide completed tasks</span>
+      <span class="material-symbols-outlined">expand_less</span>
+    <% end %>
+  </div>
+<% else %>
+  <%= render partial: "shared/notification", locals: { status: :warning, message: "There are no completed tasks." } %>
+  <%= render "projects/completed_tasks_off" %>
+<% end %>
