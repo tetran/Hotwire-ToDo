@@ -113,6 +113,7 @@
 .completed-tasks__action {
     display: flex;
     justify-content: flex-start;
+    margin-top: .5rem;
 }
 .completed-tasks__action-link {
     display: flex;

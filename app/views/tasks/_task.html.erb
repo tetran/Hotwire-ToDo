@@ -1,12 +1,14 @@
 <%= turbo_frame_tag task do %>
   <div class="task-card <%= task.completed ? "task-card--complete" : "" %> <%= task.overdue? ? "overdue" : "" %>">
     <div class="task-card__content">
-      <%= button_to "",
-                    task_complete_path(task),
-                    method: :post,
-                    class: "task-card__complete-check",
-                    disabled: task.completed,
-                    form: { class: "task-card__complete-check-outer" } %>
+      <% if task.completed %>
+        <%= button_tag "", type: :button, class: "task-card__complete-check", disabled: true %>
+      <% else %>
+        <%= button_to "",
+                      task_complete_path(task),
+                      method: :post,
+                      class: "task-card__complete-check" %>
+      <% end %>
       <div>
         <div class="task-card__name">
           <%= link_to task.name, task, data: { turbo_frame: "modal" } %>

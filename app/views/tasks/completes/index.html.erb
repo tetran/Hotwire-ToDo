@@ -1,5 +1,5 @@
 <%= turbo_frame_tag "completed-tasks" do %>
-  <% if @completed_tasks.present? %>
+  <% if params[:show] %>
     <%= render "projects/completed_tasks_on" %>
   <% else %>
     <%= render "projects/completed_tasks_off" %>
