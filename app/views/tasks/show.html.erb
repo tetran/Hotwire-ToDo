@@ -1,39 +1,41 @@
-<%= render "shared/modal", options: { base_class: "show-task #{@task.overdue? ? "overdue" : ""}", scrollable: true } do %>
-  <%= turbo_stream_from @task %>
-  <style>.comment-card__actions[data-editable-user="<%= current_user.id %>"] { display: flex; }</style>
-  <h2 class="show-task__name">
-    <%= @task.name %>
-  </h2>
-  <% if @task.description.present? %>
-    <div class="show-task__description">
-      <%= @task.description %>
-    </div>
-  <% end %>
-  <% if @task.has_due_date? %>
-    <div class="show-task__due-date">
-      <span class="material-symbols-outlined">event</span>
-      <%= l(@task.due_date, format: due_date_format(@task)) %>
-    </div>
-  <% end %>
+<%= turbo_frame_tag "modal" do %>
+  <%= render "shared/modal", options: { base_class: "show-task #{@task.overdue? ? "overdue" : ""}", scrollable: true } do %>
+    <%= turbo_stream_from @task %>
+    <style>.comment-card__actions[data-editable-user="<%= current_user.id %>"] { display: flex; }</style>
+    <h2 class="show-task__name">
+      <%= @task.name %>
+    </h2>
+    <% if @task.description.present? %>
+      <div class="show-task__description">
+        <%= @task.description %>
+      </div>
+    <% end %>
+    <% if @task.has_due_date? %>
+      <div class="show-task__due-date">
+        <span class="material-symbols-outlined">event</span>
+        <%= l(@task.due_date, format: due_date_format(@task)) %>
+      </div>
+    <% end %>
 
-  <div class="task-comments">
-    <div class="task-comments__history">
-      <% if @comments.present? %>
-        <h4 class="task-comments__title">
-          Comments
-        </h4>
-      <% end %>
-      <div class="task-comments__content">
-        <%= turbo_frame_tag "comments" do %>
-          <%= render partial: "tasks/comments/comment", collection: @comments %>
+    <div class="task-comments">
+      <div class="task-comments__history">
+        <% if @comments.present? %>
+          <h4 class="task-comments__title">
+            Comments
+          </h4>
+        <% end %>
+        <div class="task-comments__content">
+          <%= turbo_frame_tag "comments" do %>
+            <%= render partial: "tasks/comments/comment", collection: @comments %>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="task-comments__add-comment">
+        <%= turbo_frame_tag Comment.new do %>
+          <%= render partial: "tasks/comments/add_comment", locals: { task: @task } %>
         <% end %>
       </div>
     </div>
-
-    <div class="task-comments__add-comment">
-      <%= turbo_frame_tag Comment.new do %>
-        <%= render partial: "tasks/comments/add_comment", locals: { task: @task } %>
-      <% end %>
-    </div>
-  </div>
+  <% end %>
 <% end %>

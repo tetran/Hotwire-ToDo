@@ -1,20 +1,20 @@
-<%= turbo_frame_tag "modal" do %>
-  <div class="modal-base <%= options[:base_class] %>">
-    <%= tag.div data: { controller: "turbo-modal",
-                        action: "keyup@window->turbo-modal#closeWithKeyboard click@window->turbo-modal#closeBackground" },
-                class: "modal-content" do %>
-      <div class="modal-header show-task__header">
-        <% if options[:header_title].present? %>
-          <h3 class="modal-header__title"><%= options[:header_title] %></h3>
-        <% end %>
-        <%= link_to "", class: "modal-header__close", data: { action: "turbo-modal#hideModal" } do %>
-          <span class="material-symbols-outlined">close</span>
-        <% end %>
-      </div>
+<dialog
+  class="modal-base <%= options[:base_class] %>"
+  data-controller="turbo-modal"
+  data-action="click->turbo-modal#closeBackground">
 
-      <div class="modal-body <%= 'scrollable' if options[:scrollable] %>" data-controller="<%= options[:body_controller] %>">
-        <%= yield %>
-      </div>
+  <div class="modal-header show-task__header" data-turbo-modal-target="header">
+    <% if options[:header_title].present? %>
+      <h3 class="modal-header__title"><%= options[:header_title] %></h3>
+    <% end %>
+    <%= link_to "", class: "modal-header__close", data: { action: "turbo-modal#hideModal" } do %>
+      <span class="material-symbols-outlined">close</span>
     <% end %>
   </div>
-<% end %>
+
+  <div class="modal-body <%= 'scrollable' if options[:scrollable] %>"
+       data-controller="<%= options[:body_controller] %>"
+       data-turbo-modal-target="body">
+    <%= yield %>
+  </div>
+</dialog>
