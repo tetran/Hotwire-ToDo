@@ -2,7 +2,7 @@
   class="modal-base <%= options[:base_class] %>"
   data-controller="turbo-modal"
   data-action="click->turbo-modal#closeBackground">
-
+  <%= turbo_frame_tag "modal_notification" %>
   <div class="modal-header" data-turbo-modal-target="header">
     <% if options[:header_title].present? %>
       <h3 class="modal-header__title"><%= options[:header_title] %></h3>
