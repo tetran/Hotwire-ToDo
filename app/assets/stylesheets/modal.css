@@ -26,7 +26,7 @@
     background: rgba(0, 0, 0, 0.1);
 }
 .modal-body {
-    max-height: 80vh;
+    max-height: 75vh;
     padding: 1% .2rem;
 }
 .modal-body.scrollable {
