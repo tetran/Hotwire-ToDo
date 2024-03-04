@@ -15,8 +15,8 @@ export default class extends Controller {
       // prevent bubbling up the DOM tree to avoid triggering the click event on the window
       e.stopPropagation()
     }
-    document.getElementById("modal").removeAttribute("src")
-    document.querySelector(".modal-base").remove()
+    this.element.parentElement.removeAttribute("src")
+    this.element.remove()
   }
 
   // hide modal when clicking outside of modal
