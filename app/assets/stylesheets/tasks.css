@@ -92,9 +92,6 @@
     border-color: transparent;
 }
 
-.modal-content.show-task {
-    height: 90%;
-}
 .show-task .modal-header {
     justify-content: right;
 }
@@ -195,6 +192,9 @@
 }
 
 /* assignees */
+.assignee-list {
+    position: relative;
+}
 .assignee-list__member {
     display: flex;
     justify-content: space-between;

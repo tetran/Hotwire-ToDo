@@ -1,2 +1,2 @@
 <%= turbo_stream.update "modal", partial: "users/user_display" %>
-<%= turbo_stream.update "notification", partial: "shared/notification", locals: { message: @message, status: "success" } %>
+<%= turbo_stream.update "modal_notification", partial: "shared/notification", locals: { message: @message, status: "success" } %>
