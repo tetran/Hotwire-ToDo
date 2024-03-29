@@ -10,7 +10,7 @@
 .task-card__content {
     display: flex;
     gap: 0.5rem;
-    align-items: center;
+    align-items: flex-start;
 }
 .task-card__complete-check {
     width: 16px;

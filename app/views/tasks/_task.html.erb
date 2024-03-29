@@ -15,7 +15,7 @@
         </div>
         <% if task.description.present? %>
           <div class="task-card__description">
-            <%= task.description.to_plain_text %>
+            <%= task.description.to_plain_text.gsub(/\R/, " ") %>
           </div>
         <% end %>
         <% if task.has_due_date? %>
