@@ -25,32 +25,37 @@ class TasksController < ApplicationController
 
   # POST /tasks or /tasks.json
   def create
-    @task = @project.tasks.build(task_params.merge(created_by: current_user))
+    if form_cancel?
+      @new_task = @project.tasks.build
+      render turbo_stream: turbo_stream.update(@new_task, partial: "tasks/add_task_btn")
+      return
+    end
 
+    @task = @project.tasks.build(task_params.merge(created_by: current_user))
     respond_to do |format|
       if @task.save
-        @new_task = @task.project.tasks.build
-        format.html { redirect_to task_url(@task), success: "Task was successfully created." }
-        format.json { render :show, status: :created, location: @task }
+        @new_task = @project.tasks.build
         format.turbo_stream
       else
         set_suggestion_variables
         format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @task.errors, status: :unprocessable_entity }
       end
     end
   end
 
   # PATCH/PUT /tasks/1 or /tasks/1.json
   def update
+    if form_cancel?
+      render turbo_stream: turbo_stream.update(@task, partial: "tasks/task", locals: { task: @task })
+      return
+    end
+
     respond_to do |format|
       if @task.update(task_params)
         format.html { redirect_to task_url(@task), success: "Task was successfully updated." }
-        format.json { render :show, status: :ok, location: @task }
         format.turbo_stream
       else
         format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @task.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -61,7 +66,6 @@ class TasksController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to tasks_url, success: "Task was successfully destroyed." }
-      format.json { head :no_content }
       format.turbo_stream
     end
   end
@@ -89,5 +93,9 @@ class TasksController < ApplicationController
         due_date: Time.zone.today + 3.months
       )
       @show_suggestion = false
+    end
+
+    def form_cancel?
+      params[:cancel] == "1"
     end
 end
