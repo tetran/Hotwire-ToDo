@@ -7,9 +7,15 @@ class ProjectsController < ApplicationController
   end
 
   def show
+    @new_task = @project.tasks.build
+    if params[:c].present?
+      @tasks = @project.tasks.where(id: params[:t]) if params[:t].present?
+      return
+    end
+
     session[:current_project_id] = @project.id
     @tasks = @project.tasks.uncompleted.with_rich_text_description_and_embeds.order(:created_at)
-    @new_task = @project.tasks.build
+
     # Inboxを最初に表示するため`dedicated`の降順でソート
     @projects = current_user.participating_projects
     # ログインユーザーを最初に表示

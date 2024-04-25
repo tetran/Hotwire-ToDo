@@ -21,7 +21,7 @@
 
     <div class="form-actions task-form__actions">
       <%= hidden_field_tag :project_id, task.project_id %>
-      <%= link_to "Cancel", project_path(task.project_id), class: "btn btn-light task-form__cancel" %>
+      <%= link_to "Cancel", project_path(task.project_id, c: 1, t: task.id), class: "btn btn-light task-form__cancel" %>
       <%= form.submit class: "task-form__submit primary" %>
     </div>
   <% end %>

@@ -7,7 +7,7 @@
 
     <nav class="menu-navigation hidden" data-menu-target="menu">
       <ul class="menu-list project-selector__list">
-        <% @projects.each do |project| %>
+        <% @projects&.each do |project| %>
           <li class="project-selector__list-item <%= @project == project ? "current-project" : "" %>">
             <%= link_to "# #{project.display_name}", project_path(project), class: "project-selector__list-item__project-name" %>
 
