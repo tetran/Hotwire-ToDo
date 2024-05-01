@@ -26,5 +26,6 @@
 
     <div id="loader-wrapper"><div id="loader"></div></div>
     <%= hidden_field_tag :uid, current_user&.id %>
+    <%= audio_tag "complete.mp3", id: "complete-sound" %>
   </body>
 </html>
