@@ -9,6 +9,10 @@ class ApplicationController < ActionController::Base
 
   add_flash_types :success, :info, :warning, :error
 
+  if ENV["BASIC_AUTH_USERNAME"].present? && ENV["BASIC_AUTH_PASSWORD"].present?
+    http_basic_authenticate_with name: ENV["BASIC_AUTH_USERNAME"], password: ENV["BASIC_AUTH_PASSWORD"]
+  end
+
   private
 
     def in_time_zone_and_locale
