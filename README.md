@@ -4,7 +4,7 @@
 This is a sample todo list application to try Rails 7 & Hotwire.
 
 ## Requirements
-* Ruby version: 3.3
+* Ruby version: 3.3.4
 * Rails version: 7.1
 * Database: PostgreSQL
 
@@ -12,9 +12,9 @@ This is a sample todo list application to try Rails 7 & Hotwire.
 ### Clone this repository
 
 ### Install ruby 3.3.x
-I use [rbenv](https://github.com/rbenv/rbenv) to manage ruby versions. You can install ruby 3.3.x with rbenv like this:
+I use [rbenv](https://github.com/rbenv/rbenv) to manage ruby versions. You can install ruby 3.3.4 with rbenv like this:
 ```bash
-rbenv install 3.3.0
+rbenv install 3.3.4
 ```
 
 ### Install libvips for ActiveStorage
