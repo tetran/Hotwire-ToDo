@@ -45,7 +45,7 @@
               <div class="role-actions">
                 <%= link_to "詳細", admin_role_path(role), class: "btn btn-sm" %>
                 <% if can_write?('User') %>
-                  <%= link_to "権限編集", assign_permissions_admin_role_path(role), class: "btn btn-sm btn-outline" %>
+                  <%= link_to "権限編集", admin_role_permissions_path(role), class: "btn btn-sm btn-outline" %>
                 <% end %>
               </div>
             </div>
@@ -90,7 +90,7 @@
                 <%= link_to "詳細", admin_role_path(role), class: "btn btn-sm" %>
                 <% if can_write?('User') %>
                   <%= link_to "編集", edit_admin_role_path(role), class: "btn btn-sm btn-outline" %>
-                  <%= link_to "権限編集", assign_permissions_admin_role_path(role), class: "btn btn-sm btn-outline" %>
+                  <%= link_to "権限編集", admin_role_permissions_path(role), class: "btn btn-sm btn-outline" %>
                 <% end %>
                 <% if can_delete?('User') %>
                   <%= link_to "削除", admin_role_path(role), method: :delete, 

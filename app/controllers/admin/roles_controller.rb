@@ -1,5 +1,5 @@
 class Admin::RolesController < Admin::ApplicationController
-  before_action :set_role, only: [:show, :edit, :update, :destroy, :assign_permissions, :update_permissions]
+  before_action :set_role, only: [:show, :edit, :update, :destroy]
   before_action :authorize_role_management
 
   def index
@@ -61,21 +61,6 @@ class Admin::RolesController < Admin::ApplicationController
     end
   end
 
-  def assign_permissions
-    @available_permissions = Permission.all.group_by(&:resource_type)
-    @role_permissions = @role.permissions
-  end
-
-  def update_permissions
-    permission_ids = params[:permission_ids] || []
-    @role.permission_ids = permission_ids
-    
-    flash[:success] = I18n.t('admin.roles.permissions_updated', default: '権限を更新しました')
-    redirect_to admin_role_path(@role)
-  rescue => e
-    flash[:error] = I18n.t('admin.roles.permissions_update_failed', default: '権限の更新に失敗しました')
-    redirect_to assign_permissions_admin_role_path(@role)
-  end
 
   private
 
@@ -91,7 +76,7 @@ class Admin::RolesController < Admin::ApplicationController
     case action_name
     when 'index', 'show'
       authorize_read!('User')  # Role management is part of user management
-    when 'new', 'create', 'edit', 'update', 'assign_permissions', 'update_permissions'
+    when 'new', 'create', 'edit', 'update'
       authorize_write!('User')
     when 'destroy'
       authorize_delete!('User')

@@ -10,7 +10,7 @@
         <% unless @role.system_role? %>
           <%= link_to "編集", edit_admin_role_path(@role), class: "btn btn-primary" %>
         <% end %>
-        <%= link_to "権限管理", assign_permissions_admin_role_path(@role), class: "btn btn-outline" %>
+        <%= link_to "権限管理", admin_role_permissions_path(@role), class: "btn btn-outline" %>
       <% end %>
     </div>
   </div>
@@ -71,7 +71,7 @@
         <div class="empty-state">
           <p>このロールには権限が割り当てられていません。</p>
           <% if can_write?('User') %>
-            <%= link_to "権限を割り当てる", assign_permissions_admin_role_path(@role), class: "btn btn-primary" %>
+            <%= link_to "権限を割り当てる", admin_role_permissions_path(@role), class: "btn btn-primary" %>
           <% end %>
         </div>
       <% end %>

@@ -9,7 +9,7 @@
     </div>
   </div>
 
-  <%= form_with url: update_permissions_admin_role_path(@role), method: :patch, local: true do |form| %>
+  <%= form_with url: admin_role_permissions_path(@role), method: :patch, local: true do |form| %>
     <div class="permissions-form">
       <h2>権限の選択</h2>
       <p>このロールに割り当てる権限を選択してください。</p>
@@ -22,7 +22,7 @@
             <% permissions.each do |permission| %>
               <div class="permission-option">
                 <label class="permission-checkbox">
-                  <%= check_box_tag "permission_ids[]", permission.id, @role_permissions.include?(permission), id: "permission_#{permission.id}" %>
+                  <%= check_box_tag "permission_ids[]", permission.id, @assigned_permissions.include?(permission), id: "permission_#{permission.id}" %>
                   <div class="permission-info">
                     <h4><%= permission.action %></h4>
                     <p><%= permission.description %></p>

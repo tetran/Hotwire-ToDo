@@ -8,7 +8,7 @@
       <%= link_to "一覧に戻る", admin_users_path, class: "btn btn-outline" %>
       <% if can_write?('User') %>
         <%= link_to "編集", edit_admin_user_path(@user), class: "btn btn-primary" %>
-        <%= link_to "ロール管理", assign_roles_admin_user_path(@user), class: "btn btn-outline" %>
+        <%= link_to "ロール管理", admin_user_roles_path(@user), class: "btn btn-outline" %>
       <% end %>
     </div>
   </div>
@@ -84,7 +84,7 @@
       <% else %>
         <p>ロールが割り当てられていません。</p>
         <% if can_write?('User') %>
-          <%= link_to "ロールを割り当てる", assign_roles_admin_user_path(@user), class: "btn btn-primary" %>
+          <%= link_to "ロールを割り当てる", admin_user_roles_path(@user), class: "btn btn-primary" %>
         <% end %>
       <% end %>
     </div>
