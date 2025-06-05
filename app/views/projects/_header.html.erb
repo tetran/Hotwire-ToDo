@@ -72,6 +72,14 @@
               Setting
             <% end %>
           </li>
+          <% if current_user&.can_read?('Admin') %>
+            <li>
+              <%= link_to admin_root_path, class: "menu-list__admin label-with-icon", data: { action: "menu#hideMenu" } do %>
+                <span class="material-symbols-outlined">admin_panel_settings</span>
+                Admin
+              <% end %>
+            </li>
+          <% end %>
           <li>
             <%= button_to logout_path, method: :delete, class: "menu-list__logout-btn label-with-icon", data: { turbo_confirm: "Logout?" } do %>
               <span class="material-symbols-outlined">logout</span>

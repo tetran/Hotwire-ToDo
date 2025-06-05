@@ -22,7 +22,7 @@ class SuggestionRequest < ApplicationRecord
 
     def set_raw_request
       @raw_request_hash = {
-        model: "gpt-3.5-turbo-1106",
+        model: "gpt-4.1-mini",
         response_format: { type: "json_object" },
         messages: [
           { role: "system", content: "You are a professional and friendly strategy consultant who helps clients achieve their goals." },

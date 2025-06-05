@@ -1,0 +1,82 @@
+<% content_for :title, "ダッシュボード" %>
+
+<div class="admin-dashboard">
+  <h1>管理者ダッシュボード</h1>
+  
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h3>ユーザー数</h3>
+      <div class="stat-number"><%= @stats[:users_count] %></div>
+      <%= link_to "詳細を見る", admin_users_path, class: "stat-link" %>
+    </div>
+    
+    <div class="stat-card">
+      <h3>プロジェクト数</h3>
+      <div class="stat-number"><%= @stats[:projects_count] %></div>
+    </div>
+    
+    <div class="stat-card">
+      <h3>タスク数</h3>
+      <div class="stat-number"><%= @stats[:tasks_count] %></div>
+      <small>アクティブ: <%= @stats[:active_tasks_count] %></small>
+    </div>
+  </div>
+
+  <div class="admin-sections">
+    <div class="admin-section">
+      <h2>最近のユーザー</h2>
+      <% if @stats[:recent_users].any? %>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>メール</th>
+              <th>名前</th>
+              <th>登録日</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @stats[:recent_users].each do |user| %>
+              <tr>
+                <td><%= user.email %></td>
+                <td><%= user.name.presence || "未設定" %></td>
+                <td><%= user.created_at.strftime("%Y/%m/%d") %></td>
+                <td>
+                  <%= link_to "詳細", admin_user_path(user), class: "btn btn-sm" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p>ユーザーがいません。</p>
+      <% end %>
+    </div>
+
+    <div class="admin-section">
+      <h2>最近のプロジェクト</h2>
+      <% if @stats[:recent_projects].any? %>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>プロジェクト名</th>
+              <th>作成者</th>
+              <th>作成日</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @stats[:recent_projects].each do |project| %>
+              <tr>
+                <td><%= project.display_name %></td>
+                <td><%= project.owner.user_name %></td>
+                <td><%= project.created_at.strftime("%Y/%m/%d") %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p>プロジェクトがありません。</p>
+      <% end %>
+    </div>
+  </div>
+</div>

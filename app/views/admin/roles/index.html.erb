@@ -1,0 +1,114 @@
+<% content_for :title, "ロール管理" %>
+
+<div class="admin-roles-index">
+  <div class="admin-header-section">
+    <h1>ロール管理</h1>
+    
+    <div class="admin-actions">
+      <% if can_write?('User') %>
+        <%= link_to "新しいロールを作成", new_admin_role_path, class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="roles-sections">
+    <div class="roles-section">
+      <h2>システムロール</h2>
+      <p>システムが管理する基本的なロールです。削除はできません。</p>
+      
+      <% if @system_roles.any? %>
+        <div class="roles-grid">
+          <% @system_roles.each do |role| %>
+            <div class="role-card system">
+              <div class="role-header">
+                <h3>
+                  <%= link_to role.name, admin_role_path(role), class: "role-link" %>
+                  <span class="badge system">システム</span>
+                  <span class="stat">ユーザー: <%= role.users.count %></span>
+                </h3>
+              </div>
+              
+              <p class="role-description"><%= role.description %></p>
+              
+              <% if role.permissions.any? %>
+                <div class="role-permissions">
+                  <strong>権限:</strong>
+                  <% role.permissions.group_by(&:resource_type).each do |resource, perms| %>
+                    <div class="permission-group">
+                      <span class="resource"><%= resource %></span>:
+                      <%= perms.map(&:action).join(", ") %>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+              
+              <div class="role-actions">
+                <%= link_to "詳細", admin_role_path(role), class: "btn btn-sm" %>
+                <% if can_write?('User') %>
+                  <%= link_to "権限編集", assign_permissions_admin_role_path(role), class: "btn btn-sm btn-outline" %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p>システムロールがありません。</p>
+      <% end %>
+    </div>
+
+    <div class="roles-section">
+      <h2>カスタムロール</h2>
+      <p>管理者が作成したカスタムロールです。</p>
+      
+      <% if @custom_roles.any? %>
+        <div class="roles-grid">
+          <% @custom_roles.each do |role| %>
+            <div class="role-card custom">
+              <div class="role-header">
+                <h3>
+                  <%= link_to role.name, admin_role_path(role), class: "role-link" %>
+                  <span class="badge custom">カスタム</span>
+                  <span class="stat">ユーザー: <%= role.users.count %></span>
+                </h3>
+              </div>
+              
+              <p class="role-description"><%= role.description %></p>
+              
+              <% if role.permissions.any? %>
+                <div class="role-permissions">
+                  <strong>権限:</strong>
+                  <% role.permissions.group_by(&:resource_type).each do |resource, perms| %>
+                    <div class="permission-group">
+                      <span class="resource"><%= resource %></span>:
+                      <%= perms.map(&:action).join(", ") %>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+              
+              <div class="role-actions">
+                <%= link_to "詳細", admin_role_path(role), class: "btn btn-sm" %>
+                <% if can_write?('User') %>
+                  <%= link_to "編集", edit_admin_role_path(role), class: "btn btn-sm btn-outline" %>
+                  <%= link_to "権限編集", assign_permissions_admin_role_path(role), class: "btn btn-sm btn-outline" %>
+                <% end %>
+                <% if can_delete?('User') %>
+                  <%= link_to "削除", admin_role_path(role), method: :delete, 
+                             class: "btn btn-sm btn-danger",
+                             data: { confirm: "本当に削除しますか？" } %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-state">
+          <p>カスタムロールがありません。</p>
+          <% if can_write?('User') %>
+            <%= link_to "最初のロールを作成", new_admin_role_path, class: "btn btn-primary" %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -34,7 +34,7 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update task" do
-    patch task_url(@task), params: { task: { completed: @task.completed, due_date: @task.due_date, title: @task.title, user_id: @task.user_id } }
+    patch task_url(@task), params: { task: { completed: @task.completed, due_date: @task.due_date, name: @task.name, user_id: @task.user_id } }
     assert_redirected_to task_url(@task)
   end
 

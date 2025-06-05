@@ -1,0 +1,114 @@
+<% content_for :title, "ロール詳細" %>
+
+<div class="admin-role-show">
+  <div class="admin-header-section">
+    <h1>ロール詳細</h1>
+    
+    <div class="admin-actions">
+      <%= link_to "一覧に戻る", admin_roles_path, class: "btn btn-outline" %>
+      <% if can_write?('User') %>
+        <% unless @role.system_role? %>
+          <%= link_to "編集", edit_admin_role_path(@role), class: "btn btn-primary" %>
+        <% end %>
+        <%= link_to "権限管理", assign_permissions_admin_role_path(@role), class: "btn btn-outline" %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="role-details">
+    <div class="detail-section">
+      <h2>基本情報</h2>
+      <table class="detail-table">
+        <tr>
+          <th>ID</th>
+          <td><%= @role.id %></td>
+        </tr>
+        <tr>
+          <th>名前</th>
+          <td>
+            <%= @role.name %>
+            <% if @role.system_role? %>
+              <span class="badge system">システムロール</span>
+            <% else %>
+              <span class="badge custom">カスタムロール</span>
+            <% end %>
+          </td>
+        </tr>
+        <tr>
+          <th>説明</th>
+          <td><%= @role.description %></td>
+        </tr>
+        <tr>
+          <th>作成日</th>
+          <td><%= @role.created_at.strftime("%Y年%m月%d日 %H:%M") %></td>
+        </tr>
+        <tr>
+          <th>更新日</th>
+          <td><%= @role.updated_at.strftime("%Y年%m月%d日 %H:%M") %></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="detail-section">
+      <h2>権限</h2>
+      <% if @role_permissions.any? %>
+        <div class="permissions-by-resource">
+          <% @role_permissions.group_by(&:resource_type).each do |resource, perms| %>
+            <div class="resource-permissions">
+              <h3><%= resource %></h3>
+              <div class="permissions-list">
+                <% perms.each do |permission| %>
+                  <div class="permission-item">
+                    <strong><%= permission.action %></strong>
+                    <p><%= permission.description %></p>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-state">
+          <p>このロールには権限が割り当てられていません。</p>
+          <% if can_write?('User') %>
+            <%= link_to "権限を割り当てる", assign_permissions_admin_role_path(@role), class: "btn btn-primary" %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="detail-section">
+      <h2>このロールを持つユーザー</h2>
+      <% if @role_users.any? %>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>メール</th>
+              <th>名前</th>
+              <th>登録日</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @role_users.each do |user| %>
+              <tr>
+                <td><%= user.id %></td>
+                <td><%= user.email %></td>
+                <td><%= user.name.presence || "未設定" %></td>
+                <td><%= user.created_at.strftime("%Y/%m/%d") %></td>
+                <td>
+                  <%= link_to "詳細", admin_user_path(user), class: "btn btn-sm" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <div class="empty-state">
+          <p>このロールを持つユーザーはいません。</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

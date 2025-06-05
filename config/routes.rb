@@ -34,6 +34,25 @@ Rails.application.routes.draw do
     resource :challenge, only: [:new, :create]
   end
 
+  # Admin routes
+  namespace :admin do
+    root "dashboard#index"
+    resources :users do
+      member do
+        patch :toggle_status
+        get :assign_roles
+        patch :update_roles
+      end
+    end
+    resources :roles do
+      member do
+        get :assign_permissions
+        patch :update_permissions
+      end
+    end
+    resources :permissions, only: [:index, :show]
+  end
+
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check

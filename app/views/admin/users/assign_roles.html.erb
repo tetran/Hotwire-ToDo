@@ -1,0 +1,56 @@
+<% content_for :title, "ロール割り当て" %>
+
+<div class="admin-user-assign-roles">
+  <div class="admin-header-section">
+    <h1><%= @user.user_name %> のロール管理</h1>
+    
+    <div class="admin-actions">
+      <%= link_to "ユーザー詳細に戻る", admin_user_path(@user), class: "btn btn-outline" %>
+    </div>
+  </div>
+
+  <%= form_with url: update_roles_admin_user_path(@user), method: :patch, local: true do |form| %>
+    <div class="roles-form">
+      <h2>ロールの選択</h2>
+      <p>このユーザーに割り当てるロールを選択してください。</p>
+      
+      <div class="roles-grid">
+        <% @available_roles.each do |role| %>
+          <div class="role-option">
+            <label class="role-checkbox">
+              <%= check_box_tag "role_ids[]", role.id, @user_roles.include?(role), id: "role_#{role.id}" %>
+              <div class="role-info">
+                <h3>
+                  <%= role.name %>
+                  <% if role.system_role? %>
+                    <span class="badge system">システム</span>
+                  <% end %>
+                </h3>
+                <p><%= role.description %></p>
+                
+                <% if role.permissions.any? %>
+                  <div class="role-permissions">
+                    <strong>権限:</strong>
+                    <% role.permissions.group_by(&:resource_type).each do |resource, perms| %>
+                      <div class="permission-group">
+                        <span class="resource"><%= resource %></span>:
+                        <%= perms.map(&:action).join(", ") %>
+                      </div>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <div class="no-permissions">権限なし</div>
+                <% end %>
+              </div>
+            </label>
+          </div>
+        <% end %>
+      </div>
+      
+      <div class="form-actions">
+        <%= form.submit "ロールを更新", class: "btn btn-primary" %>
+        <%= link_to "キャンセル", admin_user_path(@user), class: "btn btn-outline" %>
+      </div>
+    </div>
+  <% end %>
+</div>

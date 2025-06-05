@@ -1,0 +1,76 @@
+<% content_for :title, "権限詳細" %>
+
+<div class="admin-permission-show">
+  <div class="admin-header-section">
+    <h1>権限詳細</h1>
+    
+    <div class="admin-actions">
+      <%= link_to "一覧に戻る", admin_permissions_path, class: "btn btn-outline" %>
+    </div>
+  </div>
+
+  <div class="permission-details">
+    <div class="detail-section">
+      <h2>基本情報</h2>
+      <table class="detail-table">
+        <tr>
+          <th>ID</th>
+          <td><%= @permission.id %></td>
+        </tr>
+        <tr>
+          <th>名前</th>
+          <td><%= @permission.name %></td>
+        </tr>
+        <tr>
+          <th>リソースタイプ</th>
+          <td><%= @permission.resource_type %></td>
+        </tr>
+        <tr>
+          <th>アクション</th>
+          <td><%= @permission.action %></td>
+        </tr>
+        <tr>
+          <th>説明</th>
+          <td><%= @permission.description %></td>
+        </tr>
+        <tr>
+          <th>作成日</th>
+          <td><%= @permission.created_at.strftime("%Y年%m月%d日 %H:%M") %></td>
+        </tr>
+        <tr>
+          <th>更新日</th>
+          <td><%= @permission.updated_at.strftime("%Y年%m月%d日 %H:%M") %></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="detail-section">
+      <h2>この権限を持つロール</h2>
+      <% if @permission_roles.any? %>
+        <div class="roles-list">
+          <% @permission_roles.each do |role| %>
+            <div class="role-card">
+              <h3>
+                <%= link_to role.name, admin_role_path(role) %>
+                <% if role.system_role? %>
+                  <span class="badge system">システム</span>
+                <% else %>
+                  <span class="badge custom">カスタム</span>
+                <% end %>
+              </h3>
+              <p><%= role.description %></p>
+              <div class="role-stats">
+                <span class="stat">ユーザー数: <%= role.users.count %></span>
+                <span class="stat">権限数: <%= role.permissions.count %></span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-state">
+          <p>この権限を持つロールはありません。</p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,132 @@
+<% content_for :title, "ユーザー詳細" %>
+
+<div class="admin-user-show">
+  <div class="admin-header-section">
+    <h1>ユーザー詳細</h1>
+    
+    <div class="admin-actions">
+      <%= link_to "一覧に戻る", admin_users_path, class: "btn btn-outline" %>
+      <% if can_write?('User') %>
+        <%= link_to "編集", edit_admin_user_path(@user), class: "btn btn-primary" %>
+        <%= link_to "ロール管理", assign_roles_admin_user_path(@user), class: "btn btn-outline" %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="user-details">
+    <div class="detail-section">
+      <h2>基本情報</h2>
+      <table class="detail-table">
+        <tr>
+          <th>ID</th>
+          <td><%= @user.id %></td>
+        </tr>
+        <tr>
+          <th>メールアドレス</th>
+          <td><%= @user.email %></td>
+        </tr>
+        <tr>
+          <th>名前</th>
+          <td><%= @user.name.presence || "未設定" %></td>
+        </tr>
+        <tr>
+          <th>タイムゾーン</th>
+          <td><%= @user.time_zone || "未設定" %></td>
+        </tr>
+        <tr>
+          <th>言語</th>
+          <td><%= @user.locale || "未設定" %></td>
+        </tr>
+        <tr>
+          <th>TOTP有効</th>
+          <td><%= @user.totp_enabled? ? "有効" : "無効" %></td>
+        </tr>
+        <tr>
+          <th>登録日</th>
+          <td><%= @user.created_at.strftime("%Y年%m月%d日 %H:%M") %></td>
+        </tr>
+        <tr>
+          <th>更新日</th>
+          <td><%= @user.updated_at.strftime("%Y年%m月%d日 %H:%M") %></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="detail-section">
+      <h2>ロール</h2>
+      <% if @user.roles.any? %>
+        <div class="roles-list">
+          <% @user.roles.each do |role| %>
+            <div class="role-card">
+              <h3>
+                <%= role.name %>
+                <% if role.system_role? %>
+                  <span class="badge system">システム</span>
+                <% end %>
+              </h3>
+              <p><%= role.description %></p>
+              <div class="permissions">
+                <strong>権限:</strong>
+                <% if role.permissions.any? %>
+                  <% role.permissions.group_by(&:resource_type).each do |resource, perms| %>
+                    <div class="permission-group">
+                      <span class="resource"><%= resource %></span>:
+                      <%= perms.map(&:action).join(", ") %>
+                    </div>
+                  <% end %>
+                <% else %>
+                  なし
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p>ロールが割り当てられていません。</p>
+        <% if can_write?('User') %>
+          <%= link_to "ロールを割り当てる", assign_roles_admin_user_path(@user), class: "btn btn-primary" %>
+        <% end %>
+      <% end %>
+    </div>
+
+    <div class="detail-section">
+      <h2>プロジェクト・タスク統計</h2>
+      <table class="detail-table">
+        <tr>
+          <th>参加プロジェクト数</th>
+          <td><%= @user_projects.count %></td>
+        </tr>
+        <tr>
+          <th>割り当てタスク数</th>
+          <td><%= @user_tasks_count %></td>
+        </tr>
+      </table>
+    </div>
+
+    <% if @user_projects.any? %>
+      <div class="detail-section">
+        <h2>参加プロジェクト</h2>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>プロジェクト名</th>
+              <th>タスク数</th>
+              <th>ロール</th>
+              <th>作成日</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @user_projects.each do |project| %>
+              <tr>
+                <td><%= project.display_name %></td>
+                <td><%= project.tasks.count %></td>
+                <td><%= project.owner == @user ? "オーナー" : "メンバー" %></td>
+                <td><%= project.created_at.strftime("%Y/%m/%d") %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  </div>
+</div>
