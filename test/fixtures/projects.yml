@@ -1,9 +1,13 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  user: one
-  name: MyString
+  owner: one
+  name: Test Project One
+  archived: false
+  dedicated: false
 
 two:
-  user: two
-  name: MyString
+  owner: two
+  name: Test Project Two
+  archived: false
+  dedicated: false

@@ -1,11 +1,13 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  request: one
+  suggestion_request: one
   completion_tokens: 1
   prompt_tokens: 1
+  raw_response: '{"test": "response"}'
 
 two:
-  request: two
+  suggestion_request: two
   completion_tokens: 1
   prompt_tokens: 1
+  raw_response: '{"test": "response"}'
