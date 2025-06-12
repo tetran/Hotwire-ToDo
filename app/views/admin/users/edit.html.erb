@@ -3,7 +3,7 @@
 <div class="admin-user-edit">
   <div class="admin-header-section">
     <h1>ユーザー編集</h1>
-    
+
     <div class="admin-actions">
       <%= link_to "ユーザー詳細", admin_user_path(@user), class: "btn btn-outline" %>
       <%= link_to "一覧に戻る", admin_users_path, class: "btn btn-outline" %>
@@ -25,7 +25,7 @@
 
       <div class="form-section">
         <h2>基本情報</h2>
-        
+
         <div class="form-group">
           <%= form.label :email, "メールアドレス", class: "form-label" %>
           <%= form.email_field :email, class: "form-input", required: true %>
@@ -39,7 +39,7 @@
 
       <div class="form-section">
         <h2>設定</h2>
-        
+
         <div class="form-group">
           <%= form.label :time_zone, "タイムゾーン", class: "form-label" %>
           <%= form.select :time_zone, options_for_select([
@@ -98,7 +98,7 @@
       <div class="form-actions">
         <%= form.submit "ユーザーを更新", class: "btn btn-primary" %>
         <%= link_to "キャンセル", admin_user_path(@user), class: "btn btn-outline" %>
-        <%= link_to "ロール管理", assign_roles_admin_user_path(@user), class: "btn btn-outline" %>
+        <%= link_to "ロール管理", admin_user_roles_path(@user), class: "btn btn-outline" %>
       </div>
     </div>
   <% end %>
@@ -107,7 +107,7 @@
     <h3>危険な操作</h3>
     <p>以下の操作は元に戻せません。十分注意してください。</p>
     <% if can_delete?('User') %>
-      <%= link_to "ユーザーを削除", admin_user_path(@user), method: :delete, 
+      <%= link_to "ユーザーを削除", admin_user_path(@user), method: :delete,
                  class: "btn btn-danger",
                  data: { confirm: "本当にこのユーザーを削除しますか？この操作は元に戻せません。" } %>
     <% end %>

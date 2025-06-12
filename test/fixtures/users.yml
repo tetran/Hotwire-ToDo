@@ -1,13 +1,33 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  email: one@example.com
-  password_digest: MyString
-  totp_secret: totp
+admin_user:
+  name: Admin User
+  email: admin@example.com
+  password_digest: <%= BCrypt::Password.create('password') %>
+  totp_secret: JBSWY3DPEHPK3PXP
+  totp_enabled: false
+  verified: true
 
-two:
-  name: MyString
-  email: two@example.com
-  password_digest: MyString
-  totp_secret: totp
+user_manager:
+  name: User Manager
+  email: manager@example.com
+  password_digest: <%= BCrypt::Password.create('password') %>
+  totp_secret: JBSWY3DPEHPK3PXP
+  totp_enabled: false
+  verified: true
+
+regular_user:
+  name: Regular User
+  email: user@example.com
+  password_digest: <%= BCrypt::Password.create('password') %>
+  totp_secret: JBSWY3DPEHPK3PXP
+  totp_enabled: false
+  verified: true
+
+no_role_user:
+  name: No Role User
+  email: norole@example.com
+  password_digest: <%= BCrypt::Password.create('password') %>
+  totp_secret: JBSWY3DPEHPK3PXP
+  totp_enabled: false
+  verified: true

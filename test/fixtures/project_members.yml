@@ -2,8 +2,25 @@
 
 one:
   project: one
-  user: one
+  user: regular_user
 
 two:
   project: two
-  user: two
+  user: regular_user
+
+# Each user is a member of their own inbox project
+admin_user_inbox_member:
+  project: admin_user_inbox
+  user: admin_user
+
+user_manager_inbox_member:
+  project: user_manager_inbox
+  user: user_manager
+
+regular_user_inbox_member:
+  project: regular_user_inbox
+  user: regular_user
+
+no_role_user_inbox_member:
+  project: no_role_user_inbox
+  user: no_role_user

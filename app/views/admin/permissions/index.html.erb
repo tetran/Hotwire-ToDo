@@ -10,7 +10,7 @@
     <% @permissions_by_resource.each do |resource_type, permissions| %>
       <div class="permissions-section">
         <h2><%= resource_type %> 権限</h2>
-        
+
         <div class="permissions-grid">
           <% permissions.each do |permission| %>
             <div class="permission-card">
@@ -22,9 +22,9 @@
                   <span class="stat">ロール: <%= permission.roles.count %></span>
                 </div>
               </div>
-              
+
               <p class="permission-description"><%= permission.description %></p>
-              
+
               <div class="permission-details">
                 <div class="detail-item">
                   <strong>リソース:</strong> <%= permission.resource_type %>
@@ -33,7 +33,7 @@
                   <strong>アクション:</strong> <%= permission.action %>
                 </div>
               </div>
-              
+
               <% if permission.roles.any? %>
                 <div class="permission-roles">
                   <strong>使用しているロール:</strong>
@@ -50,7 +50,7 @@
                   <span class="text-muted">どのロールでも使用されていません</span>
                 </div>
               <% end %>
-              
+
               <div class="permission-actions">
                 <%= link_to "詳細", admin_permission_path(permission), class: "btn btn-sm" %>
               </div>

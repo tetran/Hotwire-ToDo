@@ -1,14 +1,14 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  created_by: one
+  created_by: admin_user
   project: one
   name: Test Task One
   due_date: 2023-12-05
   completed: false
 
 two:
-  created_by: two
+  created_by: regular_user
   project: two
   name: Test Task Two
   due_date: 2023-12-05

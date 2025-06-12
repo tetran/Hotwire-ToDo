@@ -1,9 +1,9 @@
-<% content_for :title, "新しいロール作成" %>
+<% content_for :title, "新規ロール作成" %>
 
 <div class="admin-role-new">
   <div class="admin-header-section">
-    <h1>新しいロール作成</h1>
-    
+    <h1>新規ロール作成</h1>
+
     <div class="admin-actions">
       <%= link_to "一覧に戻る", admin_roles_path, class: "btn btn-outline" %>
     </div>
@@ -24,7 +24,7 @@
 
       <div class="form-section">
         <h2>基本情報</h2>
-        
+
         <div class="form-group">
           <%= form.label :name, "ロール名", class: "form-label" %>
           <%= form.text_field :name, class: "form-input", placeholder: "例: content_manager" %>

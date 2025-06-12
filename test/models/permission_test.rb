@@ -23,7 +23,7 @@ class PermissionTest < ActiveSupport::TestCase
   end
 
   test "should be valid with valid attributes" do
-    Permission.delete_all
+    Permission.destroy_all
     assert @permission.valid?
   end
 
@@ -60,8 +60,8 @@ class PermissionTest < ActiveSupport::TestCase
   end
 
   test "should allow same action for different resource_types" do
-    Permission.where(resource_type: "Project").delete_all
-    Permission.where(resource_type: "User").delete_all
+    Permission.where(resource_type: "Project").destroy_all
+    Permission.where(resource_type: "User").destroy_all
     Permission.create!(resource_type: "User", action: "read")
 
     @permission.resource_type = "Project"
@@ -70,7 +70,7 @@ class PermissionTest < ActiveSupport::TestCase
   end
 
   test "should allow different actions for same resource_type" do
-    Permission.where(resource_type: "User").delete_all
+    Permission.where(resource_type: "User").destroy_all
     Permission.create!(resource_type: "User", action: "read")
     @permission.resource_type = "User"
     @permission.action = "write"
@@ -86,7 +86,8 @@ class PermissionTest < ActiveSupport::TestCase
   end
 
   test "should destroy dependent role_permissions when destroyed" do
-    permission = Permission.find_by(resource_type: "User", action: "read")
+    Permission.destroy_all
+    permission = Permission.create!(resource_type: "User", action: "read")
     role = Role.create!(name: "test_role")
     RolePermission.create!(role: role, permission: permission)
 
@@ -110,7 +111,7 @@ class PermissionTest < ActiveSupport::TestCase
   end
 
   test "should accept all valid resource types" do
-    Permission.delete_all
+    Permission.destroy_all
     Permission::RESOURCE_TYPES.each do |resource_type|
       permission = Permission.new(resource_type: resource_type, action: "read")
       assert permission.valid?, "#{resource_type} should be valid"
@@ -118,7 +119,7 @@ class PermissionTest < ActiveSupport::TestCase
   end
 
   test "should accept all valid actions" do
-    Permission.delete_all
+    Permission.destroy_all
     Permission::ACTIONS.each do |action|
       permission = Permission.new(resource_type: "User", action: action)
       assert permission.valid?, "#{action} should be valid"

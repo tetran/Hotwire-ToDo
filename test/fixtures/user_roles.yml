@@ -1,3 +1,13 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-# Empty file - relationships will be created in tests as needed
+admin_user_admin_role:
+  user: admin_user
+  role: admin
+
+user_manager_user_manager_role:
+  user: user_manager
+  role: user_manager
+
+regular_user_regular_role:
+  user: regular_user
+  role: regular

@@ -8,7 +8,7 @@ class SessionsController < ApplicationController
   def create
     user = User.authenticate_by(email: params[:email], password: params[:password])
     unless user
-      redirect_to login_path(email_hint: params[:email]), error: "Email or password is invalid"
+      redirect_to login_path(email_hint: params[:email]), error: "Email or password is invalid", status: :unprocessable_entity
       return
     end
 

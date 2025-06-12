@@ -3,7 +3,7 @@
 <div class="admin-users-index">
   <div class="admin-header-section">
     <h1>ユーザー管理</h1>
-    
+
     <div class="admin-actions">
       <%= form_with url: admin_users_path, method: :get, local: true, class: "search-form" do |form| %>
         <%= form.text_field :search, placeholder: "メールまたは名前で検索", value: params[:search] %>
@@ -49,10 +49,10 @@
               <%= link_to "詳細", admin_user_path(user), class: "btn btn-sm" %>
               <% if can_write?('User') %>
                 <%= link_to "編集", edit_admin_user_path(user), class: "btn btn-sm btn-outline" %>
-                <%= link_to "ロール", assign_roles_admin_user_path(user), class: "btn btn-sm btn-outline" %>
+                <%= link_to "ロール", admin_user_roles_path(user), class: "btn btn-sm btn-outline" %>
               <% end %>
               <% if can_delete?('User') %>
-                <%= link_to "削除", admin_user_path(user), method: :delete, 
+                <%= link_to "削除", admin_user_path(user), method: :delete,
                            class: "btn btn-sm btn-danger",
                            data: { confirm: "本当に削除しますか？" } %>
               <% end %>
@@ -61,7 +61,7 @@
         <% end %>
       </tbody>
     </table>
-    
+
     <% if @users.empty? %>
       <div class="empty-state">
         <p>ユーザーが見つかりませんでした。</p>

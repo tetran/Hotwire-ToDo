@@ -22,7 +22,7 @@ class User < ApplicationRecord
   has_many :assigned_tasks, class_name: "Task", foreign_key: :assignee_id, dependent: :nullify
   # inboxプロジェクト: owner_idが自分で、dedicatedがtrueのプロジェクト。各ユーザーに1つだけ存在する。
   has_one :inbox_project, -> { where(dedicated: true) }, class_name: "Project", foreign_key: :owner_id, dependent: :destroy
-  
+
   # ロールベース認可
   has_many :user_roles, dependent: :destroy
   has_many :roles, through: :user_roles
@@ -73,6 +73,12 @@ class User < ApplicationRecord
 
   def can_manage?(resource_type)
     has_permission?(resource_type, 'manage')
+  end
+
+  def force_destroy
+    comments.destroy_all
+    project_members.destroy_all
+    destroy
   end
 
   private

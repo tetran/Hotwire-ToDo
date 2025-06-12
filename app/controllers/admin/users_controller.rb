@@ -5,10 +5,10 @@ class Admin::UsersController < Admin::ApplicationController
   def index
     @users = User.includes(:roles)
                  .order(:created_at)
-    
+
     if params[:search].present?
-      @users = @users.where("email ILIKE ? OR name ILIKE ?", 
-                           "%#{params[:search]}%", 
+      @users = @users.where("email ILIKE ? OR name ILIKE ?",
+                           "%#{params[:search]}%",
                            "%#{params[:search]}%")
     end
   end
@@ -24,7 +24,7 @@ class Admin::UsersController < Admin::ApplicationController
 
   def create
     @user = User.new(user_params)
-    
+
     if @user.save
       flash[:success] = I18n.t('admin.users.created_successfully', default: 'ユーザーを作成しました')
       redirect_to admin_user_path(@user)
@@ -46,7 +46,7 @@ class Admin::UsersController < Admin::ApplicationController
   end
 
   def destroy
-    if @user.destroy
+    if @user.force_destroy
       flash[:success] = I18n.t('admin.users.deleted_successfully', default: 'ユーザーを削除しました')
       redirect_to admin_users_path
     else

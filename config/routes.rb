@@ -37,18 +37,17 @@ Rails.application.routes.draw do
   # Admin routes
   namespace :admin do
     root "dashboard#index"
-    
+
     # RESTful user management
     resources :users, only: [:index, :show, :new, :create, :edit, :update, :destroy] do
-      resource :status, only: [:update], controller: 'user_statuses'
       resource :roles, only: [:show, :update], controller: 'user_roles'
     end
-    
+
     # RESTful role management
     resources :roles, only: [:index, :show, :new, :create, :edit, :update, :destroy] do
       resource :permissions, only: [:show, :update], controller: 'role_permissions'
     end
-    
+
     # Permissions are read-only for admin interface
     resources :permissions, only: [:index, :show]
   end

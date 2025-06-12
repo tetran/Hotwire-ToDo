@@ -13,3 +13,45 @@ module ActiveSupport
     # Add more helper methods to be used by all tests here...
   end
 end
+
+module ActionDispatch
+  class IntegrationTest
+    # Helper methods for login/logout
+    def login_as(user)
+      # Perform actual login through the login endpoint
+      if user
+        post login_path, params: {
+          email: user.email,
+          password: 'password'  # This matches the fixture password
+        }
+        # The login should succeed and redirect to the user's inbox project
+        # Follow redirects to complete the login process
+        while response.redirect?
+          follow_redirect!
+        end
+      end
+    end
+
+    def logout
+      reset_session
+    end
+
+    # Helper methods for admin tests
+    def login_as_admin
+      login_as(users(:admin_user))
+    end
+
+    def login_as_user_manager
+      login_as(users(:user_manager))
+    end
+
+    def login_as_regular_user
+      login_as(users(:regular_user))
+    end
+
+    def assert_admin_access_required
+      assert_redirected_to root_path
+      # Note: Flash message assertion might need adjustment based on actual implementation
+    end
+  end
+end
