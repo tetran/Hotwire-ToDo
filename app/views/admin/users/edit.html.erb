@@ -107,9 +107,10 @@
     <h3>危険な操作</h3>
     <p>以下の操作は元に戻せません。十分注意してください。</p>
     <% if can_delete?('User') %>
-      <%= link_to "ユーザーを削除", admin_user_path(@user), method: :delete,
-                 class: "btn btn-danger",
-                 data: { confirm: "本当にこのユーザーを削除しますか？この操作は元に戻せません。" } %>
+      <%= button_to "ユーザーを削除", admin_user_path(@user),
+            method: :delete,
+            class: "btn btn-danger",
+            data: { turbo_confirm: "本当にこのユーザーを削除しますか？この操作は元に戻せません。" } %>
     <% end %>
   </div>
 </div>

@@ -3,7 +3,7 @@
 <div class="admin-roles-index">
   <div class="admin-header-section">
     <h1>ロール管理</h1>
-    
+
     <div class="admin-actions">
       <% if can_write?('User') %>
         <%= link_to "新しいロールを作成", new_admin_role_path, class: "btn btn-primary" %>
@@ -15,7 +15,7 @@
     <div class="roles-section">
       <h2>システムロール</h2>
       <p>システムが管理する基本的なロールです。削除はできません。</p>
-      
+
       <% if @system_roles.any? %>
         <div class="roles-grid">
           <% @system_roles.each do |role| %>
@@ -27,9 +27,9 @@
                   <span class="stat">ユーザー: <%= role.users.count %></span>
                 </h3>
               </div>
-              
+
               <p class="role-description"><%= role.description %></p>
-              
+
               <% if role.permissions.any? %>
                 <div class="role-permissions">
                   <strong>権限:</strong>
@@ -41,7 +41,7 @@
                   <% end %>
                 </div>
               <% end %>
-              
+
               <div class="role-actions">
                 <%= link_to "詳細", admin_role_path(role), class: "btn btn-sm" %>
                 <% if can_write?('User') %>
@@ -59,7 +59,7 @@
     <div class="roles-section">
       <h2>カスタムロール</h2>
       <p>管理者が作成したカスタムロールです。</p>
-      
+
       <% if @custom_roles.any? %>
         <div class="roles-grid">
           <% @custom_roles.each do |role| %>
@@ -71,9 +71,9 @@
                   <span class="stat">ユーザー: <%= role.users.count %></span>
                 </h3>
               </div>
-              
+
               <p class="role-description"><%= role.description %></p>
-              
+
               <% if role.permissions.any? %>
                 <div class="role-permissions">
                   <strong>権限:</strong>
@@ -85,7 +85,7 @@
                   <% end %>
                 </div>
               <% end %>
-              
+
               <div class="role-actions">
                 <%= link_to "詳細", admin_role_path(role), class: "btn btn-sm" %>
                 <% if can_write?('User') %>
@@ -93,9 +93,10 @@
                   <%= link_to "権限編集", admin_role_permissions_path(role), class: "btn btn-sm btn-outline" %>
                 <% end %>
                 <% if can_delete?('User') %>
-                  <%= link_to "削除", admin_role_path(role), method: :delete, 
-                             class: "btn btn-sm btn-danger",
-                             data: { confirm: "本当に削除しますか？" } %>
+                  <%= button_to "削除", admin_role_path(role),
+                        method: :delete,
+                        class: "btn btn-sm btn-danger",
+                        data: { turbo_confirm: "Are you sure?" } %>
                 <% end %>
               </div>
             </div>
