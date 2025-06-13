@@ -1,18 +1,18 @@
-<% content_for :title, "ロール割り当て" %>
+<% content_for :title, "Assign Roles" %>
 
 <div class="admin-user-assign-roles">
   <div class="admin-header-section">
-    <h1><%= @user.user_name %> のロール管理</h1>
+    <h1>Role Management for <%= @user.user_name %></h1>
     
     <div class="admin-actions">
-      <%= link_to "ユーザー詳細に戻る", admin_user_path(@user), class: "btn btn-outline" %>
+      <%= link_to "Back to User Details", admin_user_path(@user), class: "btn btn-outline" %>
     </div>
   </div>
 
   <%= form_with url: admin_user_roles_path(@user), method: :patch, local: true do |form| %>
     <div class="roles-form">
-      <h2>ロールの選択</h2>
-      <p>このユーザーに割り当てるロールを選択してください。</p>
+      <h2>Select Roles</h2>
+      <p>Please select the roles to assign to this user.</p>
       
       <div class="roles-grid">
         <% @available_roles.each do |role| %>
@@ -23,14 +23,14 @@
                 <h3>
                   <%= role.name %>
                   <% if role.system_role? %>
-                    <span class="badge system">システム</span>
+                    <span class="badge system">System</span>
                   <% end %>
                 </h3>
                 <p><%= role.description %></p>
                 
                 <% if role.permissions.any? %>
                   <div class="role-permissions">
-                    <strong>権限:</strong>
+                    <strong>Permissions:</strong>
                     <% role.permissions.group_by(&:resource_type).each do |resource, perms| %>
                       <div class="permission-group">
                         <span class="resource"><%= resource %></span>:
@@ -39,7 +39,7 @@
                     <% end %>
                   </div>
                 <% else %>
-                  <div class="no-permissions">権限なし</div>
+                  <div class="no-permissions">No permissions</div>
                 <% end %>
               </div>
             </label>
@@ -48,8 +48,8 @@
       </div>
       
       <div class="form-actions">
-        <%= form.submit "ロールを更新", class: "btn btn-primary" %>
-        <%= link_to "キャンセル", admin_user_path(@user), class: "btn btn-outline" %>
+        <%= form.submit "Update Roles", class: "btn btn-primary" %>
+        <%= link_to "Cancel", admin_user_path(@user), class: "btn btn-outline" %>
       </div>
     </div>
   <% end %>

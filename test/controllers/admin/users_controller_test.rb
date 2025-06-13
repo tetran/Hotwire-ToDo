@@ -25,7 +25,7 @@ class Admin::UsersControllerTest < ActionDispatch::IntegrationTest
     login_as_admin
     get admin_users_path
     assert_response :success
-    assert_select "h1", "ユーザー管理"
+    assert_select "h1", "User Management"
   end
 
   test "should get index for user manager" do
@@ -53,7 +53,7 @@ class Admin::UsersControllerTest < ActionDispatch::IntegrationTest
     login_as_admin
     get admin_user_path(@regular_user)
     assert_response :success
-    assert_select "h1", "ユーザー詳細"
+    assert_select "h1", "User Details"
   end
 
   # New/Create tests
@@ -61,7 +61,7 @@ class Admin::UsersControllerTest < ActionDispatch::IntegrationTest
     login_as_admin
     get new_admin_user_path
     assert_response :success
-    assert_select "h1", "新規ユーザー作成"
+    assert_select "h1", "Create New User"
   end
 
   test "should create user" do
@@ -99,7 +99,7 @@ class Admin::UsersControllerTest < ActionDispatch::IntegrationTest
     login_as_admin
     get edit_admin_user_path(@regular_user)
     assert_response :success
-    assert_select "h1", "ユーザー編集"
+    assert_select "h1", "Edit User"
   end
 
   test "should update user" do

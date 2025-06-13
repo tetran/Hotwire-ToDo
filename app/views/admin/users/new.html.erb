@@ -1,11 +1,11 @@
-<% content_for :title, "新規ユーザー作成" %>
+<% content_for :title, "Create New User" %>
 
 <div class="admin-user-new">
   <div class="admin-header-section">
-    <h1>新規ユーザー作成</h1>
+    <h1>Create New User</h1>
 
     <div class="admin-actions">
-      <%= link_to "一覧に戻る", admin_users_path, class: "btn btn-outline" %>
+      <%= link_to "Back to List", admin_users_path, class: "btn btn-outline" %>
     </div>
   </div>
 
@@ -13,7 +13,7 @@
     <div class="form-container">
       <% if @user.errors.any? %>
         <div class="form-errors">
-          <h3>エラーが発生しました</h3>
+          <h3>Errors occurred</h3>
           <ul>
             <% @user.errors.full_messages.each do |message| %>
               <li><%= message %></li>
@@ -23,65 +23,65 @@
       <% end %>
 
       <div class="form-section">
-        <h2>基本情報</h2>
+        <h2>Basic Information</h2>
 
         <div class="form-group">
-          <%= form.label :email, "メールアドレス", class: "form-label" %>
+          <%= form.label :email, "Email Address", class: "form-label" %>
           <%= form.email_field :email, class: "form-input", placeholder: "user@example.com", required: true %>
         </div>
 
         <div class="form-group">
-          <%= form.label :name, "名前", class: "form-label" %>
-          <%= form.text_field :name, class: "form-input", placeholder: "ユーザー名（任意）" %>
+          <%= form.label :name, "Name", class: "form-label" %>
+          <%= form.text_field :name, class: "form-input", placeholder: "Username (optional)" %>
         </div>
 
         <div class="form-group">
-          <%= form.label :password, "パスワード", class: "form-label" %>
-          <%= form.password_field :password, class: "form-input", placeholder: "8文字以上", required: true %>
-          <small class="form-help">8文字以上で入力してください</small>
+          <%= form.label :password, "Password", class: "form-label" %>
+          <%= form.password_field :password, class: "form-input", placeholder: "8 characters or more", required: true %>
+          <small class="form-help">Please enter 8 characters or more</small>
         </div>
 
         <div class="form-group">
-          <%= form.label :password_confirmation, "パスワード確認", class: "form-label" %>
-          <%= form.password_field :password_confirmation, class: "form-input", placeholder: "パスワードを再入力", required: true %>
+          <%= form.label :password_confirmation, "Password Confirmation", class: "form-label" %>
+          <%= form.password_field :password_confirmation, class: "form-input", placeholder: "Re-enter password", required: true %>
         </div>
       </div>
 
       <div class="form-section">
-        <h2>設定</h2>
+        <h2>Settings</h2>
 
         <div class="form-group">
-          <%= form.label :time_zone, "タイムゾーン", class: "form-label" %>
+          <%= form.label :time_zone, "Time Zone", class: "form-label" %>
           <%= form.select :time_zone, options_for_select([
             ["Asia/Tokyo", "Asia/Tokyo"],
             ["UTC", "UTC"],
             ["America/New_York", "America/New_York"],
             ["Europe/London", "Europe/London"]
-          ], "Asia/Tokyo"), { prompt: "選択してください" }, { class: "form-input" } %>
+          ], "Asia/Tokyo"), { prompt: "Please select" }, { class: "form-input" } %>
         </div>
 
         <div class="form-group">
-          <%= form.label :locale, "言語", class: "form-label" %>
+          <%= form.label :locale, "Language", class: "form-label" %>
           <%= form.select :locale, options_for_select([
-            ["日本語", "ja"],
+            ["Japanese", "ja"],
             ["English", "en"]
-          ], "ja"), { prompt: "選択してください" }, { class: "form-input" } %>
+          ], "ja"), { prompt: "Please select" }, { class: "form-input" } %>
         </div>
       </div>
 
       <div class="form-actions">
-        <%= form.submit "ユーザーを作成", class: "btn btn-primary" %>
-        <%= link_to "キャンセル", admin_users_path, class: "btn btn-outline" %>
+        <%= form.submit "Create User", class: "btn btn-primary" %>
+        <%= link_to "Cancel", admin_users_path, class: "btn btn-outline" %>
       </div>
     </div>
   <% end %>
 
   <div class="form-help-section">
-    <h3>ユーザー作成について</h3>
+    <h3>About User Creation</h3>
     <ul>
-      <li>作成後にロールを割り当てることができます</li>
-      <li>ユーザーは最初の自動でinboxプロジェクトが作成されます</li>
-      <li>TOTPの設定はユーザー自身が行います</li>
+      <li>You can assign roles after creation</li>
+      <li>An inbox project will be automatically created for the user initially</li>
+      <li>TOTP settings are configured by the user themselves</li>
     </ul>
   </div>
 </div>

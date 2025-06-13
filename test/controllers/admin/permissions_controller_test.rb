@@ -26,7 +26,7 @@ class Admin::PermissionsControllerTest < ActionDispatch::IntegrationTest
     login_as_admin
     get admin_permissions_path
     assert_response :success
-    assert_select "h1", "権限管理"
+    assert_select "h1", "Permission Management"
   end
 
   test "should get index for user manager" do
@@ -39,9 +39,9 @@ class Admin::PermissionsControllerTest < ActionDispatch::IntegrationTest
     login_as_admin
     get admin_permissions_path
     assert_response :success
-    assert_select ".permissions-section h2", text: "User 権限"
-    assert_select ".permissions-section h2", text: "Project 権限"
-    assert_select ".permissions-section h2", text: "Admin 権限"
+    assert_select ".permissions-section h2", text: "User Permissions"
+    assert_select ".permissions-section h2", text: "Project Permissions"
+    assert_select ".permissions-section h2", text: "Admin Permissions"
   end
 
   test "should show all permissions with details" do
@@ -69,7 +69,7 @@ class Admin::PermissionsControllerTest < ActionDispatch::IntegrationTest
     login_as_admin
     get admin_permission_path(@user_read_permission)
     assert_response :success
-    assert_select "h1", "権限詳細"
+    assert_select "h1", "Permission Details"
   end
 
   test "should show permission information" do
@@ -114,7 +114,7 @@ class Admin::PermissionsControllerTest < ActionDispatch::IntegrationTest
     login_as_admin
     get admin_permission_path(unused_permission)
     assert_response :success
-    assert_select ".empty-state", text: /この権限を持つロールはありません。/
+    assert_select ".empty-state", text: /No roles have this permission./
   end
 
   # Navigation tests
@@ -122,7 +122,7 @@ class Admin::PermissionsControllerTest < ActionDispatch::IntegrationTest
     login_as_admin
     get admin_permission_path(@user_read_permission)
     assert_response :success
-    assert_select "a[href='#{admin_permissions_path}']", "一覧に戻る"
+    assert_select "a[href='#{admin_permissions_path}']", "Back to List"
   end
 
   # Read-only nature tests

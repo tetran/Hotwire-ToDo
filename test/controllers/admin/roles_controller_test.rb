@@ -26,15 +26,15 @@ class Admin::RolesControllerTest < ActionDispatch::IntegrationTest
     login_as_admin
     get admin_roles_path
     assert_response :success
-    assert_select "h1", "ロール管理"
+    assert_select "h1", "Role Management"
   end
 
   test "should separate system and custom roles" do
     login_as_admin
     get admin_roles_path
     assert_response :success
-    assert_select "h2", "システムロール"
-    assert_select "h2", "カスタムロール"
+    assert_select "h2", "System Roles"
+    assert_select "h2", "Custom Roles"
   end
 
   # Show tests
@@ -42,7 +42,7 @@ class Admin::RolesControllerTest < ActionDispatch::IntegrationTest
     login_as_admin
     get admin_role_path(@admin_role)
     assert_response :success
-    assert_select "h1", "ロール詳細"
+    assert_select "h1", "Role Details"
   end
 
   # New/Create tests
@@ -50,7 +50,7 @@ class Admin::RolesControllerTest < ActionDispatch::IntegrationTest
     login_as_admin
     get new_admin_role_path
     assert_response :success
-    assert_select "h1", "新規ロール作成"
+    assert_select "h1", "Create New Role"
   end
 
   test "should create custom role" do
@@ -86,7 +86,7 @@ class Admin::RolesControllerTest < ActionDispatch::IntegrationTest
     login_as_admin
     get edit_admin_role_path(@regular_role)
     assert_response :success
-    assert_select "h1", "ロール編集"
+    assert_select "h1", "Edit Role"
   end
 
   test "should update custom role" do

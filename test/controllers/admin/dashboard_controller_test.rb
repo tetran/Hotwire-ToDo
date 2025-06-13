@@ -22,7 +22,7 @@ class Admin::DashboardControllerTest < ActionDispatch::IntegrationTest
     login_as_user_manager
     get admin_root_path
     assert_response :success
-    assert_select "h1", "管理者ダッシュボード"
+    assert_select "h1", "Admin Dashboard"
   end
 
   test "should display statistics" do
@@ -32,8 +32,8 @@ class Admin::DashboardControllerTest < ActionDispatch::IntegrationTest
 
     # Check for stats cards
     assert_select "h3", count: 3
-    assert_select "h3", text: /ユーザー数/
-    assert_select "h3", text: /プロジェクト数/
-    assert_select "h3", text: /タスク数/
+    assert_select "h3", text: /Users Count/
+    assert_select "h3", text: /Projects Count/
+    assert_select "h3", text: /Tasks Count/
   end
 end

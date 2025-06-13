@@ -28,7 +28,7 @@ class Admin::UserRolesControllerTest < ActionDispatch::IntegrationTest
     login_as_admin
     get admin_user_roles_path(@regular_user)
     assert_response :success
-    assert_select "h1", text: /#{@regular_user.user_name}.*のロール管理/
+    assert_select "h1", text: /Role Management for #{@regular_user.user_name}/
   end
 
   test "should show available roles" do
@@ -160,6 +160,6 @@ class Admin::UserRolesControllerTest < ActionDispatch::IntegrationTest
     login_as_admin
     get admin_user_roles_path(@regular_user)
     assert_response :success
-    assert_select "a[href='#{admin_user_path(@regular_user)}']", "ユーザー詳細に戻る"
+    assert_select "a[href='#{admin_user_path(@regular_user)}']", "Back to User Details"
   end
 end

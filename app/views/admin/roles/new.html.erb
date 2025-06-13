@@ -1,11 +1,11 @@
-<% content_for :title, "新規ロール作成" %>
+<% content_for :title, "Create New Role" %>
 
 <div class="admin-role-new">
   <div class="admin-header-section">
-    <h1>新規ロール作成</h1>
+    <h1>Create New Role</h1>
 
     <div class="admin-actions">
-      <%= link_to "一覧に戻る", admin_roles_path, class: "btn btn-outline" %>
+      <%= link_to "Back to List", admin_roles_path, class: "btn btn-outline" %>
     </div>
   </div>
 
@@ -13,7 +13,7 @@
     <div class="form-container">
       <% if @role.errors.any? %>
         <div class="form-errors">
-          <h3>エラーが発生しました</h3>
+          <h3>Errors occurred</h3>
           <ul>
             <% @role.errors.full_messages.each do |message| %>
               <li><%= message %></li>
@@ -23,33 +23,33 @@
       <% end %>
 
       <div class="form-section">
-        <h2>基本情報</h2>
+        <h2>Basic Information</h2>
 
         <div class="form-group">
-          <%= form.label :name, "ロール名", class: "form-label" %>
-          <%= form.text_field :name, class: "form-input", placeholder: "例: content_manager" %>
-          <small class="form-help">英数字とアンダースコアのみ使用可能です</small>
+          <%= form.label :name, "Role Name", class: "form-label" %>
+          <%= form.text_field :name, class: "form-input", placeholder: "e.g. content_manager" %>
+          <small class="form-help">Only alphanumeric characters and underscores allowed</small>
         </div>
 
         <div class="form-group">
-          <%= form.label :description, "説明", class: "form-label" %>
-          <%= form.text_area :description, class: "form-input", rows: 3, placeholder: "このロールの説明を入力してください" %>
+          <%= form.label :description, "Description", class: "form-label" %>
+          <%= form.text_area :description, class: "form-input", rows: 3, placeholder: "Please enter a description for this role" %>
         </div>
       </div>
 
       <div class="form-actions">
-        <%= form.submit "ロールを作成", class: "btn btn-primary" %>
-        <%= link_to "キャンセル", admin_roles_path, class: "btn btn-outline" %>
+        <%= form.submit "Create Role", class: "btn btn-primary" %>
+        <%= link_to "Cancel", admin_roles_path, class: "btn btn-outline" %>
       </div>
     </div>
   <% end %>
 
   <div class="form-help-section">
-    <h3>ロール作成について</h3>
+    <h3>About Role Creation</h3>
     <ul>
-      <li>作成後に権限を割り当てることができます</li>
-      <li>ロール名は後から変更可能です</li>
-      <li>システムロールとは異なり、カスタムロールは削除可能です</li>
+      <li>You can assign permissions after creation</li>
+      <li>Role name can be changed later</li>
+      <li>Unlike system roles, custom roles can be deleted</li>
     </ul>
   </div>
 </div>

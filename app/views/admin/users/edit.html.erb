@@ -1,12 +1,12 @@
-<% content_for :title, "ユーザー編集" %>
+<% content_for :title, "Edit User" %>
 
 <div class="admin-user-edit">
   <div class="admin-header-section">
-    <h1>ユーザー編集</h1>
+    <h1>Edit User</h1>
 
     <div class="admin-actions">
-      <%= link_to "ユーザー詳細", admin_user_path(@user), class: "btn btn-outline" %>
-      <%= link_to "一覧に戻る", admin_users_path, class: "btn btn-outline" %>
+      <%= link_to "User Details", admin_user_path(@user), class: "btn btn-outline" %>
+      <%= link_to "Back to List", admin_users_path, class: "btn btn-outline" %>
     </div>
   </div>
 
@@ -14,7 +14,7 @@
     <div class="form-container">
       <% if @user.errors.any? %>
         <div class="form-errors">
-          <h3>エラーが発生しました</h3>
+          <h3>Errors occurred</h3>
           <ul>
             <% @user.errors.full_messages.each do |message| %>
               <li><%= message %></li>
@@ -24,62 +24,62 @@
       <% end %>
 
       <div class="form-section">
-        <h2>基本情報</h2>
+        <h2>Basic Information</h2>
 
         <div class="form-group">
-          <%= form.label :email, "メールアドレス", class: "form-label" %>
+          <%= form.label :email, "Email Address", class: "form-label" %>
           <%= form.email_field :email, class: "form-input", required: true %>
         </div>
 
         <div class="form-group">
-          <%= form.label :name, "名前", class: "form-label" %>
-          <%= form.text_field :name, class: "form-input", placeholder: "ユーザー名（任意）" %>
+          <%= form.label :name, "Name", class: "form-label" %>
+          <%= form.text_field :name, class: "form-input", placeholder: "Username (optional)" %>
         </div>
       </div>
 
       <div class="form-section">
-        <h2>設定</h2>
+        <h2>Settings</h2>
 
         <div class="form-group">
-          <%= form.label :time_zone, "タイムゾーン", class: "form-label" %>
+          <%= form.label :time_zone, "Time Zone", class: "form-label" %>
           <%= form.select :time_zone, options_for_select([
             ["Asia/Tokyo", "Asia/Tokyo"],
             ["UTC", "UTC"],
             ["America/New_York", "America/New_York"],
             ["Europe/London", "Europe/London"]
-          ], @user.time_zone), { prompt: "選択してください" }, { class: "form-input" } %>
+          ], @user.time_zone), { prompt: "Please select" }, { class: "form-input" } %>
         </div>
 
         <div class="form-group">
-          <%= form.label :locale, "言語", class: "form-label" %>
+          <%= form.label :locale, "Language", class: "form-label" %>
           <%= form.select :locale, options_for_select([
-            ["日本語", "ja"],
+            ["Japanese", "ja"],
             ["English", "en"]
-          ], @user.locale), { prompt: "選択してください" }, { class: "form-input" } %>
+          ], @user.locale), { prompt: "Please select" }, { class: "form-input" } %>
         </div>
       </div>
 
       <div class="user-info-section">
-        <h3>アカウント情報</h3>
+        <h3>Account Information</h3>
         <table class="detail-table">
           <tr>
-            <th>ユーザーID</th>
+            <th>User ID</th>
             <td><%= @user.id %></td>
           </tr>
           <tr>
-            <th>登録日</th>
+            <th>Registration Date</th>
             <td><%= @user.created_at.strftime("%Y年%m月%d日 %H:%M") %></td>
           </tr>
           <tr>
-            <th>最終更新</th>
+            <th>Last Updated</th>
             <td><%= @user.updated_at.strftime("%Y年%m月%d日 %H:%M") %></td>
           </tr>
           <tr>
-            <th>TOTP有効</th>
-            <td><%= @user.totp_enabled? ? "有効" : "無効" %></td>
+            <th>TOTP Enabled</th>
+            <td><%= @user.totp_enabled? ? "Enabled" : "Disabled" %></td>
           </tr>
           <tr>
-            <th>現在のロール</th>
+            <th>Current Roles</th>
             <td>
               <% if @user.roles.any? %>
                 <% @user.roles.each do |role| %>
@@ -88,7 +88,7 @@
                   </span>
                 <% end %>
               <% else %>
-                なし
+                None
               <% end %>
             </td>
           </tr>
@@ -96,21 +96,21 @@
       </div>
 
       <div class="form-actions">
-        <%= form.submit "ユーザーを更新", class: "btn btn-primary" %>
-        <%= link_to "キャンセル", admin_user_path(@user), class: "btn btn-outline" %>
-        <%= link_to "ロール管理", admin_user_roles_path(@user), class: "btn btn-outline" %>
+        <%= form.submit "Update User", class: "btn btn-primary" %>
+        <%= link_to "Cancel", admin_user_path(@user), class: "btn btn-outline" %>
+        <%= link_to "Role Management", admin_user_roles_path(@user), class: "btn btn-outline" %>
       </div>
     </div>
   <% end %>
 
   <div class="danger-section">
-    <h3>危険な操作</h3>
-    <p>以下の操作は元に戻せません。十分注意してください。</p>
+    <h3>Dangerous Operations</h3>
+    <p>The following operations cannot be undone. Please use with caution.</p>
     <% if can_delete?('User') %>
-      <%= button_to "ユーザーを削除", admin_user_path(@user),
+      <%= button_to "Delete User", admin_user_path(@user),
             method: :delete,
             class: "btn btn-danger",
-            data: { turbo_confirm: "本当にこのユーザーを削除しますか？この操作は元に戻せません。" } %>
+            data: { turbo_confirm: "Are you sure you want to delete this user? This operation cannot be undone." } %>
     <% end %>
   </div>
 </div>

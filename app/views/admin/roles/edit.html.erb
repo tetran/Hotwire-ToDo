@@ -1,12 +1,12 @@
-<% content_for :title, "ロール編集" %>
+<% content_for :title, "Edit Role" %>
 
 <div class="admin-role-edit">
   <div class="admin-header-section">
-    <h1>ロール編集</h1>
+    <h1>Edit Role</h1>
 
     <div class="admin-actions">
-      <%= link_to "ロール詳細", admin_role_path(@role), class: "btn btn-outline" %>
-      <%= link_to "一覧に戻る", admin_roles_path, class: "btn btn-outline" %>
+      <%= link_to "Role Details", admin_role_path(@role), class: "btn btn-outline" %>
+      <%= link_to "Back to List", admin_roles_path, class: "btn btn-outline" %>
     </div>
   </div>
 
@@ -14,7 +14,7 @@
     <div class="form-container">
       <% if @role.errors.any? %>
         <div class="form-errors">
-          <h3>エラーが発生しました</h3>
+          <h3>Errors occurred</h3>
           <ul>
             <% @role.errors.full_messages.each do |message| %>
               <li><%= message %></li>
@@ -24,49 +24,49 @@
       <% end %>
 
       <div class="form-section">
-        <h2>基本情報</h2>
+        <h2>Basic Information</h2>
 
         <% if @role.system_role? %>
           <div class="system-role-notice">
-            <p><strong>注意:</strong> これはシステムロールです。名前と説明の変更はできません。</p>
+            <p><strong>Note:</strong> This is a system role. Name and description cannot be changed.</p>
           </div>
 
           <div class="form-group">
-            <%= form.label :name, "ロール名", class: "form-label" %>
+            <%= form.label :name, "Role Name", class: "form-label" %>
             <%= form.text_field :name, class: "form-input", readonly: true %>
           </div>
 
           <div class="form-group">
-            <%= form.label :description, "説明", class: "form-label" %>
+            <%= form.label :description, "Description", class: "form-label" %>
             <%= form.text_area :description, class: "form-input", rows: 3, readonly: true %>
           </div>
         <% else %>
           <div class="form-group">
-            <%= form.label :name, "ロール名", class: "form-label" %>
-            <%= form.text_field :name, class: "form-input", placeholder: "例: content_manager" %>
-            <small class="form-help">英数字とアンダースコアのみ使用可能です</small>
+            <%= form.label :name, "Role Name", class: "form-label" %>
+            <%= form.text_field :name, class: "form-input", placeholder: "e.g. content_manager" %>
+            <small class="form-help">Only alphanumeric characters and underscores allowed</small>
           </div>
 
           <div class="form-group">
-            <%= form.label :description, "説明", class: "form-label" %>
-            <%= form.text_area :description, class: "form-input", rows: 3, placeholder: "このロールの説明を入力してください" %>
+            <%= form.label :description, "Description", class: "form-label" %>
+            <%= form.text_area :description, class: "form-input", rows: 3, placeholder: "Please enter a description for this role" %>
           </div>
         <% end %>
       </div>
 
       <div class="role-stats">
-        <h3>ロール統計</h3>
+        <h3>Role Statistics</h3>
         <ul>
-          <li>ユーザー数: <%= @role.users.count %></li>
-          <li>権限数: <%= @role.permissions.count %></li>
-          <li>タイプ: <%= @role.system_role? ? "システムロール" : "カスタムロール" %></li>
+          <li>Users: <%= @role.users.count %></li>
+          <li>Permissions: <%= @role.permissions.count %></li>
+          <li>Type: <%= @role.system_role? ? "System Role" : "Custom Role" %></li>
         </ul>
       </div>
 
       <div class="form-actions">
-        <%= form.submit "ロールを更新", class: "btn btn-primary" %>
-        <%= link_to "キャンセル", admin_role_path(@role), class: "btn btn-outline" %>
-        <%= link_to "権限管理", admin_role_permissions_path(@role), class: "btn btn-outline" %>
+        <%= form.submit "Update Role", class: "btn btn-primary" %>
+        <%= link_to "Cancel", admin_role_path(@role), class: "btn btn-outline" %>
+        <%= link_to "Permission Management", admin_role_permissions_path(@role), class: "btn btn-outline" %>
       </div>
     </div>
   <% end %>

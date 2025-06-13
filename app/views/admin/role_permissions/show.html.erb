@@ -1,22 +1,22 @@
-<% content_for :title, "権限割り当て" %>
+<% content_for :title, "Assign Permissions" %>
 
 <div class="admin-role-assign-permissions">
   <div class="admin-header-section">
-    <h1><%= @role.name %> の権限管理</h1>
+    <h1>Permission Management for <%= @role.name %></h1>
     
     <div class="admin-actions">
-      <%= link_to "ロール詳細に戻る", admin_role_path(@role), class: "btn btn-outline" %>
+      <%= link_to "Back to Role Details", admin_role_path(@role), class: "btn btn-outline" %>
     </div>
   </div>
 
   <%= form_with url: admin_role_permissions_path(@role), method: :patch, local: true do |form| %>
     <div class="permissions-form">
-      <h2>権限の選択</h2>
-      <p>このロールに割り当てる権限を選択してください。</p>
+      <h2>Select Permissions</h2>
+      <p>Please select the permissions to assign to this role.</p>
       
       <% @available_permissions.each do |resource_type, permissions| %>
         <div class="resource-section">
-          <h3><%= resource_type %> 権限</h3>
+          <h3><%= resource_type %> Permissions</h3>
           
           <div class="permissions-grid">
             <% permissions.each do |permission| %>
@@ -36,8 +36,8 @@
       <% end %>
       
       <div class="form-actions">
-        <%= form.submit "権限を更新", class: "btn btn-primary" %>
-        <%= link_to "キャンセル", admin_role_path(@role), class: "btn btn-outline" %>
+        <%= form.submit "Update Permissions", class: "btn btn-primary" %>
+        <%= link_to "Cancel", admin_role_path(@role), class: "btn btn-outline" %>
       </div>
     </div>
   <% end %>

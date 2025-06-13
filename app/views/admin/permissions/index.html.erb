@@ -1,15 +1,15 @@
-<% content_for :title, "権限管理" %>
+<% content_for :title, "Permission Management" %>
 
 <div class="admin-permissions-index">
   <div class="admin-header-section">
-    <h1>権限管理</h1>
-    <p>システムで利用可能な権限の一覧です。権限は各ロールに割り当てることで機能します。</p>
+    <h1>Permission Management</h1>
+    <p>List of permissions available in the system. Permissions function by being assigned to each role.</p>
   </div>
 
   <div class="permissions-sections">
     <% @permissions_by_resource.each do |resource_type, permissions| %>
       <div class="permissions-section">
-        <h2><%= resource_type %> 権限</h2>
+        <h2><%= resource_type %> Permissions</h2>
 
         <div class="permissions-grid">
           <% permissions.each do |permission| %>
@@ -19,7 +19,7 @@
                   <%= link_to permission.name, admin_permission_path(permission), class: "permission-link" %>
                 </h3>
                 <div class="permission-stats">
-                  <span class="stat">ロール: <%= permission.roles.count %></span>
+                  <span class="stat">Roles: <%= permission.roles.count %></span>
                 </div>
               </div>
 
@@ -27,16 +27,16 @@
 
               <div class="permission-details">
                 <div class="detail-item">
-                  <strong>リソース:</strong> <%= permission.resource_type %>
+                  <strong>Resource:</strong> <%= permission.resource_type %>
                 </div>
                 <div class="detail-item">
-                  <strong>アクション:</strong> <%= permission.action %>
+                  <strong>Action:</strong> <%= permission.action %>
                 </div>
               </div>
 
               <% if permission.roles.any? %>
                 <div class="permission-roles">
-                  <strong>使用しているロール:</strong>
+                  <strong>Roles using this permission:</strong>
                   <div class="roles-list">
                     <% permission.roles.each do |role| %>
                       <span class="role-badge <%= 'system' if role.system_role %>">
@@ -47,12 +47,12 @@
                 </div>
               <% else %>
                 <div class="no-roles">
-                  <span class="text-muted">どのロールでも使用されていません</span>
+                  <span class="text-muted">Not used by any role</span>
                 </div>
               <% end %>
 
               <div class="permission-actions">
-                <%= link_to "詳細", admin_permission_path(permission), class: "btn btn-sm" %>
+                <%= link_to "Details", admin_permission_path(permission), class: "btn btn-sm" %>
               </div>
             </div>
           <% end %>
@@ -63,7 +63,7 @@
 
   <% if @permissions_by_resource.empty? %>
     <div class="empty-state">
-      <p>権限がありません。</p>
+      <p>No permissions found.</p>
     </div>
   <% end %>
 </div>

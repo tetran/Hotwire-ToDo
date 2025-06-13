@@ -30,16 +30,16 @@ class Admin::RolePermissionsControllerTest < ActionDispatch::IntegrationTest
     login_as_admin
     get admin_role_permissions_path(@regular_role)
     assert_response :success
-    assert_select "h1", text: /#{@regular_role.name}.*の権限管理/
+    assert_select "h1", text: /Permission Management for #{@regular_role.name}/
   end
 
   test "should group permissions by resource type" do
     login_as_admin
     get admin_role_permissions_path(@regular_role)
     assert_response :success
-    assert_select ".resource-section h3", text: "User 権限"
-    assert_select ".resource-section h3", text: "Project 権限"
-    assert_select ".resource-section h3", text: "Admin 権限"
+    assert_select ".resource-section h3", text: "User Permissions"
+    assert_select ".resource-section h3", text: "Project Permissions"
+    assert_select ".resource-section h3", text: "Admin Permissions"
   end
 
   test "should show all available permissions" do
@@ -196,13 +196,13 @@ class Admin::RolePermissionsControllerTest < ActionDispatch::IntegrationTest
     login_as_admin
     get admin_role_permissions_path(@regular_role)
     assert_response :success
-    assert_select "a[href='#{admin_role_path(@regular_role)}']", "ロール詳細に戻る"
+    assert_select "a[href='#{admin_role_path(@regular_role)}']", "Back to Role Details"
   end
 
   test "should show cancel link" do
     login_as_admin
     get admin_role_permissions_path(@regular_role)
     assert_response :success
-    assert_select "a[href='#{admin_role_path(@regular_role)}']", "キャンセル"
+    assert_select "a[href='#{admin_role_path(@regular_role)}']", "Cancel"
   end
 end
