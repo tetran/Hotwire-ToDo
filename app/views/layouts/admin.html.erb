@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Hobo - 管理者画面</title>
+    <title>Hobo - Admin Panel</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -24,16 +24,16 @@
           <%= link_to "Hobo Admin", admin_root_path, class: "admin-logo" %>
           
           <ul class="admin-nav-items">
-            <li><%= link_to "ダッシュボード", admin_root_path, class: ("active" if current_page?(admin_root_path)) %></li>
-            <li><%= link_to "ユーザー", admin_users_path, class: ("active" if controller_name == "users") %></li>
-            <li><%= link_to "ロール", admin_roles_path, class: ("active" if controller_name == "roles") %></li>
-            <li><%= link_to "権限", admin_permissions_path, class: ("active" if controller_name == "permissions") %></li>
+            <li><%= link_to "Dashboard", admin_root_path, class: ("active" if current_page?(admin_root_path)) %></li>
+            <li><%= link_to "Users", admin_users_path, class: ("active" if controller_name == "users") %></li>
+            <li><%= link_to "Roles", admin_roles_path, class: ("active" if controller_name == "roles") %></li>
+            <li><%= link_to "Permissions", admin_permissions_path, class: ("active" if controller_name == "permissions") %></li>
           </ul>
           
           <div class="admin-user-menu">
-            <span>管理者: <%= current_user.user_name %></span>
-            <%= link_to "メイン画面", root_path, class: "btn btn-outline" %>
-            <%= link_to "ログアウト", logout_path, method: :delete, class: "btn btn-outline" %>
+            <span>Admin: <%= current_user.user_name %></span>
+            <%= link_to "Main App", root_path, class: "btn btn-outline" %>
+            <%= button_to "Logout", logout_path, method: :delete, class: "btn btn-outline", data: { turbo_confirm: "Are you sure you want to logout?" } %>
           </div>
         </nav>
       </div>
