@@ -1,0 +1,16 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+admin:
+  name: admin
+  description: System administrator
+  system_role: true
+
+user_manager:
+  name: user_manager
+  description: User manager
+  system_role: true
+
+regular:
+  name: regular
+  description: Regular user role
+  system_role: false

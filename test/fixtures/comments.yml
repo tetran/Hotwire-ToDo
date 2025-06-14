@@ -1,11 +1,11 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  user: one
+  user: admin_user
   task: one
-  content: MyText
+  content: 管理者からのコメント
 
 two:
-  user: two
+  user: regular_user
   task: two
-  content: MyText
+  content: ユーザーからのコメント

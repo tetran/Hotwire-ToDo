@@ -1,0 +1,36 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+user_read:
+  resource_type: User
+  action: read
+  description: Read user information
+
+user_write:
+  resource_type: User
+  action: write
+  description: Write user information
+
+user_delete:
+  resource_type: User
+  action: delete
+  description: Delete user information
+
+user_manage:
+  resource_type: User
+  action: manage
+  description: Manage users
+
+project_read:
+  resource_type: Project
+  action: read
+  description: Read project information
+
+project_write:
+  resource_type: Project
+  action: write
+  description: Write project information
+
+admin_manage:
+  resource_type: Admin
+  action: manage
+  description: Access admin panel

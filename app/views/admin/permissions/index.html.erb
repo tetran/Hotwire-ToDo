@@ -1,0 +1,69 @@
+<% content_for :title, "Permission Management" %>
+
+<div class="admin-permissions-index">
+  <div class="admin-header-section">
+    <h1>Permission Management</h1>
+    <p>List of permissions available in the system. Permissions function by being assigned to each role.</p>
+  </div>
+
+  <div class="permissions-sections">
+    <% @permissions_by_resource.each do |resource_type, permissions| %>
+      <div class="permissions-section">
+        <h2><%= resource_type %> Permissions</h2>
+
+        <div class="permissions-grid">
+          <% permissions.each do |permission| %>
+            <div class="permission-card">
+              <div class="permission-header">
+                <h3>
+                  <%= link_to permission.name, admin_permission_path(permission), class: "permission-link" %>
+                </h3>
+                <div class="permission-stats">
+                  <span class="stat">Roles: <%= permission.roles.count %></span>
+                </div>
+              </div>
+
+              <p class="permission-description"><%= permission.description %></p>
+
+              <div class="permission-details">
+                <div class="detail-item">
+                  <strong>Resource:</strong> <%= permission.resource_type %>
+                </div>
+                <div class="detail-item">
+                  <strong>Action:</strong> <%= permission.action %>
+                </div>
+              </div>
+
+              <% if permission.roles.any? %>
+                <div class="permission-roles">
+                  <strong>Roles using this permission:</strong>
+                  <div class="roles-list">
+                    <% permission.roles.each do |role| %>
+                      <span class="role-badge <%= 'system' if role.system_role %>">
+                        <%= link_to role.name, admin_role_path(role) %>
+                      </span>
+                    <% end %>
+                  </div>
+                </div>
+              <% else %>
+                <div class="no-roles">
+                  <span class="text-muted">Not used by any role</span>
+                </div>
+              <% end %>
+
+              <div class="permission-actions">
+                <%= link_to "Details", admin_permission_path(permission), class: "btn btn-sm" %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <% if @permissions_by_resource.empty? %>
+    <div class="empty-state">
+      <p>No permissions found.</p>
+    </div>
+  <% end %>
+</div>

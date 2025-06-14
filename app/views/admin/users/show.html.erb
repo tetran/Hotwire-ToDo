@@ -1,0 +1,132 @@
+<% content_for :title, "User Details" %>
+
+<div class="admin-user-show">
+  <div class="admin-header-section">
+    <h1>User Details</h1>
+    
+    <div class="admin-actions">
+      <%= link_to "Back to List", admin_users_path, class: "btn btn-outline" %>
+      <% if can_write?('User') %>
+        <%= link_to "Edit", edit_admin_user_path(@user), class: "btn btn-primary" %>
+        <%= link_to "Role Management", admin_user_roles_path(@user), class: "btn btn-outline" %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="user-details">
+    <div class="detail-section">
+      <h2>Basic Information</h2>
+      <table class="detail-table">
+        <tr>
+          <th>ID</th>
+          <td><%= @user.id %></td>
+        </tr>
+        <tr>
+          <th>Email Address</th>
+          <td><%= @user.email %></td>
+        </tr>
+        <tr>
+          <th>Name</th>
+          <td><%= @user.name.presence || "Not set" %></td>
+        </tr>
+        <tr>
+          <th>Time Zone</th>
+          <td><%= @user.time_zone || "Not set" %></td>
+        </tr>
+        <tr>
+          <th>Language</th>
+          <td><%= @user.locale || "Not set" %></td>
+        </tr>
+        <tr>
+          <th>TOTP Enabled</th>
+          <td><%= @user.totp_enabled? ? "Enabled" : "Disabled" %></td>
+        </tr>
+        <tr>
+          <th>Registration Date</th>
+          <td><%= @user.created_at.strftime("%Y年%m月%d日 %H:%M") %></td>
+        </tr>
+        <tr>
+          <th>Updated Date</th>
+          <td><%= @user.updated_at.strftime("%Y年%m月%d日 %H:%M") %></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="detail-section">
+      <h2>Roles</h2>
+      <% if @user.roles.any? %>
+        <div class="roles-list">
+          <% @user.roles.each do |role| %>
+            <div class="role-card">
+              <h3>
+                <%= role.name %>
+                <% if role.system_role? %>
+                  <span class="badge system">System</span>
+                <% end %>
+              </h3>
+              <p><%= role.description %></p>
+              <div class="permissions">
+                <strong>Permissions:</strong>
+                <% if role.permissions.any? %>
+                  <% role.permissions.group_by(&:resource_type).each do |resource, perms| %>
+                    <div class="permission-group">
+                      <span class="resource"><%= resource %></span>:
+                      <%= perms.map(&:action).join(", ") %>
+                    </div>
+                  <% end %>
+                <% else %>
+                  None
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p>No roles assigned.</p>
+        <% if can_write?('User') %>
+          <%= link_to "Assign Roles", admin_user_roles_path(@user), class: "btn btn-primary" %>
+        <% end %>
+      <% end %>
+    </div>
+
+    <div class="detail-section">
+      <h2>Project & Task Statistics</h2>
+      <table class="detail-table">
+        <tr>
+          <th>Participating Projects</th>
+          <td><%= @user_projects.count %></td>
+        </tr>
+        <tr>
+          <th>Assigned Tasks</th>
+          <td><%= @user_tasks_count %></td>
+        </tr>
+      </table>
+    </div>
+
+    <% if @user_projects.any? %>
+      <div class="detail-section">
+        <h2>Participating Projects</h2>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Project Name</th>
+              <th>Tasks Count</th>
+              <th>Role</th>
+              <th>Creation Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @user_projects.each do |project| %>
+              <tr>
+                <td><%= project.display_name %></td>
+                <td><%= project.tasks.count %></td>
+                <td><%= project.owner == @user ? "Owner" : "Member" %></td>
+                <td><%= project.created_at.strftime("%Y/%m/%d") %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+  </div>
+</div>

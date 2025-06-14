@@ -1,9 +1,38 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  user: one
-  name: MyString
+  owner: admin_user
+  name: Test Project One
+  archived: false
+  dedicated: false
 
 two:
-  user: two
-  name: MyString
+  owner: regular_user
+  name: Test Project Two
+  archived: false
+  dedicated: false
+
+# Inbox projects for each user (dedicated: true)
+admin_user_inbox:
+  owner: admin_user
+  name: inbox
+  archived: false
+  dedicated: true
+
+user_manager_inbox:
+  owner: user_manager
+  name: inbox
+  archived: false
+  dedicated: true
+
+regular_user_inbox:
+  owner: regular_user
+  name: inbox
+  archived: false
+  dedicated: true
+
+no_role_user_inbox:
+  owner: no_role_user
+  name: inbox
+  archived: false
+  dedicated: true

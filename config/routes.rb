@@ -34,6 +34,24 @@ Rails.application.routes.draw do
     resource :challenge, only: [:new, :create]
   end
 
+  # Admin routes
+  namespace :admin do
+    root "dashboard#index"
+
+    # RESTful user management
+    resources :users, only: [:index, :show, :new, :create, :edit, :update, :destroy] do
+      resource :roles, only: [:show, :update], controller: 'user_roles'
+    end
+
+    # RESTful role management
+    resources :roles, only: [:index, :show, :new, :create, :edit, :update, :destroy] do
+      resource :permissions, only: [:show, :update], controller: 'role_permissions'
+    end
+
+    # Permissions are read-only for admin interface
+    resources :permissions, only: [:index, :show]
+  end
+
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check

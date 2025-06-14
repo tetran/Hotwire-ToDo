@@ -1,0 +1,115 @@
+<% content_for :title, "Role Management" %>
+
+<div class="admin-roles-index">
+  <div class="admin-header-section">
+    <h1>Role Management</h1>
+
+    <div class="admin-actions">
+      <% if can_write?('User') %>
+        <%= link_to "Create New Role", new_admin_role_path, class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="roles-sections">
+    <div class="roles-section">
+      <h2>System Roles</h2>
+      <p>Basic roles managed by the system. Cannot be deleted.</p>
+
+      <% if @system_roles.any? %>
+        <div class="roles-grid">
+          <% @system_roles.each do |role| %>
+            <div class="role-card system">
+              <div class="role-header">
+                <h3>
+                  <%= link_to role.name, admin_role_path(role), class: "role-link" %>
+                  <span class="badge system">System</span>
+                  <span class="stat">Users: <%= role.users.count %></span>
+                </h3>
+              </div>
+
+              <p class="role-description"><%= role.description %></p>
+
+              <% if role.permissions.any? %>
+                <div class="role-permissions">
+                  <strong>Permissions:</strong>
+                  <% role.permissions.group_by(&:resource_type).each do |resource, perms| %>
+                    <div class="permission-group">
+                      <span class="resource"><%= resource %></span>:
+                      <%= perms.map(&:action).join(", ") %>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+
+              <div class="role-actions">
+                <%= link_to "Details", admin_role_path(role), class: "btn btn-sm" %>
+                <% if can_write?('User') %>
+                  <%= link_to "Edit Permissions", admin_role_permissions_path(role), class: "btn btn-sm btn-outline" %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p>No system roles found.</p>
+      <% end %>
+    </div>
+
+    <div class="roles-section">
+      <h2>Custom Roles</h2>
+      <p>Custom roles created by administrators.</p>
+
+      <% if @custom_roles.any? %>
+        <div class="roles-grid">
+          <% @custom_roles.each do |role| %>
+            <div class="role-card custom">
+              <div class="role-header">
+                <h3>
+                  <%= link_to role.name, admin_role_path(role), class: "role-link" %>
+                  <span class="badge custom">Custom</span>
+                  <span class="stat">Users: <%= role.users.count %></span>
+                </h3>
+              </div>
+
+              <p class="role-description"><%= role.description %></p>
+
+              <% if role.permissions.any? %>
+                <div class="role-permissions">
+                  <strong>Permissions:</strong>
+                  <% role.permissions.group_by(&:resource_type).each do |resource, perms| %>
+                    <div class="permission-group">
+                      <span class="resource"><%= resource %></span>:
+                      <%= perms.map(&:action).join(", ") %>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+
+              <div class="role-actions">
+                <%= link_to "Details", admin_role_path(role), class: "btn btn-sm" %>
+                <% if can_write?('User') %>
+                  <%= link_to "Edit", edit_admin_role_path(role), class: "btn btn-sm btn-outline" %>
+                  <%= link_to "Edit Permissions", admin_role_permissions_path(role), class: "btn btn-sm btn-outline" %>
+                <% end %>
+                <% if can_delete?('User') %>
+                  <%= button_to "Delete", admin_role_path(role),
+                        method: :delete,
+                        class: "btn btn-sm btn-danger",
+                        data: { turbo_confirm: "Are you sure?" } %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <div class="empty-state">
+          <p>No custom roles found.</p>
+          <% if can_write?('User') %>
+            <%= link_to "Create First Role", new_admin_role_path, class: "btn btn-primary" %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

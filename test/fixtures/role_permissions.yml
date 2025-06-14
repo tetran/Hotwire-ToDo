@@ -1,0 +1,47 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# Admin role gets all permissions
+admin_user_read:
+  role: admin
+  permission: user_read
+
+admin_user_write:
+  role: admin
+  permission: user_write
+
+admin_user_delete:
+  role: admin
+  permission: user_delete
+
+admin_user_manage:
+  role: admin
+  permission: user_manage
+
+admin_project_read:
+  role: admin
+  permission: project_read
+
+admin_project_write:
+  role: admin
+  permission: project_write
+
+admin_admin_manage:
+  role: admin
+  permission: admin_manage
+
+# User manager gets user management permissions
+user_manager_user_read:
+  role: user_manager
+  permission: user_read
+
+user_manager_user_write:
+  role: user_manager
+  permission: user_write
+
+user_manager_user_manage:
+  role: user_manager
+  permission: user_manage
+
+user_manager_admin_manage:
+  role: user_manager
+  permission: admin_manage

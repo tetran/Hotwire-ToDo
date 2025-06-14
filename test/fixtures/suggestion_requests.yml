@@ -2,7 +2,7 @@
 
 one:
   project: one
-  requested_by: one
+  requested_by: regular_user
   goal: MyString
   context: MyText
   start_date: 2024-01-08
@@ -10,7 +10,7 @@ one:
 
 two:
   project: one
-  requested_by: one
+  requested_by: regular_user
   goal: MyString
   context: MyText
   start_date: 2024-01-08

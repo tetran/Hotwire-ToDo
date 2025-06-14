@@ -1,0 +1,309 @@
+/* Admin Permissions Styles */
+
+/* Permissions Sections */
+.permissions-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.permissions-section h2 {
+  color: #2c3e50;
+  font-size: 1.5em;
+  font-weight: 600;
+  margin-bottom: 25px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #f8f9fa;
+}
+
+/* Permissions Grid */
+.permissions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.permission-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border-left: 4px solid #007bff;
+  transition: all 0.3s ease;
+}
+
+.permission-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+/* Permission Header */
+.permission-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+.permission-header h3 {
+  margin: 0;
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.permission-link {
+  color: #2c3e50;
+  text-decoration: none;
+}
+
+.permission-link:hover {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+.permission-stats {
+  display: flex;
+  gap: 10px;
+  font-size: 11px;
+  color: #6c757d;
+}
+
+.permission-stats .stat {
+  background: #f8f9fa;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+/* Permission Description */
+.permission-description {
+  color: #495057;
+  line-height: 1.5;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+/* Permission Details */
+.permission-details {
+  margin-bottom: 15px;
+}
+
+.detail-item {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 5px;
+  font-size: 13px;
+}
+
+.detail-item strong {
+  color: #495057;
+  min-width: 80px;
+}
+
+/* Permission Roles */
+.permission-roles {
+  margin-bottom: 15px;
+}
+
+.permission-roles strong {
+  color: #495057;
+  font-size: 13px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.permission-roles .roles-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.permission-roles .role-badge {
+  font-size: 11px;
+  padding: 3px 8px;
+}
+
+.permission-roles .role-badge a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.permission-roles .role-badge a:hover {
+  text-decoration: underline;
+}
+
+/* Permission Actions */
+.permission-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* No Roles State */
+.no-roles {
+  color: #6c757d;
+  font-style: italic;
+  font-size: 13px;
+}
+
+/* Permission Show Page */
+.admin-permission-show .permission-details {
+  margin-bottom: 30px;
+}
+
+/* Different border colors for different resource types */
+.permission-card[data-resource="User"] {
+  border-left-color: #28a745;
+}
+
+.permission-card[data-resource="Project"] {
+  border-left-color: #ffc107;
+}
+
+.permission-card[data-resource="Task"] {
+  border-left-color: #dc3545;
+}
+
+.permission-card[data-resource="Comment"] {
+  border-left-color: #6f42c1;
+}
+
+.permission-card[data-resource="Admin"] {
+  border-left-color: #fd7e14;
+}
+
+/* Resource Type Indicator */
+.resource-indicator {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-left: 8px;
+}
+
+.resource-indicator.user {
+  background: #d4edda;
+  color: #155724;
+}
+
+.resource-indicator.project {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.resource-indicator.task {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.resource-indicator.comment {
+  background: #e2e3f1;
+  color: #383d41;
+}
+
+.resource-indicator.admin {
+  background: #fdeaa7;
+  color: #856404;
+}
+
+/* Action Type Styling */
+.action-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.action-badge.read {
+  background: #cce5ff;
+  color: #004085;
+}
+
+.action-badge.write {
+  background: #d4edda;
+  color: #155724;
+}
+
+.action-badge.delete {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.action-badge.manage {
+  background: #ffeeba;
+  color: #856404;
+}
+
+/* Permissions by Resource (Show Page) */
+.permissions-by-resource {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.resource-permissions {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid #007bff;
+}
+
+.resource-permissions h3 {
+  color: #2c3e50;
+  font-size: 1.2em;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.permissions-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.permission-item {
+  background: white;
+  padding: 15px;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+}
+
+.permission-item strong {
+  color: #007bff;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.permission-item p {
+  color: #6c757d;
+  font-size: 13px;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .permissions-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .permissions-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .permission-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .permission-stats {
+    justify-content: flex-start;
+  }
+}

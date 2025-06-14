@@ -1,0 +1,73 @@
+<% content_for :title, "Edit Role" %>
+
+<div class="admin-role-edit">
+  <div class="admin-header-section">
+    <h1>Edit Role</h1>
+
+    <div class="admin-actions">
+      <%= link_to "Role Details", admin_role_path(@role), class: "btn btn-outline" %>
+      <%= link_to "Back to List", admin_roles_path, class: "btn btn-outline" %>
+    </div>
+  </div>
+
+  <%= form_with model: [:admin, @role], local: true do |form| %>
+    <div class="form-container">
+      <% if @role.errors.any? %>
+        <div class="form-errors">
+          <h3>Errors occurred</h3>
+          <ul>
+            <% @role.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="form-section">
+        <h2>Basic Information</h2>
+
+        <% if @role.system_role? %>
+          <div class="system-role-notice">
+            <p><strong>Note:</strong> This is a system role. Name and description cannot be changed.</p>
+          </div>
+
+          <div class="form-group">
+            <%= form.label :name, "Role Name", class: "form-label" %>
+            <%= form.text_field :name, class: "form-input", readonly: true %>
+          </div>
+
+          <div class="form-group">
+            <%= form.label :description, "Description", class: "form-label" %>
+            <%= form.text_area :description, class: "form-input", rows: 3, readonly: true %>
+          </div>
+        <% else %>
+          <div class="form-group">
+            <%= form.label :name, "Role Name", class: "form-label" %>
+            <%= form.text_field :name, class: "form-input", placeholder: "e.g. content_manager" %>
+            <small class="form-help">Only alphanumeric characters and underscores allowed</small>
+          </div>
+
+          <div class="form-group">
+            <%= form.label :description, "Description", class: "form-label" %>
+            <%= form.text_area :description, class: "form-input", rows: 3, placeholder: "Please enter a description for this role" %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="role-stats">
+        <h3>Role Statistics</h3>
+        <ul>
+          <li>Users: <%= @role.users.count %></li>
+          <li>Permissions: <%= @role.permissions.count %></li>
+          <li>Type: <%= @role.system_role? ? "System Role" : "Custom Role" %></li>
+        </ul>
+      </div>
+
+      <div class="form-actions">
+        <%= form.submit "Update Role", class: "btn btn-primary" %>
+        <%= link_to "Cancel", admin_role_path(@role), class: "btn btn-outline" %>
+        <%= link_to "Permission Management", admin_role_permissions_path(@role), class: "btn btn-outline" %>
+      </div>
+    </div>
+  <% end %>
+</div>

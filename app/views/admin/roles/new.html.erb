@@ -1,0 +1,55 @@
+<% content_for :title, "Create New Role" %>
+
+<div class="admin-role-new">
+  <div class="admin-header-section">
+    <h1>Create New Role</h1>
+
+    <div class="admin-actions">
+      <%= link_to "Back to List", admin_roles_path, class: "btn btn-outline" %>
+    </div>
+  </div>
+
+  <%= form_with model: [:admin, @role], local: true do |form| %>
+    <div class="form-container">
+      <% if @role.errors.any? %>
+        <div class="form-errors">
+          <h3>Errors occurred</h3>
+          <ul>
+            <% @role.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="form-section">
+        <h2>Basic Information</h2>
+
+        <div class="form-group">
+          <%= form.label :name, "Role Name", class: "form-label" %>
+          <%= form.text_field :name, class: "form-input", placeholder: "e.g. content_manager" %>
+          <small class="form-help">Only alphanumeric characters and underscores allowed</small>
+        </div>
+
+        <div class="form-group">
+          <%= form.label :description, "Description", class: "form-label" %>
+          <%= form.text_area :description, class: "form-input", rows: 3, placeholder: "Please enter a description for this role" %>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <%= form.submit "Create Role", class: "btn btn-primary" %>
+        <%= link_to "Cancel", admin_roles_path, class: "btn btn-outline" %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="form-help-section">
+    <h3>About Role Creation</h3>
+    <ul>
+      <li>You can assign permissions after creation</li>
+      <li>Role name can be changed later</li>
+      <li>Unlike system roles, custom roles can be deleted</li>
+    </ul>
+  </div>
+</div>

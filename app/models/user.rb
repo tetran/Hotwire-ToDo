@@ -23,6 +23,10 @@ class User < ApplicationRecord
   # inboxプロジェクト: owner_idが自分で、dedicatedがtrueのプロジェクト。各ユーザーに1つだけ存在する。
   has_one :inbox_project, -> { where(dedicated: true) }, class_name: "Project", foreign_key: :owner_id, dependent: :destroy
 
+  # ロールベース認可
+  has_many :user_roles, dependent: :destroy
+  has_many :roles, through: :user_roles
+
   before_validation :generate_totp_secret, on: :create
   after_create :create_inbox_project
 
@@ -42,6 +46,39 @@ class User < ApplicationRecord
     generate_totp_secret
     self.totp_enabled = false
     save!
+  end
+
+  # ロールベース認可メソッド
+  def admin?
+    roles.exists?(name: 'admin', system_role: true)
+  end
+
+  def has_permission?(resource_type, action)
+    roles.joins(:permissions)
+         .where(permissions: { resource_type: resource_type, action: action })
+         .exists?
+  end
+
+  def can_read?(resource_type)
+    has_permission?(resource_type, 'read') || has_permission?(resource_type, 'manage')
+  end
+
+  def can_write?(resource_type)
+    has_permission?(resource_type, 'write') || has_permission?(resource_type, 'manage')
+  end
+
+  def can_delete?(resource_type)
+    has_permission?(resource_type, 'delete') || has_permission?(resource_type, 'manage')
+  end
+
+  def can_manage?(resource_type)
+    has_permission?(resource_type, 'manage')
+  end
+
+  def force_destroy
+    comments.destroy_all
+    project_members.destroy_all
+    destroy
   end
 
   private

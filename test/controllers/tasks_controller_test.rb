@@ -6,39 +6,47 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get index" do
+    login_as_regular_user
     get tasks_url
     assert_response :success
   end
 
   test "should get new" do
-    get new_task_url
+    login_as_regular_user
+    get new_task_url(project_id: projects(:one).id)
     assert_response :success
   end
 
   test "should create task" do
+    login_as_regular_user
+
     assert_difference("Task.count") do
-      post tasks_url, params: { task: { completed: @task.completed, due_date: @task.due_date, title: @task.title, user_id: @task.user_id } }
+      post tasks_url, params: { project_id: projects(:one).id, task: { due_date: @task.due_date, name: @task.name } }
     end
 
     assert_redirected_to task_url(Task.last)
   end
 
   test "should show task" do
+    login_as_regular_user
     get task_url(@task)
     assert_response :success
   end
 
   test "should get edit" do
+    login_as_regular_user
     get edit_task_url(@task)
     assert_response :success
   end
 
   test "should update task" do
-    patch task_url(@task), params: { task: { completed: @task.completed, due_date: @task.due_date, title: @task.title, user_id: @task.user_id } }
+    login_as_regular_user
+    patch task_url(@task), params: { task: { completed: @task.completed, due_date: @task.due_date, name: @task.name } }
     assert_redirected_to task_url(@task)
   end
 
   test "should destroy task" do
+    login_as_regular_user
     assert_difference("Task.count", -1) do
       delete task_url(@task)
     end
