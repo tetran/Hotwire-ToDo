@@ -3,6 +3,7 @@ class SuggestionRequest < ApplicationRecord
 
   belongs_to :project
   belongs_to :requested_by, class_name: "User"
+  belongs_to :llm_model
   has_one :response, dependent: :destroy, class_name: "SuggestionResponse", inverse_of: :suggestion_request
 
   before_save :set_raw_request

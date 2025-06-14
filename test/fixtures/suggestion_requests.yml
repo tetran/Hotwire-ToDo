@@ -3,15 +3,17 @@
 one:
   project: one
   requested_by: regular_user
-  goal: MyString
-  context: MyText
+  llm_model: gpt_turbo
+  goal: Create a mobile app
+  context: Need to build an iOS app for task management
   start_date: 2024-01-08
-  due_date: 2024-01-08
+  due_date: 2024-01-15
 
 two:
   project: one
   requested_by: regular_user
-  goal: MyString
-  context: MyText
+  llm_model: gpt_4
+  goal: Write documentation
+  context: Technical documentation for the API
   start_date: 2024-01-08
-  due_date: 2024-01-08
+  due_date: 2024-01-10

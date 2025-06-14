@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_06_14_114243) do
+ActiveRecord::Schema[7.2].define(version: 2025_06_14_122415) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -163,6 +163,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_06_14_114243) do
     t.text "raw_request"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "llm_model_id", null: false
+    t.index ["llm_model_id"], name: "index_suggestion_requests_on_llm_model_id"
     t.index ["project_id"], name: "index_suggestion_requests_on_project_id"
     t.index ["requested_by_id"], name: "index_suggestion_requests_on_requested_by_id"
   end
@@ -226,6 +228,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_06_14_114243) do
   add_foreign_key "role_permissions", "permissions"
   add_foreign_key "role_permissions", "roles"
   add_foreign_key "suggested_tasks", "suggestion_responses"
+  add_foreign_key "suggestion_requests", "llm_models"
   add_foreign_key "suggestion_requests", "projects"
   add_foreign_key "suggestion_requests", "users", column: "requested_by_id"
   add_foreign_key "suggestion_responses", "suggestion_requests"

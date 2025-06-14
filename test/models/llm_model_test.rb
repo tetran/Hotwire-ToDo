@@ -4,18 +4,13 @@ class LlmModelTest < ActiveSupport::TestCase
   self.use_transactional_tests = false
 
   def setup
-    @provider = LlmProvider.create!(
-      name: "OpenAI",
-      api_endpoint: "https://api.openai.com/v1",
-      api_key: "test-api-key-123"
-    )
-    @model = @provider.llm_models.create!(
-      name: "gpt-4-mini",
-      display_name: "GPT-4 Mini"
-    )
+    @provider = llm_providers(:openai)
+    @model = llm_models(:gpt_4)
   end
 
   def teardown
+    SuggestionResponse.destroy_all
+    SuggestionRequest.delete_all
     LlmModel.delete_all
     LlmProvider.delete_all
   end
@@ -50,10 +45,7 @@ class LlmModelTest < ActiveSupport::TestCase
   end
 
   test "should allow same name across different providers" do
-    another_provider = LlmProvider.create!(
-      name: "Anthropic",
-      api_key: "another-key"
-    )
+    another_provider = llm_providers(:anthropic)
     model = another_provider.llm_models.new(
       name: @model.name,
       display_name: "Claude"
@@ -84,11 +76,11 @@ class LlmModelTest < ActiveSupport::TestCase
       active: true
     )
     inactive_model = @provider.llm_models.create!(
-      name: "inactive-model", 
+      name: "inactive-model",
       display_name: "Inactive Model",
       active: false
     )
-    
+
     assert_includes LlmModel.active, active_model
     assert_not_includes LlmModel.active, inactive_model
   end
@@ -104,7 +96,7 @@ class LlmModelTest < ActiveSupport::TestCase
       display_name: "Regular Model",
       default_model: false
     )
-    
+
     assert_includes LlmModel.default, default_model
     assert_not_includes LlmModel.default, regular_model
   end
@@ -120,36 +112,33 @@ class LlmModelTest < ActiveSupport::TestCase
       display_name: "First Default",
       default_model: true
     )
-    
+
     second_default = @provider.llm_models.create!(
       name: "second-default",
-      display_name: "Second Default", 
+      display_name: "Second Default",
       default_model: true
     )
-    
+
     first_default.reload
     assert_not first_default.default_model?
     assert second_default.default_model?
   end
 
   test "should allow multiple default models across different providers" do
-    another_provider = LlmProvider.create!(
-      name: "Anthropic",
-      api_key: "another-key"
-    )
-    
+    another_provider = llm_providers(:anthropic)
+
     @provider.llm_models.create!(
       name: "gpt-default",
       display_name: "GPT Default",
       default_model: true
     )
-    
+
     claude_default = another_provider.llm_models.new(
       name: "claude-default",
       display_name: "Claude Default",
       default_model: true
     )
-    
+
     assert claude_default.valid?
   end
 
@@ -159,46 +148,43 @@ class LlmModelTest < ActiveSupport::TestCase
       display_name: "First Default",
       default_model: true
     )
-    
+
     second_model = @provider.llm_models.create!(
       name: "second-model",
       display_name: "Second Model"
     )
-    
+
     second_model.update!(default_model: true)
     first_default.reload
-    
+
     assert_not first_default.default_model?
     assert second_model.default_model?
   end
 
   test "should not affect default models of other providers" do
-    another_provider = LlmProvider.create!(
-      name: "Anthropic", 
-      api_key: "another-key"
-    )
-    
+    another_provider = llm_providers(:anthropic)
+
     openai_default = @provider.llm_models.create!(
       name: "gpt-default",
       display_name: "GPT Default",
       default_model: true
     )
-    
+
     claude_default = another_provider.llm_models.create!(
       name: "claude-default",
-      display_name: "Claude Default", 
+      display_name: "Claude Default",
       default_model: true
     )
-    
+
     new_openai_default = @provider.llm_models.create!(
       name: "new-gpt-default",
       display_name: "New GPT Default",
       default_model: true
     )
-    
+
     openai_default.reload
     claude_default.reload
-    
+
     assert_not openai_default.default_model?
     assert claude_default.default_model?
     assert new_openai_default.default_model?

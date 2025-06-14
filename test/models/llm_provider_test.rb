@@ -4,23 +4,20 @@ class LlmProviderTest < ActiveSupport::TestCase
   self.use_transactional_tests = false
 
   def setup
-    @provider = LlmProvider.create!(
-      name: "OpenAI",
-      api_endpoint: "https://api.openai.com/v1",
-      api_key: "test-api-key-123",
-      organization_id: "org-123"
-    )
+    @provider = llm_providers(:openai)
   end
 
   def teardown
+    SuggestionResponse.destroy_all
+    SuggestionRequest.delete_all
     LlmModel.delete_all
     LlmProvider.delete_all
   end
 
   test "should create provider with valid attributes" do
     provider = LlmProvider.new(
-      name: "Anthropic",
-      api_endpoint: "https://api.anthropic.com",
+      name: "New LLM Provider",
+      api_endpoint: "https://newllm.example.com",
       api_key: "test-key"
     )
     assert provider.valid?
@@ -51,7 +48,7 @@ class LlmProviderTest < ActiveSupport::TestCase
     original_key = "secret-api-key-456"
     @provider.api_key = original_key
     @provider.save!
-    
+
     assert_not_equal original_key, @provider.api_key_encrypted
     assert_equal original_key, @provider.api_key
   end
@@ -76,7 +73,7 @@ class LlmProviderTest < ActiveSupport::TestCase
   test "should scope active providers" do
     active_provider = LlmProvider.create!(name: "Active", api_key: "key", active: true)
     inactive_provider = LlmProvider.create!(name: "Inactive", api_key: "key", active: false)
-    
+
     assert_includes LlmProvider.active, active_provider
     assert_not_includes LlmProvider.active, inactive_provider
   end
@@ -95,7 +92,9 @@ class LlmProviderTest < ActiveSupport::TestCase
       display_name: "GPT-4"
     )
     model_id = model.id
-    
+
+    SuggestionRequest.where(llm_model: @provider.llm_models).destroy_all
+
     @provider.destroy!
     assert_not LlmModel.exists?(model_id)
   end
