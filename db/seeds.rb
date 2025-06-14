@@ -90,8 +90,9 @@ project_manager_role.permissions = project_manager_permissions
 
 puts "Assigned permissions to roles"
 
-# Create a default admin user if it doesn't exist
+# Create admin users based on environment
 if Rails.env.development?
+  # Development environment - create default admin
   admin_user = User.find_or_create_by!(email: 'admin@example.com') do |user|
     user.password = 'password'
     user.name = 'Admin User'
@@ -101,6 +102,32 @@ if Rails.env.development?
   admin_user.roles << admin_role unless admin_user.roles.include?(admin_role)
   
   puts "Created admin user: admin@example.com (password: password)"
+elsif Rails.env.production? || Rails.env.staging?
+  # Production/Staging environment - create master user with environment variables
+  master_email = ENV['MASTER_USER_EMAIL']
+  master_password = ENV['MASTER_USER_PASSWORD']
+  
+  if master_email.present? && master_password.present?
+    master_user = User.find_or_create_by!(email: master_email) do |user|
+      user.password = master_password
+      user.password_confirmation = master_password
+      user.name = ENV['MASTER_USER_NAME'] || 'Master Admin'
+    end
+    
+    # Assign admin role to the master user
+    master_user.roles << admin_role unless master_user.roles.include?(admin_role)
+    
+    puts "Created master user: #{master_email}"
+    puts "Note: Password was set from MASTER_USER_PASSWORD environment variable"
+  else
+    puts "WARNING: Master user not created in production environment"
+    puts "Please set the following environment variables:"
+    puts "- MASTER_USER_EMAIL: Email address for master admin user"
+    puts "- MASTER_USER_PASSWORD: Secure password for master admin user"
+    puts "- MASTER_USER_NAME: Display name for master admin user (optional)"
+    puts ""
+    puts "Then run: bin/rails db:seed"
+  end
 end
 
 puts "Seed data creation completed!"
