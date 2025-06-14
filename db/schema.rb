@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_06_05_070032) do
+ActiveRecord::Schema[7.2].define(version: 2025_06_14_114243) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -60,6 +60,30 @@ ActiveRecord::Schema[7.2].define(version: 2025_06_05_070032) do
     t.datetime "updated_at", null: false
     t.index ["task_id"], name: "index_comments_on_task_id"
     t.index ["user_id"], name: "index_comments_on_user_id"
+  end
+
+  create_table "llm_models", force: :cascade do |t|
+    t.bigint "llm_provider_id", null: false
+    t.string "name", null: false
+    t.string "display_name"
+    t.boolean "active", default: true
+    t.boolean "default_model", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["default_model"], name: "index_llm_models_on_default_model"
+    t.index ["llm_provider_id", "name"], name: "index_llm_models_on_llm_provider_id_and_name", unique: true
+    t.index ["llm_provider_id"], name: "index_llm_models_on_llm_provider_id"
+  end
+
+  create_table "llm_providers", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "api_endpoint"
+    t.text "api_key_encrypted"
+    t.string "organization_id"
+    t.boolean "active", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_llm_providers_on_name", unique: true
   end
 
   create_table "permissions", force: :cascade do |t|
@@ -195,6 +219,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_06_05_070032) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "comments", "tasks"
   add_foreign_key "comments", "users"
+  add_foreign_key "llm_models", "llm_providers"
   add_foreign_key "project_members", "projects"
   add_foreign_key "project_members", "users"
   add_foreign_key "projects", "users", column: "owner_id"
