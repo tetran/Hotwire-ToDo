@@ -1,5 +1,6 @@
 class LlmModel < ApplicationRecord
   belongs_to :llm_provider
+  has_many :suggestion_requests, dependent: :restrict_with_error
   
   validates :name, presence: true, uniqueness: { scope: :llm_provider_id }
   validates :display_name, presence: true

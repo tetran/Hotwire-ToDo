@@ -1,0 +1,88 @@
+<% content_for :title, @llm_model.display_name %>
+
+<div class="admin-section">
+  <div class="section-header">
+    <div>
+      <nav class="breadcrumb">
+        <%= link_to "LLM Providers", admin_llm_providers_path %>
+        <span>/</span>
+        <%= link_to @llm_provider.name, admin_llm_provider_path(@llm_provider) %>
+        <span>/</span>
+        <span><%= @llm_model.display_name %></span>
+      </nav>
+      <h1><%= @llm_model.display_name %></h1>
+    </div>
+    <div class="actions">
+      <%= link_to "Edit Model", edit_admin_llm_provider_llm_model_path(@llm_provider, @llm_model), class: "btn btn-outline" %>
+    </div>
+  </div>
+
+  <div class="detail-grid">
+    <div class="detail-card">
+      <h3>Model Details</h3>
+      <dl class="detail-list">
+        <dt>Name</dt>
+        <dd><%= @llm_model.name %></dd>
+        
+        <dt>Display Name</dt>
+        <dd><%= @llm_model.display_name %></dd>
+        
+        <dt>Provider</dt>
+        <dd><%= link_to @llm_provider.name, admin_llm_provider_path(@llm_provider), class: "link" %></dd>
+        
+        <dt>Status</dt>
+        <dd>
+          <span class="status-badge <%= @llm_model.active? ? 'active' : 'inactive' %>">
+            <%= @llm_model.active? ? 'Active' : 'Inactive' %>
+          </span>
+        </dd>
+        
+        <dt>Default Model</dt>
+        <dd>
+          <% if @llm_model.default_model? %>
+            <span class="badge badge-primary">Yes</span>
+          <% else %>
+            <span class="text-muted">No</span>
+          <% end %>
+        </dd>
+        
+        <dt>Usage Statistics</dt>
+        <dd>
+          <%= @llm_model.suggestion_requests.count %> suggestion requests
+        </dd>
+        
+        <dt>Created</dt>
+        <dd><%= @llm_model.created_at.strftime("%Y/%m/%d %H:%M") %></dd>
+        
+        <dt>Last Updated</dt>
+        <dd><%= @llm_model.updated_at.strftime("%Y/%m/%d %H:%M") %></dd>
+      </dl>
+    </div>
+  </div>
+
+  <% if @llm_model.suggestion_requests.any? %>
+    <div class="admin-section">
+      <h2>Recent Suggestion Requests</h2>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Goal</th>
+            <th>Project</th>
+            <th>Requested By</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @llm_model.suggestion_requests.includes(:project, :requested_by).limit(10).order(created_at: :desc).each do |request| %>
+            <tr>
+              <td><%= truncate(request.goal, length: 50) %></td>
+              <td><%= request.project.display_name %></td>
+              <td><%= request.requested_by.user_name %></td>
+              <td><%= request.created_at.strftime("%Y/%m/%d %H:%M") %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
+</div>

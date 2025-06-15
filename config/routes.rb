@@ -50,6 +50,11 @@ Rails.application.routes.draw do
 
     # Permissions are read-only for admin interface
     resources :permissions, only: [:index, :show]
+
+    # LLM management
+    resources :llm_providers do
+      resources :llm_models
+    end
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

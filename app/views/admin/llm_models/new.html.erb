@@ -1,0 +1,64 @@
+<% content_for :title, "New Model for #{@llm_provider.name}" %>
+
+<div class="admin-section">
+  <div class="section-header">
+    <div>
+      <nav class="breadcrumb">
+        <%= link_to "LLM Providers", admin_llm_providers_path %>
+        <span>/</span>
+        <%= link_to @llm_provider.name, admin_llm_provider_path(@llm_provider) %>
+        <span>/</span>
+        <span>New Model</span>
+      </nav>
+      <h1>New Model for <%= @llm_provider.name %></h1>
+    </div>
+  </div>
+
+  <%= form_with model: [:admin, @llm_provider, @llm_model], local: true, class: "admin-form" do |f| %>
+    <% if @llm_model.errors.any? %>
+      <div class="error-messages">
+        <h4><%= pluralize(@llm_model.errors.count, "error") %> prohibited this model from being saved:</h4>
+        <ul>
+          <% @llm_model.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <%= f.label :name, class: "form-label required" %>
+        <%= f.text_field :name, class: "form-input", placeholder: "e.g., gpt-4-mini, claude-3-sonnet" %>
+        <small class="form-help">The exact model name as used by the API</small>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :display_name, class: "form-label required" %>
+        <%= f.text_field :display_name, class: "form-input", placeholder: "e.g., GPT-4 Mini, Claude 3 Sonnet" %>
+        <small class="form-help">Human-readable name for the model</small>
+      </div>
+
+      <div class="form-group">
+        <div class="checkbox-group">
+          <%= f.check_box :active, class: "form-checkbox", checked: true %>
+          <%= f.label :active, "Active", class: "form-label" %>
+        </div>
+        <small class="form-help">Only active models can be used</small>
+      </div>
+
+      <div class="form-group">
+        <div class="checkbox-group">
+          <%= f.check_box :default_model, class: "form-checkbox" %>
+          <%= f.label :default_model, "Default Model", class: "form-label" %>
+        </div>
+        <small class="form-help">Only one model per provider can be default</small>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <%= f.submit "Create Model", class: "btn btn-primary" %>
+      <%= link_to "Cancel", admin_llm_provider_path(@llm_provider), class: "btn btn-outline" %>
+    </div>
+  <% end %>
+</div>

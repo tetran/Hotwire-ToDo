@@ -1,0 +1,71 @@
+<% content_for :title, "Edit #{@llm_provider.name}" %>
+
+<div class="admin-section">
+  <div class="section-header">
+    <div>
+      <nav class="breadcrumb">
+        <%= link_to "LLM Providers", admin_llm_providers_path %>
+        <span>/</span>
+        <%= link_to @llm_provider.name, admin_llm_provider_path(@llm_provider) %>
+        <span>/</span>
+        <span>Edit</span>
+      </nav>
+      <h1>Edit <%= @llm_provider.name %></h1>
+    </div>
+  </div>
+
+  <%= form_with model: [:admin, @llm_provider], local: true, class: "admin-form" do |f| %>
+    <% if @llm_provider.errors.any? %>
+      <div class="error-messages">
+        <h4><%= pluralize(@llm_provider.errors.count, "error") %> prohibited this provider from being saved:</h4>
+        <ul>
+          <% @llm_provider.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <%= f.label :name, class: "form-label required" %>
+        <%= f.text_field :name, class: "form-input", placeholder: "e.g., OpenAI, Anthropic" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :api_endpoint, class: "form-label required" %>
+        <%= f.url_field :api_endpoint, class: "form-input", placeholder: "https://api.openai.com/v1" %>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :api_key, "API Key", class: "form-label" %>
+        <%= f.password_field :api_key, class: "form-input", placeholder: "Leave blank to keep current key" %>
+        <small class="form-help">
+          <% if @llm_provider.api_key_encrypted.present? %>
+            Current API key is configured. Leave blank to keep existing key.
+          <% else %>
+            No API key configured. Enter a new key.
+          <% end %>
+        </small>
+      </div>
+
+      <div class="form-group">
+        <%= f.label :organization_id, class: "form-label" %>
+        <%= f.text_field :organization_id, class: "form-input", placeholder: "Optional organization ID" %>
+      </div>
+
+      <div class="form-group">
+        <div class="checkbox-group">
+          <%= f.check_box :active, class: "form-checkbox" %>
+          <%= f.label :active, "Active", class: "form-label" %>
+        </div>
+        <small class="form-help">Only active providers can be used</small>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <%= f.submit "Update Provider", class: "btn btn-primary" %>
+      <%= link_to "Cancel", admin_llm_provider_path(@llm_provider), class: "btn btn-outline" %>
+    </div>
+  <% end %>
+</div>

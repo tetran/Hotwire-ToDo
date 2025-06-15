@@ -28,6 +28,7 @@
             <li><%= link_to "Users", admin_users_path, class: ("active" if controller_name == "users") %></li>
             <li><%= link_to "Roles", admin_roles_path, class: ("active" if controller_name == "roles") %></li>
             <li><%= link_to "Permissions", admin_permissions_path, class: ("active" if controller_name == "permissions") %></li>
+            <li><%= link_to "LLM Providers", admin_llm_providers_path, class: ("active" if ["llm_providers", "llm_models"].include?(controller_name)) %></li>
           </ul>
           
           <div class="admin-user-menu">
