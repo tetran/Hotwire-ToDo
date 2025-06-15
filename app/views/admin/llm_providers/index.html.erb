@@ -1,0 +1,57 @@
+<% content_for :title, "LLM Providers" %>
+
+<div class="admin-section">
+  <div class="section-header">
+    <h1>LLM Providers</h1>
+    <%= link_to "New Provider", new_admin_llm_provider_path, class: "btn btn-primary" %>
+  </div>
+
+  <% if @llm_providers.any? %>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>API Endpoint</th>
+          <th>Models Count</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @llm_providers.each do |provider| %>
+          <tr>
+            <td>
+              <%= link_to provider.name, admin_llm_provider_path(provider), class: "link" %>
+            </td>
+            <td><%= provider.api_endpoint %></td>
+            <td>
+              <%= provider.llm_models.count %>
+              <small>(<%= provider.llm_models.active.count %> active)</small>
+            </td>
+            <td>
+              <span class="status-badge <%= provider.active? ? 'active' : 'inactive' %>">
+                <%= provider.active? ? 'Active' : 'Inactive' %>
+              </span>
+            </td>
+            <td class="actions">
+              <%= link_to "View", admin_llm_provider_path(provider), class: "btn btn-sm" %>
+              <%= link_to "Edit", edit_admin_llm_provider_path(provider), class: "btn btn-sm btn-outline" %>
+              <%= link_to "Delete", admin_llm_provider_path(provider), 
+                          method: :delete,
+                          class: "btn btn-sm btn-danger",
+                          data: { 
+                            turbo_confirm: "Are you sure? This will also delete all associated models." 
+                          } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="empty-state">
+      <h3>No LLM Providers Found</h3>
+      <p>Get started by adding your first LLM provider.</p>
+      <%= link_to "Add Provider", new_admin_llm_provider_path, class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>

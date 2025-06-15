@@ -1,0 +1,110 @@
+<% content_for :title, @llm_provider.name %>
+
+<div class="admin-section">
+  <div class="section-header">
+    <div>
+      <nav class="breadcrumb">
+        <%= link_to "LLM Providers", admin_llm_providers_path %>
+        <span>/</span>
+        <span><%= @llm_provider.name %></span>
+      </nav>
+      <h1><%= @llm_provider.name %></h1>
+    </div>
+    <div class="actions">
+      <%= link_to "Edit Provider", edit_admin_llm_provider_path(@llm_provider), class: "btn btn-outline" %>
+      <%= link_to "New Model", new_admin_llm_provider_llm_model_path(@llm_provider), class: "btn btn-primary" %>
+    </div>
+  </div>
+
+  <div class="detail-grid">
+    <div class="detail-card">
+      <h3>Provider Details</h3>
+      <dl class="detail-list">
+        <dt>Name</dt>
+        <dd><%= @llm_provider.name %></dd>
+        
+        <dt>API Endpoint</dt>
+        <dd><%= @llm_provider.api_endpoint %></dd>
+        
+        <dt>Organization ID</dt>
+        <dd><%= @llm_provider.organization_id.presence || "Not set" %></dd>
+        
+        <dt>Status</dt>
+        <dd>
+          <span class="status-badge <%= @llm_provider.active? ? 'active' : 'inactive' %>">
+            <%= @llm_provider.active? ? 'Active' : 'Inactive' %>
+          </span>
+        </dd>
+        
+        <dt>API Key</dt>
+        <dd>
+          <% if @llm_provider.api_key_encrypted.present? %>
+            <span class="secure-field">••••••••••••••••</span>
+          <% else %>
+            <span class="text-muted">Not configured</span>
+          <% end %>
+        </dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="admin-section">
+    <div class="section-header">
+      <h2>Models (<%= @llm_models.count %>)</h2>
+      <%= link_to "Add Model", new_admin_llm_provider_llm_model_path(@llm_provider), class: "btn btn-primary" %>
+    </div>
+
+    <% if @llm_models.any? %>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Display Name</th>
+            <th>Status</th>
+            <th>Default</th>
+            <th>Usage</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @llm_models.each do |model| %>
+            <tr>
+              <td>
+                <%= link_to model.name, admin_llm_provider_llm_model_path(@llm_provider, model), class: "link" %>
+              </td>
+              <td><%= model.display_name %></td>
+              <td>
+                <span class="status-badge <%= model.active? ? 'active' : 'inactive' %>">
+                  <%= model.active? ? 'Active' : 'Inactive' %>
+                </span>
+              </td>
+              <td>
+                <% if model.default_model? %>
+                  <span class="badge badge-primary">Default</span>
+                <% end %>
+              </td>
+              <td>
+                <%= model.suggestion_requests.count %> requests
+              </td>
+              <td class="actions">
+                <%= link_to "Edit", edit_admin_llm_provider_llm_model_path(@llm_provider, model), class: "btn btn-sm btn-outline" %>
+                <%= link_to "Delete", admin_llm_provider_llm_model_path(@llm_provider, model), 
+                            method: :delete,
+                            class: "btn btn-sm btn-danger",
+                            data: { 
+                              turbo_confirm: "Are you sure you want to delete this model?" 
+                            } %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <div class="empty-state">
+        <h3>No Models Found</h3>
+        <p>Add your first model for this provider.</p>
+        <%= link_to "Add Model", new_admin_llm_provider_llm_model_path(@llm_provider), class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>
