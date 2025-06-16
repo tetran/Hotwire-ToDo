@@ -54,6 +54,7 @@ Rails.application.routes.draw do
     # LLM management
     resources :llm_providers do
       resources :llm_models
+      resources :available_models, only: [:index]
     end
   end
 
@@ -61,3 +62,4 @@ Rails.application.routes.draw do
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
 end
+

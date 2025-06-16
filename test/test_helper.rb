@@ -1,6 +1,11 @@
 ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
+require 'webmock/minitest'
+require 'mocha/minitest'
+
+# Allow local connections but block external HTTP requests during tests
+WebMock.disable_net_connect!(allow_localhost: true)
 
 module ActiveSupport
   class TestCase
@@ -58,3 +63,4 @@ module ActionDispatch
     end
   end
 end
+
