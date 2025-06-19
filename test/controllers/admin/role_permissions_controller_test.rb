@@ -64,8 +64,8 @@ class Admin::RolePermissionsControllerTest < ActionDispatch::IntegrationTest
     login_as_admin
     get admin_role_permissions_path(@regular_role)
     assert_response :success
-    assert_select ".permission-info h4", text: @user_read_permission.action
-    assert_select ".permission-info p", text: @user_read_permission.description
+    assert_select ".permission-info h4", text: permissions(:user_read).action
+    assert_select ".permission-info p", text: permissions(:user_read).description
   end
 
   # Update tests
@@ -77,16 +77,16 @@ class Admin::RolePermissionsControllerTest < ActionDispatch::IntegrationTest
     
     # Assign some permissions
     patch admin_role_permissions_path(@regular_role), params: {
-      permission_ids: [@user_read_permission.id, @user_write_permission.id]
+      permission_ids: [permissions(:user_read).id, permissions(:user_write).id]
     }
     
     assert_redirected_to admin_role_path(@regular_role)
     assert_equal "ロールの権限が更新されました。", flash[:notice]
     
     @regular_role.reload
-    assert @regular_role.permissions.include?(@user_read_permission)
-    assert @regular_role.permissions.include?(@user_write_permission)
-    assert_not @regular_role.permissions.include?(@user_delete_permission)
+    assert @regular_role.permissions.include?(permissions(:user_read))
+    assert @regular_role.permissions.include?(permissions(:user_write))
+    assert_not @regular_role.permissions.include?(permissions(:user_delete))
   end
 
   test "should replace existing permissions" do
@@ -98,13 +98,13 @@ class Admin::RolePermissionsControllerTest < ActionDispatch::IntegrationTest
     
     # Replace with different permissions
     patch admin_role_permissions_path(@user_manager_role), params: {
-      permission_ids: [@user_read_permission.id]
+      permission_ids: [permissions(:user_read).id]
     }
     
     assert_redirected_to admin_role_path(@user_manager_role)
     
     @user_manager_role.reload
-    assert_equal [@user_read_permission], @user_manager_role.permissions.to_a
+    assert_equal [permissions(:user_read)], @user_manager_role.permissions.to_a
   end
 
   test "should remove all permissions when none selected" do
@@ -128,13 +128,13 @@ class Admin::RolePermissionsControllerTest < ActionDispatch::IntegrationTest
     login_as_admin
     
     patch admin_role_permissions_path(@regular_role), params: {
-      permission_ids: [99999, @user_read_permission.id]  # Invalid ID + valid ID
+      permission_ids: [99999, permissions(:user_read).id]  # Invalid ID + valid ID
     }
     
     assert_redirected_to admin_role_path(@regular_role)
     
     @regular_role.reload
-    assert_equal [@user_read_permission], @regular_role.permissions.to_a
+    assert_equal [permissions(:user_read)], @regular_role.permissions.to_a
   end
 
   test "should affect user permissions immediately" do
@@ -153,7 +153,7 @@ class Admin::RolePermissionsControllerTest < ActionDispatch::IntegrationTest
     
     # Assign read permission to regular role
     patch admin_role_permissions_path(@regular_role), params: {
-      permission_ids: [@user_read_permission.id]
+      permission_ids: [permissions(:user_read).id]
     }
     
     # User should now have read permission
@@ -169,14 +169,14 @@ class Admin::RolePermissionsControllerTest < ActionDispatch::IntegrationTest
     original_permission_count = @admin_role.permissions.count
     
     patch admin_role_permissions_path(@admin_role), params: {
-      permission_ids: [@user_read_permission.id]
+      permission_ids: [permissions(:user_read).id]
     }
     
     assert_redirected_to admin_role_path(@admin_role)
     
     @admin_role.reload
     assert_equal 1, @admin_role.permissions.count
-    assert @admin_role.permissions.include?(@user_read_permission)
+    assert @admin_role.permissions.include?(permissions(:user_read))
   end
 
   # Authorization tests
@@ -187,7 +187,7 @@ class Admin::RolePermissionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     
     patch admin_role_permissions_path(@regular_role), params: {
-      permission_ids: [@user_read_permission.id]
+      permission_ids: [permissions(:user_read).id]
     }
     assert_redirected_to admin_role_path(@regular_role)
   end
@@ -205,7 +205,7 @@ class Admin::RolePermissionsControllerTest < ActionDispatch::IntegrationTest
       name: "limited_admin2",
       description: "Admin access without user management"
     )
-    limited_role.permissions << @admin_manage_permission
+    limited_role.permissions << permissions(:admin_manage)
     user_without_user_permissions.roles << limited_role
     
     login_as(user_without_user_permissions)
@@ -228,8 +228,8 @@ class Admin::RolePermissionsControllerTest < ActionDispatch::IntegrationTest
       name: "user_viewer2",
       description: "User viewer"
     )
-    read_only_role.permissions << @admin_manage_permission
-    read_only_role.permissions << @user_read_permission
+    read_only_role.permissions << permissions(:admin_manage)
+    read_only_role.permissions << permissions(:user_read)
     read_only_user.roles << read_only_role
     
     login_as(read_only_user)
@@ -240,7 +240,7 @@ class Admin::RolePermissionsControllerTest < ActionDispatch::IntegrationTest
     
     # Should not be able to update
     patch admin_role_permissions_path(@regular_role), params: {
-      permission_ids: [@user_read_permission.id]
+      permission_ids: [permissions(:user_read).id]
     }
     assert_redirected_to root_path
     assert_match /権限がありません/, flash[:error]
