@@ -1,5 +1,6 @@
 class Admin::UserRolesController < Admin::ApplicationController
   before_action :set_user, only: [:show, :update]
+  before_action :authorize_user_role_management
 
   # GET /admin/users/:user_id/roles
   def show
@@ -23,5 +24,14 @@ class Admin::UserRolesController < Admin::ApplicationController
 
   def set_user
     @user = User.find(params[:user_id])
+  end
+
+  def authorize_user_role_management
+    case action_name
+    when 'show'
+      authorize_read!('User')
+    when 'update'
+      authorize_write!('User')
+    end
   end
 end

@@ -156,6 +156,60 @@ class Admin::UserRolesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to admin_user_path(@regular_user)
   end
 
+  test "should require User:read permission for show action" do
+    # Create a user with only admin access but no User permissions
+    user_without_user_permissions = User.create!(
+      name: "Limited Admin",
+      email: "limited@example.com",
+      password: "password"
+    )
+    
+    # Create a custom role with only admin access
+    limited_role = Role.create!(
+      name: "limited_admin",
+      description: "Admin access without user management"
+    )
+    limited_role.permissions << permissions(:admin_manage)
+    user_without_user_permissions.roles << limited_role
+    
+    login_as(user_without_user_permissions)
+    
+    get admin_user_roles_path(@regular_user)
+    assert_redirected_to root_path
+    assert_match /権限がありません/, flash[:error]
+  end
+
+  test "should require User:write permission for update action" do
+    # Create a user with only read permissions
+    read_only_user = User.create!(
+      name: "Read Only",
+      email: "readonly@example.com", 
+      password: "password"
+    )
+    
+    # Create a role with read-only user permissions
+    read_only_role = Role.create!(
+      name: "user_viewer",
+      description: "User viewer"
+    )
+    read_only_role.permissions << permissions(:admin_manage)
+    read_only_role.permissions << permissions(:user_read)
+    read_only_user.roles << read_only_role
+    
+    login_as(read_only_user)
+    
+    # Should be able to view
+    get admin_user_roles_path(@regular_user)
+    assert_response :success
+    
+    # Should not be able to update
+    patch admin_user_roles_path(@regular_user), params: {
+      role_ids: [@user_manager_role.id]
+    }
+    assert_redirected_to root_path
+    assert_match /権限がありません/, flash[:error]
+  end
+
   test "should show back link to user details" do
     login_as_admin
     get admin_user_roles_path(@regular_user)

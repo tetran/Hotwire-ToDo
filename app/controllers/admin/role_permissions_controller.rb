@@ -1,5 +1,6 @@
 class Admin::RolePermissionsController < Admin::ApplicationController
   before_action :set_role, only: [:show, :update]
+  before_action :authorize_role_permission_management
 
   # GET /admin/roles/:role_id/permissions
   def show
@@ -23,5 +24,14 @@ class Admin::RolePermissionsController < Admin::ApplicationController
 
   def set_role
     @role = Role.find(params[:role_id])
+  end
+
+  def authorize_role_permission_management
+    case action_name
+    when 'show'
+      authorize_read!('User')  # Role management is part of user management
+    when 'update'
+      authorize_write!('User')
+    end
   end
 end
