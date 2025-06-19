@@ -192,6 +192,60 @@ class Admin::RolePermissionsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to admin_role_path(@regular_role)
   end
 
+  test "should require User:read permission for show action" do
+    # Create a user with only admin access but no User permissions
+    user_without_user_permissions = User.create!(
+      name: "Limited Admin",
+      email: "limited2@example.com",
+      password: "password"
+    )
+    
+    # Create a custom role with only admin access
+    limited_role = Role.create!(
+      name: "limited_admin2",
+      description: "Admin access without user management"
+    )
+    limited_role.permissions << @admin_manage_permission
+    user_without_user_permissions.roles << limited_role
+    
+    login_as(user_without_user_permissions)
+    
+    get admin_role_permissions_path(@regular_role)
+    assert_redirected_to root_path
+    assert_match /権限がありません/, flash[:error]
+  end
+
+  test "should require User:write permission for update action" do
+    # Create a user with only read permissions
+    read_only_user = User.create!(
+      name: "Read Only",
+      email: "readonly2@example.com",
+      password: "password"
+    )
+    
+    # Create a role with read-only user permissions
+    read_only_role = Role.create!(
+      name: "user_viewer2",
+      description: "User viewer"
+    )
+    read_only_role.permissions << @admin_manage_permission
+    read_only_role.permissions << @user_read_permission
+    read_only_user.roles << read_only_role
+    
+    login_as(read_only_user)
+    
+    # Should be able to view
+    get admin_role_permissions_path(@regular_role)
+    assert_response :success
+    
+    # Should not be able to update
+    patch admin_role_permissions_path(@regular_role), params: {
+      permission_ids: [@user_read_permission.id]
+    }
+    assert_redirected_to root_path
+    assert_match /権限がありません/, flash[:error]
+  end
+
   test "should show back link to role details" do
     login_as_admin
     get admin_role_permissions_path(@regular_role)
