@@ -1,5 +1,7 @@
 class Admin::LlmModelsController < Admin::ApplicationController
-  before_action :require_admin_access
+  before_action :authorize_admin_read!, only: [:index, :show]
+  before_action :authorize_admin_write!, only: [:new, :create, :edit, :update]
+  before_action :authorize_admin_delete!, only: [:destroy]
   before_action :set_llm_provider
   before_action :set_llm_model, only: [:show, :edit, :update, :destroy]
 

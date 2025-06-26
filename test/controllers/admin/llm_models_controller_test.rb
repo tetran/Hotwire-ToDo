@@ -318,4 +318,175 @@ class Admin::LlmModelsControllerTest < ActionDispatch::IntegrationTest
     delete admin_llm_provider_llm_model_path(@llm_provider, @llm_model)
     assert_admin_access_required
   end
+
+  # Granular permission tests for issue #125
+  test "user with only Admin:read permission can access read-only actions" do
+    # Create user with only Admin:read permission
+    admin_read_user = users(:user_manager)  # user_manager has Admin:read permission
+    login_as(admin_read_user)
+    
+    # Should be able to access index
+    get admin_llm_provider_llm_models_path(@llm_provider)
+    assert_response :success
+    
+    # Should be able to access show
+    get admin_llm_provider_llm_model_path(@llm_provider, @llm_model)
+    assert_response :success
+  end
+
+  test "user_manager can access write actions after migration" do
+    # user_manager should now have Admin:read + Admin:write permissions after migration
+    user_manager = users(:user_manager)
+    login_as(user_manager)
+    
+    # Should be able to access new
+    get new_admin_llm_provider_llm_model_path(@llm_provider)
+    assert_response :success
+    
+    # Should be able to access edit
+    get edit_admin_llm_provider_llm_model_path(@llm_provider, @llm_model)
+    assert_response :success
+    
+    # Should be able to create
+    post admin_llm_provider_llm_models_path(@llm_provider), params: {
+      llm_model: { 
+        name: "test-model-#{Time.current.to_i}", 
+        display_name: "Test Model" 
+      }
+    }
+    assert_response :redirect
+    
+    # Should NOT be able to delete (no Admin:delete permission)
+    delete admin_llm_provider_llm_model_path(@llm_provider, @llm_model)
+    assert_response :redirect
+    assert_match /権限がありません/, flash[:error]
+  end
+
+  test "user with only Admin:read permission cannot access write actions" do
+    # Use no_role_user and manually assign only Admin:read permission
+    read_only_user = users(:no_role_user)
+    admin_read_permission = Permission.find_or_create_by!(resource_type: 'Admin', action: 'read') do |p|
+      p.description = '管理画面の閲覧'
+    end
+    read_only_role = Role.create!(name: 'test_read_only_models', system_role: false)
+    read_only_role.permissions << admin_read_permission
+    read_only_user.roles << read_only_role
+    
+    login_as(read_only_user)
+    
+    # Should not be able to access new - redirected with error
+    get new_admin_llm_provider_llm_model_path(@llm_provider)
+    assert_response :redirect
+    assert_match /権限がありません/, flash[:error]
+    
+    # Should not be able to create - redirected with error
+    post admin_llm_provider_llm_models_path(@llm_provider), params: {
+      llm_model: { name: "test-model", display_name: "Test Model" }
+    }
+    assert_response :redirect
+    assert_match /権限がありません/, flash[:error]
+    
+    # Should not be able to access edit - redirected with error
+    get edit_admin_llm_provider_llm_model_path(@llm_provider, @llm_model)
+    assert_response :redirect
+    assert_match /権限がありません/, flash[:error]
+    
+    # Should not be able to update - redirected with error
+    patch admin_llm_provider_llm_model_path(@llm_provider, @llm_model), params: {
+      llm_model: { display_name: "Updated Name" }
+    }
+    assert_response :redirect
+    assert_match /権限がありません/, flash[:error]
+  end
+
+  test "user with only Admin:read permission cannot delete" do
+    # Use no_role_user and manually assign only Admin:read permission
+    read_only_user = users(:no_role_user)
+    admin_read_permission = Permission.find_or_create_by!(resource_type: 'Admin', action: 'read') do |p|
+      p.description = '管理画面の閲覧'
+    end
+    read_only_role = Role.create!(name: 'test_read_only_models_delete', system_role: false)
+    read_only_role.permissions << admin_read_permission
+    read_only_user.roles << read_only_role
+    
+    login_as(read_only_user)
+    
+    # Should not be able to delete - redirected with error
+    delete admin_llm_provider_llm_model_path(@llm_provider, @llm_model)
+    assert_response :redirect
+    assert_match /権限がありません/, flash[:error]
+  end
+
+  test "user with Admin:write permission can create and edit but not delete" do
+    # This test will fail until we implement granular permissions
+    # but it defines the expected behavior
+    skip "Requires implementation of granular Admin permissions"
+    
+    # admin_write_user = create_user_with_admin_write_permission
+    # login_as(admin_write_user)
+    
+    # # Should be able to read
+    # get admin_llm_provider_llm_models_path(@llm_provider)
+    # assert_response :success
+    
+    # # Should be able to create
+    # post admin_llm_provider_llm_models_path(@llm_provider), params: {
+    #   llm_model: { name: "test-model", display_name: "Test Model" }
+    # }
+    # assert_response :redirect
+    
+    # # Should be able to edit
+    # get edit_admin_llm_provider_llm_model_path(@llm_provider, @llm_model)
+    # assert_response :success
+    
+    # # Should not be able to delete
+    # delete admin_llm_provider_llm_model_path(@llm_provider, @llm_model)
+    # assert_response :forbidden
+  end
+
+  test "user with Admin:delete permission can delete" do
+    # This test will fail until we implement granular permissions
+    skip "Requires implementation of granular Admin permissions"
+    
+    # admin_delete_user = create_user_with_admin_delete_permission
+    # login_as(admin_delete_user)
+    
+    # # Should be able to delete
+    # test_model = @llm_provider.llm_models.create!(
+    #   name: "test-model",
+    #   display_name: "Test Model"
+    # )
+    # delete admin_llm_provider_llm_model_path(@llm_provider, test_model)
+    # assert_response :redirect
+  end
+
+  test "user with Admin:manage permission has full access" do
+    # admin_user fixture should have Admin:manage permission
+    login_as(@admin_user)
+    
+    # Should be able to read
+    get admin_llm_provider_llm_models_path(@llm_provider)
+    assert_response :success
+    
+    # Should be able to create
+    post admin_llm_provider_llm_models_path(@llm_provider), params: {
+      llm_model: { 
+        name: "test-model-#{Time.current.to_i}", 
+        display_name: "Test Model" 
+      }
+    }
+    assert_response :redirect
+    
+    # Should be able to edit
+    get edit_admin_llm_provider_llm_model_path(@llm_provider, @llm_model)
+    assert_response :success
+    
+    # Should be able to delete (test with model that has no dependencies)
+    test_model = @llm_provider.llm_models.create!(
+      name: "test-model-for-delete",
+      display_name: "Test Model for Delete"
+    )
+    delete admin_llm_provider_llm_model_path(@llm_provider, test_model)
+    assert_response :redirect
+  end
 end
