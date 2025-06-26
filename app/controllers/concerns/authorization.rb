@@ -67,7 +67,43 @@ module Authorization
     current_user&.can_manage?(resource_type)
   end
 
-  def handle_authorization_failure(resource_type, action)
+  def authorize_user_read!
+    unless current_user&.can_read?('User')
+      handle_authorization_failure('User', 'read', admin_root_path)
+    end
+  end
+
+  def authorize_user_write!
+    unless current_user&.can_write?('User')
+      handle_authorization_failure('User', 'write', admin_root_path)
+    end
+  end
+
+  def authorize_user_delete!
+    unless current_user&.can_delete?('User')
+      handle_authorization_failure('User', 'delete', admin_root_path)
+    end
+  end
+
+  def authorize_admin_read!
+    unless current_user&.can_read?('Admin')
+      handle_authorization_failure('Admin', 'read', root_path)
+    end
+  end
+
+  def authorize_admin_write!
+    unless current_user&.can_write?('Admin')
+      handle_authorization_failure('Admin', 'write', admin_root_path)
+    end
+  end
+
+  def authorize_admin_delete!
+    unless current_user&.can_delete?('Admin')
+      handle_authorization_failure('Admin', 'delete', admin_root_path)
+    end
+  end
+
+  def handle_authorization_failure(resource_type, action, redirect_path = root_path)
     if request.xhr? || request.format.turbo_stream?
       head :forbidden
     else
@@ -77,7 +113,7 @@ module Authorization
         action: I18n.t("actions.#{action}", default: action),
         default: "#{resource_type}への#{action}権限がありません"
       )
-      redirect_to root_path
+      redirect_to redirect_path
     end
   end
 end

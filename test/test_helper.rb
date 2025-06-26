@@ -20,6 +20,9 @@ module ActionDispatch
     def login_as(user)
       # Perform actual login through the login endpoint
       if user
+        # Set user locale to Japanese for consistent test behavior
+        user.update!(locale: 'ja')
+
         post login_path, params: {
           email: user.email,
           password: 'password'  # This matches the fixture password

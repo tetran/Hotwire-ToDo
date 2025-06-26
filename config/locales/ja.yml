@@ -67,3 +67,23 @@ ja:
       long: "%Y/%m/%d %H:%M:%S"
   project:
     inbox: "インボックス"
+  authorization:
+    access_denied: "%{resource}への%{action}権限がありません"
+    admin_access_denied: "管理者権限が必要です"
+    user_read_denied: "ユーザー閲覧権限が必要です"
+    user_write_denied: "ユーザー編集権限が必要です"
+    user_delete_denied: "ユーザー削除権限が必要です"
+    admin_read_denied: "管理者閲覧権限が必要です"
+    admin_write_denied: "管理者編集権限が必要です"
+    admin_delete_denied: "管理者削除権限が必要です"
+  resources:
+    user: "ユーザー"
+    admin: "管理者"
+    project: "プロジェクト"
+    task: "タスク"
+    comment: "コメント"
+  actions:
+    read: "閲覧"
+    write: "編集"
+    delete: "削除"
+    manage: "管理"

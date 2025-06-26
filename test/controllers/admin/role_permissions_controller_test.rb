@@ -53,7 +53,7 @@ class Admin::RolePermissionsControllerTest < ActionDispatch::IntegrationTest
     login_as_admin
     get admin_role_permissions_path(@admin_role)
     assert_response :success
-    
+
     # Admin role should have all permissions checked
     @admin_role.permissions.each do |permission|
       assert_select "input[type=checkbox][value='#{permission.id}'][checked]"
@@ -71,18 +71,18 @@ class Admin::RolePermissionsControllerTest < ActionDispatch::IntegrationTest
   # Update tests
   test "should update role permissions" do
     login_as_admin
-    
+
     # Regular role starts with no permissions
     assert @regular_role.permissions.empty?
-    
+
     # Assign some permissions
     patch admin_role_permissions_path(@regular_role), params: {
       permission_ids: [permissions(:user_read).id, permissions(:user_write).id]
     }
-    
+
     assert_redirected_to admin_role_path(@regular_role)
     assert_equal "ロールの権限が更新されました。", flash[:notice]
-    
+
     @regular_role.reload
     assert @regular_role.permissions.include?(permissions(:user_read))
     assert @regular_role.permissions.include?(permissions(:user_write))
@@ -91,71 +91,71 @@ class Admin::RolePermissionsControllerTest < ActionDispatch::IntegrationTest
 
   test "should replace existing permissions" do
     login_as_admin
-    
+
     # User manager starts with some permissions
     original_permissions = @user_manager_role.permissions.to_a
     assert original_permissions.any?
-    
+
     # Replace with different permissions
     patch admin_role_permissions_path(@user_manager_role), params: {
       permission_ids: [permissions(:user_read).id]
     }
-    
+
     assert_redirected_to admin_role_path(@user_manager_role)
-    
+
     @user_manager_role.reload
     assert_equal [permissions(:user_read)], @user_manager_role.permissions.to_a
   end
 
   test "should remove all permissions when none selected" do
     login_as_admin
-    
+
     # Admin role starts with permissions
     assert @admin_role.permissions.any?
-    
+
     patch admin_role_permissions_path(@admin_role), params: {
       permission_ids: []
     }
-    
+
     assert_redirected_to admin_role_path(@admin_role)
     assert_equal "ロールの権限が更新されました。", flash[:notice]
-    
+
     @admin_role.reload
     assert @admin_role.permissions.empty?
   end
 
   test "should handle invalid permission IDs gracefully" do
     login_as_admin
-    
+
     patch admin_role_permissions_path(@regular_role), params: {
       permission_ids: [99999, permissions(:user_read).id]  # Invalid ID + valid ID
     }
-    
+
     assert_redirected_to admin_role_path(@regular_role)
-    
+
     @regular_role.reload
     assert_equal [permissions(:user_read)], @regular_role.permissions.to_a
   end
 
   test "should affect user permissions immediately" do
     login_as_admin
-    
+
     # Create a user with the regular role
     test_user = User.create!(
       name: "Test User",
-      email: "test@example.com", 
+      email: "test@example.com",
       password: "password"
     )
     test_user.roles << @regular_role
-    
+
     # Regular role has no permissions initially
     assert_not test_user.has_permission?('User', 'read')
-    
+
     # Assign read permission to regular role
     patch admin_role_permissions_path(@regular_role), params: {
       permission_ids: [permissions(:user_read).id]
     }
-    
+
     # User should now have read permission
     test_user.reload
     assert test_user.has_permission?('User', 'read')
@@ -163,17 +163,17 @@ class Admin::RolePermissionsControllerTest < ActionDispatch::IntegrationTest
 
   test "should maintain system role restrictions" do
     login_as_admin
-    
+
     # Even admin can modify system role permissions in this interface
     # This tests that the permission system itself works
     original_permission_count = @admin_role.permissions.count
-    
+
     patch admin_role_permissions_path(@admin_role), params: {
       permission_ids: [permissions(:user_read).id]
     }
-    
+
     assert_redirected_to admin_role_path(@admin_role)
-    
+
     @admin_role.reload
     assert_equal 1, @admin_role.permissions.count
     assert @admin_role.permissions.include?(permissions(:user_read))
@@ -182,10 +182,10 @@ class Admin::RolePermissionsControllerTest < ActionDispatch::IntegrationTest
   # Authorization tests
   test "user manager can assign permissions" do
     login_as_user_manager
-    
+
     get admin_role_permissions_path(@regular_role)
     assert_response :success
-    
+
     patch admin_role_permissions_path(@regular_role), params: {
       permission_ids: [permissions(:user_read).id]
     }
@@ -199,7 +199,7 @@ class Admin::RolePermissionsControllerTest < ActionDispatch::IntegrationTest
       email: "limited2@example.com",
       password: "password"
     )
-    
+
     # Create a custom role with only admin access
     limited_role = Role.create!(
       name: "limited_admin2",
@@ -207,9 +207,9 @@ class Admin::RolePermissionsControllerTest < ActionDispatch::IntegrationTest
     )
     limited_role.permissions << permissions(:admin_manage)
     user_without_user_permissions.roles << limited_role
-    
+
     login_as(user_without_user_permissions)
-    
+
     get admin_role_permissions_path(@regular_role)
     assert_redirected_to root_path
     assert_match /権限がありません/, flash[:error]
@@ -222,7 +222,7 @@ class Admin::RolePermissionsControllerTest < ActionDispatch::IntegrationTest
       email: "readonly2@example.com",
       password: "password"
     )
-    
+
     # Create a role with read-only user permissions
     read_only_role = Role.create!(
       name: "user_viewer2",
@@ -231,13 +231,13 @@ class Admin::RolePermissionsControllerTest < ActionDispatch::IntegrationTest
     read_only_role.permissions << permissions(:admin_manage)
     read_only_role.permissions << permissions(:user_read)
     read_only_user.roles << read_only_role
-    
+
     login_as(read_only_user)
-    
+
     # Should be able to view
     get admin_role_permissions_path(@regular_role)
     assert_response :success
-    
+
     # Should not be able to update
     patch admin_role_permissions_path(@regular_role), params: {
       permission_ids: [permissions(:user_read).id]
