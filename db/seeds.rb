@@ -31,7 +31,10 @@ permissions_data = [
   { resource_type: 'Comment', action: 'manage', description: 'コメントの完全管理' },
   
   # Admin permissions
-  { resource_type: 'Admin', action: 'manage', description: '管理画面へのアクセス' }
+  { resource_type: 'Admin', action: 'read', description: '管理画面の閲覧' },
+  { resource_type: 'Admin', action: 'write', description: '管理画面での編集操作' },
+  { resource_type: 'Admin', action: 'delete', description: '管理画面での削除操作' },
+  { resource_type: 'Admin', action: 'manage', description: '管理画面の完全管理' }
 ]
 
 permissions_data.each do |perm_attrs|
@@ -70,22 +73,22 @@ puts "Assigning permissions to roles..."
 # Admin role gets all permissions
 admin_role.permissions = Permission.all
 
-# User manager gets user management and admin access
+# User manager gets user management and admin read access only
 user_manager_permissions = Permission.where(
-  resource_type: ['User', 'Admin']
-)
+  resource_type: 'User'
+).or(Permission.where(resource_type: 'Admin', action: 'read'))
 user_manager_role.permissions = user_manager_permissions
 
-# User viewer gets read access to users and admin access
+# User viewer gets read access to users and admin read access
 user_viewer_permissions = Permission.where(
   resource_type: 'User', action: 'read'
-).or(Permission.where(resource_type: 'Admin', action: 'manage'))
+).or(Permission.where(resource_type: 'Admin', action: 'read'))
 user_viewer_role.permissions = user_viewer_permissions
 
-# Project manager gets project and task management
+# Project manager gets project and task management with admin read access
 project_manager_permissions = Permission.where(
   resource_type: ['Project', 'Task', 'Comment']
-).or(Permission.where(resource_type: 'Admin', action: 'manage'))
+).or(Permission.where(resource_type: 'Admin', action: 'read'))
 project_manager_role.permissions = project_manager_permissions
 
 puts "Assigned permissions to roles"

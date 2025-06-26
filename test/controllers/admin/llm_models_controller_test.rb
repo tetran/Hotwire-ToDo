@@ -335,37 +335,58 @@ class Admin::LlmModelsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "user with only Admin:read permission cannot access write actions" do
-    admin_read_user = users(:user_manager)
-    login_as(admin_read_user)
+    # Use no_role_user and manually assign only Admin:read permission
+    read_only_user = users(:no_role_user)
+    admin_read_permission = Permission.find_or_create_by!(resource_type: 'Admin', action: 'read') do |p|
+      p.description = '管理画面の閲覧'
+    end
+    read_only_role = Role.create!(name: 'test_read_only_models', system_role: false)
+    read_only_role.permissions << admin_read_permission
+    read_only_user.roles << read_only_role
     
-    # Should not be able to access new
+    login_as(read_only_user)
+    
+    # Should not be able to access new - redirected with error
     get new_admin_llm_provider_llm_model_path(@llm_provider)
-    assert_response :forbidden
+    assert_response :redirect
+    assert_match /権限がありません/, flash[:error]
     
-    # Should not be able to create
+    # Should not be able to create - redirected with error
     post admin_llm_provider_llm_models_path(@llm_provider), params: {
       llm_model: { name: "test-model", display_name: "Test Model" }
     }
-    assert_response :forbidden
+    assert_response :redirect
+    assert_match /権限がありません/, flash[:error]
     
-    # Should not be able to access edit
+    # Should not be able to access edit - redirected with error
     get edit_admin_llm_provider_llm_model_path(@llm_provider, @llm_model)
-    assert_response :forbidden
+    assert_response :redirect
+    assert_match /権限がありません/, flash[:error]
     
-    # Should not be able to update
+    # Should not be able to update - redirected with error
     patch admin_llm_provider_llm_model_path(@llm_provider, @llm_model), params: {
       llm_model: { display_name: "Updated Name" }
     }
-    assert_response :forbidden
+    assert_response :redirect
+    assert_match /権限がありません/, flash[:error]
   end
 
   test "user with only Admin:read permission cannot delete" do
-    admin_read_user = users(:user_manager)
-    login_as(admin_read_user)
+    # Use no_role_user and manually assign only Admin:read permission
+    read_only_user = users(:no_role_user)
+    admin_read_permission = Permission.find_or_create_by!(resource_type: 'Admin', action: 'read') do |p|
+      p.description = '管理画面の閲覧'
+    end
+    read_only_role = Role.create!(name: 'test_read_only_models_delete', system_role: false)
+    read_only_role.permissions << admin_read_permission
+    read_only_user.roles << read_only_role
     
-    # Should not be able to delete
+    login_as(read_only_user)
+    
+    # Should not be able to delete - redirected with error
     delete admin_llm_provider_llm_model_path(@llm_provider, @llm_model)
-    assert_response :forbidden
+    assert_response :redirect
+    assert_match /権限がありません/, flash[:error]
   end
 
   test "user with Admin:write permission can create and edit but not delete" do
