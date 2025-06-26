@@ -69,13 +69,16 @@ class Admin::UsersController < Admin::ApplicationController
   end
 
   def authorize_user_management
+    # All user management operations require Admin:read access to admin area
+    authorize_admin_read!
+    
     case action_name
     when 'index', 'show'
-      authorize_read!('User')
+      authorize_user_read!
     when 'new', 'create', 'edit', 'update'
-      authorize_write!('User')
+      authorize_user_write!
     when 'destroy'
-      authorize_delete!('User')
+      authorize_user_delete!
     end
   end
 end

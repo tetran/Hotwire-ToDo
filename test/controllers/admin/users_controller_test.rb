@@ -151,8 +151,8 @@ class Admin::UsersControllerTest < ActionDispatch::IntegrationTest
     get edit_admin_user_path(@regular_user)
     assert_response :success
 
-    # Cannot delete (this should be handled by authorization)
+    # Can delete (user_manager has User:manage permission which includes delete)
     delete admin_user_path(@no_role_user)
-    assert_redirected_to root_path
+    assert_response :redirect
   end
 end

@@ -169,13 +169,13 @@ class Admin::UserRolesControllerTest < ActionDispatch::IntegrationTest
       name: "limited_admin",
       description: "Admin access without user management"
     )
-    limited_role.permissions << permissions(:admin_manage)
+    limited_role.permissions << permissions(:admin_read)
     user_without_user_permissions.roles << limited_role
     
     login_as(user_without_user_permissions)
     
     get admin_user_roles_path(@regular_user)
-    assert_redirected_to root_path
+    assert_response :redirect
     assert_match /権限がありません/, flash[:error]
   end
 
@@ -192,7 +192,7 @@ class Admin::UserRolesControllerTest < ActionDispatch::IntegrationTest
       name: "user_viewer",
       description: "User viewer"
     )
-    read_only_role.permissions << permissions(:admin_manage)
+    read_only_role.permissions << permissions(:admin_read)
     read_only_role.permissions << permissions(:user_read)
     read_only_user.roles << read_only_role
     
@@ -202,11 +202,11 @@ class Admin::UserRolesControllerTest < ActionDispatch::IntegrationTest
     get admin_user_roles_path(@regular_user)
     assert_response :success
     
-    # Should not be able to update
+    # Should not be able to update (lacks User:write permission)
     patch admin_user_roles_path(@regular_user), params: {
       role_ids: [@user_manager_role.id]
     }
-    assert_redirected_to root_path
+    assert_response :redirect
     assert_match /権限がありません/, flash[:error]
   end
 

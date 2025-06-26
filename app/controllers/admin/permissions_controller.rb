@@ -20,6 +20,8 @@ class Admin::PermissionsController < Admin::ApplicationController
   end
 
   def authorize_permission_viewing
-    authorize_read!('User')  # Permission viewing is part of user management
+    # All permission viewing operations require Admin:read access to admin area
+    authorize_admin_read!
+    authorize_user_read!  # Permission viewing is part of user management
   end
 end
