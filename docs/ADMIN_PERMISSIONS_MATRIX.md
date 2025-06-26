@@ -74,6 +74,8 @@
 | LLMモデル編集 | `Admin:read` | モデル情報の更新 |
 | LLMモデル削除 | `Admin:read` | モデルの削除（使用中は不可） |
 
+> **注意**: 現在の実装では全てのLLM管理機能が `Admin:read` で動作していますが、理想的にはIssues #124-127の実装完了後、作成・編集・削除操作はそれぞれ `Admin:write`・`Admin:delete` 権限が必要になります。
+
 ## システムロール
 
 システムには以下の定義済みロールが存在します：
@@ -116,21 +118,6 @@
 3. **LLM管理**: `Admin:read` のみで全機能が利用可能
 4. **権限管理**: 権限の閲覧は `User:read`、権限の変更は `User:write` が必要
 
-## TODO: 実装の不整合
-
-> **注意**: 以下の問題は [Issue #121](https://github.com/tetran/Hotwire-ToDo/issues/121) で修正予定です。
-
-### 権限チェック不足
-以下のコントローラーで権限チェックが実装されていません：
-- `app/controllers/admin/user_roles_controller.rb` - ユーザーロール管理
-- `app/controllers/admin/role_permissions_controller.rb` - ロール権限管理
-
-これらのコントローラーは基本的な管理者アクセス（`Admin:read`）はチェックしていますが、具体的な機能レベルでの権限チェック（`User:write`など）が不足しています。
-
-### 権限マトリクスの修正
-上記の不整合により、実際の実装では：
-- **ユーザーロール管理**: `Admin:read` のみ必要（ドキュメントでは `User:write`）
-- **ロール権限管理**: `Admin:read` のみ必要（ドキュメントでは `User:write`）
 
 ## 実装ファイル
 
