@@ -65,6 +65,10 @@ project_manager_role = Role.find_or_create_by!(name: 'project_manager', system_r
   role.description = 'プロジェクト管理者（プロジェクトとタスクの管理）'
 end
 
+llm_admin_role = Role.find_or_create_by!(name: 'llm_admin', system_role: true) do |role|
+  role.description = 'LLM設定管理者（LLM関連機能の管理）'
+end
+
 puts "Created #{Role.count} roles"
 
 # Assign permissions to roles
@@ -73,9 +77,9 @@ puts "Assigning permissions to roles..."
 # Admin role gets all permissions
 admin_role.permissions = Permission.all
 
-# User manager gets user management and admin read access only
+# User manager gets user management permissions and admin read access only
 user_manager_permissions = Permission.where(
-  resource_type: 'User'
+  resource_type: 'User', action: ['read', 'write', 'delete']
 ).or(Permission.where(resource_type: 'Admin', action: 'read'))
 user_manager_role.permissions = user_manager_permissions
 
@@ -90,6 +94,12 @@ project_manager_permissions = Permission.where(
   resource_type: ['Project', 'Task', 'Comment']
 ).or(Permission.where(resource_type: 'Admin', action: 'read'))
 project_manager_role.permissions = project_manager_permissions
+
+# LLM admin gets admin management permissions (read, write, delete) for LLM settings
+llm_admin_permissions = Permission.where(
+  resource_type: 'Admin', action: ['read', 'write', 'delete']
+)
+llm_admin_role.permissions = llm_admin_permissions
 
 puts "Assigned permissions to roles"
 
