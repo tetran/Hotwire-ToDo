@@ -56,3 +56,23 @@ en:
       long: "%B %d, %Y %H:%M"
   project:
     inbox: "Inbox"
+  authorization:
+    access_denied: "You don't have %{action} permission for %{resource}"
+    admin_access_denied: "Administrator access required"
+    user_read_denied: "User read permission required"
+    user_write_denied: "User write permission required"
+    user_delete_denied: "User delete permission required"
+    admin_read_denied: "Administrator read permission required"
+    admin_write_denied: "Administrator write permission required"
+    admin_delete_denied: "Administrator delete permission required"
+  resources:
+    user: "User"
+    admin: "Administrator"
+    project: "Project"
+    task: "Task"
+    comment: "Comment"
+  actions:
+    read: "read"
+    write: "write"
+    delete: "delete"
+    manage: "manage"
