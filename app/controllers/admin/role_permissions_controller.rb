@@ -27,11 +27,14 @@ class Admin::RolePermissionsController < Admin::ApplicationController
   end
 
   def authorize_role_permission_management
+    # All role permission management operations require Admin:read access to admin area
+    authorize_admin_read!
+    
     case action_name
     when 'show'
-      authorize_read!('User')  # Role management is part of user management
+      authorize_user_read!  # Role management is part of user management
     when 'update'
-      authorize_write!('User')
+      authorize_user_write!
     end
   end
 end

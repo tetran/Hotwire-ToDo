@@ -73,13 +73,16 @@ class Admin::RolesController < Admin::ApplicationController
   end
 
   def authorize_role_management
+    # All role management operations require Admin:read access to admin area
+    authorize_admin_read!
+    
     case action_name
     when 'index', 'show'
-      authorize_read!('User')  # Role management is part of user management
+      authorize_user_read!  # Role management is part of user management
     when 'new', 'create', 'edit', 'update'
-      authorize_write!('User')
+      authorize_user_write!
     when 'destroy'
-      authorize_delete!('User')
+      authorize_user_delete!
     end
   end
 end

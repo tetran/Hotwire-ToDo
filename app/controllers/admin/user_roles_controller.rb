@@ -27,11 +27,14 @@ class Admin::UserRolesController < Admin::ApplicationController
   end
 
   def authorize_user_role_management
+    # All user role management operations require Admin:read access to admin area
+    authorize_admin_read!
+    
     case action_name
     when 'show'
-      authorize_read!('User')
+      authorize_user_read!
     when 'update'
-      authorize_write!('User')
+      authorize_user_write!
     end
   end
 end
