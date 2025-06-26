@@ -30,7 +30,22 @@ project_write:
   action: write
   description: Write project information
 
+admin_read:
+  resource_type: Admin
+  action: read
+  description: Read admin panel
+
+admin_write:
+  resource_type: Admin
+  action: write
+  description: Write admin operations
+
+admin_delete:
+  resource_type: Admin
+  action: delete
+  description: Delete admin operations
+
 admin_manage:
   resource_type: Admin
   action: manage
-  description: Access admin panel
+  description: Full admin panel access

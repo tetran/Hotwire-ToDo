@@ -334,6 +334,34 @@ class Admin::LlmModelsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  test "user_manager can access write actions after migration" do
+    # user_manager should now have Admin:read + Admin:write permissions after migration
+    user_manager = users(:user_manager)
+    login_as(user_manager)
+    
+    # Should be able to access new
+    get new_admin_llm_provider_llm_model_path(@llm_provider)
+    assert_response :success
+    
+    # Should be able to access edit
+    get edit_admin_llm_provider_llm_model_path(@llm_provider, @llm_model)
+    assert_response :success
+    
+    # Should be able to create
+    post admin_llm_provider_llm_models_path(@llm_provider), params: {
+      llm_model: { 
+        name: "test-model-#{Time.current.to_i}", 
+        display_name: "Test Model" 
+      }
+    }
+    assert_response :redirect
+    
+    # Should NOT be able to delete (no Admin:delete permission)
+    delete admin_llm_provider_llm_model_path(@llm_provider, @llm_model)
+    assert_response :redirect
+    assert_match /権限がありません/, flash[:error]
+  end
+
   test "user with only Admin:read permission cannot access write actions" do
     # Use no_role_user and manually assign only Admin:read permission
     read_only_user = users(:no_role_user)

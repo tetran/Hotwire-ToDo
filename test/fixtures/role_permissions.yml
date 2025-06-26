@@ -25,6 +25,18 @@ admin_project_write:
   role: admin
   permission: project_write
 
+admin_admin_read:
+  role: admin
+  permission: admin_read
+
+admin_admin_write:
+  role: admin
+  permission: admin_write
+
+admin_admin_delete:
+  role: admin
+  permission: admin_delete
+
 admin_admin_manage:
   role: admin
   permission: admin_manage
@@ -42,6 +54,10 @@ user_manager_user_manage:
   role: user_manager
   permission: user_manage
 
-user_manager_admin_manage:
+user_manager_admin_read:
   role: user_manager
-  permission: admin_manage
+  permission: admin_read
+
+user_manager_admin_write:
+  role: user_manager
+  permission: admin_write
