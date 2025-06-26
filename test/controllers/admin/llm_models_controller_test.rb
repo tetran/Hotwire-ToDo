@@ -318,4 +318,126 @@ class Admin::LlmModelsControllerTest < ActionDispatch::IntegrationTest
     delete admin_llm_provider_llm_model_path(@llm_provider, @llm_model)
     assert_admin_access_required
   end
+
+  # Granular permission tests for issue #125
+  test "user with only Admin:read permission can access read-only actions" do
+    # Create user with only Admin:read permission
+    admin_read_user = users(:user_manager)  # user_manager has Admin:read permission
+    login_as(admin_read_user)
+    
+    # Should be able to access index
+    get admin_llm_provider_llm_models_path(@llm_provider)
+    assert_response :success
+    
+    # Should be able to access show
+    get admin_llm_provider_llm_model_path(@llm_provider, @llm_model)
+    assert_response :success
+  end
+
+  test "user with only Admin:read permission cannot access write actions" do
+    admin_read_user = users(:user_manager)
+    login_as(admin_read_user)
+    
+    # Should not be able to access new
+    get new_admin_llm_provider_llm_model_path(@llm_provider)
+    assert_response :forbidden
+    
+    # Should not be able to create
+    post admin_llm_provider_llm_models_path(@llm_provider), params: {
+      llm_model: { name: "test-model", display_name: "Test Model" }
+    }
+    assert_response :forbidden
+    
+    # Should not be able to access edit
+    get edit_admin_llm_provider_llm_model_path(@llm_provider, @llm_model)
+    assert_response :forbidden
+    
+    # Should not be able to update
+    patch admin_llm_provider_llm_model_path(@llm_provider, @llm_model), params: {
+      llm_model: { display_name: "Updated Name" }
+    }
+    assert_response :forbidden
+  end
+
+  test "user with only Admin:read permission cannot delete" do
+    admin_read_user = users(:user_manager)
+    login_as(admin_read_user)
+    
+    # Should not be able to delete
+    delete admin_llm_provider_llm_model_path(@llm_provider, @llm_model)
+    assert_response :forbidden
+  end
+
+  test "user with Admin:write permission can create and edit but not delete" do
+    # This test will fail until we implement granular permissions
+    # but it defines the expected behavior
+    skip "Requires implementation of granular Admin permissions"
+    
+    # admin_write_user = create_user_with_admin_write_permission
+    # login_as(admin_write_user)
+    
+    # # Should be able to read
+    # get admin_llm_provider_llm_models_path(@llm_provider)
+    # assert_response :success
+    
+    # # Should be able to create
+    # post admin_llm_provider_llm_models_path(@llm_provider), params: {
+    #   llm_model: { name: "test-model", display_name: "Test Model" }
+    # }
+    # assert_response :redirect
+    
+    # # Should be able to edit
+    # get edit_admin_llm_provider_llm_model_path(@llm_provider, @llm_model)
+    # assert_response :success
+    
+    # # Should not be able to delete
+    # delete admin_llm_provider_llm_model_path(@llm_provider, @llm_model)
+    # assert_response :forbidden
+  end
+
+  test "user with Admin:delete permission can delete" do
+    # This test will fail until we implement granular permissions
+    skip "Requires implementation of granular Admin permissions"
+    
+    # admin_delete_user = create_user_with_admin_delete_permission
+    # login_as(admin_delete_user)
+    
+    # # Should be able to delete
+    # test_model = @llm_provider.llm_models.create!(
+    #   name: "test-model",
+    #   display_name: "Test Model"
+    # )
+    # delete admin_llm_provider_llm_model_path(@llm_provider, test_model)
+    # assert_response :redirect
+  end
+
+  test "user with Admin:manage permission has full access" do
+    # admin_user fixture should have Admin:manage permission
+    login_as(@admin_user)
+    
+    # Should be able to read
+    get admin_llm_provider_llm_models_path(@llm_provider)
+    assert_response :success
+    
+    # Should be able to create
+    post admin_llm_provider_llm_models_path(@llm_provider), params: {
+      llm_model: { 
+        name: "test-model-#{Time.current.to_i}", 
+        display_name: "Test Model" 
+      }
+    }
+    assert_response :redirect
+    
+    # Should be able to edit
+    get edit_admin_llm_provider_llm_model_path(@llm_provider, @llm_model)
+    assert_response :success
+    
+    # Should be able to delete (test with model that has no dependencies)
+    test_model = @llm_provider.llm_models.create!(
+      name: "test-model-for-delete",
+      display_name: "Test Model for Delete"
+    )
+    delete admin_llm_provider_llm_model_path(@llm_provider, test_model)
+    assert_response :redirect
+  end
 end
