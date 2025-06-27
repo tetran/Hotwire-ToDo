@@ -3,7 +3,6 @@
 <div class="admin-section">
   <div class="section-header">
     <h1>LLM Providers</h1>
-    <%= link_to "New Provider", new_admin_llm_provider_path, class: "btn btn-primary" %>
   </div>
 
   <% if @llm_providers.any? %>
@@ -36,12 +35,6 @@
             <td class="actions">
               <%= link_to "View", admin_llm_provider_path(provider), class: "btn btn-sm" %>
               <%= link_to "Edit", edit_admin_llm_provider_path(provider), class: "btn btn-sm btn-outline" %>
-              <%= link_to "Delete", admin_llm_provider_path(provider), 
-                          method: :delete,
-                          class: "btn btn-sm btn-danger",
-                          data: { 
-                            turbo_confirm: "Are you sure? This will also delete all associated models." 
-                          } %>
             </td>
           </tr>
         <% end %>
@@ -50,8 +43,7 @@
   <% else %>
     <div class="empty-state">
       <h3>No LLM Providers Found</h3>
-      <p>Get started by adding your first LLM provider.</p>
-      <%= link_to "Add Provider", new_admin_llm_provider_path, class: "btn btn-primary" %>
+      <p>LLM providers are not configured.</p>
     </div>
   <% end %>
 </div>

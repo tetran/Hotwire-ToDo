@@ -52,7 +52,7 @@ Rails.application.routes.draw do
     resources :permissions, only: [:index, :show]
 
     # LLM management
-    resources :llm_providers do
+    resources :llm_providers, only: [:index, :show, :edit, :update] do
       resources :llm_models
       resources :available_models, only: [:index]
     end

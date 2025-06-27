@@ -143,9 +143,46 @@ elsif Rails.env.production? || Rails.env.staging?
   end
 end
 
+# Create LLM Providers
+puts "Creating LLM providers..."
+
+llm_providers_data = [
+  {
+    name: 'OpenAI',
+    api_endpoint: 'https://api.openai.com/v1',
+    api_key: ENV['OPENAI_ACCESS_TOKEN'] || 'dummy_key_for_development',
+    organization_id: ENV['OPENAI_ORGANIZATION_ID'],
+    active: true
+  },
+  {
+    name: 'Anthropic',
+    api_endpoint: 'https://api.anthropic.com/v1',
+    api_key: ENV['ANTHROPIC_API_KEY'] || 'dummy_key_for_development',
+    active: true
+  },
+  {
+    name: 'Gemini',
+    api_endpoint: 'https://generativelanguage.googleapis.com/v1',
+    api_key: ENV['GEMINI_API_KEY'] || 'dummy_key_for_development',
+    active: true
+  }
+]
+
+llm_providers_data.each do |provider_attrs|
+  LlmProvider.find_or_create_by!(name: provider_attrs[:name]) do |provider|
+    provider.api_endpoint = provider_attrs[:api_endpoint]
+    provider.api_key = provider_attrs[:api_key]
+    provider.organization_id = provider_attrs[:organization_id]
+    provider.active = provider_attrs[:active]
+  end
+end
+
+puts "Created #{LlmProvider.count} LLM providers"
+
 puts "Seed data creation completed!"
 puts "Summary:"
 puts "- Permissions: #{Permission.count}"
 puts "- Roles: #{Role.count}"
 puts "- System roles: #{Role.system_roles.count}"
 puts "- Custom roles: #{Role.custom_roles.count}"
+puts "- LLM Providers: #{LlmProvider.count}"
