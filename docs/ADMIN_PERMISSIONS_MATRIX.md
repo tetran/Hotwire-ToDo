@@ -34,30 +34,30 @@
 
 | 機能 | 必要な権限 | 説明 |
 |------|-----------|------|
-| ユーザー一覧表示 | `User:read` | ユーザー一覧の閲覧、検索 |
-| ユーザー詳細表示 | `User:read` | 個別ユーザー情報の閲覧 |
-| ユーザー作成 | `User:write` | 新規ユーザーの作成 |
-| ユーザー編集 | `User:write` | ユーザー情報の更新 |
-| ユーザー削除 | `User:delete` | ユーザーの削除 |
-| ユーザーロール管理 | `User:write` | ユーザーへのロール割り当て |
+| ユーザー一覧表示 | `Admin:read` + `User:read` | ユーザー一覧の閲覧、検索 |
+| ユーザー詳細表示 | `Admin:read` + `User:read` | 個別ユーザー情報の閲覧 |
+| ユーザー作成 | `Admin:read` + `User:write` | 新規ユーザーの作成 |
+| ユーザー編集 | `Admin:read` + `User:write` | ユーザー情報の更新 |
+| ユーザー削除 | `Admin:read` + `User:delete` | ユーザーの削除 |
+| ユーザーロール管理 | `Admin:read` + `User:write` | ユーザーへのロール割り当て |
 
 ### ロール管理
 
 | 機能 | 必要な権限 | 説明 |
 |------|-----------|------|
-| ロール一覧表示 | `User:read` | システムロールとカスタムロールの一覧 |
-| ロール詳細表示 | `User:read` | 個別ロール情報と権限の閲覧 |
-| カスタムロール作成 | `User:write` | 新規カスタムロールの作成 |
-| ロール編集 | `User:write` | ロール情報の更新（システムロールは制限あり） |
-| カスタムロール削除 | `User:delete` | カスタムロールの削除（システムロールは不可） |
-| ロール権限管理 | `User:write` | ロールへの権限割り当て |
+| ロール一覧表示 | `Admin:read` + `User:read` | システムロールとカスタムロールの一覧 |
+| ロール詳細表示 | `Admin:read` + `User:read` | 個別ロール情報と権限の閲覧 |
+| カスタムロール作成 | `Admin:read` + `User:write` | 新規カスタムロールの作成 |
+| ロール編集 | `Admin:read` + `User:write` | ロール情報の更新（システムロールは制限あり） |
+| カスタムロール削除 | `Admin:read` + `User:delete` | カスタムロールの削除（システムロールは不可） |
+| ロール権限管理 | `Admin:read` + `User:write` | ロールへの権限割り当て |
 
 ### 権限管理
 
 | 機能 | 必要な権限 | 説明 |
 |------|-----------|------|
-| 権限一覧表示 | `User:read` | 全権限の一覧表示（リソースタイプ別） |
-| 権限詳細表示 | `User:read` | 個別権限の詳細とロール割り当て状況 |
+| 権限一覧表示 | `Admin:read` + `User:read` | 全権限の一覧表示（リソースタイプ別） |
+| 権限詳細表示 | `Admin:read` + `User:read` | 個別権限の詳細とロール割り当て状況 |
 
 ### LLM管理
 
@@ -65,16 +65,15 @@
 |------|-----------|------|
 | LLMプロバイダー一覧 | `Admin:read` | LLM プロバイダーの一覧表示 |
 | LLMプロバイダー詳細 | `Admin:read` | プロバイダー詳細とモデル一覧 |
-| LLMプロバイダー作成 | `Admin:read` | 新規プロバイダーの作成 |
-| LLMプロバイダー編集 | `Admin:read` | プロバイダー情報の更新 |
-| LLMプロバイダー削除 | `Admin:read` | プロバイダーの削除（使用中は不可） |
+| LLMプロバイダー作成 | `Admin:write` | 新規プロバイダーの作成 |
+| LLMプロバイダー編集 | `Admin:write` | プロバイダー情報の更新 |
+| LLMプロバイダー削除 | `Admin:delete` | プロバイダーの削除（使用中は不可） |
 | LLMモデル一覧 | `Admin:read` | プロバイダー配下のモデル一覧 |
 | LLMモデル詳細 | `Admin:read` | モデルの詳細情報 |
-| LLMモデル作成 | `Admin:read` | 新規モデルの作成 |
-| LLMモデル編集 | `Admin:read` | モデル情報の更新 |
-| LLMモデル削除 | `Admin:read` | モデルの削除（使用中は不可） |
+| LLMモデル作成 | `Admin:write` | 新規モデルの作成 |
+| LLMモデル編集 | `Admin:write` | モデル情報の更新 |
+| LLMモデル削除 | `Admin:delete` | モデルの削除（使用中は不可） |
 
-> **注意**: 現在の実装では全てのLLM管理機能が `Admin:read` で動作していますが、理想的にはIssues #124-127の実装完了後、作成・編集・削除操作はそれぞれ `Admin:write`・`Admin:delete` 権限が必要になります。
 
 ## システムロール
 
@@ -86,15 +85,19 @@
 
 ### user_manager
 - ユーザー管理に特化したロール
-- `User:read`、`User:write`、`User:delete` を持つ
+- `User:read`、`User:write`、`User:delete`、`Admin:read` を持つ
 
 ### user_viewer
 - ユーザー情報の閲覧のみ可能なロール
-- `User:read` と `Admin:manage` を持つ
+- `User:read` と `Admin:read` を持つ
 
 ### project_manager
 - プロジェクトとタスク管理に特化したロール
-- `Project:manage`、`Task:manage`、`Comment:manage`、`Admin:manage` を持つ
+- `Project:manage`、`Task:manage`、`Comment:manage`、`Admin:read` を持つ
+
+### llm_admin
+- LLM設定管理に特化したロール
+- `Admin:read`、`Admin:write`、`Admin:delete` を持つ
 
 ## セキュリティ制限
 
@@ -114,9 +117,12 @@
 ## アクセスパターン
 
 1. **管理者エリアアクセス**: 全ての管理者機能は `Admin:read` が必要
-2. **ユーザー・ロール管理**: `User` リソースの権限が必要
-3. **LLM管理**: `Admin:read` のみで全機能が利用可能
-4. **権限管理**: 権限の閲覧は `User:read`、権限の変更は `User:write` が必要
+2. **ユーザー・ロール管理**: `Admin:read` + `User` リソースの権限が必要
+3. **LLM管理**: 
+   - 閲覧: `Admin:read`
+   - 作成・編集: `Admin:write` 
+   - 削除: `Admin:delete`
+4. **権限管理**: 権限の閲覧は `Admin:read` + `User:read`、権限の変更は `Admin:read` + `User:write` が必要
 
 
 ## 実装ファイル
