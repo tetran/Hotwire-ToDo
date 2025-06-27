@@ -1,8 +1,7 @@
 class Admin::LlmProvidersController < Admin::ApplicationController
   before_action :authorize_admin_read!, only: [:index, :show]
-  before_action :authorize_admin_write!, only: [:new, :create, :edit, :update]
-  before_action :authorize_admin_delete!, only: [:destroy]
-  before_action :set_llm_provider, only: [:show, :edit, :update, :destroy]
+  before_action :authorize_admin_write!, only: [:edit, :update]
+  before_action :set_llm_provider, only: [:show, :edit, :update]
 
   def index
     @llm_providers = LlmProvider.includes(:llm_models).order(:name)
@@ -12,19 +11,6 @@ class Admin::LlmProvidersController < Admin::ApplicationController
     @llm_models = @llm_provider.llm_models.order(:name)
   end
 
-  def new
-    @llm_provider = LlmProvider.new
-  end
-
-  def create
-    @llm_provider = LlmProvider.new(llm_provider_params)
-
-    if @llm_provider.save
-      redirect_to admin_llm_provider_path(@llm_provider), notice: 'LLM Provider was successfully created.'
-    else
-      render :new, status: :unprocessable_entity
-    end
-  end
 
   def edit
   end
@@ -41,15 +27,6 @@ class Admin::LlmProvidersController < Admin::ApplicationController
     end
   end
 
-  def destroy
-    if @llm_provider.llm_models.joins(:suggestion_requests).exists?
-      redirect_to admin_llm_providers_path, alert: 'Cannot delete provider that has models being used by suggestion requests.'
-      return
-    end
-
-    @llm_provider.destroy
-    redirect_to admin_llm_providers_path, notice: 'LLM Provider was successfully deleted.'
-  end
 
   private
 
@@ -58,6 +35,6 @@ class Admin::LlmProvidersController < Admin::ApplicationController
   end
 
   def llm_provider_params
-    params.require(:llm_provider).permit(:name, :api_endpoint, :api_key, :organization_id, :active)
+    params.require(:llm_provider).permit(:api_endpoint, :api_key, :organization_id, :active)
   end
 end

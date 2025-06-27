@@ -4,7 +4,18 @@ class LlmProviderTest < ActiveSupport::TestCase
   self.use_transactional_tests = false
 
   def setup
-    @provider = llm_providers(:openai)
+    # Clear all providers to avoid conflicts
+    SuggestionResponse.destroy_all
+    SuggestionRequest.delete_all
+    LlmModel.delete_all
+    LlmProvider.delete_all
+    
+    @provider = LlmProvider.create!(
+      name: "OpenAI",
+      api_endpoint: "https://api.openai.com/v1",
+      api_key: "test-api-key",
+      active: true
+    )
   end
 
   def teardown
@@ -16,8 +27,8 @@ class LlmProviderTest < ActiveSupport::TestCase
 
   test "should create provider with valid attributes" do
     provider = LlmProvider.new(
-      name: "New LLM Provider",
-      api_endpoint: "https://newllm.example.com",
+      name: "Anthropic",
+      api_endpoint: "https://api.anthropic.com/v1",
       api_key: "test-key"
     )
     assert provider.valid?
@@ -66,15 +77,16 @@ class LlmProviderTest < ActiveSupport::TestCase
   end
 
   test "should default active to true" do
-    provider = LlmProvider.create!(name: "Test Provider", api_key: "key")
+    provider = LlmProvider.create!(name: "Gemini", api_key: "key")
     assert provider.active?
   end
 
   test "should scope active providers" do
-    active_provider = LlmProvider.create!(name: "Active", api_key: "key", active: true)
-    inactive_provider = LlmProvider.create!(name: "Inactive", api_key: "key", active: false)
+    # Use existing fixture data to avoid duplicate names
+    @provider.update!(active: true)
+    inactive_provider = LlmProvider.create!(name: "Gemini", api_key: "key", active: false)
 
-    assert_includes LlmProvider.active, active_provider
+    assert_includes LlmProvider.active, @provider
     assert_not_includes LlmProvider.active, inactive_provider
   end
 

@@ -4,8 +4,24 @@ class Admin::LlmModelsControllerTest < ActionDispatch::IntegrationTest
   setup do
     @admin_user = users(:admin_user)
     @regular_user = users(:regular_user)
-    @llm_provider = llm_providers(:openai)
-    @llm_model = llm_models(:gpt_turbo)
+    
+    # Clean up all data to avoid conflicts
+    SuggestionResponse.destroy_all
+    SuggestionRequest.delete_all
+    LlmModel.delete_all
+    LlmProvider.delete_all
+    
+    @llm_provider = LlmProvider.create!(
+      name: 'OpenAI',
+      api_endpoint: 'https://api.openai.com/v1',
+      api_key: 'test-api-key',
+      active: true
+    )
+    @llm_model = @llm_provider.llm_models.create!(
+      name: 'gpt-4-turbo',
+      display_name: 'GPT-4 Turbo',
+      active: true
+    )
   end
 
   # Authentication tests
@@ -67,19 +83,19 @@ class Admin::LlmModelsControllerTest < ActionDispatch::IntegrationTest
     
     post admin_llm_provider_llm_models_path(@llm_provider), params: {
       llm_model: {
-        name: "gpt-4-turbo",
-        display_name: "GPT-4 Turbo",
+        name: "gpt-3.5-turbo",
+        display_name: "GPT-3.5 Turbo",
         active: true,
         default_model: false
       }
     }
     
     if response.redirect?
-      created_model = @llm_provider.llm_models.find_by(name: "gpt-4-turbo")
+      created_model = @llm_provider.llm_models.find_by(name: "gpt-3.5-turbo")
       assert_not_nil created_model, "Model should have been created"
       assert_redirected_to admin_llm_provider_llm_model_path(@llm_provider, created_model)
-      assert_equal "gpt-4-turbo", created_model.name
-      assert_equal "GPT-4 Turbo", created_model.display_name
+      assert_equal "gpt-3.5-turbo", created_model.name
+      assert_equal "GPT-3.5 Turbo", created_model.display_name
       assert created_model.active?
       assert_not created_model.default_model?
     else
@@ -142,7 +158,7 @@ class Admin::LlmModelsControllerTest < ActionDispatch::IntegrationTest
   test "should allow same model name across different providers" do
     login_as_admin
     another_provider = LlmProvider.create!(
-      name: "Anthropic #{Time.current.to_i}",
+      name: "Anthropic",
       api_endpoint: "https://api.anthropic.com",
       api_key: "test-key"
     )
@@ -238,7 +254,16 @@ class Admin::LlmModelsControllerTest < ActionDispatch::IntegrationTest
   test "should not destroy model when used by suggestion requests" do
     login_as_admin
     
-    # @llm_model has suggestion requests from fixtures
+    # Create a suggestion request to prevent deletion
+    user = users(:admin_user)
+    project = user.projects.create!(name: "Test Project", owner: user)
+    SuggestionRequest.create!(
+      project: project, 
+      requested_by: user, 
+      llm_model: @llm_model, 
+      goal: "test goal"
+    )
+    
     assert_no_difference("@llm_provider.llm_models.count") do
       delete admin_llm_provider_llm_model_path(@llm_provider, @llm_model)
     end
@@ -250,7 +275,7 @@ class Admin::LlmModelsControllerTest < ActionDispatch::IntegrationTest
   test "should only show models for specific provider" do
     login_as_admin
     another_provider = LlmProvider.create!(
-      name: "Anthropic #{Time.current.to_i}",
+      name: "Anthropic",
       api_endpoint: "https://api.anthropic.com",
       api_key: "test-key"
     )
