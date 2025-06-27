@@ -28,11 +28,24 @@
       </div>
     <% end %>
 
-    <div class="form-grid">
+    <div class="form-grid" 
+         data-controller="model-selector" 
+         data-model-selector-provider-id-value="<%= @llm_provider.id %>"
+         data-model-selector-available-models-url-value="<%= admin_llm_provider_available_models_path(@llm_provider) %>">
       <div class="form-group">
         <%= f.label :name, class: "form-label required" %>
-        <%= f.text_field :name, class: "form-input", placeholder: "e.g., gpt-4-mini, claude-3-sonnet" %>
-        <small class="form-help">The exact model name as used by the API</small>
+        <div style="position: relative;">
+          <%= f.select :name, 
+                       options_for_select([["Select a model...", ""], [@llm_model.name, @llm_model.name]]), 
+                       {}, 
+                       { class: "form-input", 
+                         disabled: true,
+                         data: { model_selector_target: "select" } } %>
+          <span data-model-selector-target="loading" style="display: none; position: absolute; right: 10px; top: 50%; transform: translateY(-50%);">
+            Loading...
+          </span>
+        </div>
+        <small class="form-help">Select a model from the available options</small>
       </div>
 
       <div class="form-group">
@@ -71,3 +84,4 @@
     </div>
   <% end %>
 </div>
+
