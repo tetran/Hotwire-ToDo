@@ -78,6 +78,12 @@ Each user gets a dedicated "inbox" project for personal tasks. Tasks belong to p
 - `OPENAI_ACCESS_TOKEN` - OpenAI API key
 - `OPENAI_ORGANIZATION_ID` - OpenAI organization ID
 
+### Routing Guidelines
+- Follow RESTful principles strictly (see `docs/ROUTING.md`)
+- Create new controllers instead of custom actions
+- Use namespaces to organize related functionality
+- Maintain single responsibility per controller
+
 ### Testing
 - Comprehensive test suite with fixtures
 - Parallel test execution enabled

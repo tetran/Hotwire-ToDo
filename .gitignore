@@ -42,3 +42,6 @@
 vendor/bundle
 
 /config/credentials/production.key
+
+# Ignore Claude settings
+.claude/settings.local.json

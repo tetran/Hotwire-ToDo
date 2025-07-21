@@ -81,7 +81,7 @@
 
 ### admin
 - 全ての権限を持つ最高権限ロール
-- 通常、`Admin:manage`、`User:manage` などの管理権限を持つ
+- `Admin:manage`、`User:manage`、`Project:manage`、`Task:manage`、`Comment:manage` を持つ
 
 ### user_manager
 - ユーザー管理に特化したロール
