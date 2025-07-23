@@ -1,0 +1,24 @@
+{
+  "name": "hobo",
+  "version": "1.0.0",
+  "description": "This is a sample todo list application to try Rails 7 & Hotwire.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "github-personal:tetran/Hotwire-ToDo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@playwright/test": "^1.54.1",
+    "@types/node": "^24.1.0"
+  }
+}
