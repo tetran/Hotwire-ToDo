@@ -67,7 +67,7 @@
         </h4>
         <ul class="menu-list">
           <li>
-            <%= link_to user_path, class: "menu-list__setting label-with-icon", data: { turbo_frame: "modal", action: "menu#hideMenu" } do %>
+            <%= link_to user_path, class: "menu-list__setting label-with-icon", data: { turbo_stream: true, action: "menu#hideMenu" } do %>
               <span class="material-symbols-outlined">settings</span>
               Setting
             <% end %>
