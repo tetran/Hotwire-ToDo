@@ -47,6 +47,12 @@ Layout/LineLength:
   Exclude:
     - 'config/**/*'
 
+Layout/AccessModifierIndentation:
+  EnforcedStyle: indent
+
+Layout/IndentationConsistency:
+  EnforcedStyle: indented_internal_methods
+
 # Style
 Style/Documentation:
   Enabled: false
