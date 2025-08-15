@@ -91,7 +91,7 @@ class Admin::UsersControllerTest < ActionDispatch::IntegrationTest
         }
       }
     end
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
   end
 
   # Edit/Update tests
@@ -122,7 +122,7 @@ class Admin::UsersControllerTest < ActionDispatch::IntegrationTest
         email: "invalid-email"
       }
     }
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
   end
 
   # Delete tests

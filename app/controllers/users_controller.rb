@@ -15,7 +15,7 @@ class UsersController < ApplicationController
       send_email_verification(@user)
       redirect_to project_url(@user.inbox_project.id), success: "Welcome! You have signed up successfully!"
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -35,7 +35,7 @@ class UsersController < ApplicationController
           format.turbo_stream
         end
       else
-        render :show, status: :unprocessable_entity
+        render :show, status: :unprocessable_content
       end
     end
   end

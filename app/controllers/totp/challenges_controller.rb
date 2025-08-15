@@ -16,7 +16,7 @@ module Totp
       else
         @token = @user.generate_token_for(:totp_verification)
         @err_message = "Invalid code"
-        render :new, status: :unprocessable_entity
+        render :new, status: :unprocessable_content
       end
     end
 

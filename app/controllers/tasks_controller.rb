@@ -35,8 +35,8 @@ class TasksController < ApplicationController
         format.turbo_stream
       else
         set_suggestion_variables
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @task.errors, status: :unprocessable_entity }
+        format.html { render :new, status: :unprocessable_content }
+        format.json { render json: @task.errors, status: :unprocessable_content }
       end
     end
   end
@@ -49,8 +49,8 @@ class TasksController < ApplicationController
         format.json { render :show, status: :ok, location: @task }
         format.turbo_stream
       else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @task.errors, status: :unprocessable_entity }
+        format.html { render :edit, status: :unprocessable_content }
+        format.json { render json: @task.errors, status: :unprocessable_content }
       end
     end
   end

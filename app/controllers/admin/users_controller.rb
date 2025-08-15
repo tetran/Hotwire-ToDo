@@ -29,7 +29,7 @@ class Admin::UsersController < Admin::ApplicationController
       flash[:success] = I18n.t('admin.users.created_successfully', default: 'ユーザーを作成しました')
       redirect_to admin_user_path(@user)
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -41,7 +41,7 @@ class Admin::UsersController < Admin::ApplicationController
       flash[:success] = I18n.t('admin.users.updated_successfully', default: 'ユーザー情報を更新しました')
       redirect_to admin_user_path(@user)
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

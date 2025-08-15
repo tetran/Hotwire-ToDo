@@ -78,7 +78,7 @@ class Admin::RolesControllerTest < ActionDispatch::IntegrationTest
         }
       }
     end
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
   end
 
   # Edit/Update tests

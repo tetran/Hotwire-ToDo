@@ -35,7 +35,7 @@ class Admin::AvailableModelsControllerTest < ActionDispatch::IntegrationTest
     get admin_llm_provider_available_models_path(@llm_provider),
         headers: { 'Accept' => 'application/json' }
 
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
     
     json_response = JSON.parse(response.body)
     assert_includes json_response['error'], 'API key not configured'

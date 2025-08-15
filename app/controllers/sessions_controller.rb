@@ -13,10 +13,10 @@ class SessionsController < ApplicationController
           render turbo_stream: turbo_stream.update("notification", 
             partial: "shared/notification", 
             locals: { status: "error", message: "Email or password is invalid" }
-          ), status: :unprocessable_entity
+          ), status: :unprocessable_content
         end
         format.html do
-          redirect_to login_path(email_hint: params[:email]), flash: { error: "Email or password is invalid" }, status: :unprocessable_entity
+          redirect_to login_path(email_hint: params[:email]), flash: { error: "Email or password is invalid" }, status: :unprocessable_content
         end
       end
       return

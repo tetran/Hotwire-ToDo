@@ -23,7 +23,7 @@ class Admin::LlmModelsController < Admin::ApplicationController
       redirect_to admin_llm_provider_llm_model_path(@llm_provider, @llm_model),
                   notice: 'LLM Model was successfully created.'
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -35,7 +35,7 @@ class Admin::LlmModelsController < Admin::ApplicationController
       redirect_to admin_llm_provider_llm_model_path(@llm_provider, @llm_model),
                   notice: 'LLM Model was successfully updated.'
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

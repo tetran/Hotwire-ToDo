@@ -8,7 +8,7 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
 
   test "should get create with invalid credentials" do
     post login_path, params: { email: "invalid@example.com", password: "wrong" }
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
   end
 
   test "should destroy session" do
