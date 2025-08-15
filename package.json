@@ -8,7 +8,12 @@
     "lib": "lib",
     "test": "test"
   },
-  "scripts": {},
+  "scripts": {
+    "lint:js": "eslint app/javascript --ext .js",
+    "lint:js:fix": "eslint app/javascript --ext .js --fix",
+    "format": "prettier --write \"app/javascript/**/*.js\" \"**/*.{css,scss,json,md}\"",
+    "format:check": "prettier --check \"app/javascript/**/*.js\" \"**/*.{css,scss,json,md}\""
+  },
   "repository": {
     "type": "git",
     "url": "github-personal:tetran/Hotwire-ToDo.git"
@@ -19,6 +24,12 @@
   "type": "commonjs",
   "devDependencies": {
     "@playwright/test": "^1.54.1",
-    "@types/node": "^24.1.0"
+    "@types/node": "^24.1.0",
+    "eslint": "^8.57.0",
+    "eslint-config-standard": "^17.1.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^6.1.1",
+    "prettier": "^3.2.5"
   }
 }
