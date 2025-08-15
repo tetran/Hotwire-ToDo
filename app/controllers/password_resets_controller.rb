@@ -12,7 +12,7 @@ class PasswordResetsController < ApplicationController
       send_password_reset
       redirect_to login_path, success: "Check your email for reset instructions"
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -24,7 +24,7 @@ class PasswordResetsController < ApplicationController
     if @user.save(context: :update_password)
       redirect_to login_path, success: "Password updated successfully."
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

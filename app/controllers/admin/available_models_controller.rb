@@ -5,7 +5,7 @@ class Admin::AvailableModelsController < Admin::ApplicationController
 
   def index
     if @llm_provider.api_key.blank?
-      render json: { error: "API key not configured for this provider" }, status: :unprocessable_entity
+      render json: { error: "API key not configured for this provider" }, status: :unprocessable_content
       return
     end
 

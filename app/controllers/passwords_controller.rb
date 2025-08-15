@@ -9,7 +9,7 @@ class PasswordsController < ApplicationController
         @message = "Password updated successfully."
         format.turbo_stream
       else
-        format.html { render :edit, status: :unprocessable_entity }
+        format.html { render :edit, status: :unprocessable_content }
       end
     end
   end

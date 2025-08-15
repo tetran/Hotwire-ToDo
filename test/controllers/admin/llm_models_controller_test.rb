@@ -100,7 +100,7 @@ class Admin::LlmModelsControllerTest < ActionDispatch::IntegrationTest
       assert_not created_model.default_model?
     else
       # If not redirected, check for validation errors
-      assert_response :unprocessable_entity
+      assert_response :unprocessable_content
       flunk "Model creation failed. Response body: #{response.body}"
     end
   end
@@ -139,7 +139,7 @@ class Admin::LlmModelsControllerTest < ActionDispatch::IntegrationTest
         }
       }
     end
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
   end
 
   test "should not create model with duplicate name within provider" do
@@ -152,7 +152,7 @@ class Admin::LlmModelsControllerTest < ActionDispatch::IntegrationTest
         }
       }
     end
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
   end
 
   test "should allow same model name across different providers" do
@@ -232,7 +232,7 @@ class Admin::LlmModelsControllerTest < ActionDispatch::IntegrationTest
         display_name: ""
       }
     }
-    assert_response :unprocessable_entity
+    assert_response :unprocessable_content
   end
 
   # Delete tests

@@ -1,11 +1,11 @@
 # README
 
 ## What is this?
-This is a sample todo list application to try Rails 7 & Hotwire.
+This is a sample todo list application to try Rails 8 & Hotwire.
 
 ## Requirements
 * Ruby version: 3.4.4
-* Rails version: 7.1
+* Rails version: 8.0
 * Database: PostgreSQL
 
 ## How to run

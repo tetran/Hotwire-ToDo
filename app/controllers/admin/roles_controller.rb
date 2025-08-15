@@ -23,7 +23,7 @@ class Admin::RolesController < Admin::ApplicationController
       flash[:success] = I18n.t('admin.roles.created_successfully', default: 'ロールを作成しました')
       redirect_to admin_role_path(@role)
     else
-      render :new, status: :unprocessable_entity
+      render :new, status: :unprocessable_content
     end
   end
 
@@ -41,7 +41,7 @@ class Admin::RolesController < Admin::ApplicationController
       flash[:success] = I18n.t('admin.roles.updated_successfully', default: 'ロールを更新しました')
       redirect_to admin_role_path(@role)
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

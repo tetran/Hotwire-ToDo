@@ -14,7 +14,7 @@ module Tasks
           format.html { redirect_to @task, notice: "Comment was successfully created." }
           format.turbo_stream
         else
-          format.html { render :new, status: :unprocessable_entity }
+          format.html { render :new, status: :unprocessable_content }
         end
       end
     end
@@ -31,7 +31,7 @@ module Tasks
           format.html { redirect_to @task, notice: "Comment was successfully updated." }
           format.turbo_stream
         else
-          format.html { render :edit, status: :unprocessable_entity }
+          format.html { render :edit, status: :unprocessable_content }
         end
       end
     end

@@ -10,7 +10,7 @@ module Projects
           format.turbo_stream
         else
           format.turbo_stream do
-            render turbo_stream: turbo_stream.replace("project_member_error", partial: "shared/simple_error_message", locals: { message: "Failed" }), status: :unprocessable_entity
+            render turbo_stream: turbo_stream.replace("project_member_error", partial: "shared/simple_error_message", locals: { message: "Failed" }), status: :unprocessable_content
           end
         end
       end
@@ -21,7 +21,7 @@ module Projects
       respond_to do |format|
         if @project.members.length < 1
           format.turbo_stream do
-            render turbo_stream: turbo_stream.replace("project_member_error", partial: "shared/simple_error_message", locals: { message: "Failed" }), status: :unprocessable_entity
+            render turbo_stream: turbo_stream.replace("project_member_error", partial: "shared/simple_error_message", locals: { message: "Failed" }), status: :unprocessable_content
           end
           return
         end

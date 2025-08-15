@@ -23,7 +23,7 @@ class Admin::LlmProvidersController < Admin::ApplicationController
     if @llm_provider.update(params_to_update)
       redirect_to admin_llm_provider_path(@llm_provider), notice: 'LLM Provider was successfully updated.'
     else
-      render :edit, status: :unprocessable_entity
+      render :edit, status: :unprocessable_content
     end
   end
 

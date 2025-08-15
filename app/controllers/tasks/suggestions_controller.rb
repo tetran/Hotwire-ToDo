@@ -7,7 +7,7 @@ module Tasks
       set_view_variables
 
       unless @suggestion_request.save
-        render "tasks/new", status: :unprocessable_entity
+        render "tasks/new", status: :unprocessable_content
         return
       end
 

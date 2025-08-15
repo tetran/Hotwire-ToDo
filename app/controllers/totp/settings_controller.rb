@@ -15,7 +15,7 @@ module Totp
         else
           set_totp_url
           @err_message = "Invalid code"
-          format.html { render :show, status: :unprocessable_entity }
+          format.html { render :show, status: :unprocessable_content }
         end
       end
     end
