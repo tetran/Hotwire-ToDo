@@ -26,6 +26,16 @@ bin/rails test test/models/user_test.rb  # Run specific test file
 bin/rails test:system       # Run system tests
 ```
 
+### Code Formatting & Linting
+```bash
+bundle exec rubocop         # Run RuboCop linter
+bundle exec rubocop -a      # Auto-fix RuboCop issues
+npm run lint:js             # Run ESLint for JavaScript
+npm run lint:js:fix         # Auto-fix ESLint issues
+npm run format              # Format code with Prettier
+npm run format:check        # Check formatting with Prettier
+```
+
 ### Maintenance
 ```bash
 bin/rails log:clear tmp:clear  # Clear logs and temp files

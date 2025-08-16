@@ -1,0 +1,88 @@
+plugins:
+  - rubocop-rails
+  - rubocop-performance
+
+AllCops:
+  TargetRubyVersion: 3.4
+  NewCops: enable
+  Exclude:
+    - 'bin/*'
+    - 'db/schema.rb'
+    - 'db/migrate/*.rb'
+    - 'node_modules/**/*'
+    - 'vendor/**/*'
+    - 'tmp/**/*'
+    - 'log/**/*'
+    - 'storage/**/*'
+    - 'config/boot.rb'
+    - 'config/environment.rb'
+    - 'config/application.rb'
+    - 'config/environments/*.rb'
+    - 'config/initializers/*.rb'
+
+# Rails specific configurations
+Rails:
+  Enabled: true
+
+# Metrics
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+    - 'test/**/*'
+    - 'config/routes.rb'
+    - 'db/seeds.rb'
+    - 'lib/tasks/*.rake'
+
+Metrics/MethodLength:
+  Max: 15
+  Exclude:
+    - 'test/**/*'
+
+Metrics/ClassLength:
+  Max: 150
+
+# Layout
+Layout/LineLength:
+  Max: 120
+  Exclude:
+    - 'config/**/*'
+
+Layout/AccessModifierIndentation:
+  EnforcedStyle: indent
+
+Layout/IndentationConsistency:
+  EnforcedStyle: indented_internal_methods
+
+# Style
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: comma
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: comma
+
+# Lint
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    - 'test/**/*'
+
+# Rails specific
+Rails/FilePath:
+  Enabled: false
+
+Rails/I18nLocaleTexts:
+  Enabled: false
+
+Rails/SkipsModelValidations:
+  Enabled: false
