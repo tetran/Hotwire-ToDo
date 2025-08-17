@@ -6,7 +6,7 @@
   color: white;
   padding: 0;
   margin: 0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   position: sticky;
   top: 0;
   z-index: 1000;
@@ -111,12 +111,12 @@
     flex-direction: column;
     gap: 15px;
   }
-  
+
   .admin-nav-items {
     flex-wrap: wrap;
     gap: 15px;
   }
-  
+
   .admin-user-menu {
     flex-direction: column;
     gap: 10px;

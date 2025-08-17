@@ -1,2 +1,4 @@
-module Projects::MembersHelper
+module Projects
+  module MembersHelper
+  end
 end

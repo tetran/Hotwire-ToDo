@@ -1,7 +1,6 @@
 module Tasks
   # タスクの提案を行う
   class SuggestionsController < ApplicationController
-
     def create
       @suggestion_request = SuggestionRequest.new(suggestion_request_params.merge(requested_by: current_user))
       set_view_variables
@@ -19,7 +18,7 @@ module Tasks
     private
 
       def suggestion_request_params
-        params.require(:suggestion_request).permit(:goal, :context, :due_date, :start_date, :project_id)
+        params.expect(suggestion_request: %i[goal context due_date start_date project_id])
       end
 
       def set_view_variables

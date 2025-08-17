@@ -1,8 +1,8 @@
-import { Controller } from "@hotwired/stimulus"
-import { popupMenu } from "controllers/mixins/popupMenu"
+import { Controller } from '@hotwired/stimulus'
+import { popupMenu } from 'controllers/mixins/popupMenu'
 
 export default class extends Controller {
-  static targets = [ "menu", "form" ]
+  static targets = ['menu', 'form']
 
   connect() {
     popupMenu(this)
@@ -11,7 +11,7 @@ export default class extends Controller {
   clear() {
     this.formTarget.reset()
     const errors = this.formTarget.querySelectorAll('.simple-error')
-    errors.forEach((error) => {
+    errors.forEach(error => {
       error.remove()
     })
   }

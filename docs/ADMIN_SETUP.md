@@ -1,10 +1,12 @@
 # Admin Panel Setup Guide
 
-This guide explains how to set up master admin users for production and staging environments.
+This guide explains how to set up master admin users for production and staging
+environments.
 
 ## Security Best Practices
 
-1. **Use strong passwords**: Minimum 12 characters with mixed case, numbers, and symbols
+1. **Use strong passwords**: Minimum 12 characters with mixed case, numbers, and
+   symbols
 2. **Environment variables**: Never hardcode passwords in code or config files
 3. **Limit access**: Only create the minimum number of admin users needed
 4. **Regular rotation**: Change admin passwords regularly
@@ -73,11 +75,11 @@ bin/rails console
 
 ## Environment Variables Reference
 
-| Variable | Required | Description | Example |
-|----------|----------|-------------|---------|
-| `MASTER_USER_EMAIL` | Yes | Admin email address | `admin@company.com` |
-| `MASTER_USER_PASSWORD` | Yes | Secure password (12+ chars) | `SecureP@ssw0rd123!` |
-| `MASTER_USER_NAME` | No | Display name | `Master Administrator` |
+| Variable               | Required | Description                 | Example                |
+| ---------------------- | -------- | --------------------------- | ---------------------- |
+| `MASTER_USER_EMAIL`    | Yes      | Admin email address         | `admin@company.com`    |
+| `MASTER_USER_PASSWORD` | Yes      | Secure password (12+ chars) | `SecureP@ssw0rd123!`   |
+| `MASTER_USER_NAME`     | No       | Display name                | `Master Administrator` |
 
 ## Security Checklist
 
@@ -106,4 +108,5 @@ bin/rails console
 
 ### Support
 
-For additional help, contact the development team or check the application logs for specific error messages.
+For additional help, contact the development team or check the application logs
+for specific error messages.

@@ -13,7 +13,7 @@
 ```ruby
 class Admin::ExampleControllerTest < ActionDispatch::IntegrationTest
   # 1. 認証テスト - ログインが必要
-  # 2. 基本認可テスト - 管理者権限が必要  
+  # 2. 基本認可テスト - 管理者権限が必要
   # 3. 機能別権限テスト - 具体的な権限が必要
   # 4. 正常系テスト - 適切な権限での動作確認
 end
@@ -67,7 +67,7 @@ test "should require Resource:read permission for show action" do
     email: "limited@example.com",
     password: "password"
   )
-  
+
   # 管理者権限のみのロールを作成
   limited_role = Role.create!(
     name: "limited_admin",
@@ -75,9 +75,9 @@ test "should require Resource:read permission for show action" do
   )
   limited_role.permissions << permissions(:admin_manage)
   limited_user.roles << limited_role
-  
+
   login_as(limited_user)
-  
+
   get admin_example_path
   assert_redirected_to root_path
   assert_match /権限がありません/, flash[:error]
@@ -94,7 +94,7 @@ test "should require Resource:write permission for update action" do
     email: "readonly@example.com",
     password: "password"
   )
-  
+
   # 読み取り専用ロールを作成
   read_only_role = Role.create!(
     name: "resource_viewer",
@@ -103,13 +103,13 @@ test "should require Resource:write permission for update action" do
   read_only_role.permissions << permissions(:admin_manage)
   read_only_role.permissions << permissions(:resource_read)
   read_only_user.roles << read_only_role
-  
+
   login_as(read_only_user)
-  
+
   # 表示は可能
   get admin_example_path
   assert_response :success
-  
+
   # 更新は不可
   patch admin_example_path, params: { example: { name: "Updated" } }
   assert_redirected_to root_path
@@ -122,10 +122,10 @@ end
 ```ruby
 test "user with appropriate permissions can perform action" do
   login_as_user_manager  # 適切な権限を持つユーザー
-  
+
   get admin_example_path
   assert_response :success
-  
+
   patch admin_example_path, params: { example: { name: "Updated" } }
   assert_redirected_to admin_example_path
   assert_equal "更新しました", flash[:notice]
@@ -359,7 +359,7 @@ puts current_user.permissions.map { |p| "#{p.resource_type}:#{p.action}" }
 def authorize_example_management
   Rails.logger.debug "Action: #{action_name}"
   Rails.logger.debug "User permissions: #{current_user.permissions.pluck(:resource_type, :action)}"
-  
+
   case action_name
   when 'show'
     Rails.logger.debug "Checking Example:read permission"

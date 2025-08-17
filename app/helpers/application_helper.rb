@@ -18,9 +18,9 @@ module ApplicationHelper
     end
   end
 
-  def debug_block(&block)
+  def debug_block(&)
     return unless Rails.env.development?
 
-    raw "<div class='debug-block'>#{capture(&block)}</div>"
+    content_tag(:div, capture(&), class: "debug-block")
   end
 end

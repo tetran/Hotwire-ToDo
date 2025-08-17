@@ -1,6 +1,5 @@
 class PasswordsController < ApplicationController
-  def edit
-  end
+  def edit; end
 
   def update
     respond_to do |format|
@@ -17,6 +16,6 @@ class PasswordsController < ApplicationController
   private
 
     def update_params
-      params.require(:user).permit(:password, :password_confirmation, :password_challenge)
+      params.expect(user: %i[password password_confirmation password_challenge])
     end
 end

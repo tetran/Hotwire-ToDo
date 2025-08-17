@@ -23,14 +23,14 @@ class Task < ApplicationRecord
   def self.create_from_suggestion(params, project_id, user)
     tasks = []
     transaction do
-      params.each do |_, param|
+      params.each_value do |param|
         # insert_allを使いたいが、descriptionはActionTextなので何らかの調整が必要
         tasks << Task.create!(
           name: param[:name],
           description: param[:description],
           due_date: param[:due_date],
           project_id: project_id,
-          created_by: user
+          created_by: user,
         )
       end
     end

@@ -10,22 +10,22 @@ class Role < ApplicationRecord
   scope :custom_roles, -> { where(system_role: false) }
 
   def self.admin
-    find_by(name: 'admin', system_role: true)
+    find_by(name: "admin", system_role: true)
   end
 
   def self.user_manager
-    find_by(name: 'user_manager', system_role: true)
+    find_by(name: "user_manager", system_role: true)
   end
 
   def self.user_viewer
-    find_by(name: 'user_viewer', system_role: true)
+    find_by(name: "user_viewer", system_role: true)
   end
 
   def self.project_manager
-    find_by(name: 'project_manager', system_role: true)
+    find_by(name: "project_manager", system_role: true)
   end
 
   def self.llm_admin
-    find_by(name: 'llm_admin', system_role: true)
+    find_by(name: "llm_admin", system_role: true)
   end
 end

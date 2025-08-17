@@ -1,2 +1,4 @@
-module Totp::ChallengesHelper
+module Totp
+  module ChallengesHelper
+  end
 end

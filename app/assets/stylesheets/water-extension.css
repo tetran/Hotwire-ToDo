@@ -1,43 +1,50 @@
 :root {
-    --button-primary: #0096bf;
-    --button-primary-hover: #007a9d;
-    --button-primary-text: #eee;
+  --button-primary: #0096bf;
+  --button-primary-hover: #007a9d;
+  --button-primary-text: #eee;
 }
 .btn {
-    color: var(--form-text);
-    background-color: var(--button-base);
-    font-family: inherit;
-    font-size: inherit;
-    margin-right: 6px;
-    margin-bottom: 6px;
-    padding: 8px;
-    border: none;
-    border-radius: 6px;
-    outline: none;
-    transition: background-color 0.1s linear, border-color 0.1s linear, color 0.1s linear, box-shadow 0.1s linear, transform 0.1s ease;
+  color: var(--form-text);
+  background-color: var(--button-base);
+  font-family: inherit;
+  font-size: inherit;
+  margin-right: 6px;
+  margin-bottom: 6px;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  outline: none;
+  transition:
+    background-color 0.1s linear,
+    border-color 0.1s linear,
+    color 0.1s linear,
+    box-shadow 0.1s linear,
+    transform 0.1s ease;
 }
 .btn:hover {
-    text-decoration: none;
-    background: var(--button-hover);
+  text-decoration: none;
+  background: var(--button-hover);
 }
 .btn:active {
-    transform: translateY(2px);
+  transform: translateY(2px);
 }
 
-input[type="submit"], button {
-    padding-left: 12px;
-    padding-right: 12px;
+input[type="submit"],
+button {
+  padding-left: 12px;
+  padding-right: 12px;
 }
-input[type="submit"]:hover, button:hover {
-    background: var(--button-hover);
+input[type="submit"]:hover,
+button:hover {
+  background: var(--button-hover);
 }
 
 input[type="submit"].primary,
 button.primary {
-    background-color: var(--button-primary) !important;
-    color: var(--button-primary-text) !important;
+  background-color: var(--button-primary) !important;
+  color: var(--button-primary-text) !important;
 }
 input[type="submit"].primary:hover,
 button.primary:hover {
-    background-color: var(--button-primary-hover) !important;
+  background-color: var(--button-primary-hover) !important;
 }

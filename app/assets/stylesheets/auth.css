@@ -1,11 +1,11 @@
 .auth-form {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 15px;
-    border-radius: 5px;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 15px;
+  border-radius: 5px;
 }
 .auth-form input {
-    box-sizing: border-box;
-    margin-bottom: 15px;
-    width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 15px;
+  width: 100%;
 }

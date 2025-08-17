@@ -6,6 +6,10 @@ module Tasks
       @comment = @task.comments.build
     end
 
+    def edit
+      @comment = @task.comments.find(params[:id])
+    end
+
     def create
       @comment = @task.comments.build(comment_params.merge(user: current_user))
 
@@ -17,10 +21,6 @@ module Tasks
           format.html { render :new, status: :unprocessable_content }
         end
       end
-    end
-
-    def edit
-      @comment = @task.comments.find(params[:id])
     end
 
     def update
@@ -52,7 +52,7 @@ module Tasks
     private
 
       def comment_params
-        params.require(:comment).permit(:content)
+        params.expect(comment: [:content])
       end
   end
 end

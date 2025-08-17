@@ -1,6 +1,6 @@
 module Totp
   class ChallengesController < ApplicationController
-    skip_before_action :require_login, only: [:new, :create]
+    skip_before_action :require_login, only: %i[new create]
     before_action :set_user_from_token, only: :create
 
     def new
@@ -21,6 +21,7 @@ module Totp
     end
 
     private
+
       def set_user_from_token
         @user = User.find_by_token_for!(:totp_verification, params[:token])
       rescue StandardError

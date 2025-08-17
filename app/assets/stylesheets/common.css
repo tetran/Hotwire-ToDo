@@ -1,181 +1,186 @@
 :root {
-    --color-error: #fc5050;
-    --color-warning: #8a6d3b;
-    --color-success: #3c763d;
-    --color-info: #31708f;
+  --color-error: #fc5050;
+  --color-warning: #8a6d3b;
+  --color-success: #3c763d;
+  --color-info: #31708f;
 }
 
 .hidden {
-    display: none;
+  display: none;
 }
 
 .visually-hidden {
-    position: absolute !important;
-    width: 1px !important;
-    height: 1px !important;
-    padding: 0 !important;
-    margin: -1px !important;
-    overflow: hidden !important;
-    clip: rect(0, 0, 0, 0) !important;
-    white-space: nowrap !important;
-    border: 0 !important;
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
 }
 
 .simple-error {
-    color: var(--color-error);
-    font-size: 0.9rem;
-    padding: 0 0 0.5rem 0.5rem;
-    margin: 0;
+  color: var(--color-error);
+  font-size: 0.9rem;
+  padding: 0 0 0.5rem 0.5rem;
+  margin: 0;
 }
 
 .notification {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: -1;
-    width: 100%;
-    opacity: 0;
-    display: flex;
-    justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  width: 100%;
+  opacity: 0;
+  display: flex;
+  justify-content: center;
 }
 .notification.bottom {
-    bottom: 0;
-    top: auto;
+  bottom: 0;
+  top: auto;
 }
 .notification.animate {
-    animation: fadeInOut 1.5s ease-in-out;
-    z-index: 9999;
+  animation: fadeInOut 1.5s ease-in-out;
+  z-index: 9999;
 }
 .notification.animate--in {
-    animation: fadeIn 0.2s ease-in-out;
-    animation-fill-mode: forwards;
-    z-index: 9999;
+  animation: fadeIn 0.2s ease-in-out;
+  animation-fill-mode: forwards;
+  z-index: 9999;
 }
 .notification.animate--out {
-    animation: fadeOut 0.2s ease-in-out;
-    animation-fill-mode: forwards;
+  animation: fadeOut 0.2s ease-in-out;
+  animation-fill-mode: forwards;
 }
 
 .notification__contents {
-    padding: .75em;
-    margin: 1em;
-    max-width: 400px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    font-size: 16px;
-    line-height: 1.5;
+  padding: 0.75em;
+  margin: 1em;
+  max-width: 400px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  font-size: 16px;
+  line-height: 1.5;
 }
 
 .notification__contents--success {
-    background-color: #dff0d8;
-    color: var(--color-success);
+  background-color: #dff0d8;
+  color: var(--color-success);
 }
 
 .notification__contents--error {
-    background-color: #f2dede;
-    color: var(--color-error);
+  background-color: #f2dede;
+  color: var(--color-error);
 }
 
 .notification__contents--warning {
-    background-color: #fcf8e3;
-    color: var(--color-warning);
+  background-color: #fcf8e3;
+  color: var(--color-warning);
 }
 
 .notification__contents--info {
-    background-color: #d9edf7;
-    color: var(--color-info);
+  background-color: #d9edf7;
+  color: var(--color-info);
 }
 
 @keyframes fadeInOut {
-    0% {
-        opacity: 0;
-        transform: translateY(-100%);
-    }
-    10% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    90% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-    100% {
-        opacity: 0;
-        transform: translateY(-100%);
-    }
+  0% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
 }
 @keyframes fadeIn {
-    0% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 1;
-    }
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 @keyframes fadeOut {
-    0% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0;
-    }
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 .horizontal-actions {
-    display: flex;
-    flex: 0 0 auto;
-    align-self: flex-start;
-    gap: 0.5rem;
+  display: flex;
+  flex: 0 0 auto;
+  align-self: flex-start;
+  gap: 0.5rem;
 }
 .horizontal-actions .material-symbols-outlined {
-    color: var(--text-main);
+  color: var(--text-main);
 }
 .horizontal-actions a {
-    display: inline-block;
-    color: var(--text-main);
-    border-radius: 6px;
-    padding: 2px;
-    transition: background-color 0.1s linear, border-color 0.1s linear, color 0.1s linear, box-shadow 0.1s linear, transform 0.1s ease;
+  display: inline-block;
+  color: var(--text-main);
+  border-radius: 6px;
+  padding: 2px;
+  transition:
+    background-color 0.1s linear,
+    border-color 0.1s linear,
+    color 0.1s linear,
+    box-shadow 0.1s linear,
+    transform 0.1s ease;
 }
 .horizontal-actions a:hover {
-    background: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.1);
 }
 .horizontal-actions a:active {
-    transform: translateY(2px);
+  transform: translateY(2px);
 }
 .horizontal-actions button {
-    background: none;
-    border: none;
-    padding: 2px;
-    margin: 0;
+  background: none;
+  border: none;
+  padding: 2px;
+  margin: 0;
 }
 .horizontal-actions button:hover {
-    background: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.1);
 }
 
 .label-with-icon .material-symbols-outlined {
-    font-size: 1.2rem;
-    vertical-align: -4px;
+  font-size: 1.2rem;
+  vertical-align: -4px;
 }
 
 .user-initial-sign {
-    display: inline-block;
-    width: 1.5rem;
-    height: 1.5rem;
-    border-radius: 50%;
-    text-align: center;
-    line-height: 1.5rem;
-    font-size: 1rem;
-    font-weight: bold;
-    color: var(--form-text);
-    background: var(--background);
-    border: solid 1px var(--border);
+  display: inline-block;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--form-text);
+  background: var(--background);
+  border: solid 1px var(--border);
 }
 .user-avatar {
-    clip-path: circle(50%);
+  clip-path: circle(50%);
 }
 
 select {
-    text-overflow: ellipsis;
-    max-width: 100%;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }

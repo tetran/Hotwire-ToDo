@@ -34,11 +34,11 @@ class SuggestionRequestTest < ActiveSupport::TestCase
       llm_model: @llm_model,
       goal: "Build a web application",
       start_date: Date.current,
-      due_date: Date.current + 1.week
+      due_date: Date.current + 1.week,
     )
 
     # Skip rate limiting validation for this test
-    request.define_singleton_method(:too_many_requests) { }
+    request.define_singleton_method(:too_many_requests) {}
 
     assert request.valid?
   end
@@ -89,7 +89,7 @@ class SuggestionRequestTest < ActiveSupport::TestCase
     response = @suggestion_request.build_response(
       raw_response: '{"tasks": []}',
       completion_tokens: 10,
-      prompt_tokens: 20
+      prompt_tokens: 20,
     )
     response.save!
 
@@ -98,7 +98,7 @@ class SuggestionRequestTest < ActiveSupport::TestCase
 
   test "should validate rate limiting" do
     # Mock Time to create requests within the limit window
-    travel_to Time.current do
+    freeze_time do
       # Create two requests to reach the limit
       2.times do |i|
         req = SuggestionRequest.new(
@@ -107,9 +107,9 @@ class SuggestionRequestTest < ActiveSupport::TestCase
           llm_model: @llm_model,
           goal: "Request #{i}",
           start_date: Date.current,
-          due_date: Date.current + 1.week
+          due_date: Date.current + 1.week,
         )
-        req.save(validate: false)  # Skip validation for setup
+        req.save(validate: false) # Skip validation for setup
         req.update_column(:created_at, Time.current)
       end
 
@@ -120,7 +120,7 @@ class SuggestionRequestTest < ActiveSupport::TestCase
         llm_model: @llm_model,
         goal: "Third request",
         start_date: Date.current,
-        due_date: Date.current + 1.week
+        due_date: Date.current + 1.week,
       )
 
       assert_not third_request.valid?
@@ -136,17 +136,17 @@ class SuggestionRequestTest < ActiveSupport::TestCase
       goal: "Test goal",
       context: "Test context",
       start_date: Date.current,
-      due_date: Date.current + 1.week
+      due_date: Date.current + 1.week,
     )
 
     # Skip rate limiting validation
-    request.define_singleton_method(:too_many_requests) { }
+    request.define_singleton_method(:too_many_requests) {}
 
     request.save!
     assert_not_nil request.raw_request
 
     parsed = JSON.parse(request.raw_request)
-    assert_equal "gpt-4.1-mini", parsed["model"]  # Current hardcoded value
+    assert_equal "gpt-4.1-mini", parsed["model"] # Current hardcoded value
     assert_equal "json_object", parsed["response_format"]["type"]
     assert_equal 0.7, parsed["temperature"]
     assert_includes parsed["messages"].last["content"], "Test goal"
@@ -160,11 +160,11 @@ class SuggestionRequestTest < ActiveSupport::TestCase
       goal: "Test goal",
       context: "Important context",
       start_date: Date.current,
-      due_date: Date.current + 1.week
+      due_date: Date.current + 1.week,
     )
 
     # Skip rate limiting validation
-    request.define_singleton_method(:too_many_requests) { }
+    request.define_singleton_method(:too_many_requests) {}
 
     request.save!
     parsed = JSON.parse(request.raw_request)
@@ -178,18 +178,18 @@ class SuggestionRequestTest < ActiveSupport::TestCase
       llm_model: @llm_model,
       goal: "Test params",
       start_date: Date.current,
-      due_date: Date.current + 1.week
+      due_date: Date.current + 1.week,
     )
 
     # Skip rate limiting validation
-    request.define_singleton_method(:too_many_requests) { }
+    request.define_singleton_method(:too_many_requests) {}
 
     request.save!
 
     params = request.openai_params
     assert_not_nil params, "openai_params should not be nil"
 
-    assert_equal "gpt-4.1-mini", params[:model]  # Current hardcoded value
+    assert_equal "gpt-4.1-mini", params[:model] # Current hardcoded value
     assert_equal "json_object", params[:response_format][:type]
   end
 
@@ -203,11 +203,11 @@ class SuggestionRequestTest < ActiveSupport::TestCase
       llm_model: @llm_model,
       goal: "User 2 request",
       start_date: Date.current,
-      due_date: Date.current + 1.week
+      due_date: Date.current + 1.week,
     )
 
     # Skip rate limiting validation
-    request.define_singleton_method(:too_many_requests) { }
+    request.define_singleton_method(:too_many_requests) {}
 
     assert request.valid?
   end

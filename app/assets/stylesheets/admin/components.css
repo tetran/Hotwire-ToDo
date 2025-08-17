@@ -53,7 +53,7 @@
 .btn:hover {
   background: #0056b3;
   transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .btn-primary {
@@ -99,7 +99,7 @@
   border-collapse: collapse;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   margin-top: 20px;
 }
 
@@ -137,7 +137,7 @@
   border-collapse: collapse;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .detail-table th {
@@ -221,12 +221,12 @@
   .admin-table {
     font-size: 14px;
   }
-  
+
   .admin-table th,
   .admin-table td {
     padding: 10px 8px;
   }
-  
+
   .admin-table .actions .btn {
     padding: 4px 8px;
     font-size: 11px;

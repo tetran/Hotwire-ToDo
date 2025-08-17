@@ -12,16 +12,18 @@ class User < ApplicationRecord
     attachable.variant :icon, resize_to_limit: [40, 40], preprocessed: true
   end
 
-  normalizes :email, with: -> email { email.strip.downcase }
+  normalizes :email, with: ->(email) { email.strip.downcase }
 
   has_many :comments, dependent: :restrict_with_error
   has_many :project_members, dependent: :restrict_with_error
   has_many :projects, through: :project_members
   # 参加しているprojectsのタスクすべて
   has_many :tasks, through: :projects
-  has_many :assigned_tasks, class_name: "Task", foreign_key: :assignee_id, dependent: :nullify
+  has_many :assigned_tasks, class_name: "Task", foreign_key: :assignee_id, dependent: :nullify, inverse_of: :assignee
   # inboxプロジェクト: owner_idが自分で、dedicatedがtrueのプロジェクト。各ユーザーに1つだけ存在する。
-  has_one :inbox_project, -> { where(dedicated: true) }, class_name: "Project", foreign_key: :owner_id, dependent: :destroy
+  has_one :inbox_project, lambda {
+    where(dedicated: true)
+  }, class_name: "Project", foreign_key: :owner_id, dependent: :destroy, inverse_of: :owner
 
   # ロールベース認可
   has_many :user_roles, dependent: :destroy
@@ -31,10 +33,11 @@ class User < ApplicationRecord
   after_create :create_inbox_project
 
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
-  validates :password, presence: true, length: { minimum: 8 }, on: [:create, :update_password]
+  validates :password, presence: true, length: { minimum: 8 }, on: %i[create update_password]
   validates :password, confirmation: true, on: :update_password
 
   def participating_projects
+    # Inboxを最初に表示するため`dedicated`の降順でソート
     projects.unarchived.order({ dedicated: :desc }, :created_at)
   end
 
@@ -50,29 +53,28 @@ class User < ApplicationRecord
 
   # ロールベース認可メソッド
   def admin?
-    roles.exists?(name: 'admin', system_role: true)
+    roles.exists?(name: "admin", system_role: true)
   end
 
   def has_permission?(resource_type, action)
     roles.joins(:permissions)
-         .where(permissions: { resource_type: resource_type, action: action })
-         .exists?
+         .exists?(permissions: { resource_type: resource_type, action: action })
   end
 
   def can_read?(resource_type)
-    has_permission?(resource_type, 'read') || has_permission?(resource_type, 'manage')
+    has_permission?(resource_type, "read") || has_permission?(resource_type, "manage")
   end
 
   def can_write?(resource_type)
-    has_permission?(resource_type, 'write') || has_permission?(resource_type, 'manage')
+    has_permission?(resource_type, "write") || has_permission?(resource_type, "manage")
   end
 
   def can_delete?(resource_type)
-    has_permission?(resource_type, 'delete') || has_permission?(resource_type, 'manage')
+    has_permission?(resource_type, "delete") || has_permission?(resource_type, "manage")
   end
 
   def can_manage?(resource_type)
-    has_permission?(resource_type, 'manage')
+    has_permission?(resource_type, "manage")
   end
 
   def force_destroy

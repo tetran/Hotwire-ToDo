@@ -1,6 +1,6 @@
 module Totp
   class SettingsController < ApplicationController
-    before_action :set_totp, only: [:show, :create]
+    before_action :set_totp, only: %i[show create]
 
     def show
       set_totp_url

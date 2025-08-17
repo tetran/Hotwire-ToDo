@@ -1,8 +1,8 @@
 ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
-require 'webmock/minitest'
-require 'mocha/minitest'
+require "webmock/minitest"
+require "mocha/minitest"
 
 # Allow local connections but block external HTTP requests during tests
 WebMock.disable_net_connect!(allow_localhost: true)
@@ -24,20 +24,18 @@ module ActionDispatch
     # Helper methods for login/logout
     def login_as(user)
       # Perform actual login through the login endpoint
-      if user
-        # Set user locale to Japanese for consistent test behavior
-        user.update!(locale: 'ja')
+      return unless user
 
-        post login_path, params: {
-          email: user.email,
-          password: 'password'  # This matches the fixture password
-        }
-        # The login should succeed and redirect to the user's inbox project
-        # Follow redirects to complete the login process
-        while response.redirect?
-          follow_redirect!
-        end
-      end
+      # Set user locale to Japanese for consistent test behavior
+      user.update!(locale: "ja")
+
+      post login_path, params: {
+        email: user.email,
+        password: "password", # This matches the fixture password
+      }
+      # The login should succeed and redirect to the user's inbox project
+      # Follow redirects to complete the login process
+      follow_redirect! while response.redirect?
     end
 
     def logout
@@ -59,8 +57,7 @@ module ActionDispatch
 
     def assert_admin_access_required
       assert_redirected_to root_path
-      # Note: Flash message assertion might need adjustment based on actual implementation
+      # NOTE: Flash message assertion might need adjustment based on actual implementation
     end
   end
 end
-

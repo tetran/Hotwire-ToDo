@@ -7,7 +7,7 @@ gpt_turbo:
   active: true
   default_model: true
 
-gpt_4:
+gpt4:
   llm_provider: openai
   name: gpt-4-mini
   display_name: GPT-4 Mini

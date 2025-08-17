@@ -1,10 +1,12 @@
 class PasswordResetsController < ApplicationController
   skip_before_action :require_login
-  before_action :set_user_from_token, only: [:edit, :update]
+  before_action :set_user_from_token, only: %i[edit update]
 
   def new
     @password_reset = PasswordReset.new
   end
+
+  def edit; end
 
   def create
     @password_reset = PasswordReset.new(params[:password_reset].permit(:email))
@@ -14,9 +16,6 @@ class PasswordResetsController < ApplicationController
     else
       render :new, status: :unprocessable_content
     end
-  end
-
-  def edit
   end
 
   def update
@@ -42,6 +41,6 @@ class PasswordResetsController < ApplicationController
     end
 
     def update_params
-      params.require(:user).permit(:password, :password_confirmation)
+      params.expect(user: %i[password password_confirmation])
     end
 end
