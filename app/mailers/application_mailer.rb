@@ -1,4 +1,4 @@
 class ApplicationMailer < ActionMailer::Base
-  default from: "noreply@#{ENV["APP_HOST"]}"
+  default from: "noreply@#{ENV.fetch('APP_HOST', nil)}"
   layout "mailer"
 end

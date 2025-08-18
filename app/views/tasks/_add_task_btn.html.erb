@@ -1,4 +1,4 @@
-<%= button_to new_task_path, params: { project_id: @new_task.project_id }, class: "add-task primary", method: :get, data: { turbo_frame: dom_id(@new_task) } do %>
+<%= button_to new_task_path, params: { project_id: @project.id }, class: "add-task primary", method: :get, data: { turbo_frame: "new_task" } do %>
   <!--  <span class="material-symbols-outlined add-task__icon">add</span>-->
   Add Task
 <% end %>

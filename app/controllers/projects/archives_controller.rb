@@ -4,7 +4,8 @@ module Projects
 
     def create
       @project.archive!
-      redirect_to project_url(session[:current_project_id] || current_user.inbox_project.id), success: "Project \"#{@project.name}\" was archived."
+      redirect_to project_url(session[:current_project_id] || current_user.inbox_project.id),
+                  success: "Project \"#{@project.name}\" was archived."
     end
 
     def destroy

@@ -63,7 +63,7 @@ class RoleTest < ActiveSupport::TestCase
   test "should destroy dependent user_roles when destroyed" do
     role = Role.create!(name: "destroy_role")
     user = User.create!(email: "test2@example.com", password: "password123")
-    user_role = UserRole.create!(user: user, role: role)
+    UserRole.create!(user: user, role: role)
 
     assert_difference "UserRole.count", -1 do
       role.destroy

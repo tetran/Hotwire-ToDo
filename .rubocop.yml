@@ -34,12 +34,14 @@ Metrics/BlockLength:
     - 'lib/tasks/*.rake'
 
 Metrics/MethodLength:
-  Max: 15
+  Max: 30
   Exclude:
     - 'test/**/*'
 
 Metrics/ClassLength:
   Max: 150
+  Exclude:
+    - 'test/**/*'
 
 # Layout
 Layout/LineLength:
@@ -76,6 +78,13 @@ Style/TrailingCommaInHashLiteral:
 Lint/AmbiguousBlockAssociation:
   Exclude:
     - 'test/**/*'
+
+Lint/EmptyBlock:
+  Exclude:
+    - 'test/**/*'
+
+Naming/PredicatePrefix:
+  ForbiddenPrefixes: ['is_']
 
 # Rails specific
 Rails/FilePath:

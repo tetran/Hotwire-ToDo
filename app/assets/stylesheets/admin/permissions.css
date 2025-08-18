@@ -27,14 +27,14 @@
   background: white;
   border-radius: 12px;
   padding: 20px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
   border-left: 4px solid #007bff;
   transition: all 0.3s ease;
 }
 
 .permission-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
 /* Permission Header */
@@ -293,16 +293,16 @@
   .permissions-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .permissions-list {
     grid-template-columns: 1fr;
   }
-  
+
   .permission-header {
     flex-direction: column;
     gap: 10px;
   }
-  
+
   .permission-stats {
     justify-content: flex-start;
   }

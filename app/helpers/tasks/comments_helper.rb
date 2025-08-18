@@ -1,2 +1,4 @@
-module Tasks::CommentsHelper
+module Tasks
+  module CommentsHelper
+  end
 end

@@ -29,6 +29,10 @@ class Project < ApplicationRecord
     dedicated ? I18n.t("project.inbox") : name
   end
 
+  def uncompleted_tasks
+    tasks.uncompleted.with_rich_text_description_and_embeds
+  end
+
   private
 
     def add_owner_to_members

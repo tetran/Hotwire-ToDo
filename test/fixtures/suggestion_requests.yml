@@ -12,7 +12,7 @@ one:
 two:
   project: one
   requested_by: regular_user
-  llm_model: gpt_4
+  llm_model: gpt4
   goal: Write documentation
   context: Technical documentation for the API
   start_date: 2024-01-08

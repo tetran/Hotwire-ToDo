@@ -7,7 +7,7 @@
     <%= render partial: "tasks/task", collection: @tasks %>
   <% end %>
 
-  <%= turbo_frame_tag @new_task do %>
+  <%= turbo_frame_tag "new_task" do %>
     <%= render "tasks/add_task_btn" %>
   <% end %>
 </div>

@@ -10,7 +10,7 @@ class SuggestionResponse < ApplicationRecord
         suggestion_request: request,
         raw_response: raw_response.to_json,
         completion_tokens: usage["completion_tokens"],
-        prompt_tokens: usage["prompt_tokens"]
+        prompt_tokens: usage["prompt_tokens"],
       )
       SuggestedTask.insert_all!(suggested_tasks.map { |t| t.merge(suggestion_response_id: resp.id) })
       resp

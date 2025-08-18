@@ -16,16 +16,17 @@ class LlmProvider < ApplicationRecord
 
   private
 
-  def encrypt_api_key(value)
-    crypt = ActiveSupport::MessageEncryptor.new(Rails.application.credentials.secret_key_base[0..31])
-    crypt.encrypt_and_sign(value)
-  end
+    def encrypt_api_key(value)
+      crypt = ActiveSupport::MessageEncryptor.new(Rails.application.credentials.secret_key_base[0..31])
+      crypt.encrypt_and_sign(value)
+    end
 
-  def decrypt_api_key
-    return nil if api_key_encrypted.blank?
-    crypt = ActiveSupport::MessageEncryptor.new(Rails.application.credentials.secret_key_base[0..31])
-    crypt.decrypt_and_verify(api_key_encrypted)
-  rescue ActiveSupport::MessageVerifier::InvalidSignature
-    nil
-  end
+    def decrypt_api_key
+      return nil if api_key_encrypted.blank?
+
+      crypt = ActiveSupport::MessageEncryptor.new(Rails.application.credentials.secret_key_base[0..31])
+      crypt.decrypt_and_verify(api_key_encrypted)
+    rescue ActiveSupport::MessageVerifier::InvalidSignature
+      nil
+    end
 end

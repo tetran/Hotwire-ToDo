@@ -1,8 +1,7 @@
 class EmailsController < ApplicationController
   include VerifyEmail
 
-  def edit
-  end
+  def edit; end
 
   def update
     respond_to do |format|
@@ -18,6 +17,6 @@ class EmailsController < ApplicationController
   private
 
     def email_params
-      params.require(:user).permit(:email, :password_challenge)
+      params.expect(user: %i[email password_challenge])
     end
 end

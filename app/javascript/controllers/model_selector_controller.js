@@ -1,10 +1,10 @@
-import { Controller } from "@hotwired/stimulus"
+import { Controller } from '@hotwired/stimulus'
 
 export default class extends Controller {
-  static targets = ["select", "loading"]
-  static values = { 
+  static targets = ['select', 'loading']
+  static values = {
     providerId: Number,
-    availableModelsUrl: String 
+    availableModelsUrl: String
   }
 
   connect() {
@@ -25,12 +25,12 @@ export default class extends Controller {
     if (!this.providerIdValue) return
 
     this.showLoading()
-    
+
     try {
       const url = this.availableModelsUrlValue.replace(':provider_id', this.providerIdValue)
       const response = await fetch(url, {
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'X-Requested-With': 'XMLHttpRequest'
         }
       })
@@ -40,7 +40,7 @@ export default class extends Controller {
       }
 
       const data = await response.json()
-      
+
       if (data.error) {
         this.showError(data.error)
       } else {
@@ -57,7 +57,7 @@ export default class extends Controller {
   populateModels(models) {
     const select = this.selectTarget
     const currentValue = select.value
-    
+
     // Clear existing options except the first one (placeholder)
     while (select.children.length > 1) {
       select.removeChild(select.lastChild)
@@ -81,12 +81,12 @@ export default class extends Controller {
 
   clearModels() {
     const select = this.selectTarget
-    
+
     // Clear all options except the first one (placeholder)
     while (select.children.length > 1) {
       select.removeChild(select.lastChild)
     }
-    
+
     select.disabled = true
   }
 
@@ -106,7 +106,7 @@ export default class extends Controller {
   showError(message) {
     // You can customize this to show errors in your preferred way
     console.error('Model loading error:', message)
-    
+
     // Optionally show an error message to the user
     const select = this.selectTarget
     const errorOption = document.createElement('option')

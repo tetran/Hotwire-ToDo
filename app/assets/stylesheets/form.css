@@ -1,45 +1,45 @@
 .form-actions {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 0.5rem;
-    margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
 }
 .form-item-inline {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
 }
 /*
 .form-item-inline は１行に入力フォームとボタンが並ぶ配置
 ボタンはデフォルトのサイズで、入力フォームは残りのスペースを占有する
  */
 .form-item-inline .form-item-inline__input {
-    flex-grow: 1;
+  flex-grow: 1;
 }
 .form-item-inline .form-item-inline__input input {
-    box-sizing: border-box;
-    width: 100%;
+  box-sizing: border-box;
+  width: 100%;
 }
 .form-item-inline .form-item-inline__button {
-    flex-grow: 0;
+  flex-grow: 0;
 }
 .form__error {
-    padding-left: 0;
-    margin-top: .5rem;
-    margin-bottom: 0;
+  padding-left: 0;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
 }
 .form__error li {
-    color: #fc5050;
-    list-style: none;
-    margin-bottom: 6px;
-    font-size: 0.9rem;
-    padding: 0 0 0.5rem 0.5rem;
+  color: #fc5050;
+  list-style: none;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+  padding: 0 0 0.5rem 0.5rem;
 }
 
 .full-width-input {
-    box-sizing: border-box;
-    width: 100%;
+  box-sizing: border-box;
+  width: 100%;
 }

@@ -9,29 +9,29 @@ Rails.application.routes.draw do
   get "signup" => "users#new", as: :signup
   post "signup" => "users#create"
 
-  resources :projects, only: [:index, :show, :new, :create, :edit, :update] do
-    resource :archive, only: [:create, :destroy], module: :projects
-    resources :members, only: [:create, :destroy], module: :projects
+  resources :projects, only: %i[index show new create edit update] do
+    resource :archive, only: %i[create destroy], module: :projects
+    resources :members, only: %i[create destroy], module: :projects
   end
   namespace :tasks do
     resources :suggestions, only: [:create]
     resources :batches, only: [:create]
     resources :completes, only: [:index]
   end
-  resources :tasks do
-    resources :comments, only: [:new, :create, :edit, :update, :destroy], module: :tasks
-    resource :complete, only: [:create, :destroy], module: :tasks
-    resource :assign, only: [:create, :destroy], module: :tasks
+  resources :tasks, only: %i[show new create edit update destroy] do
+    resources :comments, only: %i[new create edit update destroy], module: :tasks
+    resource :complete, only: %i[create destroy], module: :tasks
+    resource :assign, only: %i[create destroy], module: :tasks
   end
 
-  resource :user, only: [:show, :update, :destroy]
-  resource :email, only: [:edit, :update]
-  resource :password, only: [:edit, :update]
-  resources :email_verifications, only: [:show, :create]
-  resources :password_resets, only: [:new, :create, :edit, :update]
+  resource :user, only: %i[show update destroy]
+  resource :email, only: %i[edit update]
+  resource :password, only: %i[edit update]
+  resources :email_verifications, only: %i[show create]
+  resources :password_resets, only: %i[new create edit update]
   namespace :totp do
-    resource :setting, only: [:show, :create, :update]
-    resource :challenge, only: [:new, :create]
+    resource :setting, only: %i[show create update]
+    resource :challenge, only: %i[new create]
   end
 
   # Admin routes
@@ -39,20 +39,20 @@ Rails.application.routes.draw do
     root "dashboard#index"
 
     # RESTful user management
-    resources :users, only: [:index, :show, :new, :create, :edit, :update, :destroy] do
-      resource :roles, only: [:show, :update], controller: 'user_roles'
+    resources :users, only: %i[index show new create edit update destroy] do
+      resource :roles, only: %i[show update], controller: "user_roles"
     end
 
     # RESTful role management
-    resources :roles, only: [:index, :show, :new, :create, :edit, :update, :destroy] do
-      resource :permissions, only: [:show, :update], controller: 'role_permissions'
+    resources :roles, only: %i[index show new create edit update destroy] do
+      resource :permissions, only: %i[show update], controller: "role_permissions"
     end
 
     # Permissions are read-only for admin interface
-    resources :permissions, only: [:index, :show]
+    resources :permissions, only: %i[index show]
 
     # LLM management
-    resources :llm_providers, only: [:index, :show, :edit, :update] do
+    resources :llm_providers, only: %i[index show edit update] do
       resources :llm_models
       resources :available_models, only: [:index]
     end
@@ -62,4 +62,3 @@ Rails.application.routes.draw do
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
 end
-

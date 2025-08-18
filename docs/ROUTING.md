@@ -1,11 +1,14 @@
 # ルーティング設計ガイドライン
 
-参照記事: [How DHH organizes his Rails controllers](https://jeromedalbert.com/how-dhh-organizes-his-rails-controllers/)
+参照記事:
+[How DHH organizes his Rails controllers](https://jeromedalbert.com/how-dhh-organizes-his-rails-controllers/)
 
 ## 基本原則
 
 ### 1. RESTfulルーティングを優先する
-- 標準的な7つのアクション（index, show, new, edit, create, update, destroy）を使用
+
+- 標準的な7つのアクション（index, show, new, edit, create, update,
+  destroy）を使用
 - カスタムアクションではなく、新しいリソースとしてモデリング
 
 ```ruby
@@ -26,6 +29,7 @@ end
 ```
 
 ### 2. 名前空間を活用した組織化
+
 - 関連する機能は名前空間でグループ化
 - コントローラーの責務を明確に分離
 
@@ -44,6 +48,7 @@ end
 ```
 
 ### 3. 単一責務の原則
+
 - 1つのコントローラーは1つの責務のみを持つ
 - 複雑な操作は専用コントローラーに分離
 
@@ -107,11 +112,13 @@ resources :email_verifications, only: [:show, :create]
 ## 判断基準
 
 ### 新しいコントローラーを作成すべき場合
+
 - 既存のRESTアクションでは表現できない操作
 - 複数のモデルを横断する複雑な処理
 - 特定の状態変更に特化した操作
 
 ### 例：タスクの一括操作
+
 ```ruby
 # ❌ 悪い例
 class TasksController < ApplicationController

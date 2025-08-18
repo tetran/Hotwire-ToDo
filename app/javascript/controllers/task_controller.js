@@ -1,4 +1,4 @@
-import { Controller } from "@hotwired/stimulus"
+import { Controller } from '@hotwired/stimulus'
 
 export default class extends Controller {
   static targets = []
@@ -6,6 +6,6 @@ export default class extends Controller {
   connect() {}
 
   playComplete() {
-    document.getElementById('complete-sound').play();
+    document.getElementById('complete-sound').play()
   }
 }

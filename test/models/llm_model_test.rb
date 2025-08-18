@@ -5,7 +5,7 @@ class LlmModelTest < ActiveSupport::TestCase
 
   def setup
     @provider = llm_providers(:openai)
-    @model = llm_models(:gpt_4)
+    @model = llm_models(:gpt4)
   end
 
   def teardown
@@ -18,7 +18,7 @@ class LlmModelTest < ActiveSupport::TestCase
   test "should create model with valid attributes" do
     model = @provider.llm_models.new(
       name: "gpt-4",
-      display_name: "GPT-4"
+      display_name: "GPT-4",
     )
     assert model.valid?
   end
@@ -38,7 +38,7 @@ class LlmModelTest < ActiveSupport::TestCase
   test "should require unique name within provider" do
     duplicate = @provider.llm_models.new(
       name: @model.name,
-      display_name: "Another Display Name"
+      display_name: "Another Display Name",
     )
     assert_not duplicate.valid?
     assert_includes duplicate.errors[:name], "has already been taken"
@@ -48,7 +48,7 @@ class LlmModelTest < ActiveSupport::TestCase
     another_provider = llm_providers(:anthropic)
     model = another_provider.llm_models.new(
       name: @model.name,
-      display_name: "Claude"
+      display_name: "Claude",
     )
     assert model.valid?
   end
@@ -56,7 +56,7 @@ class LlmModelTest < ActiveSupport::TestCase
   test "should default active to true" do
     model = @provider.llm_models.create!(
       name: "new-model",
-      display_name: "New Model"
+      display_name: "New Model",
     )
     assert model.active?
   end
@@ -64,7 +64,7 @@ class LlmModelTest < ActiveSupport::TestCase
   test "should default default_model to false" do
     model = @provider.llm_models.create!(
       name: "new-model",
-      display_name: "New Model"
+      display_name: "New Model",
     )
     assert_not model.default_model?
   end
@@ -73,12 +73,12 @@ class LlmModelTest < ActiveSupport::TestCase
     active_model = @provider.llm_models.create!(
       name: "active-model",
       display_name: "Active Model",
-      active: true
+      active: true,
     )
     inactive_model = @provider.llm_models.create!(
       name: "inactive-model",
       display_name: "Inactive Model",
-      active: false
+      active: false,
     )
 
     assert_includes LlmModel.active, active_model
@@ -89,12 +89,12 @@ class LlmModelTest < ActiveSupport::TestCase
     default_model = @provider.llm_models.create!(
       name: "default-model",
       display_name: "Default Model",
-      default_model: true
+      default_model: true,
     )
     regular_model = @provider.llm_models.create!(
       name: "regular-model",
       display_name: "Regular Model",
-      default_model: false
+      default_model: false,
     )
 
     assert_includes LlmModel.default, default_model
@@ -110,13 +110,13 @@ class LlmModelTest < ActiveSupport::TestCase
     first_default = @provider.llm_models.create!(
       name: "first-default",
       display_name: "First Default",
-      default_model: true
+      default_model: true,
     )
 
     second_default = @provider.llm_models.create!(
       name: "second-default",
       display_name: "Second Default",
-      default_model: true
+      default_model: true,
     )
 
     first_default.reload
@@ -130,13 +130,13 @@ class LlmModelTest < ActiveSupport::TestCase
     @provider.llm_models.create!(
       name: "gpt-default",
       display_name: "GPT Default",
-      default_model: true
+      default_model: true,
     )
 
     claude_default = another_provider.llm_models.new(
       name: "claude-default",
       display_name: "Claude Default",
-      default_model: true
+      default_model: true,
     )
 
     assert claude_default.valid?
@@ -146,12 +146,12 @@ class LlmModelTest < ActiveSupport::TestCase
     first_default = @provider.llm_models.create!(
       name: "first-default",
       display_name: "First Default",
-      default_model: true
+      default_model: true,
     )
 
     second_model = @provider.llm_models.create!(
       name: "second-model",
-      display_name: "Second Model"
+      display_name: "Second Model",
     )
 
     second_model.update!(default_model: true)
@@ -167,19 +167,19 @@ class LlmModelTest < ActiveSupport::TestCase
     openai_default = @provider.llm_models.create!(
       name: "gpt-default",
       display_name: "GPT Default",
-      default_model: true
+      default_model: true,
     )
 
     claude_default = another_provider.llm_models.create!(
       name: "claude-default",
       display_name: "Claude Default",
-      default_model: true
+      default_model: true,
     )
 
     new_openai_default = @provider.llm_models.create!(
       name: "new-gpt-default",
       display_name: "New GPT Default",
-      default_model: true
+      default_model: true,
     )
 
     openai_default.reload

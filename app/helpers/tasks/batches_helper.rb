@@ -1,2 +1,4 @@
-module Tasks::BatchesHelper
+module Tasks
+  module BatchesHelper
+  end
 end

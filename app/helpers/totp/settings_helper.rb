@@ -1,2 +1,4 @@
-module Totp::SettingsHelper
+module Totp
+  module SettingsHelper
+  end
 end

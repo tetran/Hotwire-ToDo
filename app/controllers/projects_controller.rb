@@ -1,5 +1,5 @@
 class ProjectsController < ApplicationController
-  before_action :set_project, only: [:show, :edit, :update]
+  before_action :set_project, only: %i[show edit update]
   rescue_from ActiveRecord::RecordNotFound, with: :redirect_to_inbox
 
   def index
@@ -7,17 +7,16 @@ class ProjectsController < ApplicationController
   end
 
   def show
-    @new_task = @project.tasks.build
-    if params[:c].present?
-      @tasks = @project.tasks.where(id: params[:t]) if params[:t].present?
+    session[:current_project_id] = @project.id
+
+    # タスク追加・編集フォームでの「キャンセル」を効率化するための分岐
+    if params[:c]
+      @tasks = @project.tasks.where(id: params[:t]) if params[:t]
       return
     end
 
-    session[:current_project_id] = @project.id
-    @tasks = @project.tasks.uncompleted.with_rich_text_description_and_embeds.order(:created_at)
+    @tasks = @project.uncompleted_tasks
 
-    # Inboxを最初に表示するため`dedicated`の降順でソート
-    @projects = current_user.participating_projects
     # ログインユーザーを最初に表示
     @members = @project.members_with_priority(current_user)
   end
@@ -26,35 +25,37 @@ class ProjectsController < ApplicationController
     @project = Project.new
   end
 
+  def edit; end
+
   def create
     @project = Project.new(project_params.merge(owner: current_user, dedicated: false))
 
     respond_to do |format|
       if @project.save
         format.html { redirect_to project_url(@project), success: "Project was successfully created." }
-        format.json { render :show, status: :created, location: @project }
       else
         format.html { render :new, status: :unprocessable_content }
-        format.json { render json: @project.errors, status: :unprocessable_content }
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("modal", partial: "projects/form", locals: { project: @project }), status: :unprocessable_content }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace("modal", partial: "projects/form", locals: { project: @project }),
+                 status: :unprocessable_content
+        end
       end
     end
-  end
-
-  def edit
   end
 
   def update
     respond_to do |format|
       if @project.update(project_params)
         format.html do
-          redirect_to project_url(session[:current_project_id] || @project.id), success: "Project was successfully updated."
+          redirect_to project_url(session[:current_project_id] || @project.id),
+                      success: "Project was successfully updated."
         end
-        format.json { render :show, status: :ok, location: @project }
       else
         format.html { render :edit, status: :unprocessable_content }
-        format.json { render json: @project.errors, status: :unprocessable_content }
-        format.turbo_stream { render turbo_stream: turbo_stream.replace("modal", partial: "projects/form", locals: { project: @project }), status: :unprocessable_content }
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.replace("modal", partial: "projects/form", locals: { project: @project }),
+                 status: :unprocessable_content
+        end
       end
     end
   end
@@ -66,7 +67,7 @@ class ProjectsController < ApplicationController
     end
 
     def project_params
-      params.require(:project).permit(:name, :archived)
+      params.expect(project: %i[name archived])
     end
 
     def redirect_to_inbox

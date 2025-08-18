@@ -1,11 +1,11 @@
-import { Controller } from "@hotwired/stimulus"
+import { Controller } from '@hotwired/stimulus'
 
 // Connects to data-controller="turbo-modal"
 export default class extends Controller {
-  static targets = ["header", "body"];
+  static targets = ['header', 'body']
 
   connect() {
-    this.element.showModal();
+    this.element.showModal()
   }
 
   hideModal(e) {
@@ -15,7 +15,7 @@ export default class extends Controller {
       // prevent bubbling up the DOM tree to avoid triggering the click event on the window
       e.stopPropagation()
     }
-    this.element.parentElement.removeAttribute("src")
+    this.element.parentElement.removeAttribute('src')
     this.element.remove()
   }
 

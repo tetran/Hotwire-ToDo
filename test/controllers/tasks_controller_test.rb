@@ -5,12 +5,6 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
     @task = tasks(:one)
   end
 
-  test "should get index" do
-    login_as_regular_user
-    get tasks_url
-    assert_response :success
-  end
-
   test "should get new" do
     login_as_regular_user
     get new_task_url(project_id: projects(:one).id)

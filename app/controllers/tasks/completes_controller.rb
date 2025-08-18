@@ -4,10 +4,12 @@ module Tasks
     include TaskDependent
 
     before_action :set_project, only: :index
-    before_action :set_task, only: [:create, :destroy]
+    before_action :set_task, only: %i[create]
 
     def index
-      @completed_tasks = @project.tasks.completed.with_rich_text_description_and_embeds.order(updated_at: :desc) if params[:show]
+      return unless params[:show]
+
+      @completed_tasks = @project.tasks.completed.with_rich_text_description_and_embeds.order(updated_at: :desc)
     end
 
     def create

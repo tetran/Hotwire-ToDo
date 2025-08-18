@@ -1,14 +1,8 @@
 class TasksController < ApplicationController
-  before_action :set_task, only: %i[ show edit update destroy ]
-  before_action :set_project, only: %i[ new create ]
+  before_action :set_task, only: %i[show edit update destroy]
+  before_action :set_project, only: %i[new create]
 
-  # GET /tasks or /tasks.json
-  def index
-    @tasks = current_user.tasks.with_rich_text_description_and_embeds.order(:created_at)
-    @new_task = current_user.inbox_project.tasks.build
-  end
-
-  # GET /tasks/1 or /tasks/1.json
+  # GET /tasks/1
   def show
     @comments = @task.comments.includes(:user).order(:created_at)
   end
@@ -20,53 +14,47 @@ class TasksController < ApplicationController
   end
 
   # GET /tasks/1/edit
-  def edit
-  end
+  def edit; end
 
-  # POST /tasks or /tasks.json
+  # POST /tasks
   def create
     @task = @project.tasks.build(task_params.merge(created_by: current_user))
 
     respond_to do |format|
       if @task.save
-        @new_task = @task.project.tasks.build
         format.html { redirect_to task_url(@task), success: "Task was successfully created." }
-        format.json { render :show, status: :created, location: @task }
         format.turbo_stream
       else
         set_suggestion_variables
         format.html { render :new, status: :unprocessable_content }
-        format.json { render json: @task.errors, status: :unprocessable_content }
       end
     end
   end
 
-  # PATCH/PUT /tasks/1 or /tasks/1.json
+  # PATCH/PUT /tasks/1
   def update
     respond_to do |format|
       if @task.update(task_params)
         format.html { redirect_to task_url(@task), success: "Task was successfully updated." }
-        format.json { render :show, status: :ok, location: @task }
         format.turbo_stream
       else
         format.html { render :edit, status: :unprocessable_content }
-        format.json { render json: @task.errors, status: :unprocessable_content }
       end
     end
   end
 
-  # DELETE /tasks/1 or /tasks/1.json
+  # DELETE /tasks/1
   def destroy
     @task.destroy!
 
     respond_to do |format|
       format.html { redirect_to tasks_url, success: "Task was successfully destroyed." }
-      format.json { head :no_content }
       format.turbo_stream
     end
   end
 
   private
+
     # Use callbacks to share common setup or constraints between actions.
     def set_task
       @task = current_user.tasks.find(params[:id])
@@ -74,7 +62,7 @@ class TasksController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def task_params
-      params.require(:task).permit(:name, :due_date, :description, :assignee)
+      params.expect(task: %i[name due_date description assignee])
     end
 
     def set_project
@@ -86,7 +74,7 @@ class TasksController < ApplicationController
         project: @project,
         requested_by: current_user,
         start_date: Time.zone.today,
-        due_date: Time.zone.today + 3.months
+        due_date: Time.zone.today + 3.months,
       )
       @show_suggestion = false
     end

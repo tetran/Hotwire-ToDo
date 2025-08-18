@@ -9,12 +9,12 @@ class LlmProviderTest < ActiveSupport::TestCase
     SuggestionRequest.delete_all
     LlmModel.delete_all
     LlmProvider.delete_all
-    
+
     @provider = LlmProvider.create!(
       name: "OpenAI",
       api_endpoint: "https://api.openai.com/v1",
       api_key: "test-api-key",
-      active: true
+      active: true,
     )
   end
 
@@ -29,7 +29,7 @@ class LlmProviderTest < ActiveSupport::TestCase
     provider = LlmProvider.new(
       name: "Anthropic",
       api_endpoint: "https://api.anthropic.com/v1",
-      api_key: "test-key"
+      api_key: "test-key",
     )
     assert provider.valid?
   end
@@ -49,7 +49,7 @@ class LlmProviderTest < ActiveSupport::TestCase
   test "should require unique name" do
     duplicate = LlmProvider.new(
       name: @provider.name,
-      api_key: "another-key"
+      api_key: "another-key",
     )
     assert_not duplicate.valid?
     assert_includes duplicate.errors[:name], "has already been taken"
@@ -93,7 +93,7 @@ class LlmProviderTest < ActiveSupport::TestCase
   test "should have many llm_models" do
     model = @provider.llm_models.create!(
       name: "gpt-4",
-      display_name: "GPT-4"
+      display_name: "GPT-4",
     )
     assert_includes @provider.llm_models, model
   end
@@ -101,7 +101,7 @@ class LlmProviderTest < ActiveSupport::TestCase
   test "should destroy associated models when provider is destroyed" do
     model = @provider.llm_models.create!(
       name: "gpt-4",
-      display_name: "GPT-4"
+      display_name: "GPT-4",
     )
     model_id = model.id
 

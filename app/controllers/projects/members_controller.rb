@@ -10,7 +10,9 @@ module Projects
           format.turbo_stream
         else
           format.turbo_stream do
-            render turbo_stream: turbo_stream.replace("project_member_error", partial: "shared/simple_error_message", locals: { message: "Failed" }), status: :unprocessable_content
+            view = { partial: "shared/simple_error_message", locals: { message: "Failed" } }
+            render turbo_stream: turbo_stream.replace("project_member_error", view),
+                   status: :unprocessable_content
           end
         end
       end
@@ -19,13 +21,6 @@ module Projects
     def destroy
       @user = User.find(params[:id])
       respond_to do |format|
-        if @project.members.length < 1
-          format.turbo_stream do
-            render turbo_stream: turbo_stream.replace("project_member_error", partial: "shared/simple_error_message", locals: { message: "Failed" }), status: :unprocessable_content
-          end
-          return
-        end
-
         @project.members.destroy(@user)
 
         if @user == current_user

@@ -1,71 +1,73 @@
 .menu-container--header {
-    position: inherit;
+  position: inherit;
 }
 .menu-button {
-    position: relative;
-    border: none;
-    background: none;
-    padding: 10px;
+  position: relative;
+  border: none;
+  background: none;
+  padding: 10px;
 }
 .menu-button:focus {
-    outline: none;
-    box-shadow: none;
+  outline: none;
+  box-shadow: none;
 }
 .menu-button .material-symbols-outlined {
-    font-size: 1.5rem;
-    vertical-align: -.25rem;
+  font-size: 1.5rem;
+  vertical-align: -0.25rem;
 }
 .menu-button .user-avatar {
-    width: 1.5rem;
-    height: 1.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 .menu-navigation {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    border-radius: 4px;
-    background: var(--background-alt);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    z-index: 10;
-    min-width: 200px;
-    max-width: 67%;
-    padding: .25rem;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  border-radius: 4px;
+  background: var(--background-alt);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+  min-width: 200px;
+  max-width: 67%;
+  padding: 0.25rem;
 }
 .menu-navigation__header {
-    margin: 0 .25rem 0;
-    padding: .5rem;
-    color: var(--form-text);
-    border-bottom: 1px solid var(--border);
+  margin: 0 0.25rem 0;
+  padding: 0.5rem;
+  color: var(--form-text);
+  border-bottom: 1px solid var(--border);
 }
 
 .menu-list {
-    list-style: none;
-    padding: .25rem;
-    margin: 0;
-    border-radius: 6px;
+  list-style: none;
+  padding: 0.25rem;
+  margin: 0;
+  border-radius: 6px;
 }
 .menu-list li {
-    border-radius: 4px;
+  border-radius: 4px;
 }
 .menu-list li:hover {
-    background: #ccc;
+  background: #ccc;
 }
-.menu-list>li button, .menu-list>li>a {
-    display: block;
-    width: 100%;
-    text-align: left;
+.menu-list > li button,
+.menu-list > li > a {
+  display: block;
+  width: 100%;
+  text-align: left;
 }
-.menu-list>li button, .menu-list>li a {
-    padding: 6px;
-    margin: 0;
-    border: none;
-    background: none;
-    color: var(--form-text);
+.menu-list > li button,
+.menu-list > li a {
+  padding: 6px;
+  margin: 0;
+  border: none;
+  background: none;
+  color: var(--form-text);
 }
 .menu-list li button:focus {
-    outline: none;
-    box-shadow: none;
+  outline: none;
+  box-shadow: none;
 }
 .menu-list li a:hover {
-    text-decoration: none;
+  text-decoration: none;
 }

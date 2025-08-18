@@ -1,21 +1,21 @@
 export const popupMenu = controller => {
   Object.assign(controller, {
     toggleMenu() {
-      this.menuTarget.classList.toggle("hidden")
+      this.menuTarget.classList.toggle('hidden')
     },
 
     hideMenu() {
-      if (document.getElementById("modal").hasAttribute("src")) {
+      if (document.getElementById('modal').hasAttribute('src')) {
         return
       }
 
-      this.menuTarget.classList.add("hidden")
+      this.menuTarget.classList.add('hidden')
     },
 
     // hide modal when clicking ESC
     // action: "keyup@window->turbo-modal#closeWithKeyboard"
     closeWithKeyboard(e) {
-      if (e.code === "Escape") {
+      if (e.code === 'Escape') {
         this.hideMenu()
       }
     },
@@ -28,5 +28,5 @@ export const popupMenu = controller => {
       }
       this.hideMenu()
     }
-  });
-};
+  })
+}

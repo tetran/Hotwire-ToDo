@@ -1,2 +1,4 @@
-module Tasks::SuggestionsHelper
+module Tasks
+  module SuggestionsHelper
+  end
 end

@@ -1,2 +1,4 @@
-module Tasks::AssignsHelper
+module Tasks
+  module AssignsHelper
+  end
 end
