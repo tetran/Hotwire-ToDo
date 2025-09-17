@@ -19,65 +19,85 @@
 ### C1 — System Context
 ```mermaid
 graph LR
-  user[Registered User] --> app[Hobo Web App (Rails)]
-  admin[Admin] --> app
-  app -->|reads/writes| pg[(PostgreSQL)]
-  app -->|sessions| redis[(Redis)]
-  app -->|files| gcs[(Google Cloud Storage)]
-  app -->|errors| sentry[(Sentry)]
-  app -->|LLM APIs| llm[(OpenAI / Anthropic / Gemini)]
+  user[Registered User];
+  admin[Admin];
+  app[Hobo Web App (Rails)];
+  pg[(PostgreSQL)];
+  redis[(Redis)];
+  gcs[(Google Cloud Storage)];
+  sentry[(Sentry)];
+  llm[(OpenAI / Anthropic / Gemini)];
+
+  user --> app;
+  admin --> app;
+  app -->|reads/writes| pg;
+  app -->|sessions| redis;
+  app -->|files| gcs;
+  app -->|errors| sentry;
+  app -->|LLM APIs| llm;
 ```
 
 ### C2 — Containers
 ```mermaid
 graph TB
-  browser[Web Browser] <-->|HTTP + Turbo| rails[Puma + Rails 8]
-  rails --> pg[(PostgreSQL)]
-  rails --> redis[(Redis Session Store)]
-  rails --> gcs[(Active Storage - GCS)]
-  rails --> llm[(lib/llm_client/*)]
-  rails --> sentry[(Sentry SDK)]
+  browser[Web Browser] <-->|HTTP + Turbo| rails[Puma + Rails 8];
+  rails --> pg[(PostgreSQL)];
+  rails --> redis[(Redis Session Store)];
+  rails --> gcs[(Active Storage - GCS)];
+  rails --> llm[(lib/llm_client/*)];
+  rails --> sentry[(Sentry SDK)];
 ```
 
 ### C3 — Key Components (Rails)
 ```mermaid
-graph TB
-  rails[Rails App] --> controllers[Controllers]
-  controllers --> views[Views (ERB + Turbo)]
-  views --> stimulus[Stimulus (app/javascript/controllers)]
-  controllers --> services[Services (ModelListService)]
-  controllers --> models[Models (ActiveRecord)]
-  models --> db[(PostgreSQL)]
-  services --> llmclient[lib/llm_client]
-  rails --> sessions[Session Store (Redis/ActiveRecord)]
-  rails --> storage[Active Storage]
+flowchart TB
+  rails[Rails App];
+  controllers[Controllers];
+  views[Views ERB+Turbo];
+  stimulus[Stimulus app/javascript/controllers];
+  services[Services ModelListService];
+  models[Models ActiveRecord];
+  db[(PostgreSQL)];
+  llmclient[lib/llm_client];
+  sessions[Session Store Redis/ActiveRecord];
+  storage[Active Storage];
+
+  rails --> controllers;
+  controllers --> views;
+  views --> stimulus;
+  controllers --> services;
+  controllers --> models;
+  models --> db;
+  services --> llmclient;
+  rails --> sessions;
+  rails --> storage;
 ```
 
 ### C3 — Component Deep Dive: Admin + LLM
 ```mermaid
 graph TB
   subgraph Admin Namespace
-    A1[Admin::LlmProvidersController]
-    A2[Admin::LlmModelsController]
-    A3[Admin::AvailableModelsController]
-    A4[Admin::Users/Roles/Permissions]
+    A1[Admin::LlmProvidersController];
+    A2[Admin::LlmModelsController];
+    A3[Admin::AvailableModelsController];
+    A4[Admin::Users/Roles/Permissions];
   end
 
-  A1 -->|CRUD| M[(ActiveRecord Models)]
-  A2 -->|CRUD| M
-  A3 --> SVC[ModelListService]
-  SVC --> C1[lib/llm_client::Openai]
-  SVC --> C2[lib/llm_client::Anthropic]
-  SVC --> C3[lib/llm_client::Gemini]
+  A1 -->|CRUD| M[(ActiveRecord Models)];
+  A2 -->|CRUD| M;
+  A3 --> SVC[ModelListService];
+  SVC --> C1[lib/llm_client::Openai];
+  SVC --> C2[lib/llm_client::Anthropic];
+  SVC --> C3[lib/llm_client::Gemini];
 
-  C1 --> EXT1[(OpenAI API)]
-  C2 --> EXT2[(Anthropic API)]
-  C3 --> EXT3[(Gemini API)]
+  C1 --> EXT1[(OpenAI API)];
+  C2 --> EXT2[(Anthropic API)];
+  C3 --> EXT3[(Gemini API)];
 
-  SVC -. cache .-> RC[(Rails.cache)]
-  A1 --> Sentry[(Sentry)]
-  A2 --> Sentry
-  A3 --> Sentry
+  SVC -. cache .-> RC[(Rails.cache)];
+  A1 --> Sentry[(Sentry)];
+  A2 --> Sentry;
+  A3 --> Sentry;
 ```
 
 - Data flow: Admin controllers read/write provider config in PostgreSQL and query available models via `ModelListService`.
