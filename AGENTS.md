@@ -18,23 +18,23 @@
 ## C4 Diagrams
 ### C1 — System Context
 ```mermaid
-graph LR
-  user[Registered User];
-  admin[Admin];
-  app[Hobo Web App (Rails)];
-  pg[(PostgreSQL)];
-  redis[(Redis)];
-  gcs[(Google Cloud Storage)];
-  sentry[(Sentry)];
-  llm[(OpenAI / Anthropic / Gemini)];
+flowchart LR
+  user[Registered User]
+  admin[Admin]
+  app[Hobo Web App]
+  pg[(PostgreSQL)]
+  redis[(Redis)]
+  gcs[(GCS Storage)]
+  sentry[(Sentry)]
+  llm[[LLM APIs]]
 
-  user --> app;
-  admin --> app;
-  app -->|reads/writes| pg;
-  app -->|sessions| redis;
-  app -->|files| gcs;
-  app -->|errors| sentry;
-  app -->|LLM APIs| llm;
+  user --> app
+  admin --> app
+  app -->|reads/writes| pg
+  app -->|sessions| redis
+  app -->|files| gcs
+  app -->|errors| sentry
+  app -->|calls| llm
 ```
 
 ### C2 — Containers
