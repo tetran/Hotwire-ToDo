@@ -3,8 +3,7 @@ require "test_helper"
 module Totp
   class ChallengesControllerTest < ActionDispatch::IntegrationTest
     test "有効なトークンでチャレンジ画面を表示できる" do
-      user = users(:regular_user)
-      user.update_column(:totp_enabled, true)
+      user = users(:totp_enabled_user)
       token = user.generate_token_for(:totp_verification)
 
       get new_totp_challenge_path(token: token)
@@ -12,8 +11,7 @@ module Totp
     end
 
     test "正しい検証コードでログインできる" do
-      user = users(:regular_user)
-      user.update_column(:totp_enabled, true)
+      user = users(:totp_enabled_user)
       token = user.generate_token_for(:totp_verification)
 
       totp = ROTP::TOTP.new(user.totp_secret, issuer: "Hobo Todo")
@@ -25,8 +23,7 @@ module Totp
     end
 
     test "間違った検証コードでログインできない" do
-      user = users(:regular_user)
-      user.update_column(:totp_enabled, true)
+      user = users(:totp_enabled_user)
       token = user.generate_token_for(:totp_verification)
 
       invalid_code = "000000"

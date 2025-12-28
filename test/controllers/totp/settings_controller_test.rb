@@ -16,7 +16,7 @@ module Totp
     end
 
     test "正しい検証コードでTOTPを有効化できる" do
-      user = users(:regular_user)
+      user = users(:totp_setup_user)
       login_as(user)
 
       # fixtureのtotp_secretから現在の検証コードを生成
@@ -33,7 +33,7 @@ module Totp
     end
 
     test "間違った検証コードでTOTPを有効化できない" do
-      user = users(:regular_user)
+      user = users(:totp_setup_user_invalid_code)
       login_as(user)
 
       invalid_code = "000000"
@@ -49,7 +49,7 @@ module Totp
 
     test "TOTP設定をリセットできる" do
       user = users(:regular_user)
-      login_as(user, bypass_totp: true)
+      login_as(user)
 
       # まずTOTPを有効化（テスト分離のためupdate_columnを使用）
       user.reload
