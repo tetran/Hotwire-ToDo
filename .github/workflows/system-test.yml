@@ -39,6 +39,7 @@ jobs:
           --health-retries 5
 
     env:
+      CI: true
       RAILS_ENV: test
       POSTGRES_HOST: localhost
       POSTGRES_PORT: 5432
