@@ -13,6 +13,8 @@ bin/rails s                  # Start development server
 bin/rails c                  # Rails console
 ```
 
+**Note**: `bin/setup` automatically configures Git hooks. A pre-push hook will run `bin/ci` before each push to catch issues early. To skip the hook temporarily, use `git push --no-verify`.
+
 ### Database
 
 ```bash
@@ -28,7 +30,16 @@ bin/rails db:seed            # Load seed data
 bin/rails test              # Run all tests
 bin/rails test test/models/user_test.rb  # Run specific test file
 bin/rails test:system       # Run system tests
+bin/ci                      # Run full CI suite locally (recommended before push)
 ```
+
+**Note**: `bin/ci` runs the complete CI pipeline locally:
+- Code style checks (RuboCop)
+- Security audits (Importmap)
+- All tests (unit + system)
+- Seed data integrity tests
+
+It's recommended to run `bin/ci` before creating a PR or pushing to ensure all checks pass.
 
 ### Code Formatting & Linting
 
