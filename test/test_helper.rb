@@ -30,14 +30,19 @@ module ActionDispatch
       user.update!(locale: "ja")
 
       if bypass_totp
-        # Direct session manipulation for testing TOTP-enabled users
-        # This allows tests to bypass TOTP challenge and test other functionality
+        # Temporarily disable TOTP to allow login, then re-enable it
+        # This approach uses the actual login flow while bypassing TOTP challenge
+        original_totp_enabled = user.totp_enabled
+        user.update_column(:totp_enabled, false)
+
         post login_path, params: {
           email: user.email,
           password: "password",
         }
-        # Manually set session to bypass TOTP challenge
-        session[:user_id] = user.id
+        follow_redirect! while response.redirect?
+
+        # Restore original TOTP setting
+        user.update_column(:totp_enabled, original_totp_enabled)
       else
         post login_path, params: {
           email: user.email,
