@@ -1,4 +1,4 @@
-name: Test
+name: System Test
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  system-test:
     runs-on: ubuntu-latest
 
     services:
@@ -39,6 +39,7 @@ jobs:
           --health-retries 5
 
     env:
+      CI: true
       RAILS_ENV: test
       POSTGRES_HOST: localhost
       POSTGRES_PORT: 5432
@@ -66,10 +67,18 @@ jobs:
       - name: Install Node.js dependencies
         run: npm ci
 
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
       - name: Prepare database
         run: |
           bin/rails db:create
           bin/rails db:schema:load
 
-      - name: Run tests
-        run: bin/rails test
+      - name: Precompile assets
+        run: bin/rails assets:precompile
+
+      - name: Run system tests
+        run: bin/rails test:system
