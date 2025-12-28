@@ -3,7 +3,7 @@ require "test_helper"
 class EmailVerificationsControllerTest < ActionDispatch::IntegrationTest
   test "有効なトークンでメール確認ができる" do
     user = users(:regular_user)
-    user.update!(verified: false)
+    user.update_column(:verified, false)
 
     token = user.generate_token_for(:email_verification)
 
@@ -25,7 +25,7 @@ class EmailVerificationsControllerTest < ActionDispatch::IntegrationTest
 
   test "ログイン済みユーザーが確認メールを送信できる" do
     user = users(:regular_user)
-    user.update!(verified: false)
+    user.update_column(:verified, false)
     login_as(user)
 
     post email_verifications_path, as: :turbo_stream

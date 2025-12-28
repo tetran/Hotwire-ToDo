@@ -49,10 +49,11 @@ module Totp
 
     test "TOTP設定をリセットできる" do
       user = users(:regular_user)
-      login_as(user)
+      login_as(user, bypass_totp: true)
 
-      # まずTOTPを有効化
-      user.update!(totp_enabled: true)
+      # まずTOTPを有効化（テスト分離のためupdate_columnを使用）
+      user.reload
+      user.update_column(:totp_enabled, true)
       old_totp_secret = user.totp_secret
 
       # リセット

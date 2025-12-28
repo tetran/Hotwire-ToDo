@@ -19,7 +19,7 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
 
   test "TOTP有効ユーザーのログイン時にチャレンジ画面にリダイレクトされる" do
     user = users(:regular_user)
-    user.update!(totp_enabled: true)
+    user.update_column(:totp_enabled, true)
 
     post login_path, params: { email: user.email, password: "password" }
     assert_response :redirect
@@ -29,7 +29,7 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
 
   test "TOTP無効ユーザーは通常通りログインできる" do
     user = users(:regular_user)
-    user.update!(totp_enabled: false)
+    user.update_column(:totp_enabled, false)
 
     post login_path, params: { email: user.email, password: "password" }
     assert_redirected_to project_path(user.inbox_project)

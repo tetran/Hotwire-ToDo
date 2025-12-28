@@ -22,20 +22,31 @@ end
 module ActionDispatch
   class IntegrationTest
     # Helper methods for login/logout
-    def login_as(user)
+    def login_as(user, bypass_totp: false)
       # Perform actual login through the login endpoint
       return unless user
 
       # Set user locale to Japanese for consistent test behavior
       user.update!(locale: "ja")
 
-      post login_path, params: {
-        email: user.email,
-        password: "password", # This matches the fixture password
-      }
-      # The login should succeed and redirect to the user's inbox project
-      # Follow redirects to complete the login process
-      follow_redirect! while response.redirect?
+      if bypass_totp
+        # Direct session manipulation for testing TOTP-enabled users
+        # This allows tests to bypass TOTP challenge and test other functionality
+        post login_path, params: {
+          email: user.email,
+          password: "password",
+        }
+        # Manually set session to bypass TOTP challenge
+        session[:user_id] = user.id
+      else
+        post login_path, params: {
+          email: user.email,
+          password: "password", # This matches the fixture password
+        }
+        # The login should succeed and redirect to the user's inbox project
+        # Follow redirects to complete the login process
+        follow_redirect! while response.redirect?
+      end
     end
 
     def logout
