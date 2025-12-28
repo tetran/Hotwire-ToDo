@@ -28,7 +28,9 @@ class EmailVerificationsControllerTest < ActionDispatch::IntegrationTest
     user.update_column(:verified, false)
     login_as(user)
 
-    post email_verifications_path, as: :turbo_stream
+    assert_emails 1 do
+      post email_verifications_path, as: :turbo_stream
+    end
     assert_response :success
   end
 end

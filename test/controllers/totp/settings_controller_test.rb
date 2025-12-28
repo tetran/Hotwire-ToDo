@@ -19,17 +19,21 @@ module Totp
       user = users(:totp_setup_user)
       login_as(user)
 
-      # fixtureのtotp_secretから現在の検証コードを生成
-      totp = ROTP::TOTP.new(user.totp_secret, issuer: "Hobo Todo")
-      valid_code = totp.now
+      # 時刻を固定してTOTPコードの期限切れを防止
+      freeze_time = Time.zone.parse("2025-01-15 12:00:00")
+      travel_to(freeze_time) do
+        # fixtureのtotp_secretから現在の検証コードを生成
+        totp = ROTP::TOTP.new(user.totp_secret, issuer: "Hobo Todo")
+        valid_code = totp.at(freeze_time)
 
-      assert_not user.totp_enabled
+        assert_not user.totp_enabled
 
-      post totp_setting_path, params: { code: valid_code }, as: :turbo_stream
-      assert_response :success
+        post totp_setting_path, params: { code: valid_code }, as: :turbo_stream
+        assert_response :success
 
-      user.reload
-      assert user.totp_enabled
+        user.reload
+        assert user.totp_enabled
+      end
     end
 
     test "間違った検証コードでTOTPを有効化できない" do
