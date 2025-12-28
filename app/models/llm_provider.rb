@@ -36,6 +36,7 @@ class LlmProvider < ApplicationRecord
         key = Rails.application.credentials.secret_key_base
         raise "Production requires credentials.secret_key_base to be configured" if key.nil?
         raise "secret_key_base must be at least 32 characters" if key.length < 32
+
         return key
       end
 

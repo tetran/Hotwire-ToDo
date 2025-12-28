@@ -22,7 +22,7 @@ end
 module ActionDispatch
   class IntegrationTest
     # Test fixture password - must match the password in fixtures
-    TEST_PASSWORD = "password"
+    TEST_PASSWORD = "password".freeze
 
     # Helper methods for login/logout
     def login_as(user, bypass_totp: false)
