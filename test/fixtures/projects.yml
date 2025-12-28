@@ -36,3 +36,28 @@ no_role_user_inbox:
   name: inbox
   archived: false
   dedicated: true
+
+# Inbox projects for TOTP test users
+totp_enabled_user_inbox:
+  owner: totp_enabled_user
+  name: inbox
+  archived: false
+  dedicated: true
+
+totp_disabled_user_inbox:
+  owner: totp_disabled_user
+  name: inbox
+  archived: false
+  dedicated: true
+
+totp_setup_user_inbox:
+  owner: totp_setup_user
+  name: inbox
+  archived: false
+  dedicated: true
+
+totp_setup_user_invalid_code_inbox:
+  owner: totp_setup_user_invalid_code
+  name: inbox
+  archived: false
+  dedicated: true

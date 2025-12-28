@@ -35,3 +35,41 @@ no_role_user:
   totp_secret: JBSWY3DPEHPK3PXP
   totp_enabled: false
   verified: true
+
+# Dedicated fixtures for TOTP testing to avoid fixture mutation
+totp_enabled_user:
+  name: TOTP Enabled User
+  email: totp@example.com
+  password_digest: <%= BCrypt::Password.create('password') %>
+  locale: ja
+  totp_secret: KBSWY3DPEHPK3PXQ
+  totp_enabled: true
+  verified: true
+
+totp_disabled_user:
+  name: TOTP Disabled User
+  email: nototp@example.com
+  password_digest: <%= BCrypt::Password.create('password') %>
+  locale: ja
+  totp_secret: LBSWY3DPEHPK3PXR
+  totp_enabled: false
+  verified: true
+
+# Users for testing TOTP setup flow (initially without TOTP)
+totp_setup_user:
+  name: TOTP Setup User
+  email: totpsetup@example.com
+  password_digest: <%= BCrypt::Password.create('password') %>
+  locale: ja
+  totp_secret: MBSWY3DPEHPK3PXS
+  totp_enabled: false
+  verified: true
+
+totp_setup_user_invalid_code:
+  name: TOTP Setup User Invalid Code
+  email: totpsetup2@example.com
+  password_digest: <%= BCrypt::Password.create('password') %>
+  locale: ja
+  totp_secret: NBSWY3DPEHPK3PXT
+  totp_enabled: false
+  verified: true

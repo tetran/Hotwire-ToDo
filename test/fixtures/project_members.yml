@@ -24,3 +24,20 @@ regular_user_inbox_member:
 no_role_user_inbox_member:
   project: no_role_user_inbox
   user: no_role_user
+
+# TOTP test users are members of their own inbox projects
+totp_enabled_user_inbox_member:
+  project: totp_enabled_user_inbox
+  user: totp_enabled_user
+
+totp_disabled_user_inbox_member:
+  project: totp_disabled_user_inbox
+  user: totp_disabled_user
+
+totp_setup_user_inbox_member:
+  project: totp_setup_user_inbox
+  user: totp_setup_user
+
+totp_setup_user_invalid_code_inbox_member:
+  project: totp_setup_user_invalid_code_inbox
+  user: totp_setup_user_invalid_code
