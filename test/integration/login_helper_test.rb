@@ -32,6 +32,6 @@ class LoginHelperTest < ActionDispatch::IntegrationTest
     # TOTP有効ユーザーは通常ログインでチャレンジにリダイレクトされる
     assert_nil session[:user_id], "Session should not be set for TOTP user without bypass"
     assert_response :success
-    assert_match /totp\/challenge/, response.body
+    assert_match(%r{totp/challenge}, response.body)
   end
 end

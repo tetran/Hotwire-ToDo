@@ -1,0 +1,19 @@
+#!/bin/sh
+# Pre-push hook to run CI checks locally before pushing
+# This helps catch issues before they fail in CI
+
+echo "Running local CI checks before push..."
+echo "To skip this check, use: git push --no-verify"
+echo ""
+
+# Run the CI suite
+if bin/ci; then
+  echo ""
+  echo "✅ All CI checks passed! Proceeding with push."
+  exit 0
+else
+  echo ""
+  echo "❌ CI checks failed. Please fix the issues before pushing."
+  echo "To push anyway (not recommended), use: git push --no-verify"
+  exit 1
+fi
