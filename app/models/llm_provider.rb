@@ -17,16 +17,29 @@ class LlmProvider < ApplicationRecord
   private
 
     def encrypt_api_key(value)
-      crypt = ActiveSupport::MessageEncryptor.new(Rails.application.credentials.secret_key_base[0..31])
+      crypt = ActiveSupport::MessageEncryptor.new(secret_key_base[0..31])
       crypt.encrypt_and_sign(value)
     end
 
     def decrypt_api_key
       return nil if api_key_encrypted.blank?
 
-      crypt = ActiveSupport::MessageEncryptor.new(Rails.application.credentials.secret_key_base[0..31])
+      crypt = ActiveSupport::MessageEncryptor.new(secret_key_base[0..31])
       crypt.decrypt_and_verify(api_key_encrypted)
     rescue ActiveSupport::MessageVerifier::InvalidSignature
       nil
+    end
+
+    def secret_key_base
+      key = Rails.application.credentials.secret_key_base
+
+      # In test environment, fallback to SECRET_KEY_BASE environment variable
+      if key.nil? && Rails.env.test?
+        key = Rails.application.secret_key_base
+      end
+
+      raise "secret_key_base is not configured" if key.nil?
+
+      key
     end
 end
