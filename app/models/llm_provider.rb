@@ -32,17 +32,19 @@ class LlmProvider < ApplicationRecord
 
     def secret_key_base
       # In production, require proper credentials configuration
-      if Rails.env.production?
-        key = Rails.application.credentials.secret_key_base
-        raise "Production requires credentials.secret_key_base to be configured" if key.nil?
-        raise "secret_key_base must be at least 32 characters" if key.length < 32
-
-        return key
-      end
+      return secret_key_base_for_prod if Rails.env.production?
 
       # Non-production: try credentials first, then fallback
       key = Rails.application.credentials.secret_key_base || Rails.application.secret_key_base
       raise "secret_key_base is not configured" if key.nil?
+      raise "secret_key_base must be at least 32 characters" if key.length < 32
+
+      key
+    end
+
+    def secret_key_base_for_prod
+      key = Rails.application.credentials.secret_key_base
+      raise "Production requires credentials.secret_key_base to be configured" if key.nil?
       raise "secret_key_base must be at least 32 characters" if key.length < 32
 
       key
