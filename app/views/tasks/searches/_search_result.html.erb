@@ -1,0 +1,13 @@
+<li class="search-result <%= task.completed? ? 'search-result--completed' : '' %>">
+  <%= link_to task_path(task),
+              class: "search-result__link",
+              data: { turbo_frame: "modal", action: "search#close" } do %>
+    <div class="search-result__task">
+      <span class="search-result__name"><%= task.name %></span>
+      <% if task.description.present? %>
+        <span class="search-result__description"><%= truncate(task.description.to_plain_text, length: 50) %></span>
+      <% end %>
+    </div>
+    <span class="search-result__project"># <%= task.project.display_name %></span>
+  <% end %>
+</li>

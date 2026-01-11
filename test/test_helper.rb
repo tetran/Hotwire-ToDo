@@ -37,23 +37,23 @@ module ActionDispatch
         original_totp_state = user.totp_enabled
         user.update_column(:totp_enabled, false)
 
-        post login_path, params: {
-          email: user.email,
-          password: TEST_PASSWORD,
-        }
-        follow_redirect! while response.redirect?
+        do_login(user)
 
         # Restore TOTP state
         user.update_column(:totp_enabled, original_totp_state)
       else
-        post login_path, params: {
-          email: user.email,
-          password: TEST_PASSWORD,
-        }
-        # The login should succeed and redirect to the user's inbox project
-        # Follow redirects to complete the login process
-        follow_redirect! while response.redirect?
+        do_login(user)
       end
+    end
+
+    def do_login(user)
+      post login_path, params: {
+        email: user.email,
+        password: TEST_PASSWORD,
+      }
+      # The login should succeed and redirect to the user's inbox project
+      # Follow redirects to complete the login process
+      follow_redirect! while response.redirect?
     end
 
     def logout
