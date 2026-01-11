@@ -3,7 +3,7 @@
     <div class="search-results">
       <div class="search-results__header">
         <span class="search-results__count">
-          <%= @tasks.size %> results for "<%= @query %>"
+          <%= @tasks.size %> results for "<%= h(@query) %>"
         </span>
         <div class="search-results__filter">
           <%= link_to tasks_searches_path(q: @query, completed: !@show_completed),

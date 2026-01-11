@@ -441,7 +441,7 @@ DEPENDENCIES
   image_processing (~> 1.2)
   importmap-rails
   jbuilder
-  minitest-rails
+  minitest-rails (~> 8.1.0)
   mocha
   pg
   puma (>= 5.0)
