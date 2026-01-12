@@ -32,8 +32,7 @@ class AuthenticationTest < ApplicationSystemTestCase
 
   private
 
-  def submit_logout
-    page.execute_script("document.querySelector('form[action=\"#{logout_path}\"]').submit()")
-  end
+    def submit_logout
+      page.execute_script("document.querySelector('form[action=\"#{logout_path}\"]').submit()")
+    end
 end
-

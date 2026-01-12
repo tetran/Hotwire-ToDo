@@ -31,15 +31,14 @@ class TaskFlowTest < ApplicationSystemTestCase
 
   private
 
-  def sign_in_as(user)
-    visit login_path
-    fill_in "Email", with: user.email
-    fill_in "Password", with: "password"
-    click_button "Login"
-  end
+    def sign_in_as(user)
+      visit login_path
+      fill_in "Email", with: user.email
+      fill_in "Password", with: "password"
+      click_button "Login"
+    end
 
-  def open_project_menu
-    find(".project-selector .menu-button").click
-  end
+    def open_project_menu
+      find(".project-selector .menu-button").click
+    end
 end
-
