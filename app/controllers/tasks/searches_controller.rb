@@ -17,7 +17,7 @@ module Tasks
         scope
           .preload(:project, :rich_text_description)
           .left_joins(:rich_text_description)
-          .where(sql, q: "%#{sanitized_query}%")
+          .where(sql, q: "%#{sanitized_query.downcase}%")
           .order(updated_at: :desc)
           .limit(20)
       end
