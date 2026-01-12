@@ -17,6 +17,7 @@ Rails.application.routes.draw do
     resources :suggestions, only: [:create]
     resources :batches, only: [:create]
     resources :completes, only: [:index]
+    resources :searches, only: [:index]
   end
   resources :tasks, only: %i[show new create edit update destroy] do
     resources :comments, only: %i[new create edit update destroy], module: :tasks

@@ -35,6 +35,20 @@
     </nav>
   </div>
 
+  <div class="search-container" data-controller="search" data-action="keyup@window->search#closeWithKeyboard click@window->search#closeBackground">
+    <div class="search-form" data-search-target="form" data-action="click->search#expand">
+      <span class="material-symbols-outlined search-form__icon">search</span>
+      <input type="text"
+             class="search-form__input"
+             placeholder="Search tasks..."
+             data-search-target="input"
+             data-action="input->search#search blur->search#collapse">
+    </div>
+    <div class="search-modal hidden" data-search-target="modal">
+      <%= turbo_frame_tag "search_results" %>
+    </div>
+  </div>
+
   <div class="project-header__right">
     <% unless @project.inbox? %>
       <div class="menu-container menu-container--header project-members" data-controller="project-members" data-action="keyup@window->project-members#closeWithKeyboard click@window->project-members#closeBackground">

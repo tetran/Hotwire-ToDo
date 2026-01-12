@@ -1,0 +1,29 @@
+<%= turbo_frame_tag "search_results" do %>
+  <% if @query.present? %>
+    <div class="search-results">
+      <div class="search-results__header">
+        <span class="search-results__count">
+          <%= @tasks.length %> results for "<%= h(@query) %>"
+        </span>
+        <div class="search-results__filter">
+          <%= link_to tasks_searches_path(q: @query, completed: !@show_completed),
+                      class: "search-results__filter-toggle",
+                      data: { turbo_frame: "search_results" } do %>
+            <span class="material-symbols-outlined"><%= @show_completed ? "check_box" : "check_box_outline_blank" %></span>
+            Show completed
+          <% end %>
+        </div>
+      </div>
+
+      <% if @tasks.present? %>
+        <ul class="search-results__list">
+          <%= render partial: "tasks/searches/search_result", collection: @tasks, as: :task %>
+        </ul>
+      <% else %>
+        <div class="search-results__empty">
+          No tasks found.
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
