@@ -15,6 +15,10 @@
 - Integrations: `lib/llm_client/*` wraps OpenAI/Anthropic/Gemini; `ModelListService` caches provider models via `Rails.cache`.
 - Observability: Sentry (`sentry-rails`, `sentry-ruby`); health check at `/up`.
 
+## Task Workflow
+
+ - Follow the sequence of `docs/FLOW.md`
+
 ## C4 Diagrams
 ### C1 — System Context
 ```mermaid
