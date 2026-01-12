@@ -17,9 +17,7 @@
 
       <% if @tasks.present? %>
         <ul class="search-results__list">
-          <% @tasks.each do |task| %>
-            <%= render "tasks/searches/search_result", task: task %>
-          <% end %>
+          <%= render partial: "tasks/searches/search_result", collection: @tasks, as: :task %>
         </ul>
       <% else %>
         <div class="search-results__empty">

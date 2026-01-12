@@ -14,7 +14,9 @@ export default class extends Controller {
   }
 
   expand() {
-    this.formTarget.classList.add('expanded')
+    if (!this.formTarget.classList.contains('expanded')) {
+      this.formTarget.classList.add('expanded')
+    }
     this.inputTarget.focus()
   }
 
@@ -46,8 +48,6 @@ export default class extends Controller {
     const frame = this.modalTarget.querySelector('turbo-frame')
     if (frame) {
       const url = `/tasks/searches?q=${encodeURIComponent(query)}`
-      // Safari対応: srcを一度クリアしてから設定することで確実にリロードさせる
-      frame.removeAttribute('src')
       frame.setAttribute('src', url)
     }
   }
