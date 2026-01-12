@@ -4,7 +4,7 @@ module Tasks
       @query = params[:q].to_s.strip
       @show_completed = params[:completed] == "true"
 
-      @tasks = search_tasks.load if @query.present?
+      @tasks = @query.present? ? search_tasks : []
     end
 
     private
