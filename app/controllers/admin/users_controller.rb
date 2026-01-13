@@ -9,9 +9,10 @@ module Admin
 
       return if params[:search].blank?
 
-      @users = @users.where("email ILIKE ? OR name ILIKE ?",
-                            "%#{params[:search]}%",
-                            "%#{params[:search]}%")
+      search_term = "%#{params[:search]}%".downcase
+      @users = @users.where("LOWER(email) LIKE ? OR LOWER(name) LIKE ?",
+                            search_term,
+                            search_term)
     end
 
     def show
