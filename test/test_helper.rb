@@ -61,8 +61,32 @@ module ActionDispatch
     end
 
     # Helper methods for admin tests
+
+    # 一般ログインフロー用。admin API テストでは login_as_admin_api を使うこと
     def login_as_admin
       login_as(users(:admin_user))
+    end
+
+    def login_as_admin_api(user = nil, bypass_totp: false)
+      user ||= users(:admin_user)
+      user.update!(locale: "ja")
+      if bypass_totp && user.totp_enabled?
+        user.update_column(:totp_enabled, false)
+        post api_v1_admin_session_path, params: { email: user.email, password: TEST_PASSWORD }, as: :json
+        user.update_column(:totp_enabled, true)
+      else
+        post api_v1_admin_session_path, params: { email: user.email, password: TEST_PASSWORD }, as: :json
+      end
+    end
+
+    def login_as_admin_api_read_only
+      user = users(:user_viewer)
+      post api_v1_admin_session_path, params: { email: user.email, password: TEST_PASSWORD }, as: :json
+    end
+
+    def login_as_llm_admin_api
+      user = users(:llm_admin_user)
+      post api_v1_admin_session_path, params: { email: user.email, password: TEST_PASSWORD }, as: :json
     end
 
     def login_as_user_manager

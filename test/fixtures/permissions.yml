@@ -35,17 +35,68 @@ admin_read:
   action: read
   description: Read admin panel
 
-admin_write:
-  resource_type: Admin
+
+llm_provider_read:
+  resource_type: LlmProvider
+  action: read
+  description: LLMプロバイダ情報の閲覧
+
+llm_provider_write:
+  resource_type: LlmProvider
   action: write
-  description: Write admin operations
+  description: LLMプロバイダ情報の編集
 
-admin_delete:
-  resource_type: Admin
+llm_provider_delete:
+  resource_type: LlmProvider
   action: delete
-  description: Delete admin operations
+  description: LLMプロバイダの削除
 
-admin_manage:
-  resource_type: Admin
+project_delete:
+  resource_type: Project
+  action: delete
+  description: Delete project information
+
+project_manage:
+  resource_type: Project
   action: manage
-  description: Full admin panel access
+  description: Manage projects
+
+task_read:
+  resource_type: Task
+  action: read
+  description: Read task information
+
+task_write:
+  resource_type: Task
+  action: write
+  description: Write task information
+
+task_delete:
+  resource_type: Task
+  action: delete
+  description: Delete task information
+
+task_manage:
+  resource_type: Task
+  action: manage
+  description: Manage tasks
+
+comment_read:
+  resource_type: Comment
+  action: read
+  description: Read comment information
+
+comment_write:
+  resource_type: Comment
+  action: write
+  description: Write comment information
+
+comment_delete:
+  resource_type: Comment
+  action: delete
+  description: Delete comment information
+
+comment_manage:
+  resource_type: Comment
+  action: manage
+  description: Manage comments

@@ -9,6 +9,7 @@ This is a sample todo list application to try Rails 8 & Hotwire.
 - Ruby version: 3.4.4
 - Rails version: 8.0
 - Database: PostgreSQL
+- Node.js (with npm)
 
 ## How to run
 
@@ -32,6 +33,12 @@ See https://www.libvips.org/install.html.
 `OPENAI_ACCESS_TOKEN` and `OPENAI_ORGANIZATION_ID` are required. See
 [Environment variables](#environment-variables) for details.
 
+### Install JavaScript dependencies
+
+```bash
+npm install
+```
+
 ### Install gems and setup database
 
 ```bash
@@ -41,10 +48,12 @@ bin/setup
 ### Start server
 
 ```bash
-bin/rails s
+bin/dev
 ```
 
 Then open http://localhost:3000
+
+The admin panel is available at http://localhost:3000/admin
 
 ## Environment variables
 

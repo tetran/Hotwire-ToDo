@@ -5,9 +5,11 @@ openai:
   api_endpoint: https://api.openai.com/v1
   organization_id: org-test
   active: true
+  api_key_encrypted: test_encrypted_key_openai
 
 anthropic:
   name: Anthropic
   api_endpoint: https://api.anthropic.com
   active: true
+  api_key_encrypted: test_encrypted_key_anthropic
 

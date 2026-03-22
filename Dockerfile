@@ -19,13 +19,21 @@ FROM base as build
 
 # Install packages needed to build gems
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential git libvips pkg-config libsqlite3-dev libyaml-dev
+    apt-get install --no-install-recommends -y build-essential curl git libvips pkg-config libsqlite3-dev libyaml-dev
+
+# Install Node.js 20
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install --no-install-recommends -y nodejs
 
 # Install application gems
 COPY Gemfile Gemfile.lock ./
 RUN bundle install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git && \
     bundle exec bootsnap precompile --gemfile
+
+# Install JS dependencies
+COPY package.json package-lock.json ./
+RUN npm ci
 
 # Copy application code
 COPY . .
