@@ -11,3 +11,15 @@ user_manager_user_manager_role:
 regular_user_regular_role:
   user: regular_user
   role: regular
+
+admin_totp_user_admin_role:
+  user: admin_totp_user
+  role: admin
+
+user_viewer_user_viewer_role:
+  user: user_viewer
+  role: user_viewer
+
+llm_admin_user_llm_admin_role:
+  user: llm_admin_user
+  role: llm_admin

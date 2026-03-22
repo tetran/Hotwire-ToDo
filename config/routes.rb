@@ -35,27 +35,27 @@ Rails.application.routes.draw do
     resource :challenge, only: %i[new create]
   end
 
-  # Admin routes
-  namespace :admin do
-    root "dashboard#index"
+  # Admin SPA shell
+  get "/admin", to: "admin#index", as: :admin_root
+  get "/admin/*path", to: "admin#index"
 
-    # RESTful user management
-    resources :users, only: %i[index show new create edit update destroy] do
-      resource :roles, only: %i[show update], controller: "user_roles"
-    end
-
-    # RESTful role management
-    resources :roles, only: %i[index show new create edit update destroy] do
-      resource :permissions, only: %i[show update], controller: "role_permissions"
-    end
-
-    # Permissions are read-only for admin interface
-    resources :permissions, only: %i[index show]
-
-    # LLM management
-    resources :llm_providers, only: %i[index show edit update] do
-      resources :llm_models
-      resources :available_models, only: [:index]
+  namespace :api do
+    namespace :v1 do
+      namespace :admin do
+        root "dashboard#index"
+        resources :users, only: %i[index show create update destroy] do
+          resource :roles, only: %i[show update], controller: "user_roles"
+        end
+        resources :roles, only: %i[index show create update destroy] do
+          resource :permissions, only: %i[show update], controller: "role_permissions"
+        end
+        resources :permissions, only: %i[index show]
+        resources :llm_providers, only: %i[index show update] do
+          resources :llm_models
+          resources :available_models, only: [:index]
+        end
+        resource :session, only: %i[show create destroy], controller: "sessions"
+      end
     end
   end
 

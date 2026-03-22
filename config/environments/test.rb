@@ -50,4 +50,10 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true
+
+  # Rack::Attack middleware is included for rate limiting tests,
+  # but disabled by default to avoid interfering with other tests.
+  config.middleware.use Rack::Attack
+  Rack::Attack.cache.store = ActiveSupport::Cache::MemoryStore.new
+  Rack::Attack.enabled = false
 end

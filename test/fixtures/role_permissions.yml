@@ -25,23 +25,64 @@ admin_project_write:
   role: admin
   permission: project_write
 
+admin_project_delete:
+  role: admin
+  permission: project_delete
+
+admin_project_manage:
+  role: admin
+  permission: project_manage
+
+admin_task_read:
+  role: admin
+  permission: task_read
+
+admin_task_write:
+  role: admin
+  permission: task_write
+
+admin_task_delete:
+  role: admin
+  permission: task_delete
+
+admin_task_manage:
+  role: admin
+  permission: task_manage
+
+admin_comment_read:
+  role: admin
+  permission: comment_read
+
+admin_comment_write:
+  role: admin
+  permission: comment_write
+
+admin_comment_delete:
+  role: admin
+  permission: comment_delete
+
+admin_comment_manage:
+  role: admin
+  permission: comment_manage
+
 admin_admin_read:
   role: admin
   permission: admin_read
 
-admin_admin_write:
-  role: admin
-  permission: admin_write
 
-admin_admin_delete:
+admin_llm_provider_read:
   role: admin
-  permission: admin_delete
+  permission: llm_provider_read
 
-admin_admin_manage:
+admin_llm_provider_write:
   role: admin
-  permission: admin_manage
+  permission: llm_provider_write
 
-# User manager gets user management permissions
+admin_llm_provider_delete:
+  role: admin
+  permission: llm_provider_delete
+
+# User manager gets user management permissions (read/write/delete) and admin read access only
 user_manager_user_read:
   role: user_manager
   permission: user_read
@@ -50,14 +91,90 @@ user_manager_user_write:
   role: user_manager
   permission: user_write
 
-user_manager_user_manage:
+user_manager_user_delete:
   role: user_manager
-  permission: user_manage
+  permission: user_delete
 
 user_manager_admin_read:
   role: user_manager
   permission: admin_read
 
-user_manager_admin_write:
-  role: user_manager
-  permission: admin_write
+# user_viewer gets user read and admin read only
+user_viewer_user_read:
+  role: user_viewer
+  permission: user_read
+
+user_viewer_admin_read:
+  role: user_viewer
+  permission: admin_read
+
+# llm_admin gets admin read/write/delete (no manage) and LlmProvider permissions
+llm_admin_admin_read:
+  role: llm_admin
+  permission: admin_read
+
+
+llm_admin_llm_provider_read:
+  role: llm_admin
+  permission: llm_provider_read
+
+llm_admin_llm_provider_write:
+  role: llm_admin
+  permission: llm_provider_write
+
+llm_admin_llm_provider_delete:
+  role: llm_admin
+  permission: llm_provider_delete
+
+# project_manager gets Project/Task/Comment all actions and admin read
+project_manager_project_read:
+  role: project_manager
+  permission: project_read
+
+project_manager_project_write:
+  role: project_manager
+  permission: project_write
+
+project_manager_project_delete:
+  role: project_manager
+  permission: project_delete
+
+project_manager_project_manage:
+  role: project_manager
+  permission: project_manage
+
+project_manager_task_read:
+  role: project_manager
+  permission: task_read
+
+project_manager_task_write:
+  role: project_manager
+  permission: task_write
+
+project_manager_task_delete:
+  role: project_manager
+  permission: task_delete
+
+project_manager_task_manage:
+  role: project_manager
+  permission: task_manage
+
+project_manager_comment_read:
+  role: project_manager
+  permission: comment_read
+
+project_manager_comment_write:
+  role: project_manager
+  permission: comment_write
+
+project_manager_comment_delete:
+  role: project_manager
+  permission: comment_delete
+
+project_manager_comment_manage:
+  role: project_manager
+  permission: comment_manage
+
+project_manager_admin_read:
+  role: project_manager
+  permission: admin_read

@@ -27,6 +27,10 @@ class ApplicationController < ActionController::Base
       session[:user_id] = user.id
     end
 
+    def admin_sign_in(user)
+      session[:admin_user_id] = user.id
+    end
+
     def current_user
       return if session[:user_id].blank?
 
@@ -37,8 +41,22 @@ class ApplicationController < ActionController::Base
       end
     end
 
+    def current_admin
+      return if session[:admin_user_id].blank?
+
+      if defined?(@current_admin)
+        @current_admin
+      else
+        @current_admin = User.find_by(id: session[:admin_user_id])
+      end
+    end
+
     def logged_in?
       current_user.present?
+    end
+
+    def admin_logged_in?
+      current_admin.present?
     end
 
     def require_login

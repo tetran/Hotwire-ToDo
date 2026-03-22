@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@theme {
+  --font-syne: 'Syne', sans-serif;
+  --font-dm-mono: 'DM Mono', monospace;
+
+  --color-sidebar: #0f1117;
+  --color-sidebar-border: #1e2130;
+  --color-accent: #6366f1;
+  --color-surface: #f8f9fc;
+}

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_06_26_144041) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_22_100000) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -52,9 +52,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_26_144041) do
   create_table "comments", force: :cascade do |t|
     t.text "content"
     t.datetime "created_at", null: false
-    t.bigint "task_id", null: false
+    t.integer "task_id", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
+    t.integer "user_id", null: false
     t.index ["task_id"], name: "index_comments_on_task_id"
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
@@ -64,7 +64,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_26_144041) do
     t.datetime "created_at", null: false
     t.boolean "default_model", default: false
     t.string "display_name"
-    t.bigint "llm_provider_id", null: false
+    t.integer "llm_provider_id", null: false
     t.string "name", null: false
     t.datetime "updated_at", null: false
     t.index ["default_model"], name: "index_llm_models_on_default_model"
@@ -94,9 +94,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_26_144041) do
 
   create_table "project_members", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.bigint "project_id", null: false
+    t.integer "project_id", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
+    t.integer "user_id", null: false
     t.index ["project_id"], name: "index_project_members_on_project_id"
     t.index ["user_id"], name: "index_project_members_on_user_id"
   end
@@ -106,15 +106,15 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_26_144041) do
     t.datetime "created_at", null: false
     t.boolean "dedicated", default: false, null: false
     t.string "name", null: false
-    t.bigint "owner_id", null: false
+    t.integer "owner_id", null: false
     t.datetime "updated_at", null: false
     t.index ["owner_id"], name: "index_projects_on_owner_id"
   end
 
   create_table "role_permissions", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.bigint "permission_id", null: false
-    t.bigint "role_id", null: false
+    t.integer "permission_id", null: false
+    t.integer "role_id", null: false
     t.datetime "updated_at", null: false
     t.index ["permission_id"], name: "index_role_permissions_on_permission_id"
     t.index ["role_id", "permission_id"], name: "index_role_permissions_on_role_id_and_permission_id", unique: true
@@ -145,7 +145,7 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_26_144041) do
     t.text "description"
     t.date "due_date"
     t.string "name", null: false
-    t.bigint "suggestion_response_id", null: false
+    t.integer "suggestion_response_id", null: false
     t.datetime "updated_at", null: false
     t.index ["suggestion_response_id"], name: "index_suggested_tasks_on_suggestion_response_id"
   end
@@ -155,10 +155,10 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_26_144041) do
     t.datetime "created_at", null: false
     t.date "due_date"
     t.string "goal", null: false
-    t.bigint "llm_model_id", null: false
-    t.bigint "project_id", null: false
+    t.integer "llm_model_id", null: false
+    t.integer "project_id", null: false
     t.text "raw_request"
-    t.bigint "requested_by_id", null: false
+    t.integer "requested_by_id", null: false
     t.date "start_date"
     t.datetime "updated_at", null: false
     t.index ["llm_model_id"], name: "index_suggestion_requests_on_llm_model_id"
@@ -171,19 +171,19 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_26_144041) do
     t.datetime "created_at", null: false
     t.integer "prompt_tokens", default: 0, null: false
     t.text "raw_response"
-    t.bigint "suggestion_request_id", null: false
+    t.integer "suggestion_request_id", null: false
     t.datetime "updated_at", null: false
     t.index ["suggestion_request_id"], name: "index_suggestion_responses_on_suggestion_request_id"
   end
 
   create_table "tasks", force: :cascade do |t|
-    t.bigint "assignee_id"
+    t.integer "assignee_id"
     t.boolean "completed", default: false, null: false
     t.datetime "created_at", null: false
-    t.bigint "created_by_id"
+    t.integer "created_by_id"
     t.date "due_date", null: false
     t.string "name", null: false
-    t.bigint "project_id", null: false
+    t.integer "project_id", null: false
     t.datetime "updated_at", null: false
     t.index ["assignee_id"], name: "index_tasks_on_assignee_id"
     t.index ["created_by_id"], name: "index_tasks_on_created_by_id"
@@ -192,9 +192,9 @@ ActiveRecord::Schema[8.1].define(version: 2025_06_26_144041) do
 
   create_table "user_roles", force: :cascade do |t|
     t.datetime "created_at", null: false
-    t.bigint "role_id", null: false
+    t.integer "role_id", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id", null: false
+    t.integer "user_id", null: false
     t.index ["role_id"], name: "index_user_roles_on_role_id"
     t.index ["user_id", "role_id"], name: "index_user_roles_on_user_id_and_role_id", unique: true
     t.index ["user_id"], name: "index_user_roles_on_user_id"

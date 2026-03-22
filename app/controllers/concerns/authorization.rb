@@ -91,18 +91,6 @@ module Authorization
       handle_authorization_failure("Admin", "read", root_path)
     end
 
-    def authorize_admin_write!
-      return if current_user&.can_write?("Admin")
-
-      handle_authorization_failure("Admin", "write", admin_root_path)
-    end
-
-    def authorize_admin_delete!
-      return if current_user&.can_delete?("Admin")
-
-      handle_authorization_failure("Admin", "delete", admin_root_path)
-    end
-
     def handle_authorization_failure(resource_type, action, redirect_path = root_path)
       if request.xhr? || request.format.turbo_stream?
         head :forbidden
