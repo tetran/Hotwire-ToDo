@@ -30,11 +30,13 @@ permissions_data = [
   { resource_type: "Comment", action: "delete", description: "コメントの削除" },
   { resource_type: "Comment", action: "manage", description: "コメントの完全管理" },
 
-  # Admin permissions
+  # Admin permissions（read のみ有効）
   { resource_type: "Admin", action: "read", description: "管理画面の閲覧" },
-  { resource_type: "Admin", action: "write", description: "管理画面での編集操作" },
-  { resource_type: "Admin", action: "delete", description: "管理画面での削除操作" },
-  { resource_type: "Admin", action: "manage", description: "管理画面の完全管理" },
+
+  # LlmProvider permissions
+  { resource_type: "LlmProvider", action: "read", description: "LLMプロバイダ情報の閲覧" },
+  { resource_type: "LlmProvider", action: "write", description: "LLMプロバイダ情報の編集" },
+  { resource_type: "LlmProvider", action: "delete", description: "LLMプロバイダの削除" },
 ]
 
 permissions_data.each do |perm_attrs|
@@ -95,10 +97,9 @@ project_manager_permissions = Permission.where(
 ).or(Permission.where(resource_type: "Admin", action: "read"))
 project_manager_role.permissions = project_manager_permissions
 
-# LLM admin gets admin management permissions (read, write, delete) for LLM settings
-llm_admin_permissions = Permission.where(
-  resource_type: "Admin", action: %w[read write delete],
-)
+# LLM admin gets admin read access and LlmProvider permissions
+llm_admin_permissions = Permission.where(resource_type: "Admin", action: "read")
+                                  .or(Permission.where(resource_type: "LlmProvider"))
 llm_admin_role.permissions = llm_admin_permissions
 
 Rails.logger.debug "Assigned permissions to roles"

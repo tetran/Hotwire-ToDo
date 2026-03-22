@@ -6,7 +6,7 @@ class Permission < ApplicationRecord
   validates :action, presence: true
   validates :resource_type, uniqueness: { scope: :action }
 
-  RESOURCE_TYPES = %w[User Project Task Comment Admin].freeze
+  RESOURCE_TYPES = %w[User Project Task Comment Admin LlmProvider].freeze
   ACTIONS = %w[read write delete manage].freeze
 
   validates :resource_type, inclusion: { in: RESOURCE_TYPES }

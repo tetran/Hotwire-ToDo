@@ -61,3 +61,9 @@ totp_setup_user_invalid_code_inbox:
   name: inbox
   archived: false
   dedicated: true
+
+admin_totp_user_inbox:
+  owner: admin_totp_user
+  name: inbox
+  archived: false
+  dedicated: true

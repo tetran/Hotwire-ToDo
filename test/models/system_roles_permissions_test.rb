@@ -18,8 +18,12 @@ class SystemRolesPermissionsTest < ActiveSupport::TestCase
 
     # Check specific resource access
     assert admin_role.permissions.exists?(resource_type: "User", action: "manage")
-    assert admin_role.permissions.exists?(resource_type: "Admin", action: "manage")
+    assert admin_role.permissions.exists?(resource_type: "Admin", action: "read")
     assert admin_role.permissions.exists?(resource_type: "Project", action: "manage")
+    # Admin リソースは read のみ有効
+    assert_not admin_role.permissions.exists?(resource_type: "Admin", action: "manage")
+    assert_not admin_role.permissions.exists?(resource_type: "Admin", action: "write")
+    assert_not admin_role.permissions.exists?(resource_type: "Admin", action: "delete")
   end
 
   test "user_manager role has correct permissions" do
@@ -73,13 +77,15 @@ class SystemRolesPermissionsTest < ActiveSupport::TestCase
     llm_admin_role = Role.llm_admin
     assert_not_nil llm_admin_role
 
-    # Should have Admin read/write/delete but not manage
-    expected_permissions = %w[Admin:read Admin:write Admin:delete]
+    # Should have Admin read and LlmProvider read/write/delete
+    expected_permissions = %w[Admin:read LlmProvider:read LlmProvider:write LlmProvider:delete]
     actual_permissions = llm_admin_role.permissions.map { |p| "#{p.resource_type}:#{p.action}" }
 
     assert_equal expected_permissions.sort, actual_permissions.sort
 
-    # Should NOT have Admin:manage
+    # Should NOT have Admin:write/delete/manage
+    assert_not llm_admin_role.permissions.exists?(resource_type: "Admin", action: "write")
+    assert_not llm_admin_role.permissions.exists?(resource_type: "Admin", action: "delete")
     assert_not llm_admin_role.permissions.exists?(resource_type: "Admin", action: "manage")
 
     # Should NOT have User permissions
@@ -115,12 +121,15 @@ class SystemRolesPermissionsTest < ActiveSupport::TestCase
     )
     user.roles << Role.llm_admin
 
-    # Should have admin permissions except manage
+    # Should have admin read and LlmProvider permissions
     assert user.has_permission?("Admin", "read")
-    assert user.has_permission?("Admin", "write")
-    assert user.has_permission?("Admin", "delete")
+    assert user.has_permission?("LlmProvider", "read")
+    assert user.has_permission?("LlmProvider", "write")
+    assert user.has_permission?("LlmProvider", "delete")
 
-    # Should NOT have admin manage or user permissions
+    # Should NOT have Admin:write/delete/manage or User permissions
+    assert_not user.has_permission?("Admin", "write")
+    assert_not user.has_permission?("Admin", "delete")
     assert_not user.has_permission?("Admin", "manage")
     assert_not user.has_permission?("User", "read")
     assert_not user.has_permission?("User", "write")
@@ -144,7 +153,8 @@ class SystemRolesPermissionsTest < ActiveSupport::TestCase
 
   test "all required permissions exist" do
     required_permissions = [
-      %w[Admin read], %w[Admin write], %w[Admin delete], %w[Admin manage],
+      # Admin リソースは read のみ有効
+      %w[Admin read],
       %w[User read], %w[User write], %w[User delete], %w[User manage],
       %w[Project read], %w[Project write], %w[Project delete], %w[Project manage],
       %w[Task read], %w[Task write], %w[Task delete], %w[Task manage],

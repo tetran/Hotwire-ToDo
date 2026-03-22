@@ -95,52 +95,6 @@ class AuthorizationTest < ActionDispatch::IntegrationTest
     end
   end
 
-  # Test for authorize_admin_write! method
-  test "authorize_admin_write! should allow access with Admin:write permission" do
-    user = users(:admin_user) # Has Admin:write permission
-
-    controller = create_test_controller_with_authorization
-    controller.current_user = user
-
-    assert_nothing_raised do
-      controller.send(:authorize_admin_write!)
-    end
-  end
-
-  test "authorize_admin_write! should deny access without Admin:write permission" do
-    user = users(:no_role_user) # No Admin:write permission
-
-    controller = create_test_controller_with_authorization
-    controller.current_user = user
-
-    assert_raises(RuntimeError) do
-      controller.send(:authorize_admin_write!)
-    end
-  end
-
-  # Test for authorize_admin_delete! method
-  test "authorize_admin_delete! should allow access with Admin:delete permission" do
-    user = users(:admin_user) # Has Admin:delete permission
-
-    controller = create_test_controller_with_authorization
-    controller.current_user = user
-
-    assert_nothing_raised do
-      controller.send(:authorize_admin_delete!)
-    end
-  end
-
-  test "authorize_admin_delete! should deny access without Admin:delete permission" do
-    user = users(:no_role_user) # No Admin:delete permission
-
-    controller = create_test_controller_with_authorization
-    controller.current_user = user
-
-    assert_raises(RuntimeError) do
-      controller.send(:authorize_admin_delete!)
-    end
-  end
-
   private
 
     def create_test_controller_with_authorization

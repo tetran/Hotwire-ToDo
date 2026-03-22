@@ -14,3 +14,18 @@ regular:
   name: regular
   description: Regular user role
   system_role: false
+
+user_viewer:
+  name: user_viewer
+  description: Read-only admin viewer
+  system_role: true
+
+llm_admin:
+  name: llm_admin
+  description: LLM administrator
+  system_role: true
+
+project_manager:
+  name: project_manager
+  description: Project manager
+  system_role: true

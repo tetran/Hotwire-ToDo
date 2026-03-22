@@ -73,3 +73,30 @@ totp_setup_user_invalid_code:
   totp_secret: NBSWY3DPEHPK3PXT
   totp_enabled: false
   verified: true
+
+admin_totp_user:
+  name: Admin TOTP User
+  email: admintotp@example.com
+  password_digest: <%= BCrypt::Password.create('password') %>
+  locale: ja
+  totp_secret: PBSWY3DPEHPK3PXU
+  totp_enabled: true
+  verified: true
+
+user_viewer:
+  name: User Viewer
+  email: viewer@example.com
+  password_digest: <%= BCrypt::Password.create('password') %>
+  locale: ja
+  totp_secret: RBSWY3DPEHPK3PXV
+  totp_enabled: false
+  verified: true
+
+llm_admin_user:
+  name: LLM Admin User
+  email: llmadmin@example.com
+  password_digest: <%= BCrypt::Password.create('password') %>
+  locale: ja
+  totp_secret: SBSWY3DPEHPK3PXW
+  totp_enabled: false
+  verified: true

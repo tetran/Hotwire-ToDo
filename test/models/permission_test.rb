@@ -1,25 +1,8 @@
 require "test_helper"
 
 class PermissionTest < ActiveSupport::TestCase
-  self.use_transactional_tests = false
-
   def setup
     @permission = Permission.new(resource_type: "User", action: "read", description: "Read user data")
-  end
-
-  def teardown
-    UserRole.delete_all
-    RolePermission.delete_all
-    Role.delete_all
-    Permission.delete_all
-    Comment.delete_all
-    ProjectMember.delete_all
-    SuggestedTask.delete_all
-    SuggestionResponse.delete_all
-    SuggestionRequest.delete_all
-    Task.delete_all
-    Project.delete_all
-    User.delete_all
   end
 
   test "should be valid with valid attributes" do
@@ -108,6 +91,16 @@ class PermissionTest < ActiveSupport::TestCase
   test "name method should return formatted name" do
     permission = Permission.find_by(resource_type: "User", action: "read")
     assert_equal "read_user", permission.name
+  end
+
+  test "LlmProvider should be included in RESOURCE_TYPES" do
+    assert_includes Permission::RESOURCE_TYPES, "LlmProvider"
+  end
+
+  test "permission with LlmProvider resource type should be valid" do
+    Permission.destroy_all
+    permission = Permission.new(resource_type: "LlmProvider", action: "read")
+    assert permission.valid?
   end
 
   test "should accept all valid resource types" do

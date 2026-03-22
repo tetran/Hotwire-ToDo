@@ -1,25 +1,8 @@
 require "test_helper"
 
 class RoleTest < ActiveSupport::TestCase
-  self.use_transactional_tests = false
-
   def setup
     @role = Role.new(name: "test_role", description: "Test role")
-  end
-
-  def teardown
-    UserRole.delete_all
-    RolePermission.delete_all
-    Role.delete_all
-    Permission.delete_all
-    Comment.delete_all
-    ProjectMember.delete_all
-    SuggestedTask.delete_all
-    SuggestionResponse.delete_all
-    SuggestionRequest.delete_all
-    Task.delete_all
-    Project.delete_all
-    User.delete_all
   end
 
   test "should be valid with valid attributes" do
@@ -109,7 +92,7 @@ class RoleTest < ActiveSupport::TestCase
   end
 
   test "user_viewer class method should find user_viewer role" do
-    user_viewer_role = Role.create!(name: "user_viewer", system_role: true)
+    user_viewer_role = Role.find_by!(name: "user_viewer", system_role: true)
     assert_equal user_viewer_role, Role.user_viewer
   end
 end
