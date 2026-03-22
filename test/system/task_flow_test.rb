@@ -40,5 +40,6 @@ class TaskFlowTest < ApplicationSystemTestCase
 
     def open_project_menu
       find(".project-selector .menu-button").click
+      find(".project-selector .menu-navigation:not(.hidden)")
     end
 end
