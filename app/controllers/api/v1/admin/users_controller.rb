@@ -11,7 +11,7 @@ module Api
           users = User.includes(:roles).order(:id)
           render json: users.as_json(
             only: %i[id email name created_at updated_at],
-            include: { roles: { only: %i[id name] } }
+            include: { roles: { only: %i[id name] } },
           )
         end
 
@@ -51,10 +51,6 @@ module Api
           def set_user
             @user = User.find_by(id: params[:id])
             render json: { error: "Not found" }, status: :not_found unless @user
-          end
-
-          def require_user_read_access
-            handle_authorization_failure unless current_admin.can_read?("User")
           end
 
           def user_params

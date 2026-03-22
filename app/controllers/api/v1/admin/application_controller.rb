@@ -9,6 +9,10 @@ module Api
 
         private
 
+          def handle_unverified_request
+            render json: { error: "CSRF token invalid" }, status: :unprocessable_entity
+          end
+
           def require_admin_access
             unless admin_logged_in?
               render json: { error: "Unauthorized" }, status: :unauthorized
@@ -22,6 +26,10 @@ module Api
 
           def handle_authorization_failure(_resource_type = nil, _action = nil, _redirect_path = nil)
             render json: { error: "Forbidden" }, status: :forbidden
+          end
+
+          def require_user_read_access
+            render json: { error: "Forbidden" }, status: :forbidden unless current_admin.can_read?("User")
           end
 
           def require_user_write_access

@@ -208,7 +208,6 @@ module Api
           assert_response :no_content
           assert_not_equal old_id, session.id.public_id
         end
-
       end
     end
   end

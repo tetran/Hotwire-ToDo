@@ -25,16 +25,12 @@ module Api
             render json: { error: "Not found" }, status: :not_found unless @user
           end
 
-          def require_user_read_access
-            render json: { error: "Forbidden" }, status: :forbidden unless current_admin.can_read?("User")
-          end
-
           def role_ids_param
             params.permit(role_ids: [])[:role_ids] || []
           end
 
           def protect_system_role_assignment
-            return unless Role.where(id: role_ids_param, system_role: true).exists?
+            return unless Role.exists?(id: role_ids_param, system_role: true)
 
             render json: { error: "Forbidden" }, status: :forbidden
           end
@@ -43,7 +39,7 @@ module Api
             current_system_roles = @user.roles.where(system_role: true)
             return unless current_system_roles.exists?
 
-            new_role_ids = role_ids_param.reject(&:blank?).map(&:to_i)
+            new_role_ids = role_ids_param.compact_blank.map(&:to_i)
             removed = current_system_roles.reject { |r| new_role_ids.include?(r.id) }
             render json: { error: "Forbidden" }, status: :forbidden if removed.any?
           end

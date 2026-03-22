@@ -26,7 +26,7 @@ module Api
                params: { email: "wrong@example.com", password: "wrong" },
                as: :json,
                headers: { "REMOTE_ADDR" => "1.2.3.4" }
-          assert_response 429
+          assert_response :too_many_requests
         end
 
         test "異なる IP から同一 email で 5 回失敗後は 429 を返す" do
@@ -42,7 +42,7 @@ module Api
                params: { email: "target@example.com", password: "wrong" },
                as: :json,
                headers: { "REMOTE_ADDR" => "1.2.3.99" }
-          assert_response 429
+          assert_response :too_many_requests
         end
 
         test "throttle レスポンスに JSON error メッセージが含まれる" do
@@ -52,7 +52,7 @@ module Api
                  as: :json,
                  headers: { "REMOTE_ADDR" => "9.9.9.9" }
           end
-          assert_response 429
+          assert_response :too_many_requests
           assert_equal "Too many requests", response.parsed_body["error"]
         end
       end

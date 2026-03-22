@@ -24,25 +24,16 @@ module Api
 
         # POST /api/v1/admin/session
         def create
-          if session[:admin_pending_user_id].present? && params[:email].blank?
-            handle_totp_challenge
-            return
-          end
+          return handle_totp_challenge if totp_challenge_pending?
 
-          user = User.authenticate_by(email: params[:email], password: params[:password])
-
-          unless user&.can_read?("Admin")
-            render json: { error: "Invalid email or password" }, status: :unauthorized
-            return
-          end
+          user = authenticate_admin_user
+          return unless user
 
           if user.totp_enabled?
-            session[:admin_pending_user_id] = user.id
-            render json: { totp_required: true }, status: :ok
-            return
+            initiate_totp_challenge(user)
+          else
+            complete_admin_login(user)
           end
-
-          complete_admin_login(user)
         end
 
         # DELETE /api/v1/admin/session
@@ -59,6 +50,27 @@ module Api
         end
 
         private
+
+          def handle_unverified_request
+            render json: { error: "CSRF token invalid" }, status: :unprocessable_entity
+          end
+
+          def totp_challenge_pending?
+            session[:admin_pending_user_id].present? && params[:email].blank?
+          end
+
+          def authenticate_admin_user
+            user = User.authenticate_by(email: params[:email], password: params[:password])
+            return user if user&.can_read?("Admin")
+
+            render json: { error: "Invalid email or password" }, status: :unauthorized
+            nil
+          end
+
+          def initiate_totp_challenge(user)
+            session[:admin_pending_user_id] = user.id
+            render json: { totp_required: true }, status: :ok
+          end
 
           def handle_totp_challenge
             user = User.find_by(id: session[:admin_pending_user_id])
@@ -89,12 +101,12 @@ module Api
           end
 
           def user_json(user)
-            capabilities = Permission::RESOURCE_TYPES.each_with_object({}) do |resource, hash|
-              hash[resource] = {
-                read:   user.can_read?(resource),
-                write:  user.can_write?(resource),
+            capabilities = Permission::RESOURCE_TYPES.index_with do |resource|
+              {
+                read: user.can_read?(resource),
+                write: user.can_write?(resource),
                 delete: user.can_delete?(resource),
-                manage: user.can_manage?(resource)
+                manage: user.can_manage?(resource),
               }
             end
             { id: user.id, email: user.email, name: user.name,

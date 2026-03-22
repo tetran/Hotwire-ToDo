@@ -48,7 +48,11 @@ const App = () => (
               <UserRolePage />
             </ProtectedRoute>
           } />
-          <Route path="roles" element={<RolesIndexPage />} />
+          <Route path="roles" element={
+            <ProtectedRoute requireAdmin>
+              <RolesIndexPage />
+            </ProtectedRoute>
+          } />
           <Route path="roles/new" element={
             <ProtectedRoute requireAdmin>
               <RoleNewPage />
@@ -64,8 +68,16 @@ const App = () => (
               <RolePermissionPage />
             </ProtectedRoute>
           } />
-          <Route path="permissions" element={<PermissionsIndexPage />} />
-          <Route path="permissions/:id" element={<PermissionDetailPage />} />
+          <Route path="permissions" element={
+            <ProtectedRoute requireAdmin>
+              <PermissionsIndexPage />
+            </ProtectedRoute>
+          } />
+          <Route path="permissions/:id" element={
+            <ProtectedRoute requireAdmin>
+              <PermissionDetailPage />
+            </ProtectedRoute>
+          } />
           <Route path="llm-providers" element={
             <ProtectedRoute requiredCapability={{ resource: 'LlmProvider', action: 'read' }}>
               <LlmProvidersIndexPage />

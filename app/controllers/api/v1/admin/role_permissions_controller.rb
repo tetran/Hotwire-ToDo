@@ -32,7 +32,7 @@ module Api
           end
 
           def protect_permission_escalation
-            new_ids = permission_ids_param.reject(&:blank?).map(&:to_i)
+            new_ids = permission_ids_param.compact_blank.map(&:to_i)
             return if new_ids.empty?
 
             admin_ids = current_admin.roles.joins(:permissions).pluck("permissions.id").uniq

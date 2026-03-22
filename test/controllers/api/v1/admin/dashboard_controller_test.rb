@@ -63,13 +63,13 @@ module Api
           get api_v1_admin_root_path
           assert_response :success
           recent_users = response.parsed_body["recent_users"]
-          timestamps = recent_users.map { |u| Time.parse(u["created_at"]) }
+          timestamps = recent_users.map { |u| Time.zone.parse(u["created_at"]) }
           assert_equal timestamps.sort.reverse, timestamps
         end
 
         # User:read権限によるrecent_usersのアクセス制御
         test "GET index returns empty recent_users when logged in as llm_admin (no User:read)" do
-          login_as_llm_admin_api  # llm_admin: Admin:read + LlmProvider 権限のみ（User:read なし）
+          login_as_llm_admin_api # llm_admin: Admin:read + LlmProvider 権限のみ（User:read なし）
           get api_v1_admin_root_path
           assert_response :success
           json = response.parsed_body

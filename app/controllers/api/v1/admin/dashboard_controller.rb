@@ -9,7 +9,7 @@ module Api
               users_count: User.count,
               roles_count: Role.count,
               llm_providers_count: LlmProvider.count,
-              llm_models_count: LlmModel.count
+              llm_models_count: LlmModel.count,
             },
             recent_users: recent_users_json,
           }
