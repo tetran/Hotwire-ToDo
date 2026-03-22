@@ -48,6 +48,9 @@ jobs:
       - name: Install Node.js dependencies
         run: npm ci
 
+      - name: Build Vite assets
+        run: bin/vite build
+
       - name: Prepare database
         run: |
           bin/rails db:create
