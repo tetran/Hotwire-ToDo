@@ -24,11 +24,11 @@ module Api
             render json: { error: "Forbidden" }, status: :forbidden
           end
 
-          def require_write_access
+          def require_user_write_access
             render json: { error: "Forbidden" }, status: :forbidden unless current_admin.can_write?("User")
           end
 
-          def require_delete_access
+          def require_user_delete_access
             render json: { error: "Forbidden" }, status: :forbidden unless current_admin.can_delete?("User")
           end
 

@@ -14,7 +14,7 @@ Rails.application.configure do
     # Allow blob: for vite-ruby test builds
     policy.script_src(*policy.script_src, :blob) if Rails.env.test?
 
-    policy.style_src :self, "https://fonts.googleapis.com"
+    policy.style_src :self, "https://fonts.googleapis.com", "https://cdn.jsdelivr.net"
     # Allow @vite/client to hot reload style changes in development
     policy.style_src(*policy.style_src, :unsafe_inline) if Rails.env.development?
 
@@ -28,5 +28,5 @@ Rails.application.configure do
 
   # Generate nonces for permitted inline scripts and styles.
   config.content_security_policy_nonce_generator = ->(_request) { SecureRandom.base64(16) }
-  config.content_security_policy_nonce_directives = %w[script-src style-src]
+  config.content_security_policy_nonce_directives = %w[script-src]
 end

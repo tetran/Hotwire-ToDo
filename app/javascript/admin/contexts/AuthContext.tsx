@@ -27,6 +27,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const result = await api.session.create({ email, password, totp_code: totpCode })
     if (!result.totp_required) {
       setUser(result.user)
+      if (result.csrf_token) {
+        const meta = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')
+        if (meta) meta.content = result.csrf_token
+      }
     }
     return { totpRequired: result.totp_required }
   }

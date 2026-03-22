@@ -9,7 +9,11 @@ class Rack::Attack
     email = if req.media_type&.include?("application/json")
               body = req.body.read
               req.body.rewind
-              JSON.parse(body)["email"] rescue nil
+              begin
+                JSON.parse(body)["email"]
+              rescue JSON::ParserError
+                nil
+              end
             else
               req.params["email"]
             end

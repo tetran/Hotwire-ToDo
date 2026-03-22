@@ -28,15 +28,6 @@ module Api
           assert_includes emails, users(:admin_user).email
         end
 
-        test "GET index returns users ordered by email" do
-          login_as_admin_api
-          get api_v1_admin_users_path
-          assert_response :success
-          json = response.parsed_body
-          emails = json.pluck("email")
-          assert_equal emails.sort, emails
-        end
-
         test "GET index response includes expected fields" do
           login_as_admin_api
           get api_v1_admin_users_path

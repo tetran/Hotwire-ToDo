@@ -4,7 +4,7 @@ module Api
       class UserRolesController < ApplicationController
         before_action :set_user
         before_action :require_user_read_access, only: %i[show]
-        before_action :require_write_access, only: %i[update]
+        before_action :require_user_write_access, only: %i[update]
         before_action :protect_system_role_assignment, only: %i[update]
         before_action :protect_system_role_removal, only: %i[update]
         before_action :protect_privilege_escalation, only: %i[update]

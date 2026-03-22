@@ -18,7 +18,8 @@ module Api
             return
           end
 
-          render json: { user: user_json(current_admin) }
+          loaded_admin = User.includes(roles: :permissions).find(current_admin.id)
+          render json: { user: user_json(loaded_admin) }
         end
 
         # POST /api/v1/admin/session
@@ -61,19 +62,20 @@ module Api
 
           def handle_totp_challenge
             user = User.find_by(id: session[:admin_pending_user_id])
-            session.delete(:admin_pending_user_id)
 
             unless user
+              session.delete(:admin_pending_user_id)
               render json: { error: "Invalid email or password" }, status: :unauthorized
               return
             end
 
             totp = ROTP::TOTP.new(user.totp_secret, issuer: "Hobo Todo")
-            unless totp.verify(params[:totp_code])
+            unless totp.verify(params[:totp_code], drift_ahead: 15, drift_behind: 15)
               render json: { error: "Invalid TOTP code" }, status: :unauthorized
               return
             end
 
+            session.delete(:admin_pending_user_id)
             complete_admin_login(user)
           end
 
@@ -82,7 +84,8 @@ module Api
             reset_session
             session[:user_id] = user_id if user_id
             admin_sign_in(user)
-            render json: { user: user_json(user) }
+            loaded_user = User.includes(roles: :permissions).find(user.id)
+            render json: { user: user_json(loaded_user), csrf_token: form_authenticity_token }
           end
 
           def user_json(user)

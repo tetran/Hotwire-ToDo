@@ -4,8 +4,8 @@ module Api
       class UsersController < ApplicationController
         before_action :set_user, only: %i[show update destroy]
         before_action :require_user_read_access, only: %i[index show]
-        before_action :require_write_access, only: %i[create update]
-        before_action :require_delete_access, only: %i[destroy]
+        before_action :require_user_write_access, only: %i[create update]
+        before_action :require_user_delete_access, only: %i[destroy]
 
         def index
           users = User.includes(:roles).order(:id)

@@ -117,7 +117,7 @@ export const api = {
   session: {
     current: () => api.get<{ user: SessionUser }>('/session'),
     create: (credentials: { email: string; password: string; totp_code?: string }) =>
-      api.post<{ user: SessionUser; totp_required?: boolean }>('/session', credentials),
+      api.post<{ user: SessionUser; totp_required?: boolean; csrf_token?: string }>('/session', credentials),
     destroy: () => api.delete<void>('/session'),
   },
 }

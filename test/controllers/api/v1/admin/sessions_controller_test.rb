@@ -85,7 +85,7 @@ module Api
           assert_nil session[:admin_pending_user_id]
         end
 
-        test "POST create with invalid TOTP code returns 401 and clears pending session" do
+        test "POST create with invalid TOTP code returns 401 and keeps pending session for retry" do
           user = users(:admin_totp_user)
           # Step 1
           post api_v1_admin_session_path,
@@ -99,7 +99,7 @@ module Api
           assert_response :unauthorized
           json = response.parsed_body
           assert_equal "Invalid TOTP code", json["error"]
-          assert_nil session[:admin_pending_user_id]
+          assert_not_nil session[:admin_pending_user_id]
         end
 
         test "POST create with totp_code but no pending session returns 401" do
