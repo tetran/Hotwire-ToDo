@@ -4,9 +4,9 @@ module Api
       class LlmModelsController < ApplicationController
         before_action :set_llm_provider
         before_action :set_llm_model, only: %i[show update destroy]
-        before_action :require_llm_provider_read_access, only: %i[index show]
-        before_action :require_llm_provider_write_access, only: %i[create update]
-        before_action :require_llm_provider_delete_access, only: %i[destroy]
+        before_action -> { require_capability!("LlmProvider", "read") }, only: %i[index show]
+        before_action -> { require_capability!("LlmProvider", "write") }, only: %i[create update]
+        before_action -> { require_capability!("LlmProvider", "delete") }, only: %i[destroy]
 
         def index
           models = @llm_provider.llm_models.order(:id)

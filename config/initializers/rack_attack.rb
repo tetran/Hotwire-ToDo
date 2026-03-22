@@ -20,7 +20,14 @@ class Rack::Attack
     email&.downcase&.strip
   end
 
-  self.throttled_responder = lambda do |_env|
-    [429, { "Content-Type" => "application/json" }, [{ error: "Too many requests" }.to_json]]
+  self.throttled_responder = lambda do |request|
+    match_data = request.env["rack.attack.match_data"]
+    now = match_data[:epoch_time] || Time.now.to_i
+    retry_after = (match_data[:period] - (now % match_data[:period])).to_s
+    [
+      429,
+      { "Content-Type" => "application/json", "Retry-After" => retry_after },
+      [{ error: "Too many requests" }.to_json],
+    ]
   end
 end

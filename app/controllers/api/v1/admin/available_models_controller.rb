@@ -2,7 +2,7 @@ module Api
   module V1
     module Admin
       class AvailableModelsController < ApplicationController
-        before_action :require_llm_provider_write_access
+        before_action -> { require_capability!("LlmProvider", "write") }
         before_action :set_llm_provider
 
         def index

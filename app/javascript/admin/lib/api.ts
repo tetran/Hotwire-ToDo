@@ -126,7 +126,7 @@ export const usersApi = {
   list: () => api.get<User[]>('/users'),
   get: (id: number) => api.get<User>(`/users/${id}`),
   create: (data: CreateUserInput) => api.post<User>('/users', { user: data }),
-  update: (id: number, data: UpdateUserInput) => api.patch<User>(`/users/${id}`, data),
+  update: (id: number, data: UpdateUserInput) => api.patch<User>(`/users/${id}`, { user: data }),
   delete: (id: number) => api.delete<void>(`/users/${id}`),
   getRoles: (id: number) => api.get<Role[]>(`/users/${id}/roles`),
   updateRoles: (id: number, roleIds: number[]) => api.patch<Role[]>(`/users/${id}/roles`, { role_ids: roleIds }),
@@ -198,7 +198,7 @@ export interface UpdateLlmModelInput {
 export const llmProvidersApi = {
   list: () => api.get<LlmProvider[]>('/llm_providers'),
   get: (id: number) => api.get<LlmProvider>(`/llm_providers/${id}`),
-  update: (id: number, data: UpdateLlmProviderInput) => api.patch<LlmProvider>(`/llm_providers/${id}`, data),
+  update: (id: number, data: UpdateLlmProviderInput) => api.patch<LlmProvider>(`/llm_providers/${id}`, { llm_provider: data }),
   getAvailableModels: (id: number) => api.get<{ models: string[] }>(`/llm_providers/${id}/available_models`),
 }
 
@@ -206,9 +206,9 @@ export const llmModelsApi = {
   list: (providerId: number) => api.get<LlmModel[]>(`/llm_providers/${providerId}/llm_models`),
   get: (providerId: number, id: number) => api.get<LlmModel>(`/llm_providers/${providerId}/llm_models/${id}`),
   create: (providerId: number, data: CreateLlmModelInput) =>
-    api.post<LlmModel>(`/llm_providers/${providerId}/llm_models`, data),
+    api.post<LlmModel>(`/llm_providers/${providerId}/llm_models`, { llm_model: data }),
   update: (providerId: number, id: number, data: UpdateLlmModelInput) =>
-    api.patch<LlmModel>(`/llm_providers/${providerId}/llm_models/${id}`, data),
+    api.patch<LlmModel>(`/llm_providers/${providerId}/llm_models/${id}`, { llm_model: data }),
   delete: (providerId: number, id: number) =>
     api.delete<void>(`/llm_providers/${providerId}/llm_models/${id}`),
 }

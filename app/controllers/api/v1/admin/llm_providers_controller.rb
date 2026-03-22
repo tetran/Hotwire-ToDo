@@ -3,8 +3,8 @@ module Api
     module Admin
       class LlmProvidersController < ApplicationController
         before_action :set_llm_provider, only: %i[show update]
-        before_action :require_llm_provider_read_access, only: %i[index show]
-        before_action :require_llm_provider_write_access, only: %i[update]
+        before_action -> { require_capability!("LlmProvider", "read") }, only: %i[index show]
+        before_action -> { require_capability!("LlmProvider", "write") }, only: %i[update]
 
         def index
           providers = LlmProvider.order(:id)

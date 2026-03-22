@@ -55,6 +55,18 @@ module Api
           assert_response :too_many_requests
           assert_equal "Too many requests", response.parsed_body["error"]
         end
+
+        test "throttle レスポンスに Retry-After ヘッダーが含まれる" do
+          6.times do
+            post api_v1_admin_session_path,
+                 params: { email: "retry@example.com", password: "wrong" },
+                 as: :json,
+                 headers: { "REMOTE_ADDR" => "8.8.8.8" }
+          end
+          assert_response :too_many_requests
+          assert response.headers["Retry-After"].present?, "Retry-After ヘッダーが存在すること"
+          assert_match(/\A\d+\z/, response.headers["Retry-After"], "Retry-After は秒数の整数文字列であること")
+        end
       end
     end
   end

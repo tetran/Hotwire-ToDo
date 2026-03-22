@@ -28,32 +28,19 @@ module Api
             render json: { error: "Forbidden" }, status: :forbidden
           end
 
-          def require_user_read_access
-            render json: { error: "Forbidden" }, status: :forbidden unless current_admin.can_read?("User")
-          end
-
-          def require_user_write_access
-            render json: { error: "Forbidden" }, status: :forbidden unless current_admin.can_write?("User")
-          end
-
-          def require_user_delete_access
-            render json: { error: "Forbidden" }, status: :forbidden unless current_admin.can_delete?("User")
+          def require_capability!(resource, action)
+            permitted = case action
+                        when "read"   then current_admin.can_read?(resource)
+                        when "write"  then current_admin.can_write?(resource)
+                        when "delete" then current_admin.can_delete?(resource)
+                        when "manage" then current_admin.can_manage?(resource)
+                        else false
+                        end
+            render json: { error: "Forbidden" }, status: :forbidden unless permitted
           end
 
           def require_manage_access
             render json: { error: "Forbidden" }, status: :forbidden unless current_admin.admin?
-          end
-
-          def require_llm_provider_read_access
-            render json: { error: "Forbidden" }, status: :forbidden unless current_admin.can_read?("LlmProvider")
-          end
-
-          def require_llm_provider_write_access
-            render json: { error: "Forbidden" }, status: :forbidden unless current_admin.can_write?("LlmProvider")
-          end
-
-          def require_llm_provider_delete_access
-            render json: { error: "Forbidden" }, status: :forbidden unless current_admin.can_delete?("LlmProvider")
           end
       end
     end
