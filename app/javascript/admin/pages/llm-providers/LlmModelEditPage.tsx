@@ -49,11 +49,13 @@ export const LlmModelEditPage = () => {
     }
   }
 
-  if (error && !model) return (
+  if (error && !model) {
+    return (
     <div className="rounded-lg border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-400">
       {error}
     </div>
-  )
+    )
+  }
   if (!model) return <p>Loading...</p>
 
   return (

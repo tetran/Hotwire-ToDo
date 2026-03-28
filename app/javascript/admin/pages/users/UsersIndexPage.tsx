@@ -85,7 +85,7 @@ export const UsersIndexPage = () => {
                           >
                             {role.name}
                           </Badge>
-                        ))
+                      ))
                       : <Badge variant="neutral">—</Badge>
                     }
                   </div>

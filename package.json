@@ -9,10 +9,10 @@
     "test": "test"
   },
   "scripts": {
-    "lint:js": "eslint app/javascript --ext .js",
-    "lint:js:fix": "eslint app/javascript --ext .js --fix",
-    "format": "prettier --write \"app/javascript/**/*.js\" \"**/*.{css,scss,json,md}\"",
-    "format:check": "prettier --check \"app/javascript/**/*.js\" \"**/*.{css,scss,json,md}\""
+    "lint:js": "eslint app/javascript --ext .js,.ts,.tsx",
+    "lint:js:fix": "eslint app/javascript --ext .js,.ts,.tsx --fix",
+    "format": "prettier --write \"app/javascript/**/*.{js,ts,tsx}\" \"**/*.{css,scss,json,md}\"",
+    "format:check": "prettier --check \"app/javascript/**/*.{js,ts,tsx}\" \"**/*.{css,scss,json,md}\""
   },
   "repository": {
     "type": "git",
@@ -28,6 +28,8 @@
     "@types/node": "^24.1.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@typescript-eslint/eslint-plugin": "^8.57.2",
+    "@typescript-eslint/parser": "^8.57.2",
     "@vitejs/plugin-react": "^4.7.0",
     "eslint": "^8.57.0",
     "eslint-config-standard": "^17.1.0",

@@ -35,5 +35,28 @@ module.exports = {
     'storage/',
     'public/',
     '**/*.min.js'
+  ],
+  overrides: [
+    {
+      files: ['*.ts', '*.tsx'],
+      parser: '@typescript-eslint/parser',
+      extends: [
+        'standard',
+        'plugin:@typescript-eslint/recommended'
+      ],
+      rules: {
+        'no-console': 'warn',
+        'no-unused-vars': 'off',
+        '@typescript-eslint/no-unused-vars': ['error', { 'argsIgnorePattern': '^_' }],
+        'prefer-const': 'error',
+        'no-var': 'error',
+        // API応答のsnake_caseフィールドを許可
+        'camelcase': 'off',
+        // React/TSの一般的なスタイルに合わせる
+        'comma-dangle': 'off',
+        'space-before-function-paren': 'off',
+        'multiline-ternary': 'off'
+      }
+    }
   ]
 }
