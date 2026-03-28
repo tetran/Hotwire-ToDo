@@ -3,7 +3,7 @@ require "application_system_test_case"
 class AuthenticationTest < ApplicationSystemTestCase
   test "sign up and logout" do
     email = "newuser@example.com"
-    password = "password123"
+    password = "HoboTest!Str0ng#2024"
 
     visit signup_path
     fill_in "Email", with: email
@@ -22,7 +22,7 @@ class AuthenticationTest < ApplicationSystemTestCase
 
     visit login_path
     fill_in "Email", with: user.email
-    fill_in "Password", with: "password"
+    fill_in "Password", with: "HoboTest!Str0ng#2024"
     click_button "Login"
     assert_current_path project_path(user.inbox_project)
 
