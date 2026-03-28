@@ -55,6 +55,7 @@ Rails.application.routes.draw do
           resources :available_models, only: [:index]
         end
         resource :session, only: %i[show create destroy], controller: "sessions"
+        resources :audit_logs, only: %i[index show]
       end
     end
   end
