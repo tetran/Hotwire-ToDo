@@ -14,6 +14,13 @@ class User < ApplicationRecord
 
   normalizes :email, with: ->(email) { email.strip.downcase }
 
+  scope :search, lambda { |query|
+    return all if query.blank?
+
+    sanitized = sanitize_sql_like(query.strip)
+    where("LOWER(name) LIKE LOWER(:q) OR LOWER(email) LIKE LOWER(:q)", q: "%#{sanitized}%")
+  }
+
   has_many :comments, dependent: :restrict_with_error
   has_many :project_members, dependent: :restrict_with_error
   has_many :projects, through: :project_members

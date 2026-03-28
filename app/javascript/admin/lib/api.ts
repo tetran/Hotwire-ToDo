@@ -123,7 +123,12 @@ export const api = {
 }
 
 export const usersApi = {
-  list: () => api.get<User[]>('/users'),
+  list: (params?: { q?: string }) => {
+    const query = new URLSearchParams()
+    if (params?.q) query.set('q', params.q)
+    const qs = query.toString()
+    return api.get<User[]>(qs ? `/users?${qs}` : '/users')
+  },
   get: (id: number) => api.get<User>(`/users/${id}`),
   create: (data: CreateUserInput) => api.post<User>('/users', { user: data }),
   update: (id: number, data: UpdateUserInput) => api.patch<User>(`/users/${id}`, { user: data }),

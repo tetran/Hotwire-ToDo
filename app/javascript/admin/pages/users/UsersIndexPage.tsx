@@ -7,12 +7,27 @@ import Badge from '../../components/Badge'
 export const UsersIndexPage = () => {
   const [users, setUsers] = useState<User[]>([])
   const [error, setError] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [debouncedQuery, setDebouncedQuery] = useState('')
 
   useEffect(() => {
-    usersApi.list()
-      .then(setUsers)
-      .catch(err => setError(err instanceof Error ? err.message : 'Failed to load users'))
-  }, [])
+    const timer = setTimeout(() => setDebouncedQuery(searchQuery), 300)
+    return () => clearTimeout(timer)
+  }, [searchQuery])
+
+  useEffect(() => {
+    const controller = new AbortController()
+    usersApi.list(debouncedQuery ? { q: debouncedQuery } : undefined)
+      .then(data => {
+        if (!controller.signal.aborted) setUsers(data)
+      })
+      .catch(err => {
+        if (!controller.signal.aborted) {
+          setError(err instanceof Error ? err.message : 'Failed to load users')
+        }
+      })
+    return () => controller.abort()
+  }, [debouncedQuery])
 
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this user?')) return
@@ -39,7 +54,13 @@ export const UsersIndexPage = () => {
             <svg className="h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 15.803 7.5 7.5 0 0016.803 15.803z" />
             </svg>
-            <span className="text-xs text-slate-400">Search users...</span>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search users..."
+              className="text-xs text-slate-700 placeholder-slate-400 outline-none bg-transparent"
+            />
           </div>
           <Link
             to="/admin/users/new"
@@ -63,6 +84,13 @@ export const UsersIndexPage = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
+            {users.length === 0 && (
+              <tr>
+                <td colSpan={5} className="px-5 py-10 text-center text-sm text-slate-400">
+                  No users found
+                </td>
+              </tr>
+            )}
             {users.map(user => (
               <tr key={user.id} className="transition-colors hover:bg-slate-50/50">
                 <td className="px-5 py-3.5 text-xs text-slate-400" style={{ fontFamily: 'DM Mono, monospace' }}>{user.id}</td>
