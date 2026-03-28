@@ -56,5 +56,8 @@ jobs:
           bin/rails db:create
           bin/rails db:schema:load
 
+      - name: Security audit (importmap)
+        run: bin/importmap audit
+
       - name: Run tests
         run: bin/rails test
