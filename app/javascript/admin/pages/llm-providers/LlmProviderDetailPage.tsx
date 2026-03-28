@@ -29,11 +29,13 @@ export const LlmProviderDetailPage = () => {
       .finally(() => setFetchingModels(false))
   }
 
-  if (error) return (
+  if (error) {
+    return (
     <div className="rounded-lg border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-400">
       {error}
     </div>
-  )
+    )
+  }
   if (!provider) return <p>Loading...</p>
 
   return (
@@ -141,7 +143,7 @@ export const LlmProviderDetailPage = () => {
                     <tr>
                       <td className="px-5 py-3.5 text-sm text-slate-700">No models found.</td>
                     </tr>
-                  )
+                    )
                   : availableModels.map(model => (
                     <tr key={model} className="transition-colors hover:bg-slate-50/50">
                       <td className="px-5 py-3.5 text-sm text-slate-700" style={{ fontFamily: 'DM Mono, monospace' }}>{model}</td>
