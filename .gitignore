@@ -43,6 +43,9 @@ vendor/bundle
 
 /config/credentials/production.key
 
+# Ignore progress files (keep directory)
+.progress/*.md
+
 # Ignore Claude local settings
 .claude/settings.local.json
 .claude/worktrees/

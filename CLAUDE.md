@@ -1,28 +1,11 @@
 # CLAUDE.md
 
 ## Task Workflow
-
- - Follow the sequence of `docs/process/WORKFLOW.md`
+  - ALWAYS follow the workflow documented in `docs/process/WORKFLOW.md`. When you enter a new phase, make sure you are following the workflow.
 
 ## Architecture Overview
 
 MVC Rails app with Hotwire. Controllers render HTML/Turbo responses; models are Active Record; views use ERB + Turbo.
-
-### Authentication System
-
-- Custom session-based authentication with `bcrypt`
-- TOTP 2FA support using `rotp` gem
-- Token-based email verification and password reset
-- All access control through `current_user` scoping
-
-#### Admin Authentication (Separate Session)
-
-- `Api::V1::Admin::SessionsController` manages a dedicated admin session
-- `SessionUser` carries `is_admin` flag and a `capabilities` hash
-- Capability-based authorization: `can(resource, action)` per resource
-  - `ResourceType`: `User | Project | Task | Comment | Admin | LlmProvider`
-  - `Action`: `read | write | delete | manage`
-- Client-side capability cache: `AuthContext` at `app/javascript/admin/contexts/AuthContext.tsx`
 
 ### Core Domain Model
 
@@ -31,58 +14,39 @@ MVC Rails app with Hotwire. Controllers render HTML/Turbo responses; models are 
 Each user gets a dedicated "inbox" project for personal tasks. Tasks belong to
 projects and can be assigned to project members.
 
-### Hotwire/Turbo Patterns
-
-- Extensive Turbo Streams for real-time UI updates
-- Broadcasting: tasks broadcast to projects, comments to tasks
-- Frontend interactions via Stimulus controllers in `app/javascript/controllers` (e.g., `task_controller.js`).
-
-### Admin Panel (React SPA)
-
-The admin panel (`/admin`) is implemented as a React SPA, independent of Hotwire.
-
-- **Shell**: `AdminController#index` renders only `<div id="admin-root"></div>`
-- **Frontend**: React + TypeScript under `app/javascript/admin/`
-- **API**: JSON REST API under the `Api::V1::Admin` namespace
-- **Build**: Vite (`vite_rails`), entry point at `app/javascript/entrypoints/admin.tsx`
-- **Styling**: Tailwind CSS v4
-
-When modifying the Admin area, do NOT use Hotwire/Turbo. Use React components and JSON API instead.
-
 ### Security
 
-- All resource access scoped through `current_user`
-- No direct ID access - everything through associations
+- All resource access scoped through `current_user` — no direct ID access
 - Proper validation at model level
 
 ### Routing Guidelines
 
 - Follow RESTful principles strictly (see `docs/conventions/ROUTING.md`)
 - Create new controllers instead of custom actions
-- Use namespaces to organize related functionality
 - Maintain single responsibility per controller
 
-#### Admin API Routing
+### Admin Panel (React SPA)
 
-Admin APIs are placed RESTfully under `namespace :api > :v1 > :admin`.
-A catch-all route (`get "/admin/*path"`) is required for client-side SPA routing.
+The admin panel (`/admin`) is a React SPA. When modifying the Admin area, do NOT use Hotwire/Turbo. Use React components and JSON API instead.
 
-When adding a new Admin feature:
+**Authentication & Authorization**
+- Capability-based authorization: `can(resource, action)` per resource
+  - `ResourceType`: `User | Project | Task | Comment | Admin | LlmProvider`
+  - `Action`: `read | write | delete | manage`
+
+**Security**
+- Every admin endpoint must call `require_capability!` with the appropriate resource and action
+- System roles (admin, user_manager, etc.) cannot be created, modified, or deleted via API
+- Prevent privilege escalation: admins cannot assign capabilities they don't have themselves
+
+**Adding a new Admin feature:**
 1. Create a controller under `Api::V1::Admin::`
 2. Add the route inside the `namespace :admin` block in `config/routes.rb`
 3. Add TypeScript types and API functions to `app/javascript/admin/lib/api.ts`
 4. Create a React page component under `app/javascript/admin/pages/`
 5. Register the route in `app/javascript/admin/App.tsx`
 
-## Coding style
-
-- Follow rubocop (`.rubocop.yml`)
-
-### Admin API Tests
-
-Place Admin controller tests under `test/controllers/api/v1/admin/`.
-Always cover the following scenarios:
-
+**Tests** — place under `test/controllers/api/v1/admin/`, always cover:
 1. **Unauthenticated access** → 401
 2. **Regular user access** → 403
 3. **Admin with insufficient capability** → 403
@@ -90,41 +54,14 @@ Always cover the following scenarios:
 
 ## Documentation
 
-### Always Read First
-- `docs/process/WORKFLOW.md` — Development flow; read before starting any task
-
-### When to Read What
-
-**Adding a new Admin feature**
-1. `docs/specs/ADMIN_INTERFACE.md` — Full feature spec overview
-2. `docs/conventions/ROUTING.md` — Endpoint and controller design principles
-3. `docs/specs/ADMIN_PERMISSIONS_MATRIX.md` — Required capabilities for the feature
-4. The relevant feature doc (see table below)
-5. `docs/features/ADMIN_AUTHORIZATION.md` — How to implement `require_capability!`
-6. `docs/design/DESIGN_SYSTEM.md` — UI components, colors, typography
-7. `docs/guides/ADMIN_PERMISSION_TESTING_GUIDE.md` — How to write permission tests
-
-**Implementing or debugging authorization / permissions**
-1. `docs/specs/ADMIN_PERMISSIONS_MATRIX.md` — Resource × action permission definitions
-2. `docs/features/ADMIN_AUTHORIZATION.md` — Capability-based auth mechanics
-3. `docs/features/ADMIN_AUTHENTICATION.md` — Session and TOTP details
-
-**Building Admin UI components**
-- `docs/design/DESIGN_SYSTEM.md` — Color palette, typography, component specs
-
-**Writing tests for Admin features**
-- `docs/guides/ADMIN_PERMISSION_TESTING_GUIDE.md` — Test patterns and helper methods
-- `docs/specs/ADMIN_PERMISSIONS_MATRIX.md` — Use the matrix to design test cases
-
-**Designing routes or controllers**
+- `docs/process/WORKFLOW.md` — ALWAYS read before starting any task
 - `docs/conventions/ROUTING.md` — RESTful principles and naming conventions
-
-**Production setup / operations**
+- `docs/design/DESIGN_SYSTEM.md` — UI components, colors, typography
+- `docs/specs/ADMIN_PERMISSIONS_MATRIX.md` — Resource × action permission definitions
+- `docs/guides/ADMIN_PERMISSION_TESTING_GUIDE.md` — Test patterns and helper methods
 - `docs/guides/ADMIN_SETUP.md` — Master admin user creation and env var setup
 
 ### Feature Reference
-
-When implementing or modifying a specific feature, read the corresponding doc:
 
 | Feature | Document |
 |---|---|

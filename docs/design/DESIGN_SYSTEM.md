@@ -527,7 +527,7 @@ Note: Tinted shadows using `shadow-indigo-500/XX` are reserved for accent-colore
 
 ## 12. Icon Conventions
 
-- **Icon library**: Heroicons (outline style), rendered as inline SVG
+- **Icon style**: Inline SVG, outline style (`fill="none"`, `stroke="currentColor"`)
 - **Sidebar nav icons**: `h-4 w-4`, `strokeWidth={1.5}`
 - **Stat card icons**: `h-5 w-5`, `strokeWidth={1.5}`
 - **Small UI icons** (search, logout): `h-3.5 w-3.5`, `strokeWidth={2}`
@@ -550,7 +550,7 @@ Defined in `app/javascript/admin/styles/admin.css` via TailwindCSS v4 `@theme`:
 }
 ```
 
-These tokens can be referenced in Tailwind as `bg-sidebar`, `border-sidebar-border`, `bg-accent`, `bg-surface`, `font-syne`, `font-dm-mono`.
+These tokens can be referenced in Tailwind as `bg-sidebar`, `border-sidebar-border`, `bg-accent`, `bg-surface`, `font-syne`, `font-dm-mono`. Note: the current implementation mostly uses hardcoded values (e.g. `bg-[#0f1117]`). Prefer token references for new components.
 
 ---
 
@@ -567,17 +567,3 @@ When creating a new component, verify:
 7. Hover transitions include `transition` or `transition-colors`
 8. Text hierarchy follows the slate scale: 800 > 700 > 600 > 400 > 500
 
----
-
-## 15. Pages Pending Design System Alignment
-
-The following pages currently use inline styles instead of the Tailwind design system and should be updated to match:
-
-- `RolesIndexPage` -- uses raw inline styles for table and layout
-- `RoleEditPage` -- unstyled form
-- `RoleNewPage` -- unstyled form
-- `UserEditPage` -- unstyled form with inline `color: 'red'` errors
-- `UserNewPage` -- unstyled form
-- `PermissionsIndexPage` -- likely unstyled
-- `PermissionDetailPage` -- likely unstyled
-- LLM provider/model pages -- partially styled

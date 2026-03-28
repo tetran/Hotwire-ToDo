@@ -1,24 +1,51 @@
 ### Standard Flow
 
-#### Planning phase
-1. **Create a plan** - Review the requirements and design the implementation approach. Any plan should be reviewed.
-2. **Create a GitHub Issue** - Document the task details and plan in an Issue
+ALWAYS update `.progress/issue-XXXXX.md` during work as the steps progress.
 
-#### Implementing phase
-1. **Create a Git Worktree** - Set up an isolated worktree for parallel development
-2. **Implement** - Write code and tests
-3. **Testing** - Ensure all unit tests pass. When implementing some feature, make sure UI tests are performed with Playwright MCP, too.
+#### Progress File Template
+
+```markdown
+# Issue #XX: Title
+
+## Status: In Progress / Done
+
+## Steps
+- [x] Step 1 — completed
+- [ ] Step 2 — in progress
+```
+
+#### Steps
+1. **Create a GitHub Issue** - This can be skipped if the issue number is specified.
+2. **Create a progress file** - Create an `issue-XXXXX.md` file in `.progress`. `XXXXX` is the issue number (5 digits with zero padding. e.g. `issue-00005.md` for issue #5).
+3. **Create a plan** - Review the requirements and design the implementation approach. Use plan mode. Consult the client for any undecided specifications.
+4. **Confirm the plan** - Confirm with the client if the plan can be proceeded. If the plan is accepted, exit plan mode.
+5. **Document the plan** - Document the plan in the issue as a comment.
+6. **Create a Git Branch** - Create a feature branch for the issue. ALL feature branches should be derived from the LATEST main branch.
+7. **Implement** - Write code and tests
+8. **Testing** - Ensure all unit tests and system tests pass.
+9. **Create a Pull Request** - Create a PR and request review.
+
+### Lightweight Flow
+
+For typo fixes, simple bug fixes, and small single-file changes.
+
+#### Steps
+1. **Create a Git Branch** - Create a feature branch derived from the LATEST main branch.
+2. **Implement** - Write code and tests.
+3. **Testing** - Ensure all relevant tests pass.
+4. **Create a Pull Request** - Create a PR and request review.
+
+Lightweight flow may skip: Issue creation, progress file, plan creation/confirmation/documentation.
 
 ### Completion Criteria
 
 - Tests are written and all pass
-- `bin/ci` succeeds
+- A Pull Request is created
 
 ### Choosing the Right Flow
 
 - **Standard flow**: New features, changes requiring design decisions, multi-file changes
 - **Lightweight flow**: Typo fixes, simple bug fixes, small single-file changes
-  - Lightweight flow may skip Issue creation and Worktree setup
 
 ### Branch Naming
 
