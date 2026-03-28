@@ -43,8 +43,9 @@ vendor/bundle
 
 /config/credentials/production.key
 
-# Ignore Claude settings
+# Ignore Claude local settings
 .claude/settings.local.json
+.claude/worktrees/
 
 # Playwright
 node_modules/

@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // .tool_response.filePath' | { read -r f; if echo \"$f\" | grep -qE '\\.rb$'; then bundle exec rubocop --autocorrect \"$f\"; else true; fi; } 2>/dev/null || true",
+            "statusMessage": "Running rubocop..."
+          },
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // .tool_response.filePath' | { read -r f; if echo \"$f\" | grep -qE '\\.(ts|tsx)$'; then npx tsc --noEmit; else true; fi; } 2>/dev/null || true",
+            "statusMessage": "Running tsc type check..."
+          },
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // .tool_response.filePath' | { read -r f; if echo \"$f\" | grep -qE '\\.(ts|tsx)$'; then result=$(npx eslint \"$f\" 2>&1); rc=$?; if [ $rc -ne 0 ]; then jq -n --arg ctx \"ESLint errors in $f. Fix them: $result\" '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":$ctx}}'; fi; fi; }",
+            "statusMessage": "Running eslint..."
+          }
+        ]
+      }
+    ]
+  }
+}
