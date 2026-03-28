@@ -34,7 +34,7 @@ module Api
 
         test "POST create returns 401 when regular user logs in (no Admin:read)" do
           user = users(:regular_user)
-          post api_v1_admin_session_path, params: { email: user.email, password: "password" },
+          post api_v1_admin_session_path, params: { email: user.email, password: TEST_PASSWORD },
                                           as: :json
           assert_response :unauthorized
           json = response.parsed_body
@@ -43,7 +43,7 @@ module Api
 
         test "POST create returns user info when admin logs in without TOTP" do
           user = users(:admin_user)
-          post api_v1_admin_session_path, params: { email: user.email, password: "password" },
+          post api_v1_admin_session_path, params: { email: user.email, password: TEST_PASSWORD },
                                           as: :json
           assert_response :success
           json = response.parsed_body
@@ -55,7 +55,7 @@ module Api
 
         test "POST create returns totp_required when admin with TOTP enabled logs in without code" do
           user = users(:admin_totp_user)
-          post api_v1_admin_session_path, params: { email: user.email, password: "password" },
+          post api_v1_admin_session_path, params: { email: user.email, password: TEST_PASSWORD },
                                           as: :json
           assert_response :ok
           json = response.parsed_body
@@ -68,7 +68,7 @@ module Api
           user = users(:admin_totp_user)
           # Step 1: credential check
           post api_v1_admin_session_path,
-               params: { email: user.email, password: "password" },
+               params: { email: user.email, password: TEST_PASSWORD },
                as: :json
           assert_response :ok
           assert session[:admin_pending_user_id]
@@ -89,7 +89,7 @@ module Api
           user = users(:admin_totp_user)
           # Step 1
           post api_v1_admin_session_path,
-               params: { email: user.email, password: "password" },
+               params: { email: user.email, password: TEST_PASSWORD },
                as: :json
           assert_response :ok
           # Step 2: invalid code
@@ -114,7 +114,7 @@ module Api
         # セッション分離の検証
         test "POST create as admin does not set session[:user_id]" do
           user = users(:admin_user)
-          post api_v1_admin_session_path, params: { email: user.email, password: "password" }, as: :json
+          post api_v1_admin_session_path, params: { email: user.email, password: TEST_PASSWORD }, as: :json
           assert_response :success
           assert_nil session[:user_id]
           assert_equal user.id, session[:admin_user_id]
@@ -145,7 +145,7 @@ module Api
         # capabilities + is_admin
         test "POST create returns capabilities and is_admin for admin_user" do
           user = users(:admin_user)
-          post api_v1_admin_session_path, params: { email: user.email, password: "password" },
+          post api_v1_admin_session_path, params: { email: user.email, password: TEST_PASSWORD },
                                           as: :json
           assert_response :success
           json = response.parsed_body
@@ -160,7 +160,7 @@ module Api
 
         test "POST create returns limited capabilities for user_viewer" do
           user = users(:user_viewer)
-          post api_v1_admin_session_path, params: { email: user.email, password: "password" },
+          post api_v1_admin_session_path, params: { email: user.email, password: TEST_PASSWORD },
                                           as: :json
           assert_response :success
           json = response.parsed_body
@@ -176,7 +176,7 @@ module Api
 
         test "POST create returns LlmProvider capabilities for llm_admin_user" do
           user = users(:llm_admin_user)
-          post api_v1_admin_session_path, params: { email: user.email, password: "password" },
+          post api_v1_admin_session_path, params: { email: user.email, password: TEST_PASSWORD },
                                           as: :json
           assert_response :success
           json = response.parsed_body

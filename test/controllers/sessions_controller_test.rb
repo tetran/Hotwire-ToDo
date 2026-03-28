@@ -20,7 +20,7 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
   test "TOTP有効ユーザーのログイン時にチャレンジ画面にリダイレクトされる" do
     user = users(:totp_enabled_user)
 
-    post login_path, params: { email: user.email, password: "password" }
+    post login_path, params: { email: user.email, password: TEST_PASSWORD }
     assert_response :redirect
     assert_match %r{/totp/challenge/new\?token=}, response.location
     assert_nil session[:user_id]
@@ -29,7 +29,7 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
   test "TOTP無効ユーザーは通常通りログインできる" do
     user = users(:totp_disabled_user)
 
-    post login_path, params: { email: user.email, password: "password" }
+    post login_path, params: { email: user.email, password: TEST_PASSWORD }
     assert_redirected_to project_path(user.inbox_project)
     assert_equal user.id, session[:user_id]
   end
