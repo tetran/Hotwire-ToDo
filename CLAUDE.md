@@ -1,10 +1,8 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Task Workflow
 
- - Follow the sequence of `docs/FLOW.md`
+ - Follow the sequence of `docs/process/WORKFLOW.md`
 
 ## Architecture Overview
 
@@ -59,7 +57,7 @@ When modifying the Admin area, do NOT use Hotwire/Turbo. Use React components an
 
 ### Routing Guidelines
 
-- Follow RESTful principles strictly (see `docs/ROUTING.md`)
+- Follow RESTful principles strictly (see `docs/conventions/ROUTING.md`)
 - Create new controllers instead of custom actions
 - Use namespaces to organize related functionality
 - Maintain single responsibility per controller
@@ -89,3 +87,50 @@ Always cover the following scenarios:
 2. **Regular user access** → 403
 3. **Admin with insufficient capability** → 403
 4. **Admin with proper capability** → 200 + response body assertions
+
+## Documentation
+
+### Always Read First
+- `docs/process/WORKFLOW.md` — Development flow; read before starting any task
+
+### When to Read What
+
+**Adding a new Admin feature**
+1. `docs/specs/ADMIN_INTERFACE.md` — Full feature spec overview
+2. `docs/conventions/ROUTING.md` — Endpoint and controller design principles
+3. `docs/specs/ADMIN_PERMISSIONS_MATRIX.md` — Required capabilities for the feature
+4. The relevant feature doc (see table below)
+5. `docs/features/ADMIN_AUTHORIZATION.md` — How to implement `require_capability!`
+6. `docs/design/DESIGN_SYSTEM.md` — UI components, colors, typography
+7. `docs/guides/ADMIN_PERMISSION_TESTING_GUIDE.md` — How to write permission tests
+
+**Implementing or debugging authorization / permissions**
+1. `docs/specs/ADMIN_PERMISSIONS_MATRIX.md` — Resource × action permission definitions
+2. `docs/features/ADMIN_AUTHORIZATION.md` — Capability-based auth mechanics
+3. `docs/features/ADMIN_AUTHENTICATION.md` — Session and TOTP details
+
+**Building Admin UI components**
+- `docs/design/DESIGN_SYSTEM.md` — Color palette, typography, component specs
+
+**Writing tests for Admin features**
+- `docs/guides/ADMIN_PERMISSION_TESTING_GUIDE.md` — Test patterns and helper methods
+- `docs/specs/ADMIN_PERMISSIONS_MATRIX.md` — Use the matrix to design test cases
+
+**Designing routes or controllers**
+- `docs/conventions/ROUTING.md` — RESTful principles and naming conventions
+
+**Production setup / operations**
+- `docs/guides/ADMIN_SETUP.md` — Master admin user creation and env var setup
+
+### Feature Reference
+
+When implementing or modifying a specific feature, read the corresponding doc:
+
+| Feature | Document |
+|---|---|
+| Admin login / TOTP / session | `docs/features/ADMIN_AUTHENTICATION.md` |
+| Permission checks / ProtectedRoute | `docs/features/ADMIN_AUTHORIZATION.md` |
+| User CRUD | `docs/features/ADMIN_USER_MANAGEMENT.md` |
+| Role CRUD | `docs/features/ADMIN_ROLE_MANAGEMENT.md` |
+| Permission list / detail view | `docs/features/ADMIN_PERMISSION_MANAGEMENT.md` |
+| LLM provider and model management | `docs/features/ADMIN_LLM_PROVIDER_MANAGEMENT.md` |
