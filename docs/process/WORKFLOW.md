@@ -1,6 +1,6 @@
 ### Standard Flow
 
-ALWAYS update `.progress/issue-XXXXX.md` during work as the steps progress.
+ALWAYS update `.progress/issue-XXXXX.md` during work. Update the progress file **immediately after completing each step** before moving on to the next step.
 
 #### Progress File Template
 
