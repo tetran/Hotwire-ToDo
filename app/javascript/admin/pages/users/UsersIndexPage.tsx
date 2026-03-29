@@ -7,6 +7,7 @@ import Badge from '../../components/Badge'
 export const UsersIndexPage = () => {
   const [users, setUsers] = useState<User[]>([])
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
 
@@ -17,7 +18,9 @@ export const UsersIndexPage = () => {
 
   useEffect(() => {
     const controller = new AbortController()
-    usersApi.list(debouncedQuery ? { q: debouncedQuery } : undefined)
+    setError('')
+    setLoading(true)
+    usersApi.list(debouncedQuery ? { q: debouncedQuery } : undefined, { signal: controller.signal })
       .then(data => {
         if (!controller.signal.aborted) setUsers(data)
       })
@@ -25,6 +28,9 @@ export const UsersIndexPage = () => {
         if (!controller.signal.aborted) {
           setError(err instanceof Error ? err.message : 'Failed to load users')
         }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false)
       })
     return () => controller.abort()
   }, [debouncedQuery])
@@ -84,7 +90,14 @@ export const UsersIndexPage = () => {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
-            {users.length === 0 && (
+            {loading && users.length === 0 && (
+              <tr>
+                <td colSpan={5} className="px-5 py-10 text-center text-sm text-slate-400">
+                  Loading...
+                </td>
+              </tr>
+            )}
+            {!loading && users.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-5 py-10 text-center text-sm text-slate-400">
                   No users found
