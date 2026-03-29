@@ -36,9 +36,6 @@ export const DashboardPage = () => {
           <h1 className="text-2xl font-bold text-slate-800" style={{ fontFamily: 'Syne, sans-serif' }}>Dashboard</h1>
           <p className="mt-0.5 text-xs text-slate-400">{dateLabel}</p>
         </div>
-        <button className="rounded-lg bg-[#6366f1] px-4 py-2 text-sm font-medium text-white shadow-md shadow-indigo-500/20 transition hover:bg-[#5558e8]">
-          + Invite User
-        </button>
       </div>
 
       {/* Stat cards */}
