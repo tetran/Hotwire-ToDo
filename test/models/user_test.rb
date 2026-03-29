@@ -137,6 +137,41 @@ class UserTest < ActiveSupport::TestCase
     assert_not @user.can_manage?("User")
   end
 
+  test "search should filter users by name" do
+    User.create!(email: "alice@test.com", password: "password123", name: "Alice Smith")
+    User.create!(email: "bob@test.com", password: "password123", name: "Bob Jones")
+
+    results = User.search("Alice")
+    assert_equal 1, results.count
+    assert_equal "Alice Smith", results.first.name
+  end
+
+  test "search should filter users by email" do
+    User.create!(email: "alice@test.com", password: "password123", name: "Alice")
+    User.create!(email: "bob@test.com", password: "password123", name: "Bob")
+
+    results = User.search("bob@test")
+    assert_equal 1, results.count
+    assert_equal "bob@test.com", results.first.email
+  end
+
+  test "search should be case-insensitive" do
+    User.create!(email: "alice@test.com", password: "password123", name: "Alice Smith")
+
+    assert_equal 1, User.search("alice").count
+    assert_equal 1, User.search("ALICE").count
+    assert_equal 1, User.search("Alice").count
+  end
+
+  test "search should return all users when query is blank" do
+    User.create!(email: "alice@test.com", password: "password123", name: "Alice")
+    User.create!(email: "bob@test.com", password: "password123", name: "Bob")
+
+    all_count = User.count
+    assert_equal all_count, User.search("").count
+    assert_equal all_count, User.search(nil).count
+  end
+
   test "should work with multiple roles and permissions" do
     role1 = Role.create!(name: "role1")
     role2 = Role.create!(name: "role2")

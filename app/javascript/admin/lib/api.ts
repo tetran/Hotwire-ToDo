@@ -107,7 +107,8 @@ const apiRequest = async <T>(
 }
 
 export const api = {
-  get: <T>(path: string) => apiRequest<T>(path),
+  get: <T>(path: string, options?: { signal?: AbortSignal }) =>
+    apiRequest<T>(path, options),
   post: <T>(path: string, body: unknown) =>
     apiRequest<T>(path, { method: 'POST', body: JSON.stringify(body) }),
   patch: <T>(path: string, body: unknown) =>
@@ -123,7 +124,12 @@ export const api = {
 }
 
 export const usersApi = {
-  list: () => api.get<User[]>('/users'),
+  list: (params?: { q?: string }, options?: { signal?: AbortSignal }) => {
+    const query = new URLSearchParams()
+    if (params?.q) query.set('q', params.q)
+    const qs = query.toString()
+    return api.get<User[]>(qs ? `/users?${qs}` : '/users', options)
+  },
   get: (id: number) => api.get<User>(`/users/${id}`),
   create: (data: CreateUserInput) => api.post<User>('/users', { user: data }),
   update: (id: number, data: UpdateUserInput) => api.patch<User>(`/users/${id}`, { user: data }),

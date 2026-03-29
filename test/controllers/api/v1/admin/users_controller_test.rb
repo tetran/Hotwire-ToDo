@@ -230,6 +230,33 @@ module Api
           get api_v1_admin_users_path
           assert_response :success
         end
+
+        # search
+        test "GET index with q param filters users by name" do
+          login_as_admin_api
+          get api_v1_admin_users_path, params: { q: "Admin" }
+          assert_response :success
+          json = response.parsed_body
+          assert json.all? { |u| u["name"]&.downcase&.include?("admin") || u["email"]&.downcase&.include?("admin") }
+          assert json.none? { |u| u["email"] == "norole@example.com" }
+        end
+
+        test "GET index with q param filters users by email" do
+          login_as_admin_api
+          get api_v1_admin_users_path, params: { q: "manager@" }
+          assert_response :success
+          json = response.parsed_body
+          assert_equal 1, json.size
+          assert_equal "manager@example.com", json.first["email"]
+        end
+
+        test "GET index with empty q param returns all users" do
+          login_as_admin_api
+          get api_v1_admin_users_path, params: { q: "" }
+          assert_response :success
+          all_count = User.count
+          assert_equal all_count, response.parsed_body.size
+        end
       end
     end
   end
