@@ -1,6 +1,6 @@
-import { FormEvent, useState } from 'react'
+import { FormEvent, useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { llmModelsApi, CreateLlmModelInput } from '../../lib/api'
+import { llmModelsApi, llmProvidersApi, CreateLlmModelInput, AvailableModel } from '../../lib/api'
 
 export const LlmModelNewPage = () => {
   const { id } = useParams<{ id: string }>()
@@ -13,6 +13,27 @@ export const LlmModelNewPage = () => {
   const [defaultModel, setDefaultModel] = useState(false)
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
+
+  const [availableModels, setAvailableModels] = useState<AvailableModel[]>([])
+  const [loadingModels, setLoadingModels] = useState(true)
+  const [modelsError, setModelsError] = useState('')
+
+  const fetchModels = useCallback(() => {
+    setLoadingModels(true)
+    setModelsError('')
+    llmProvidersApi.getAvailableModels(providerId)
+      .then(setAvailableModels)
+      .catch(err => setModelsError(err instanceof Error ? err.message : 'Failed to fetch available models'))
+      .finally(() => setLoadingModels(false))
+  }, [providerId])
+
+  useEffect(() => { fetchModels() }, [fetchModels])
+
+  const handleNameChange = (value: string) => {
+    setName(value)
+    const selected = availableModels.find(m => m.id === value)
+    setDisplayName(selected?.display_name ?? value)
+  }
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault()
@@ -57,14 +78,33 @@ export const LlmModelNewPage = () => {
           <div className="space-y-4">
             <div className="space-y-1">
               <label htmlFor="name" className="text-xs font-medium text-slate-600">Name</label>
-              <input
-                id="name"
-                type="text"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                required
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#6366f1] focus:ring-1 focus:ring-[#6366f1]/30"
-              />
+              {loadingModels ? (
+                <p className="text-sm text-slate-400">Loading available models...</p>
+              ) : modelsError ? (
+                <div className="flex items-center gap-2">
+                  <p className="text-sm text-rose-400">{modelsError}</p>
+                  <button
+                    type="button"
+                    onClick={fetchModels}
+                    className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
+                  >
+                    Retry
+                  </button>
+                </div>
+              ) : (
+                <select
+                  id="name"
+                  value={name}
+                  onChange={e => handleNameChange(e.target.value)}
+                  required
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#6366f1] focus:ring-1 focus:ring-[#6366f1]/30"
+                >
+                  <option value="">Select a model</option>
+                  {availableModels.map(model => (
+                    <option key={model.id} value={model.id}>{model.name}</option>
+                  ))}
+                </select>
+              )}
             </div>
             <div className="space-y-1">
               <label htmlFor="display_name" className="text-xs font-medium text-slate-600">Display Name</label>
@@ -110,8 +150,8 @@ export const LlmModelNewPage = () => {
             </Link>
             <button
               type="submit"
-              disabled={submitting}
-              className="rounded-lg bg-[#6366f1] px-4 py-2 text-sm font-medium text-white shadow-md shadow-indigo-500/20 transition hover:bg-[#5558e8]"
+              disabled={submitting || loadingModels || !!modelsError}
+              className="rounded-lg bg-[#6366f1] px-4 py-2 text-sm font-medium text-white shadow-md shadow-indigo-500/20 transition hover:bg-[#5558e8] disabled:opacity-50"
             >
               {submitting ? 'Creating...' : 'Create'}
             </button>

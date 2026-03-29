@@ -201,11 +201,17 @@ export interface UpdateLlmModelInput {
   default_model?: boolean
 }
 
+export interface AvailableModel {
+  id: string
+  name: string
+  display_name?: string
+}
+
 export const llmProvidersApi = {
   list: () => api.get<LlmProvider[]>('/llm_providers'),
   get: (id: number) => api.get<LlmProvider>(`/llm_providers/${id}`),
   update: (id: number, data: UpdateLlmProviderInput) => api.patch<LlmProvider>(`/llm_providers/${id}`, { llm_provider: data }),
-  getAvailableModels: (id: number) => api.get<{ models: string[] }>(`/llm_providers/${id}/available_models`),
+  getAvailableModels: (id: number) => api.get<AvailableModel[]>(`/llm_providers/${id}/available_models`),
 }
 
 export const llmModelsApi = {
