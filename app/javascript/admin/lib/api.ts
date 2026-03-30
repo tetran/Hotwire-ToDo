@@ -214,6 +214,76 @@ export const llmProvidersApi = {
   getAvailableModels: (id: number) => api.get<AvailableModel[]>(`/llm_providers/${id}/available_models`),
 }
 
+export interface Prompt {
+  id: number
+  role: 'system' | 'user'
+  body: string
+  position: number
+}
+
+export interface PromptSet {
+  id: number
+  name: string
+  active: boolean
+  created_at: string
+  updated_at: string
+  prompts: Prompt[]
+  in_use?: boolean
+}
+
+export interface PromptInput {
+  id?: number
+  role: 'system' | 'user'
+  body: string
+  position: number
+  _destroy?: boolean
+}
+
+export interface CreatePromptSetInput {
+  name: string
+  active?: boolean
+  prompts_attributes: PromptInput[]
+}
+
+export interface UpdatePromptSetInput {
+  name?: string
+  active?: boolean
+  prompts_attributes?: PromptInput[]
+}
+
+export interface SuggestionConfigEntry {
+  id: number
+  weight: number
+  llm_model_id: number
+  prompt_set_id: number
+  llm_model: { id: number; name: string; display_name: string }
+  prompt_set: { id: number; name: string }
+}
+
+export interface SuggestionConfig {
+  id: number
+  active: boolean
+  created_at: string
+  updated_at: string
+  entries: SuggestionConfigEntry[]
+}
+
+export interface EntryInput {
+  id?: number
+  llm_model_id: number
+  prompt_set_id: number
+  weight: number
+  _destroy?: boolean
+}
+
+export interface CreateSuggestionConfigInput {
+  entries_attributes: Omit<EntryInput, 'id' | '_destroy'>[]
+}
+
+export interface UpdateSuggestionConfigInput {
+  entries_attributes: EntryInput[]
+}
+
 export const llmModelsApi = {
   list: (providerId: number) => api.get<LlmModel[]>(`/llm_providers/${providerId}/llm_models`),
   get: (providerId: number, id: number) => api.get<LlmModel>(`/llm_providers/${providerId}/llm_models/${id}`),
@@ -223,4 +293,20 @@ export const llmModelsApi = {
     api.patch<LlmModel>(`/llm_providers/${providerId}/llm_models/${id}`, { llm_model: data }),
   delete: (providerId: number, id: number) =>
     api.delete<void>(`/llm_providers/${providerId}/llm_models/${id}`),
+}
+
+export const promptSetsApi = {
+  list: () => api.get<PromptSet[]>('/prompt_sets'),
+  get: (id: number) => api.get<PromptSet>(`/prompt_sets/${id}`),
+  create: (data: CreatePromptSetInput) => api.post<PromptSet>('/prompt_sets', { prompt_set: data }),
+  update: (id: number, data: UpdatePromptSetInput) => api.patch<PromptSet>(`/prompt_sets/${id}`, { prompt_set: data }),
+}
+
+export const suggestionConfigsApi = {
+  list: () => api.get<SuggestionConfig[]>('/suggestion_configs'),
+  get: (id: number) => api.get<SuggestionConfig>(`/suggestion_configs/${id}`),
+  create: (data: CreateSuggestionConfigInput) =>
+    api.post<SuggestionConfig>('/suggestion_configs', { suggestion_config: data }),
+  update: (id: number, data: UpdateSuggestionConfigInput) =>
+    api.patch<SuggestionConfig>(`/suggestion_configs/${id}`, { suggestion_config: data }),
 }
