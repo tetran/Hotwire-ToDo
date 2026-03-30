@@ -55,6 +55,7 @@ Rails.application.routes.draw do
           resources :available_models, only: [:index]
         end
         resources :prompt_sets, only: %i[index show create update]
+        resources :suggestion_configs, only: %i[index show create update]
         resource :session, only: %i[show create destroy], controller: "sessions"
       end
     end
