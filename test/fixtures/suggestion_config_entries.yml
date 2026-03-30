@@ -1,0 +1,12 @@
+entry_one:
+  suggestion_config: active_config
+  llm_model: gpt_turbo
+  prompt_set: general
+  weight: 70
+
+entry_two:
+  suggestion_config: active_config
+  llm_model: gpt4
+  prompt_set: coding
+  weight: 30
+

@@ -2,6 +2,7 @@ require "test_helper"
 
 class SuggestionConfigTest < ActiveSupport::TestCase
   def setup
+    SuggestionConfig.update_all(active: false)
     @prompt_set = PromptSet.create!(name: "Test Prompt Set")
     @model1 = llm_models(:gpt4)
     @model2 = llm_models(:claude)

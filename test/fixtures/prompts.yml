@@ -1,0 +1,24 @@
+general_system:
+  prompt_set: general
+  role: system
+  body: "You are a task suggestion assistant. Goal: {{goal}}"
+  position: 1
+
+general_user:
+  prompt_set: general
+  role: user
+  body: "Context: {{context}}. Due: {{due_date}}. Start: {{start_date}}"
+  position: 2
+
+coding_system:
+  prompt_set: coding
+  role: system
+  body: "You are a coding task assistant."
+  position: 1
+
+coding_user:
+  prompt_set: coding
+  role: user
+  body: "Goal: {{goal}}"
+  position: 2
+

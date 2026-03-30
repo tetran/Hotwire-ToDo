@@ -17,6 +17,7 @@ class SuggestionRequestTest < ActiveSupport::TestCase
     SuggestionRequest.delete_all
     SuggestionConfigEntry.delete_all
     SuggestionConfig.delete_all
+    Prompt.delete_all
     PromptSet.delete_all
     Comment.delete_all
     Task.delete_all

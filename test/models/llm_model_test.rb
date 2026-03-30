@@ -14,6 +14,7 @@ class LlmModelTest < ActiveSupport::TestCase
     SuggestionRequest.delete_all
     SuggestionConfigEntry.delete_all
     SuggestionConfig.delete_all
+    Prompt.delete_all
     PromptSet.delete_all
     LlmModel.delete_all
     LlmProvider.delete_all
