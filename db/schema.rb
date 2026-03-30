@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_22_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_30_004331) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -111,6 +111,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_100000) do
     t.index ["owner_id"], name: "index_projects_on_owner_id"
   end
 
+  create_table "prompt_sets", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.string "name", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_prompt_sets_on_name", unique: true
+  end
+
+  create_table "prompts", force: :cascade do |t|
+    t.text "body", null: false
+    t.datetime "created_at", null: false
+    t.integer "position", null: false
+    t.integer "prompt_set_id", null: false
+    t.string "role", null: false
+    t.datetime "updated_at", null: false
+    t.index ["prompt_set_id", "position"], name: "index_prompts_on_prompt_set_id_and_position", unique: true
+    t.index ["prompt_set_id"], name: "index_prompts_on_prompt_set_id"
+  end
+
   create_table "role_permissions", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.bigint "permission_id", null: false
@@ -150,20 +169,53 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_100000) do
     t.index ["suggestion_response_id"], name: "index_suggested_tasks_on_suggestion_response_id"
   end
 
+  create_table "suggestion_config_entries", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "llm_model_id", null: false
+    t.integer "prompt_set_id", null: false
+    t.integer "suggestion_config_id", null: false
+    t.datetime "updated_at", null: false
+    t.integer "weight", null: false
+    t.index ["llm_model_id"], name: "index_suggestion_config_entries_on_llm_model_id"
+    t.index ["prompt_set_id"], name: "index_suggestion_config_entries_on_prompt_set_id"
+    t.index ["suggestion_config_id", "llm_model_id", "prompt_set_id"], name: "idx_suggestion_config_entries_unique_combo", unique: true
+    t.index ["suggestion_config_id"], name: "index_suggestion_config_entries_on_suggestion_config_id"
+  end
+
+  create_table "suggestion_configs", force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["active"], name: "index_suggestion_configs_unique_active", unique: true, where: "active = 1"
+  end
+
+  create_table "suggestion_outcomes", force: :cascade do |t|
+    t.decimal "acceptance_rate", precision: 5, scale: 2, default: "0.0", null: false
+    t.datetime "created_at", null: false
+    t.boolean "high_acceptance", default: false, null: false
+    t.integer "suggestion_response_id", null: false
+    t.integer "total_adopted", default: 0, null: false
+    t.integer "total_suggested", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["suggestion_response_id"], name: "index_suggestion_outcomes_on_suggestion_response_id", unique: true
+  end
+
   create_table "suggestion_requests", force: :cascade do |t|
     t.text "context"
     t.datetime "created_at", null: false
     t.date "due_date"
     t.string "goal", null: false
-    t.bigint "llm_model_id", null: false
+    t.bigint "llm_model_id"
     t.bigint "project_id", null: false
     t.text "raw_request"
     t.bigint "requested_by_id", null: false
     t.date "start_date"
+    t.integer "suggestion_config_entry_id"
     t.datetime "updated_at", null: false
     t.index ["llm_model_id"], name: "index_suggestion_requests_on_llm_model_id"
     t.index ["project_id"], name: "index_suggestion_requests_on_project_id"
     t.index ["requested_by_id"], name: "index_suggestion_requests_on_requested_by_id"
+    t.index ["suggestion_config_entry_id"], name: "index_suggestion_requests_on_suggestion_config_entry_id"
   end
 
   create_table "suggestion_responses", force: :cascade do |t|
@@ -222,11 +274,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_22_100000) do
   add_foreign_key "project_members", "projects"
   add_foreign_key "project_members", "users"
   add_foreign_key "projects", "users", column: "owner_id"
+  add_foreign_key "prompts", "prompt_sets"
   add_foreign_key "role_permissions", "permissions"
   add_foreign_key "role_permissions", "roles"
   add_foreign_key "suggested_tasks", "suggestion_responses"
+  add_foreign_key "suggestion_config_entries", "llm_models"
+  add_foreign_key "suggestion_config_entries", "prompt_sets"
+  add_foreign_key "suggestion_config_entries", "suggestion_configs"
+  add_foreign_key "suggestion_outcomes", "suggestion_responses"
   add_foreign_key "suggestion_requests", "llm_models"
   add_foreign_key "suggestion_requests", "projects"
+  add_foreign_key "suggestion_requests", "suggestion_config_entries"
   add_foreign_key "suggestion_requests", "users", column: "requested_by_id"
   add_foreign_key "suggestion_responses", "suggestion_requests"
   add_foreign_key "tasks", "projects"

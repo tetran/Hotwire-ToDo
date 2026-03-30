@@ -34,8 +34,17 @@ module LlmClient
 
       assert_equal "Hello! How can I help you?", response[:content]
       assert_equal "gpt-4", response[:model]
-      assert response[:usage]
       assert_equal "stop", response[:finish_reason]
+    end
+
+    test "should normalize usage to input_tokens and output_tokens" do
+      stub_chat_request
+
+      messages = [{ role: "user", content: "Hello" }]
+      response = @client.chat(messages: messages, model: "gpt-4")
+
+      assert_equal 10, response[:usage][:input_tokens]
+      assert_equal 15, response[:usage][:output_tokens]
     end
 
     test "should handle API errors gracefully" do
@@ -72,7 +81,7 @@ module LlmClient
             finish_reason: "stop",
           }],
           model: "gpt-4",
-          usage: { total_tokens: 20 },
+          usage: { prompt_tokens: 10, completion_tokens: 15, total_tokens: 25 },
         }.to_json
 
         stub_request(:post, "https://api.openai.com/v1/chat/completions")

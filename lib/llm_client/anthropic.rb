@@ -25,11 +25,17 @@ module LlmClient
     end
 
     def chat(messages:, model:, **options)
+      system_messages, non_system_messages = partition_system_messages(messages)
+
       request_body = {
         model: model,
         max_tokens: options[:max_tokens] || 1000,
-        messages: format_messages(messages),
-      }
+        temperature: options[:temperature] || 0.7,
+      }.merge(options.except(:max_tokens, :temperature))
+
+      request_body[:system] = system_messages.map { |m| m[:content] || m["content"] }.join("\n") if system_messages.any?
+
+      request_body[:messages] = format_messages(non_system_messages)
 
       response = http_request(
         :post,
@@ -41,7 +47,7 @@ module LlmClient
       {
         content: response.dig("content", 0, "text"),
         model: response["model"],
-        usage: response["usage"],
+        usage: normalize_usage(response["usage"]),
         stop_reason: response["stop_reason"],
       }
     end
@@ -53,6 +59,19 @@ module LlmClient
           "x-api-key" => api_key,
           "anthropic-version" => API_VERSION,
         }
+      end
+
+      def normalize_usage(usage)
+        return {} unless usage
+
+        {
+          input_tokens: usage["input_tokens"],
+          output_tokens: usage["output_tokens"],
+        }
+      end
+
+      def partition_system_messages(messages)
+        messages.partition { |m| (m[:role] || m["role"]) == "system" }
       end
 
       def format_messages(messages)

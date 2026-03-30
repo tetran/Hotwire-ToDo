@@ -1,6 +1,7 @@
 class SuggestionResponse < ApplicationRecord
   belongs_to :suggestion_request
   has_many :suggested_tasks, dependent: :destroy
+  has_one :suggestion_outcome, dependent: :destroy
 
   def self.batch_create(request, raw_response)
     suggested_tasks = JSON.parse(raw_response.dig("choices", 0, "message", "content"))["tasks"]

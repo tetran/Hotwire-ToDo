@@ -6,6 +6,8 @@ class LlmProvider < ApplicationRecord
 
   scope :active, -> { where(active: true) }
 
+  validate :cannot_deactivate_when_models_in_use, if: -> { active_changed?(from: true, to: false) }
+
   def api_key
     decrypt_api_key
   end
@@ -15,6 +17,14 @@ class LlmProvider < ApplicationRecord
   end
 
   private
+
+    def cannot_deactivate_when_models_in_use
+      if llm_models.joins(:suggestion_config_entries)
+                   .joins("INNER JOIN suggestion_configs ON suggestion_configs.id = suggestion_config_entries.suggestion_config_id")
+                   .where(suggestion_configs: { active: true }).exists?
+        errors.add(:active, "cannot be deactivated while models are used in an active suggestion config")
+      end
+    end
 
     def encrypt_api_key(value)
       crypt = ActiveSupport::MessageEncryptor.new(secret_key_base[0..31])

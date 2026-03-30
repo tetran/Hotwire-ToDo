@@ -11,9 +11,13 @@ class SuggestionRequestTest < ActiveSupport::TestCase
   end
 
   def teardown
+    SuggestionOutcome.delete_all
     SuggestedTask.delete_all
     SuggestionResponse.delete_all
     SuggestionRequest.delete_all
+    SuggestionConfigEntry.delete_all
+    SuggestionConfig.delete_all
+    PromptSet.delete_all
     Comment.delete_all
     Task.delete_all
     ProjectMember.delete_all
@@ -67,10 +71,10 @@ class SuggestionRequestTest < ActiveSupport::TestCase
     assert_includes @suggestion_request.errors[:requested_by], "must exist"
   end
 
-  test "should require llm_model" do
+  test "should allow nil llm_model" do
     @suggestion_request.llm_model = nil
-    assert_not @suggestion_request.valid?
-    assert_includes @suggestion_request.errors[:llm_model], "must exist"
+    # llm_model is now optional (Phase 1-4: suggestion_config_entry replaces it)
+    assert_not_includes @suggestion_request.errors[:llm_model], "must exist"
   end
 
   test "should belong to llm_model" do
@@ -191,6 +195,34 @@ class SuggestionRequestTest < ActiveSupport::TestCase
 
     assert_equal "gpt-4.1-mini", params[:model] # Current hardcoded value
     assert_equal "json_object", params[:response_format][:type]
+  end
+
+  test "should return openai_params with indifferent access after reload" do
+    request = SuggestionRequest.new(
+      project: @project,
+      requested_by: @user,
+      llm_model: @llm_model,
+      goal: "Test reload params",
+      start_date: Date.current,
+      due_date: Date.current + 1.week,
+    )
+    request.define_singleton_method(:too_many_requests) {}
+    request.save!
+
+    # Reload to clear in-memory raw_request_hash
+    request.reload
+    params = request.openai_params
+
+    # Should work with both symbol and string keys
+    assert_equal "gpt-4.1-mini", params[:model]
+    assert_equal "gpt-4.1-mini", params["model"]
+  end
+
+  test "should belong to suggestion_config_entry optionally" do
+    association = SuggestionRequest.reflect_on_association(:suggestion_config_entry)
+    assert_equal :belongs_to, association.macro
+    assert association.options[:optional], "suggestion_config_entry should be optional"
+    assert_nil @suggestion_request.suggestion_config_entry
   end
 
   test "should allow different users to make requests" do

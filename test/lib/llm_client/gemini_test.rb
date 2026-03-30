@@ -30,8 +30,89 @@ module LlmClient
 
       assert_equal "Hello! How can I help you today?", response[:content]
       assert_equal "gemini-pro", response[:model]
-      assert response[:usage]
       assert_equal "STOP", response[:finish_reason]
+    end
+
+    test "should normalize usage to input_tokens and output_tokens" do
+      stub_chat_request
+
+      messages = [{ role: "user", content: "Hello" }]
+      response = @client.chat(messages: messages, model: "gemini-pro")
+
+      assert_equal 10, response[:usage][:input_tokens]
+      assert_equal 20, response[:usage][:output_tokens]
+    end
+
+    test "should separate system messages to systemInstruction parameter" do
+      expected_body = {
+        systemInstruction: { parts: [{ text: "You are a helpful assistant." }] },
+        contents: [{ role: "user", parts: [{ text: "Hello" }] }],
+        generationConfig: { maxOutputTokens: 1000, temperature: 0.7 },
+      }
+
+      stub_request(:post, "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent")
+        .with(
+          body: expected_body.to_json,
+          headers: { "x-goog-api-key" => "test-api-key", "Content-Type" => "application/json" },
+        )
+        .to_return(status: 200, body: {
+          candidates: [{ content: { parts: [{ text: "Hi!" }] }, finishReason: "STOP" }],
+          usageMetadata: { promptTokenCount: 5, candidatesTokenCount: 3, totalTokenCount: 8 },
+        }.to_json)
+
+      messages = [
+        { role: "system", content: "You are a helpful assistant." },
+        { role: "user", content: "Hello" },
+      ]
+      response = @client.chat(messages: messages, model: "gemini-pro")
+      assert_equal "Hi!", response[:content]
+    end
+
+    test "should concatenate multiple system messages for Gemini" do
+      expected_body = {
+        systemInstruction: { parts: [{ text: "You are a helpful assistant.\nBe concise." }] },
+        contents: [{ role: "user", parts: [{ text: "Hello" }] }],
+        generationConfig: { maxOutputTokens: 1000, temperature: 0.7 },
+      }
+
+      stub_request(:post, "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent")
+        .with(
+          body: expected_body.to_json,
+          headers: { "x-goog-api-key" => "test-api-key", "Content-Type" => "application/json" },
+        )
+        .to_return(status: 200, body: {
+          candidates: [{ content: { parts: [{ text: "Hi!" }] }, finishReason: "STOP" }],
+          usageMetadata: { promptTokenCount: 5, candidatesTokenCount: 3, totalTokenCount: 8 },
+        }.to_json)
+
+      messages = [
+        { role: "system", content: "You are a helpful assistant." },
+        { role: "system", content: "Be concise." },
+        { role: "user", content: "Hello" },
+      ]
+      response = @client.chat(messages: messages, model: "gemini-pro")
+      assert_equal "Hi!", response[:content]
+    end
+
+    test "should not include systemInstruction when no system messages" do
+      expected_body = {
+        contents: [{ role: "user", parts: [{ text: "Hello" }] }],
+        generationConfig: { maxOutputTokens: 1000, temperature: 0.7 },
+      }
+
+      stub_request(:post, "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent")
+        .with(
+          body: expected_body.to_json,
+          headers: { "x-goog-api-key" => "test-api-key", "Content-Type" => "application/json" },
+        )
+        .to_return(status: 200, body: {
+          candidates: [{ content: { parts: [{ text: "Hi!" }] }, finishReason: "STOP" }],
+          usageMetadata: { promptTokenCount: 5, candidatesTokenCount: 3, totalTokenCount: 8 },
+        }.to_json)
+
+      messages = [{ role: "user", content: "Hello" }]
+      response = @client.chat(messages: messages, model: "gemini-pro")
+      assert_equal "Hi!", response[:content]
     end
 
     test "should handle API errors gracefully" do
@@ -76,7 +157,7 @@ module LlmClient
             },
             finishReason: "STOP",
           }],
-          usageMetadata: { totalTokenCount: 25 },
+          usageMetadata: { promptTokenCount: 10, candidatesTokenCount: 20, totalTokenCount: 30 },
         }.to_json
 
         stub_request(:post, "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent")

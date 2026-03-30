@@ -33,13 +33,20 @@ module LlmClient
       # Format model name for API endpoint
       model_path = model.include?("/") ? model : "models/#{model}"
 
-      request_body = {
-        contents: format_contents(messages),
-        generationConfig: {
-          maxOutputTokens: options[:max_tokens] || 1000,
-          temperature: options[:temperature] || 0.7,
-        }.merge(options[:generation_config] || {}),
-      }
+      system_messages, non_system_messages = partition_system_messages(messages)
+
+      request_body = {}
+
+      if system_messages.any?
+        system_text = system_messages.map { |m| m[:content] || m["content"] }.join("\n")
+        request_body[:systemInstruction] = { parts: [{ text: system_text }] }
+      end
+
+      request_body[:contents] = format_contents(non_system_messages)
+      request_body[:generationConfig] = {
+        maxOutputTokens: options[:max_tokens] || 1000,
+        temperature: options[:temperature] || 0.7,
+      }.merge(options[:generation_config] || {})
 
       response = http_request(
         :post,
@@ -53,7 +60,7 @@ module LlmClient
       {
         content: candidate.dig("content", "parts", 0, "text"),
         model: model,
-        usage: response["usageMetadata"],
+        usage: normalize_usage(response["usageMetadata"]),
         finish_reason: candidate["finishReason"],
       }
     end
@@ -63,6 +70,19 @@ module LlmClient
       def default_headers
         {
           "x-goog-api-key" => api_key,
+        }
+      end
+
+      def partition_system_messages(messages)
+        messages.partition { |m| (m[:role] || m["role"]) == "system" }
+      end
+
+      def normalize_usage(usage)
+        return {} unless usage
+
+        {
+          input_tokens: usage["promptTokenCount"],
+          output_tokens: usage["candidatesTokenCount"],
         }
       end
 

@@ -6,7 +6,8 @@ class SuggestionRequest < ApplicationRecord
 
   belongs_to :project
   belongs_to :requested_by, class_name: "User"
-  belongs_to :llm_model
+  belongs_to :llm_model, optional: true
+  belongs_to :suggestion_config_entry, optional: true
   has_one :response, dependent: :destroy, class_name: "SuggestionResponse", inverse_of: :suggestion_request
 
   before_save :set_raw_request
@@ -14,7 +15,9 @@ class SuggestionRequest < ApplicationRecord
   validate :too_many_requests
   validates :goal, presence: true, length: { maximum: 100 }
 
-  def openai_params = raw_request_hash || JSON.parse(raw_request)
+  def openai_params
+    (raw_request_hash || JSON.parse(raw_request)).with_indifferent_access
+  end
 
   private
 

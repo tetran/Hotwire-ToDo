@@ -9,8 +9,12 @@ class LlmModelTest < ActiveSupport::TestCase
   end
 
   def teardown
+    SuggestionOutcome.delete_all
     SuggestionResponse.destroy_all
     SuggestionRequest.delete_all
+    SuggestionConfigEntry.delete_all
+    SuggestionConfig.delete_all
+    PromptSet.delete_all
     LlmModel.delete_all
     LlmProvider.delete_all
   end
@@ -192,5 +196,24 @@ class LlmModelTest < ActiveSupport::TestCase
 
   test "should belong to llm_provider" do
     assert_equal @provider, @model.llm_provider
+  end
+
+  test "should prevent deactivation when used in active suggestion config" do
+    prompt_set = PromptSet.create!(name: "Test PS")
+    SuggestionConfig.create_with_entries!(
+      entries_attributes: [
+        { llm_model_id: @model.id, prompt_set_id: prompt_set.id, weight: 100 },
+      ],
+    )
+
+    @model.active = false
+    assert_not @model.valid?
+    assert_includes @model.errors[:active], "cannot be deactivated while used in an active suggestion config"
+  end
+
+  test "should allow deactivation when not used in active suggestion config" do
+    model = @provider.llm_models.create!(name: "unused-model", display_name: "Unused")
+    model.active = false
+    assert model.valid?
   end
 end

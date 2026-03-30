@@ -47,7 +47,7 @@ module LlmClient
       {
         content: response.dig("choices", 0, "message", "content"),
         model: response["model"],
-        usage: response["usage"],
+        usage: normalize_usage(response["usage"]),
         finish_reason: response.dig("choices", 0, "finish_reason"),
       }
     end
@@ -60,6 +60,15 @@ module LlmClient
         headers = { "Authorization" => "Bearer #{api_key}" }
         headers["OpenAI-Organization"] = organization_id if organization_id
         headers
+      end
+
+      def normalize_usage(usage)
+        return {} unless usage
+
+        {
+          input_tokens: usage["prompt_tokens"],
+          output_tokens: usage["completion_tokens"],
+        }
       end
 
       def format_messages(messages)

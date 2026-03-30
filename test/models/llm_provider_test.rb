@@ -5,8 +5,12 @@ class LlmProviderTest < ActiveSupport::TestCase
 
   def setup
     # Clear all providers to avoid conflicts
+    SuggestionOutcome.delete_all
     SuggestionResponse.destroy_all
     SuggestionRequest.delete_all
+    SuggestionConfigEntry.delete_all
+    SuggestionConfig.delete_all
+    PromptSet.delete_all
     LlmModel.delete_all
     LlmProvider.delete_all
 
@@ -19,8 +23,12 @@ class LlmProviderTest < ActiveSupport::TestCase
   end
 
   def teardown
+    SuggestionOutcome.delete_all
     SuggestionResponse.destroy_all
     SuggestionRequest.delete_all
+    SuggestionConfigEntry.delete_all
+    SuggestionConfig.delete_all
+    PromptSet.delete_all
     LlmModel.delete_all
     LlmProvider.delete_all
   end
@@ -96,6 +104,27 @@ class LlmProviderTest < ActiveSupport::TestCase
       display_name: "GPT-4",
     )
     assert_includes @provider.llm_models, model
+  end
+
+  test "should prevent deactivation when models are used in active suggestion config" do
+    model = @provider.llm_models.create!(name: "gpt-4", display_name: "GPT-4")
+    prompt_set = PromptSet.create!(name: "Provider Deactivate Test")
+    SuggestionConfig.create_with_entries!(
+      entries_attributes: [
+        { llm_model_id: model.id, prompt_set_id: prompt_set.id, weight: 100 },
+      ],
+    )
+
+    @provider.active = false
+    assert_not @provider.valid?
+    assert_includes @provider.errors[:active],
+                    "cannot be deactivated while models are used in an active suggestion config"
+  end
+
+  test "should allow deactivation when models are not used in active suggestion config" do
+    @provider.llm_models.create!(name: "unused-model", display_name: "Unused")
+    @provider.active = false
+    assert @provider.valid?
   end
 
   test "should destroy associated models when provider is destroyed" do
