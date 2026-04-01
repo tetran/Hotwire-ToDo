@@ -7,7 +7,7 @@ module Api
         before_action -> { require_capability!("LlmProvider", "write") }, only: %i[create update]
 
         def index
-          prompt_sets = PromptSet.order(:id)
+          prompt_sets = PromptSet.includes(:prompts).order(:id)
           render json: prompt_sets.as_json(include: { prompts: { except: %i[created_at updated_at] } })
         end
 

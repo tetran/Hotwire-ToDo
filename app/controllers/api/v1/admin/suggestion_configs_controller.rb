@@ -7,7 +7,7 @@ module Api
         before_action -> { require_capability!("LlmProvider", "write") }, only: %i[create update]
 
         def index
-          configs = SuggestionConfig.order(id: :desc)
+          configs = SuggestionConfig.includes(entries: %i[llm_model prompt_set]).order(id: :desc)
           render json: configs.map { |c| config_json(c) }
         end
 
