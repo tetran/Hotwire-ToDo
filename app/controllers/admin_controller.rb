@@ -9,7 +9,7 @@ class AdminController < ApplicationController
   private
 
     def require_admin_session
-      return if request.path.start_with?("/admin/login")
+      return if request.path == "/admin/login"
       return if admin_logged_in?
 
       redirect_to "/admin/login"
