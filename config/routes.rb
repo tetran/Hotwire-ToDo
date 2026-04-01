@@ -14,7 +14,9 @@ Rails.application.routes.draw do
     resources :members, only: %i[create destroy], module: :projects
   end
   namespace :tasks do
-    resources :suggestions, only: [:create]
+    resources :suggestions, only: [:create] do
+      resource :abandonment, only: [:create], module: :suggestions
+    end
     resources :batches, only: [:create]
     resources :completes, only: [:index]
     resources :searches, only: [:index]
