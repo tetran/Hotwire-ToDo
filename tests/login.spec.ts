@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures/coverage';
 
 test('未ログイン状態でログイン画面が表示される', async ({ page }) => {
   await page.goto('/');

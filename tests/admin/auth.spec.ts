@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from '../fixtures/coverage'
 
 test.describe('Admin 認証フロー', () => {
   test('ログインページが表示されること', async ({ page }) => {

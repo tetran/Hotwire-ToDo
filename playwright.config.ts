@@ -13,6 +13,7 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './tests',
+  globalTeardown: './tests/global-teardown.ts',
   /* Test timeout */
   timeout: 30000,
   /* Run tests in files in parallel */

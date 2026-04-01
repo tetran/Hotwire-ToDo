@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from '../fixtures/coverage'
 
 test.describe('Admin ロール管理', () => {
   test.beforeEach(async ({ page }) => {
