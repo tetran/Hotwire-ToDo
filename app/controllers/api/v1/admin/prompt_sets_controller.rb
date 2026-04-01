@@ -50,8 +50,7 @@ module Api
           def in_use?
             @prompt_set.suggestion_config_entries
                        .joins(:suggestion_config)
-                       .where(suggestion_configs: { active: true })
-                       .exists?
+                       .exists?(suggestion_configs: { active: true })
           end
       end
     end

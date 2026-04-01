@@ -1,5 +1,5 @@
 class PromptSet < ApplicationRecord
-  has_many :prompts, -> { order(:position) }, dependent: :destroy
+  has_many :prompts, -> { order(:position) }, dependent: :destroy, inverse_of: :prompt_set
   has_many :suggestion_config_entries, dependent: :restrict_with_error
 
   validates :name, presence: true, uniqueness: true
@@ -11,8 +11,8 @@ class PromptSet < ApplicationRecord
   private
 
     def cannot_deactivate_when_in_use
-      if suggestion_config_entries.joins(:suggestion_config).where(suggestion_configs: { active: true }).exists?
-        errors.add(:active, "cannot be deactivated while used in an active suggestion config")
-      end
+      return unless suggestion_config_entries.joins(:suggestion_config).exists?(suggestion_configs: { active: true })
+
+      errors.add(:active, "cannot be deactivated while used in an active suggestion config")
     end
 end

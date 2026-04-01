@@ -6,7 +6,7 @@ class SuggestionConfig < ApplicationRecord
   accepts_nested_attributes_for :entries, allow_destroy: true
 
   validate :at_least_one_entry
-  validate :weights_sum_to_100
+  validate :weights_sum_to_one_hundred
   validate :max_entries_count
   validate :no_duplicate_combinations
   validate :only_active_models
@@ -38,7 +38,7 @@ class SuggestionConfig < ApplicationRecord
       errors.add(:entries, "must have at least one entry")
     end
 
-    def weights_sum_to_100
+    def weights_sum_to_one_hundred
       live_entries = entries.reject(&:marked_for_destruction?)
       return if live_entries.empty?
       return if live_entries.any? { |e| e.weight.nil? }
@@ -48,7 +48,8 @@ class SuggestionConfig < ApplicationRecord
     end
 
     def max_entries_count
-      return unless entries.reject(&:marked_for_destruction?).size > MAX_ENTRIES
+      live_entries_count = entries.count { |entry| !entry.marked_for_destruction? }
+      return unless live_entries_count > MAX_ENTRIES
 
       errors.add(:entries, "cannot have more than #{MAX_ENTRIES} entries")
     end

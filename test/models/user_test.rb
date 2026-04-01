@@ -17,6 +17,7 @@ class UserTest < ActiveSupport::TestCase
     SuggestedTask.delete_all
     SuggestionResponse.delete_all
     SuggestionRequest.delete_all
+    SuggestionSession.delete_all
     Task.delete_all
     Project.delete_all
     User.delete_all

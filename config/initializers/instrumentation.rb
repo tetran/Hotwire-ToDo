@@ -14,7 +14,7 @@
 #   Rails.logger.debug { "[DB Access] (SQL: #{event.payload[:sql]}, Bindings: #{event.payload[:binds]}, duration: #{event.duration} ms)" }
 # end
 
-ActiveSupport::Notifications.subscribe "chat.openai" do |*args|
+ActiveSupport::Notifications.subscribe "chat.llm" do |*args|
   event = ActiveSupport::Notifications::Event.new(*args)
-  Rails.logger.debug { "\e[1m\e[31mOpenAI Chat Request \e[0m\e[34m(Duration: #{event.duration.to_i.to_formatted_s(:delimited)}[ms] | Payloads: #{event.payload.to_json})\e[0m" }
+  Rails.logger.debug { "\e[1m\e[31mLLM Chat Request \e[0m\e[34m(Duration: #{event.duration.to_i.to_fs(:delimited)}[ms] | Payloads: #{event.payload.to_json})\e[0m" }
 end

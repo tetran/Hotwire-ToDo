@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_30_004331) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_31_000003) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -74,7 +74,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_004331) do
 
   create_table "llm_providers", force: :cascade do |t|
     t.boolean "active", default: true
-    t.string "api_endpoint"
     t.text "api_key_encrypted"
     t.datetime "created_at", null: false
     t.string "name", null: false
@@ -201,21 +200,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_004331) do
   end
 
   create_table "suggestion_requests", force: :cascade do |t|
-    t.text "context"
     t.datetime "created_at", null: false
-    t.date "due_date"
-    t.string "goal", null: false
     t.bigint "llm_model_id"
-    t.bigint "project_id", null: false
     t.text "raw_request"
-    t.bigint "requested_by_id", null: false
-    t.date "start_date"
     t.integer "suggestion_config_entry_id"
+    t.integer "suggestion_session_id", null: false
     t.datetime "updated_at", null: false
     t.index ["llm_model_id"], name: "index_suggestion_requests_on_llm_model_id"
-    t.index ["project_id"], name: "index_suggestion_requests_on_project_id"
-    t.index ["requested_by_id"], name: "index_suggestion_requests_on_requested_by_id"
     t.index ["suggestion_config_entry_id"], name: "index_suggestion_requests_on_suggestion_config_entry_id"
+    t.index ["suggestion_session_id"], name: "index_suggestion_requests_on_suggestion_session_id"
   end
 
   create_table "suggestion_responses", force: :cascade do |t|
@@ -226,6 +219,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_004331) do
     t.bigint "suggestion_request_id", null: false
     t.datetime "updated_at", null: false
     t.index ["suggestion_request_id"], name: "index_suggestion_responses_on_suggestion_request_id"
+  end
+
+  create_table "suggestion_sessions", force: :cascade do |t|
+    t.text "context"
+    t.datetime "created_at", null: false
+    t.date "due_date"
+    t.string "goal", null: false
+    t.integer "project_id", null: false
+    t.integer "requested_by_id", null: false
+    t.date "start_date"
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_suggestion_sessions_on_project_id"
+    t.index ["requested_by_id"], name: "index_suggestion_sessions_on_requested_by_id"
   end
 
   create_table "tasks", force: :cascade do |t|
@@ -283,10 +289,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_30_004331) do
   add_foreign_key "suggestion_config_entries", "suggestion_configs"
   add_foreign_key "suggestion_outcomes", "suggestion_responses"
   add_foreign_key "suggestion_requests", "llm_models"
-  add_foreign_key "suggestion_requests", "projects"
   add_foreign_key "suggestion_requests", "suggestion_config_entries"
-  add_foreign_key "suggestion_requests", "users", column: "requested_by_id"
+  add_foreign_key "suggestion_requests", "suggestion_sessions"
   add_foreign_key "suggestion_responses", "suggestion_requests"
+  add_foreign_key "suggestion_sessions", "projects"
+  add_foreign_key "suggestion_sessions", "users", column: "requested_by_id"
   add_foreign_key "tasks", "projects"
   add_foreign_key "tasks", "users", column: "assignee_id"
   add_foreign_key "tasks", "users", column: "created_by_id"

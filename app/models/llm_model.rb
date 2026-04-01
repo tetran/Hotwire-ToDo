@@ -28,8 +28,8 @@ class LlmModel < ApplicationRecord
     end
 
     def cannot_deactivate_when_in_use
-      if suggestion_config_entries.joins(:suggestion_config).where(suggestion_configs: { active: true }).exists?
-        errors.add(:active, "cannot be deactivated while used in an active suggestion config")
-      end
+      return unless suggestion_config_entries.joins(:suggestion_config).exists?(suggestion_configs: { active: true })
+
+      errors.add(:active, "cannot be deactivated while used in an active suggestion config")
     end
 end

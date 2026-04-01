@@ -68,10 +68,6 @@ export const LlmProviderDetailPage = () => {
               <td className="px-5 py-3.5 text-sm text-slate-700">{provider.name}</td>
             </tr>
             <tr className="border-b border-slate-100 last:border-0">
-              <th scope="row" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400 w-36">API Endpoint</th>
-              <td className="px-5 py-3.5 text-sm text-slate-700">{provider.api_endpoint ?? '—'}</td>
-            </tr>
-            <tr className="border-b border-slate-100 last:border-0">
               <th scope="row" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400 w-36">Organization ID</th>
               <td className="px-5 py-3.5 text-sm text-slate-700">{provider.organization_id ?? '—'}</td>
             </tr>

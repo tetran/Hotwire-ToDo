@@ -150,20 +150,17 @@ Rails.logger.debug "Creating LLM providers..."
 llm_providers_data = [
   {
     name: "OpenAI",
-    api_endpoint: "https://api.openai.com/v1",
     api_key: ENV["OPENAI_ACCESS_TOKEN"] || "dummy_key_for_development",
     organization_id: ENV.fetch("OPENAI_ORGANIZATION_ID", nil),
     active: true,
   },
   {
     name: "Anthropic",
-    api_endpoint: "https://api.anthropic.com/v1",
     api_key: ENV["ANTHROPIC_API_KEY"] || "dummy_key_for_development",
     active: true,
   },
   {
     name: "Gemini",
-    api_endpoint: "https://generativelanguage.googleapis.com/v1",
     api_key: ENV["GEMINI_API_KEY"] || "dummy_key_for_development",
     active: true,
   },
@@ -171,7 +168,6 @@ llm_providers_data = [
 
 llm_providers_data.each do |provider_attrs|
   LlmProvider.find_or_create_by!(name: provider_attrs[:name]) do |provider|
-    provider.api_endpoint = provider_attrs[:api_endpoint]
     provider.api_key = provider_attrs[:api_key]
     provider.organization_id = provider_attrs[:organization_id]
     provider.active = provider_attrs[:active]
@@ -226,10 +222,33 @@ default_prompts_data.each do |prompt_attrs|
 end
 
 # Keep this seed-managed prompt set consistent across repeated runs.
-default_prompt_set.prompts.where.not(position: default_prompts_data.map { |p| p[:position] }).destroy_all
+default_prompt_set.prompts.where.not(position: default_prompts_data.pluck(:position)).destroy_all
 
 Rails.logger.debug do
   "Created default prompt set: #{default_prompt_set.name} (#{default_prompt_set.prompts.count} prompts)"
+end
+
+# Create default SuggestionConfig (if none exists)
+Rails.logger.debug "Creating default suggestion config..."
+
+unless SuggestionConfig.exists?
+  openai_provider = LlmProvider.find_by(name: "OpenAI")
+  if openai_provider
+    # Find or create gpt-4.1-mini model
+    default_model = openai_provider.llm_models.find_or_create_by!(name: "gpt-4.1-mini") do |model|
+      model.display_name = "GPT-4.1 Mini"
+      model.active = true
+    end
+
+    SuggestionConfig.create_with_entries!(
+      entries_attributes: [
+        { llm_model_id: default_model.id, prompt_set_id: default_prompt_set.id, weight: 100 },
+      ],
+    )
+    Rails.logger.debug { "Created default suggestion config (OpenAI gpt-4.1-mini + #{default_prompt_set.name})" }
+  else
+    Rails.logger.debug "WARNING: OpenAI provider not found, skipping default suggestion config"
+  end
 end
 
 Rails.logger.debug "Seed data creation completed!"
@@ -241,3 +260,4 @@ Rails.logger.debug { "- Custom roles: #{Role.custom_roles.count}" }
 Rails.logger.debug { "- LLM Providers: #{LlmProvider.count}" }
 Rails.logger.debug { "- Prompt Sets: #{PromptSet.count}" }
 Rails.logger.debug { "- Prompts: #{Prompt.count}" }
+Rails.logger.debug { "- Suggestion Configs: #{SuggestionConfig.count}" }

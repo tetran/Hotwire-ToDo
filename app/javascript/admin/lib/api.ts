@@ -161,7 +161,6 @@ export const dashboardApi = {
 export interface LlmProvider {
   id: number
   name: string
-  api_endpoint: string | null
   organization_id: string | null
   active: boolean
   created_at: string
@@ -181,7 +180,6 @@ export interface LlmModel {
 
 export interface UpdateLlmProviderInput {
   name?: string
-  api_endpoint?: string
   organization_id?: string
   active?: boolean
   api_key?: string

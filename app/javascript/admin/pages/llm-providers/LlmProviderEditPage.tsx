@@ -9,7 +9,6 @@ export const LlmProviderEditPage = () => {
 
   const [provider, setProvider] = useState<LlmProvider | null>(null)
   const [name, setName] = useState('')
-  const [apiEndpoint, setApiEndpoint] = useState('')
   const [organizationId, setOrganizationId] = useState('')
   const [active, setActive] = useState(true)
   const [apiKey, setApiKey] = useState('')
@@ -21,7 +20,6 @@ export const LlmProviderEditPage = () => {
       .then(data => {
         setProvider(data)
         setName(data.name)
-        setApiEndpoint(data.api_endpoint ?? '')
         setOrganizationId(data.organization_id ?? '')
         setActive(data.active)
       })
@@ -35,7 +33,6 @@ export const LlmProviderEditPage = () => {
 
     const data: UpdateLlmProviderInput = {
       name,
-      api_endpoint: apiEndpoint,
       organization_id: organizationId,
       active,
     }
@@ -89,16 +86,6 @@ export const LlmProviderEditPage = () => {
                 value={name}
                 onChange={e => setName(e.target.value)}
                 required
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#6366f1] focus:ring-1 focus:ring-[#6366f1]/30"
-              />
-            </div>
-            <div className="space-y-1">
-              <label htmlFor="api_endpoint" className="text-xs font-medium text-slate-600">API Endpoint</label>
-              <input
-                id="api_endpoint"
-                type="text"
-                value={apiEndpoint}
-                onChange={e => setApiEndpoint(e.target.value)}
                 className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#6366f1] focus:ring-1 focus:ring-[#6366f1]/30"
               />
             </div>

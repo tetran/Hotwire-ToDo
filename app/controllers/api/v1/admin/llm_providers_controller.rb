@@ -32,7 +32,7 @@ module Api
           end
 
           def llm_provider_params
-            params.expect(llm_provider: %i[name api_endpoint organization_id active api_key])
+            params.expect(llm_provider: %i[name organization_id active api_key])
           end
       end
     end

@@ -1,13 +1,13 @@
 <div id="form2" class="tab-panel <%= @show_suggestion ? "" : "hidden" %>" role="tabpanel" data-tabs-target="tabPanel">
   <div class="task-suggestion-form">
-    <%= form_with model: @suggestion_request,
+    <%= form_with model: @suggestion_session || SuggestionSession.new,
                   url: tasks_suggestions_path,
                   method: :post, # Always POST. Not PATCH.
                   data: {
                     controller: "submit",
                     action: "turbo:submit-start->submit#showWaitingScreen turbo:submit-end->submit#hideWaitingScreen"
                   } do |form| %>
-      <%= render_errors_for(@suggestion_request) %>
+      <%= render_errors_for(@suggestion_session) if @suggestion_session %>
 
       <div class="task-suggestion-form__item task-suggestion-form__goal">
         <%= form.label :goal, class: "visually-hidden" %>
@@ -31,7 +31,7 @@
 
       <div class="form-actions task-suggestion-form__actions">
         <%= form.hidden_field :project_id %>
-        <%= link_to "Cancel", project_path(@suggestion_request.project_id), class: "btn btn-light task-suggestion-form__cancel" %>
+        <%= link_to "Cancel", project_path(@suggestion_session&.project_id || @project&.id), class: "btn btn-light task-suggestion-form__cancel" %>
         <%= form.submit "Suggest",
                         class: "task-suggestion-form__submit primary",
                         data: {
@@ -41,6 +41,10 @@
       </div>
     <% end %>
 
-    <%= turbo_frame_tag "task_suggestion" %>
+    <%= turbo_frame_tag "task_suggestion" do %>
+      <% if @error_message %>
+        <%= render "shared/simple_error_message", message: @error_message %>
+      <% end %>
+    <% end %>
   </div>
 </div>

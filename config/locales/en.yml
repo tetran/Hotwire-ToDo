@@ -76,3 +76,6 @@ en:
     write: "write"
     delete: "delete"
     manage: "manage"
+  suggestions:
+    no_config: "Task suggestions are not currently available. Please contact the administrator."
+    llm_error: "Unable to generate suggestions. Please try again later."

@@ -219,6 +219,65 @@ module LlmClient
       end
     end
 
+    test "should provide output_config schema options" do
+      options = @client.json_output_options(
+        structured_output: {
+          enabled: true,
+          schema_name: "emit_tasks_json",
+          schema: { type: "object", additionalProperties: false },
+          strict: true,
+        },
+        json_only: true,
+      )
+
+      assert_equal "json_schema", options.dig(:output_config, :format, :type)
+      assert_equal({ type: "object", additionalProperties: false }, options.dig(:output_config, :format, :schema))
+      assert_not options.dig(:output_config, :format).key?(:name)
+    end
+
+    test "should include output_config in request body" do
+      expected_body = {
+        model: "claude-3-opus-20240229",
+        max_tokens: 1000,
+        temperature: 0.7,
+        messages: [{ role: "user", content: "Hello" }],
+        output_config: {
+          format: {
+            type: "json_schema",
+            schema: {
+              type: "object",
+              additionalProperties: false,
+            },
+          },
+        },
+      }
+
+      stub_request(:post, "https://api.anthropic.com/v1/messages")
+        .with(
+          headers: {
+            "x-api-key" => "test-api-key",
+            "anthropic-version" => "2023-06-01",
+            "Content-Type" => "application/json",
+          },
+        )
+        .with do |request|
+          JSON.parse(request.body) == JSON.parse(expected_body.to_json)
+        end
+        .to_return(status: 200, body: {
+          content: [{ text: "{\"tasks\":[]}" }],
+          model: "claude-3-opus-20240229",
+          usage: { input_tokens: 10, output_tokens: 15 },
+          stop_reason: "end_turn",
+        }.to_json)
+
+      response = @client.chat(
+        messages: [{ role: "user", content: "Hello" }],
+        model: "claude-3-opus-20240229",
+        output_config: expected_body[:output_config],
+      )
+      assert_equal "{\"tasks\":[]}", response[:content]
+    end
+
     private
 
       def stub_models_request

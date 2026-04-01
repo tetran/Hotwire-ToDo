@@ -13,6 +13,10 @@ module LlmClient
       raise NotImplementedError, "Subclasses must implement #chat"
     end
 
+    def json_output_options(**_options)
+      {}
+    end
+
     private
 
       attr_reader :api_key, :options

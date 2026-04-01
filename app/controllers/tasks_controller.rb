@@ -70,7 +70,7 @@ class TasksController < ApplicationController
     end
 
     def set_suggestion_variables
-      @suggestion_request = SuggestionRequest.new(
+      @suggestion_session = SuggestionSession.new(
         project: @project,
         requested_by: current_user,
         start_date: Time.zone.today,

@@ -19,9 +19,8 @@ class LlmProvider < ApplicationRecord
   private
 
     def cannot_deactivate_when_models_in_use
-      if llm_models.joins(:suggestion_config_entries)
-                   .joins("INNER JOIN suggestion_configs ON suggestion_configs.id = suggestion_config_entries.suggestion_config_id")
-                   .where(suggestion_configs: { active: true }).exists?
+      if llm_models.joins(suggestion_config_entries: :suggestion_config)
+                   .exists?(suggestion_configs: { active: true })
         errors.add(:active, "cannot be deactivated while models are used in an active suggestion config")
       end
     end

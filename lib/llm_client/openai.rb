@@ -52,9 +52,33 @@ module LlmClient
       }
     end
 
+    def json_output_options(structured_output: nil, json_only: false)
+      return build_json_schema_output(structured_output) if structured_output_enabled?(structured_output)
+      return { response_format: { type: "json_object" } } if json_only
+
+      {}
+    end
+
     private
 
       attr_reader :organization_id
+
+      def structured_output_enabled?(structured_output)
+        structured_output.is_a?(Hash) && structured_output[:enabled]
+      end
+
+      def build_json_schema_output(structured_output)
+        {
+          response_format: {
+            type: "json_schema",
+            json_schema: {
+              name: structured_output[:schema_name],
+              schema: structured_output[:schema],
+              strict: structured_output.fetch(:strict, true),
+            },
+          },
+        }
+      end
 
       def default_headers
         headers = { "Authorization" => "Bearer #{api_key}" }

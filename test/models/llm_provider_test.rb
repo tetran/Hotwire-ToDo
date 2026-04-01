@@ -17,7 +17,7 @@ class LlmProviderTest < ActiveSupport::TestCase
 
     @provider = LlmProvider.create!(
       name: "OpenAI",
-      api_endpoint: "https://api.openai.com/v1",
+
       api_key: "test-api-key",
       active: true,
     )
@@ -38,7 +38,7 @@ class LlmProviderTest < ActiveSupport::TestCase
   test "should create provider with valid attributes" do
     provider = LlmProvider.new(
       name: "Anthropic",
-      api_endpoint: "https://api.anthropic.com/v1",
+
       api_key: "test-key",
     )
     assert provider.valid?
