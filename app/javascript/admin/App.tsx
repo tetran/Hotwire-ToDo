@@ -20,6 +20,12 @@ import { LlmProviderEditPage } from './pages/llm-providers/LlmProviderEditPage'
 import { LlmModelsIndexPage } from './pages/llm-providers/LlmModelsIndexPage'
 import { LlmModelNewPage } from './pages/llm-providers/LlmModelNewPage'
 import { LlmModelEditPage } from './pages/llm-providers/LlmModelEditPage'
+import { PromptSetsIndexPage } from './pages/prompt-sets/PromptSetsIndexPage'
+import { PromptSetNewPage } from './pages/prompt-sets/PromptSetNewPage'
+import { PromptSetEditPage } from './pages/prompt-sets/PromptSetEditPage'
+import { SuggestionConfigsIndexPage } from './pages/suggestion-configs/SuggestionConfigsIndexPage'
+import { SuggestionConfigNewPage } from './pages/suggestion-configs/SuggestionConfigNewPage'
+import { SuggestionConfigDetailPage } from './pages/suggestion-configs/SuggestionConfigDetailPage'
 
 const App = () => (
   <BrowserRouter>
@@ -106,6 +112,36 @@ const App = () => (
           <Route path="llm-providers/:id/models/:modelId/edit" element={
             <ProtectedRoute requiredCapability={{ resource: 'LlmProvider', action: 'write' }}>
               <LlmModelEditPage />
+            </ProtectedRoute>
+          } />
+          <Route path="prompt-sets" element={
+            <ProtectedRoute requiredCapability={{ resource: 'LlmProvider', action: 'read' }}>
+              <PromptSetsIndexPage />
+            </ProtectedRoute>
+          } />
+          <Route path="prompt-sets/new" element={
+            <ProtectedRoute requiredCapability={{ resource: 'LlmProvider', action: 'write' }}>
+              <PromptSetNewPage />
+            </ProtectedRoute>
+          } />
+          <Route path="prompt-sets/:id/edit" element={
+            <ProtectedRoute requiredCapability={{ resource: 'LlmProvider', action: 'write' }}>
+              <PromptSetEditPage />
+            </ProtectedRoute>
+          } />
+          <Route path="suggestion-configs" element={
+            <ProtectedRoute requiredCapability={{ resource: 'LlmProvider', action: 'read' }}>
+              <SuggestionConfigsIndexPage />
+            </ProtectedRoute>
+          } />
+          <Route path="suggestion-configs/new" element={
+            <ProtectedRoute requiredCapability={{ resource: 'LlmProvider', action: 'write' }}>
+              <SuggestionConfigNewPage />
+            </ProtectedRoute>
+          } />
+          <Route path="suggestion-configs/:id" element={
+            <ProtectedRoute requiredCapability={{ resource: 'LlmProvider', action: 'read' }}>
+              <SuggestionConfigDetailPage />
             </ProtectedRoute>
           } />
         </Route>

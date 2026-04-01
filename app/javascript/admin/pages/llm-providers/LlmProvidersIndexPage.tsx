@@ -59,13 +59,6 @@ export const LlmProvidersIndexPage = () => {
               </div>
             </div>
 
-            {/* API info */}
-            {provider.api_endpoint && (
-              <p className="mt-3 truncate text-xs text-slate-400" style={{ fontFamily: 'DM Mono, monospace' }}>
-                {provider.api_endpoint}
-              </p>
-            )}
-
             {/* Actions */}
             <div className="mt-4 flex items-center gap-2">
               <Link

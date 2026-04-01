@@ -13,6 +13,10 @@ module LlmClient
       raise NotImplementedError, "Subclasses must implement #chat"
     end
 
+    def json_output_options(**_options)
+      {}
+    end
+
     private
 
       attr_reader :api_key, :options
@@ -50,14 +54,5 @@ module LlmClient
         request.body = body if body
         http.request(request)
       end
-  end
-
-  class ApiError < StandardError
-    attr_reader :status_code
-
-    def initialize(message, status_code = nil)
-      super(message)
-      @status_code = status_code
-    end
   end
 end

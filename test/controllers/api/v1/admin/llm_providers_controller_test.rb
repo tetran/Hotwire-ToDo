@@ -47,7 +47,6 @@ module Api
           assert provider.key?("id")
           assert provider.key?("name")
           assert provider.key?("active")
-          assert provider.key?("api_endpoint")
           assert provider.key?("created_at")
           assert provider.key?("updated_at")
         end

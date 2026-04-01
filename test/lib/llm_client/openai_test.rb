@@ -34,8 +34,17 @@ module LlmClient
 
       assert_equal "Hello! How can I help you?", response[:content]
       assert_equal "gpt-4", response[:model]
-      assert response[:usage]
       assert_equal "stop", response[:finish_reason]
+    end
+
+    test "should normalize usage to input_tokens and output_tokens" do
+      stub_chat_request
+
+      messages = [{ role: "user", content: "Hello" }]
+      response = @client.chat(messages: messages, model: "gpt-4")
+
+      assert_equal 10, response[:usage][:input_tokens]
+      assert_equal 15, response[:usage][:output_tokens]
     end
 
     test "should handle API errors gracefully" do
@@ -45,6 +54,63 @@ module LlmClient
       assert_raises(LlmClient::ApiError) do
         @client.models
       end
+    end
+
+    test "should provide json schema output options" do
+      options = @client.json_output_options(
+        structured_output: {
+          enabled: true,
+          schema_name: "emit_tasks_json",
+          schema: { type: "object" },
+          strict: true,
+        },
+        json_only: true,
+      )
+
+      assert_equal "json_schema", options.dig(:response_format, :type)
+      assert_equal "emit_tasks_json", options.dig(:response_format, :json_schema, :name)
+      assert_equal true, options.dig(:response_format, :json_schema, :strict)
+    end
+
+    test "should include response_format in chat request body" do
+      expected_body = {
+        model: "gpt-4",
+        messages: [{ role: "user", content: "Hello" }],
+        max_tokens: 1000,
+        temperature: 0.7,
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            name: "emit_tasks_json",
+            schema: { type: "object", additionalProperties: false },
+            strict: true,
+          },
+        },
+      }
+
+      stub_request(:post, "https://api.openai.com/v1/chat/completions")
+        .with(headers: {
+                "Authorization" => "Bearer test-api-key",
+                "OpenAI-Organization" => "test-org-id",
+                "Content-Type" => "application/json",
+              })
+        .with do |request|
+          JSON.parse(request.body) == JSON.parse(expected_body.to_json)
+        end
+        .to_return(status: 200, body: {
+          choices: [{ message: { content: "{\"tasks\":[]}" }, finish_reason: "stop" }],
+          model: "gpt-4",
+          usage: { prompt_tokens: 10, completion_tokens: 15, total_tokens: 25 },
+        }.to_json)
+
+      messages = [{ role: "user", content: "Hello" }]
+      @client.chat(
+        messages: messages,
+        model: "gpt-4",
+        response_format: expected_body[:response_format],
+      )
+
+      assert_requested(:post, "https://api.openai.com/v1/chat/completions", times: 1)
     end
 
     private
@@ -72,7 +138,7 @@ module LlmClient
             finish_reason: "stop",
           }],
           model: "gpt-4",
-          usage: { total_tokens: 20 },
+          usage: { prompt_tokens: 10, completion_tokens: 15, total_tokens: 25 },
         }.to_json
 
         stub_request(:post, "https://api.openai.com/v1/chat/completions")

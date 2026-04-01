@@ -1,0 +1,12 @@
+general:
+  name: General Task Suggestions
+  active: true
+
+coding:
+  name: Coding Tasks
+  active: true
+
+inactive:
+  name: Inactive Prompt Set
+  active: false
+

@@ -1,19 +1,11 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  project: one
-  requested_by: regular_user
+  suggestion_session: one
   llm_model: gpt_turbo
-  goal: Create a mobile app
-  context: Need to build an iOS app for task management
-  start_date: 2024-01-08
-  due_date: 2024-01-15
+  raw_request: '{"model":"gpt-3.5-turbo","messages":[]}'
 
 two:
-  project: one
-  requested_by: regular_user
+  suggestion_session: two
   llm_model: gpt4
-  goal: Write documentation
-  context: Technical documentation for the API
-  start_date: 2024-01-08
-  due_date: 2024-01-10
+  raw_request: '{"model":"gpt-4-mini","messages":[]}'

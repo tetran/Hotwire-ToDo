@@ -47,19 +47,52 @@ module LlmClient
       {
         content: response.dig("choices", 0, "message", "content"),
         model: response["model"],
-        usage: response["usage"],
+        usage: normalize_usage(response["usage"]),
         finish_reason: response.dig("choices", 0, "finish_reason"),
       }
+    end
+
+    def json_output_options(structured_output: nil, json_only: false)
+      return build_json_schema_output(structured_output) if structured_output_enabled?(structured_output)
+      return { response_format: { type: "json_object" } } if json_only
+
+      {}
     end
 
     private
 
       attr_reader :organization_id
 
+      def structured_output_enabled?(structured_output)
+        structured_output.is_a?(Hash) && structured_output[:enabled]
+      end
+
+      def build_json_schema_output(structured_output)
+        {
+          response_format: {
+            type: "json_schema",
+            json_schema: {
+              name: structured_output[:schema_name],
+              schema: structured_output[:schema],
+              strict: structured_output.fetch(:strict, true),
+            },
+          },
+        }
+      end
+
       def default_headers
         headers = { "Authorization" => "Bearer #{api_key}" }
         headers["OpenAI-Organization"] = organization_id if organization_id
         headers
+      end
+
+      def normalize_usage(usage)
+        return {} unless usage
+
+        {
+          input_tokens: usage["prompt_tokens"],
+          output_tokens: usage["completion_tokens"],
+        }
       end
 
       def format_messages(messages)

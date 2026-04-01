@@ -14,7 +14,9 @@ Rails.application.routes.draw do
     resources :members, only: %i[create destroy], module: :projects
   end
   namespace :tasks do
-    resources :suggestions, only: [:create]
+    resources :suggestions, only: [:create] do
+      resource :abandonment, only: [:create], module: :suggestions
+    end
     resources :batches, only: [:create]
     resources :completes, only: [:index]
     resources :searches, only: [:index]
@@ -54,6 +56,8 @@ Rails.application.routes.draw do
           resources :llm_models
           resources :available_models, only: [:index]
         end
+        resources :prompt_sets, only: %i[index show create update]
+        resources :suggestion_configs, only: %i[index show create update]
         resource :session, only: %i[show create destroy], controller: "sessions"
       end
     end

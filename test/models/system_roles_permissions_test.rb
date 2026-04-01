@@ -137,9 +137,13 @@ class SystemRolesPermissionsTest < ActiveSupport::TestCase
   end
 
   test "seeds.rb is idempotent" do
+    Rails.application.load_seed
+
     # Record initial state
     initial_permission_count = Permission.count
     initial_role_count = Role.count
+    initial_prompt_set_count = PromptSet.count
+    initial_prompt_count = Prompt.count
     initial_admin_permissions = Role.admin.permission_ids.sort
 
     # Run seeds again
@@ -148,7 +152,31 @@ class SystemRolesPermissionsTest < ActiveSupport::TestCase
     # Should have same counts and permissions
     assert_equal initial_permission_count, Permission.count
     assert_equal initial_role_count, Role.count
+    assert_equal initial_prompt_set_count, PromptSet.count
+    assert_equal initial_prompt_count, Prompt.count
     assert_equal initial_admin_permissions, Role.admin.permission_ids.sort
+  end
+
+  test "seeds default task suggestion prompt set" do
+    Rails.application.load_seed
+
+    prompt_set = PromptSet.find_by(name: "default_task_suggestion_v1")
+    assert_not_nil prompt_set
+    assert prompt_set.active?
+
+    prompts = prompt_set.prompts.order(:position)
+    assert_equal 2, prompts.count
+
+    assert_equal "system", prompts[0].role
+    assert_includes prompts[0].body, "professional and friendly strategy consultant"
+    assert_includes prompts[0].body, "respond in the same language as the client"
+
+    assert_equal "user", prompts[1].role
+    assert_includes prompts[1].body, "Please break down what is needed to accomplish the goal below"
+    assert_includes prompts[1].body, "{{goal}}"
+    assert_includes prompts[1].body, "{{start_date}}"
+    assert_includes prompts[1].body, "{{due_date}}"
+    assert_includes prompts[1].body, "{{context}}"
   end
 
   test "all required permissions exist" do
