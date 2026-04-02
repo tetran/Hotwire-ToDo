@@ -3,7 +3,10 @@ import { coverageOptions } from './fixtures/coverage'
 
 async function globalTeardown() {
   const mcr = new CoverageReport(coverageOptions)
-  await mcr.generate()
+
+  if (mcr.hasCache()) {
+    await mcr.generate()
+  }
 }
 
 export default globalTeardown

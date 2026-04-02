@@ -105,7 +105,7 @@ llm_admin_role.permissions = llm_admin_permissions
 Rails.logger.debug "Assigned permissions to roles"
 
 # Create admin users based on environment
-if Rails.env.development?
+if Rails.env.local?
   # Development environment - create default admin
   admin_user = User.find_or_create_by!(email: "admin@example.com") do |user|
     user.password = "password"
