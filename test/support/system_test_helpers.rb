@@ -16,14 +16,17 @@ module SystemTestHelpers
 
   private
 
-    def wait_for_stimulus_controller(selector, controller_name)
-      page.evaluate_async_script(<<~JS, selector, controller_name)
+    def wait_for_stimulus_controller(selector, controller_name, timeout_ms: 5000)
+      connected = page.evaluate_async_script(<<~JS, selector, controller_name, timeout_ms)
         var selector = arguments[0];
         var name = arguments[1];
-        var done = arguments[2];
+        var timeoutMs = arguments[2];
+        var done = arguments[3];
         var el = document.querySelector(selector);
+        var timerId = setTimeout(function() { done(false); }, timeoutMs);
         var check = function() {
           if (window.Stimulus && window.Stimulus.getControllerForElementAndIdentifier(el, name)) {
+            clearTimeout(timerId);
             done(true);
           } else {
             requestAnimationFrame(check);
@@ -31,5 +34,9 @@ module SystemTestHelpers
         };
         check();
       JS
+      return if connected
+
+      raise "Stimulus controller '#{controller_name}' did not connect " \
+            "on '#{selector}' within #{timeout_ms}ms"
     end
 end
