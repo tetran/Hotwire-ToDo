@@ -89,6 +89,17 @@ export const resetRedirectGuard = () => {
   isRedirectingToLogin = false
 }
 
+// Dispatched on 403 to signal that cached capabilities may be stale.
+// Note: A 403 does not always mean stale cache — the user may genuinely lack
+// the permission. The cooldown prevents excessive refresh attempts.
+export const CAPABILITIES_STALE_EVENT = 'capabilities-stale'
+const CAPABILITIES_STALE_COOLDOWN_MS = 5000
+let lastCapabilitiesStaleDispatch = 0
+
+export const resetCapabilitiesStaleCooldown = () => {
+  lastCapabilitiesStaleDispatch = 0
+}
+
 const apiRequest = async <T>(
   path: string,
   options: RequestInit = {}
@@ -109,6 +120,13 @@ const apiRequest = async <T>(
         window.location.href = '/admin/login'
       }
       return new Promise(() => {}) as T
+    }
+    if (response.status === 403) {
+      const now = Date.now()
+      if (now - lastCapabilitiesStaleDispatch > CAPABILITIES_STALE_COOLDOWN_MS) {
+        lastCapabilitiesStaleDispatch = now
+        window.dispatchEvent(new Event(CAPABILITIES_STALE_EVENT))
+      }
     }
     const error = await response.json().catch(() => ({ error: 'Unknown error' }))
     throw new Error(error.error ?? `HTTP ${response.status}`)

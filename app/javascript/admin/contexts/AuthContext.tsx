@@ -1,9 +1,10 @@
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
-import { Action, ResourceType, SessionUser, api } from '../lib/api'
+import { Action, CAPABILITIES_STALE_EVENT, ResourceType, SessionUser, api } from '../lib/api'
 
 interface AuthContextType {
   user: SessionUser | null
   loading: boolean
+  refreshing: boolean
   login: (email: string, password: string, totpCode?: string) => Promise<{ totpRequired?: boolean }>
   logout: () => Promise<void>
   can: (resource: ResourceType, action: Action) => boolean
@@ -15,12 +16,25 @@ const AuthContext = createContext<AuthContextType | null>(null)
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<SessionUser | null>(null)
   const [loading, setLoading] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
 
   useEffect(() => {
     api.session.current()
       .then(({ user }) => setUser(user))
       .catch(() => setUser(null))
       .finally(() => setLoading(false))
+  }, [])
+
+  useEffect(() => {
+    const handleCapabilitiesStale = () => {
+      setRefreshing(true)
+      api.session.current()
+        .then(({ user }) => setUser(user))
+        .catch(() => {})
+        .finally(() => setRefreshing(false))
+    }
+    window.addEventListener(CAPABILITIES_STALE_EVENT, handleCapabilitiesStale)
+    return () => window.removeEventListener(CAPABILITIES_STALE_EVENT, handleCapabilitiesStale)
   }, [])
 
   const login = async (email: string, password: string, totpCode?: string) => {
@@ -49,7 +63,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const isAdmin = user?.is_admin ?? false
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, can, isAdmin }}>
+    <AuthContext.Provider value={{ user, loading, refreshing, login, logout, can, isAdmin }}>
       {children}
     </AuthContext.Provider>
   )
