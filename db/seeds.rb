@@ -115,7 +115,22 @@ if Rails.env.development?
   # Assign admin role to the admin user
   admin_user.roles << admin_role unless admin_user.roles.include?(admin_role)
 
+  # E2E テスト用のユーザーを作成
+  viewer_user = User.find_or_create_by!(email: "viewer@example.com") do |user|
+    user.password = "password"
+    user.name = "Viewer User"
+  end
+  viewer_user.roles << user_viewer_role unless viewer_user.roles.include?(user_viewer_role)
+
+  llm_admin_user = User.find_or_create_by!(email: "llmadmin@example.com") do |user|
+    user.password = "password"
+    user.name = "LLM Admin User"
+  end
+  llm_admin_user.roles << llm_admin_role unless llm_admin_user.roles.include?(llm_admin_role)
+
   Rails.logger.debug "Created admin user: admin@example.com (password: password)"
+  Rails.logger.debug "Created viewer user: viewer@example.com (password: password)"
+  Rails.logger.debug "Created llm_admin user: llmadmin@example.com (password: password)"
 elsif Rails.env.production?
   # Production/Staging environment - create master user with environment variables
   master_email = ENV.fetch("MASTER_USER_EMAIL", nil)
