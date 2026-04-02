@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from '../fixtures/coverage'
 
 test.describe('Admin LLM プロバイダー管理', () => {
   test.beforeEach(async ({ page }) => {
@@ -33,8 +33,8 @@ test.describe('Admin LLM プロバイダー管理', () => {
     await expect(page.getByRole('heading', { name: /LLM Provider: OpenAI/ })).toBeVisible({ timeout: 10000 })
 
     // 詳細情報が表示されること
-    await expect(page.getByText('API Endpoint')).toBeVisible()
-    await expect(page.getByText('Active')).toBeVisible()
+    await expect(page.getByText('API Key')).toBeVisible()
+    await expect(page.getByRole('rowheader', { name: 'Active' })).toBeVisible()
     await expect(page.getByRole('link', { name: 'Back to list' })).toBeVisible()
     await expect(page.getByRole('link', { name: 'Edit' })).toBeVisible()
   })

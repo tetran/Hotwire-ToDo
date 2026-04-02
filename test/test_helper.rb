@@ -1,3 +1,11 @@
+require "simplecov"
+SimpleCov.start "rails" do
+  enable_coverage :branch
+  add_filter "/test/"
+  add_filter "/config/"
+  command_name "minitest-worker-#{ENV.fetch('TEST_ENV_NUMBER', 0)}"
+end
+
 ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"

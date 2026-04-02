@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from '../fixtures/coverage'
 
 test.describe('Admin 認証フロー', () => {
   test('ログインページが表示されること', async ({ page }) => {
@@ -39,6 +39,7 @@ test.describe('Admin 認証フロー', () => {
     await page.locator('input[type="password"]').fill('password')
     await page.getByRole('button', { name: 'Login' }).click()
     await expect(page).toHaveURL('/admin', { timeout: 10000 })
+    await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible({ timeout: 10000 })
 
     // ログアウト
     await page.getByRole('button', { name: 'Logout' }).click()

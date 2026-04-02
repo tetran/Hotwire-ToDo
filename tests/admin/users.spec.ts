@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect } from '../fixtures/coverage'
 
 test.describe('Admin ユーザー管理', () => {
   test.beforeEach(async ({ page }) => {
@@ -14,8 +14,8 @@ test.describe('Admin ユーザー管理', () => {
 
     await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible({ timeout: 10000 })
     await expect(page.getByRole('link', { name: 'New User' })).toBeVisible()
-    await expect(page.getByRole('columnheader', { name: 'Email' })).toBeVisible()
-    await expect(page.getByRole('columnheader', { name: 'Name' })).toBeVisible()
+    await expect(page.getByRole('columnheader', { name: 'User' })).toBeVisible()
+    await expect(page.getByRole('columnheader', { name: 'Role' })).toBeVisible()
   })
 
   test('ユーザーを新規作成できること', async ({ page }) => {

@@ -57,6 +57,9 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 
+# Test coverage
+/coverage/
+
 # Vite Ruby
 /public/vite*
 # Vite uses dotenv and suggests to ignore local-only env files. See
