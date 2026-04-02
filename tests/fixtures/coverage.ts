@@ -1,7 +1,7 @@
 import { test as base, expect } from '@playwright/test'
 import { CoverageReport } from 'monocart-coverage-reports'
 
-const coverageOptions = {
+export const coverageOptions = {
   outputDir: './coverage/e2e',
   reports: [
     ['v8'],

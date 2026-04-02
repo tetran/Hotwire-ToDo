@@ -1,6 +1,6 @@
 module Rack
   class Attack
-    unless Rails.env.local?
+    unless Rails.env.development?
       throttle("admin_login/ip", limit: 5, period: 60) do |req|
         req.ip if req.path == "/api/v1/admin/session" && req.post?
       end

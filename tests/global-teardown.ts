@@ -1,14 +1,8 @@
 import { CoverageReport } from 'monocart-coverage-reports'
+import { coverageOptions } from './fixtures/coverage'
 
 async function globalTeardown() {
-  const mcr = new CoverageReport({
-    outputDir: './coverage/e2e',
-    reports: [
-      ['v8'],
-      ['lcov'],
-      ['console-summary'],
-    ],
-  })
+  const mcr = new CoverageReport(coverageOptions)
   await mcr.generate()
 }
 
