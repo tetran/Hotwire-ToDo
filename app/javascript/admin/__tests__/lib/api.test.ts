@@ -1,4 +1,4 @@
-import { api, resetRedirectGuard } from '@admin/lib/api'
+import { api, resetRedirectGuard, resetCapabilitiesStaleCooldown, CAPABILITIES_STALE_EVENT } from '@admin/lib/api'
 
 describe('apiRequest 401 handling', () => {
   const originalLocation = window.location
@@ -132,5 +132,101 @@ describe('apiRequest 401 handling', () => {
 
     await expect(api.get('/users')).rejects.toThrow('Forbidden')
     expect(window.location.href).not.toBe('/admin/login')
+  })
+})
+
+describe('apiRequest 403 handling', () => {
+  const originalLocation = window.location
+
+  beforeEach(() => {
+    resetRedirectGuard()
+    resetCapabilitiesStaleCooldown()
+    Object.defineProperty(window, 'location', {
+      writable: true,
+      value: { ...originalLocation, href: '' },
+    })
+    vi.spyOn(document, 'querySelector').mockReturnValue({
+      content: 'test-csrf-token',
+    } as HTMLMetaElement)
+  })
+
+  afterEach(() => {
+    Object.defineProperty(window, 'location', {
+      writable: true,
+      value: originalLocation,
+    })
+    vi.restoreAllMocks()
+    globalThis.fetch = originalFetch
+  })
+
+  const originalFetch = globalThis.fetch
+
+  const mockFetch = (status: number, body: unknown = {}) => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: status >= 200 && status < 300,
+      status,
+      json: () => Promise.resolve(body),
+    })
+  }
+
+  it('dispatches capabilities-stale event on 403', async () => {
+    mockFetch(403, { error: 'Forbidden' })
+    const handler = vi.fn()
+    window.addEventListener(CAPABILITIES_STALE_EVENT, handler)
+
+    await expect(api.get('/users')).rejects.toThrow('Forbidden')
+
+    expect(handler).toHaveBeenCalledTimes(1)
+    window.removeEventListener(CAPABILITIES_STALE_EVENT, handler)
+  })
+
+  it('still throws error after dispatching event', async () => {
+    mockFetch(403, { error: 'Forbidden' })
+
+    await expect(api.get('/users')).rejects.toThrow('Forbidden')
+  })
+
+  it('suppresses duplicate events within cooldown period', async () => {
+    vi.useFakeTimers()
+    mockFetch(403, { error: 'Forbidden' })
+    const handler = vi.fn()
+    window.addEventListener(CAPABILITIES_STALE_EVENT, handler)
+
+    await expect(api.get('/users')).rejects.toThrow('Forbidden')
+    await expect(api.get('/roles')).rejects.toThrow('Forbidden')
+
+    expect(handler).toHaveBeenCalledTimes(1)
+
+    window.removeEventListener(CAPABILITIES_STALE_EVENT, handler)
+    vi.useRealTimers()
+  })
+
+  it('allows re-dispatch after cooldown expires', async () => {
+    vi.useFakeTimers()
+    mockFetch(403, { error: 'Forbidden' })
+    const handler = vi.fn()
+    window.addEventListener(CAPABILITIES_STALE_EVENT, handler)
+
+    await expect(api.get('/users')).rejects.toThrow('Forbidden')
+    expect(handler).toHaveBeenCalledTimes(1)
+
+    vi.advanceTimersByTime(5001)
+
+    await expect(api.get('/users')).rejects.toThrow('Forbidden')
+    expect(handler).toHaveBeenCalledTimes(2)
+
+    window.removeEventListener(CAPABILITIES_STALE_EVENT, handler)
+    vi.useRealTimers()
+  })
+
+  it('does not dispatch event for non-403 errors', async () => {
+    mockFetch(500, { error: 'Server Error' })
+    const handler = vi.fn()
+    window.addEventListener(CAPABILITIES_STALE_EVENT, handler)
+
+    await expect(api.get('/users')).rejects.toThrow('Server Error')
+
+    expect(handler).not.toHaveBeenCalled()
+    window.removeEventListener(CAPABILITIES_STALE_EVENT, handler)
   })
 })
