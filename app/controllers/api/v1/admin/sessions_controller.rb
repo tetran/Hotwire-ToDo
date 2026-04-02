@@ -75,7 +75,7 @@ module Api
           def handle_totp_challenge
             user = User.find_by(id: session[:admin_pending_user_id])
 
-            unless user
+            unless user&.can_read?("Admin")
               session.delete(:admin_pending_user_id)
               render json: { error: "Invalid email or password" }, status: :unauthorized
               return

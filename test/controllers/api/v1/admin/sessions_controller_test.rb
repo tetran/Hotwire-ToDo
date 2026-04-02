@@ -190,6 +190,30 @@ module Api
           assert_equal false, caps["User"]["write"]
         end
 
+        # TOTP challenge capability re-verification
+        test "POST create with valid TOTP returns 401 when admin capability revoked between steps" do
+          user = users(:admin_totp_user)
+          # Step 1: credential check
+          post api_v1_admin_session_path,
+               params: { email: user.email, password: TEST_PASSWORD },
+               as: :json
+          assert_response :ok
+          assert session[:admin_pending_user_id]
+          # Revoke admin capability between steps
+          user.user_roles.destroy_all
+          # Step 2: TOTP challenge
+          totp = ROTP::TOTP.new(user.totp_secret, issuer: "Hobo Todo")
+          valid_code = totp.now
+          post api_v1_admin_session_path,
+               params: { totp_code: valid_code },
+               as: :json
+          assert_response :unauthorized
+          json = response.parsed_body
+          assert_equal "Invalid email or password", json["error"]
+          assert_nil session[:admin_user_id]
+          assert_nil session[:admin_pending_user_id]
+        end
+
         # セッション固定化対策
         test "POST create でログインのたびにセッション ID がローテーションされる" do
           user = users(:admin_user)
