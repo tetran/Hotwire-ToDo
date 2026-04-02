@@ -67,11 +67,20 @@ describe('apiRequest 401 handling', () => {
     expect(window.location.href).not.toBe('/admin/login')
   })
 
-  it('does NOT redirect on 401 for DELETE /session (logout)', async () => {
+  it('redirects on 401 for DELETE /session (logout with expired session)', async () => {
     mockFetch(401, { error: 'Unauthorized' })
 
-    await expect(api.session.destroy()).rejects.toThrow('Unauthorized')
-    expect(window.location.href).not.toBe('/admin/login')
+    const promise = api.session.destroy()
+
+    await vi.waitFor(() => {
+      expect(window.location.href).toBe('/admin/login')
+    })
+
+    const result = await Promise.race([
+      promise.then(() => 'resolved').catch(() => 'rejected'),
+      new Promise(resolve => setTimeout(() => resolve('pending'), 50)),
+    ])
+    expect(result).toBe('pending')
   })
 
   it('sets window.location.href only once for concurrent 401 responses', async () => {

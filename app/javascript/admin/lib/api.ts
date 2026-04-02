@@ -103,7 +103,11 @@ const apiRequest = async <T>(
   })
 
   if (!response.ok) {
-    if (response.status === 401 && !path.startsWith('/session')) {
+    // Suppress redirect for GET/POST /session (session check and login)
+    // to avoid redirect loops. DELETE /session (logout) should still redirect.
+    const method = (options.method ?? 'GET').toUpperCase()
+    const isSessionAuthEndpoint = path.startsWith('/session') && (method === 'GET' || method === 'POST')
+    if (response.status === 401 && !isSessionAuthEndpoint) {
       if (!isRedirectingToLogin) {
         isRedirectingToLogin = true
         window.location.href = '/admin/login'
