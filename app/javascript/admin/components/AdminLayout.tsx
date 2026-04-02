@@ -98,7 +98,11 @@ export const AdminLayout = () => {
   const location = useLocation()
 
   const handleLogout = async () => {
-    await logout()
+    try {
+      await logout()
+    } catch {
+      // Session may already be expired; proceed to login regardless
+    }
     navigate('/admin/login')
   }
 
