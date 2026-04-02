@@ -31,18 +31,4 @@ class ProjectFlowTest < ApplicationSystemTestCase
 
     assert_selector ".project-name", text: updated_name
   end
-
-  private
-
-    def sign_in_as(user)
-      visit login_path
-      fill_in "Email", with: user.email
-      fill_in "Password", with: "HoboTest!Str0ng#2024"
-      click_button "Login"
-    end
-
-    def open_project_menu
-      find(".project-selector .menu-button").click
-      find(".project-selector .menu-navigation:not(.hidden)")
-    end
 end
