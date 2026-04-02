@@ -23,6 +23,7 @@ module SystemTestHelpers
         var timeoutMs = arguments[2];
         var done = arguments[3];
         var el = document.querySelector(selector);
+        if (!el) { done(false); return; }
         var timerId = setTimeout(function() { done(false); }, timeoutMs);
         var check = function() {
           if (window.Stimulus && window.Stimulus.getControllerForElementAndIdentifier(el, name)) {
