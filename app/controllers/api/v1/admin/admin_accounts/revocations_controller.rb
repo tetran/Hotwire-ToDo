@@ -5,6 +5,7 @@ module Api
         class RevocationsController < Admin::ApplicationController
           before_action -> { require_capability!("User", "write") }
           before_action :set_admin_account
+          before_action :set_admin_roles
           before_action :protect_revocation_escalation
 
           def create
@@ -13,11 +14,7 @@ module Api
               return
             end
 
-            admin_roles = @admin_account.roles.joins(:permissions).where(
-              permissions: { resource_type: "Admin", action: %w[read manage] },
-            ).distinct
-
-            @admin_account.user_roles.where(role_id: admin_roles.pluck(:id)).destroy_all
+            @admin_account.user_roles.where(role_id: @admin_roles.pluck(:id)).destroy_all
             head :no_content
           end
 
@@ -28,14 +25,18 @@ module Api
               render json: { error: "Not found" }, status: :not_found unless @admin_account
             end
 
-            def protect_revocation_escalation
+            def set_admin_roles
               return unless @admin_account
 
-              # Only check permissions on the admin roles being removed, not all roles
-              admin_roles = @admin_account.roles.joins(:permissions).where(
+              @admin_roles = @admin_account.roles.joins(:permissions).where(
                 permissions: { resource_type: "Admin", action: %w[read manage] },
               ).distinct
-              target_ids = RolePermission.where(role_id: admin_roles).pluck(:permission_id).uniq
+            end
+
+            def protect_revocation_escalation
+              return unless @admin_roles
+
+              target_ids = RolePermission.where(role_id: @admin_roles).pluck(:permission_id).uniq
               admin_ids = current_admin.roles.joins(:permissions).pluck("permissions.id").uniq
               return if (target_ids - admin_ids).empty?
 
