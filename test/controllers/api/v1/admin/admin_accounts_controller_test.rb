@@ -16,6 +16,12 @@ module Api
           assert_response :unauthorized
         end
 
+        # Admin:read is also the admin session gate (require_admin_access).
+        # A user without Admin:read cannot establish an admin session,
+        # so they receive 401 (covered above), not 403.
+        # This differs from endpoints like UsersController where the base gate
+        # (Admin:read) and the action capability (User:read) are different.
+
         test "GET index returns 200 when logged in as admin" do
           login_as_admin_api
           get api_v1_admin_admin_accounts_path
@@ -85,6 +91,12 @@ module Api
         end
 
         # destroy
+        test "DELETE destroy returns 401 when logged in as regular user" do
+          login_as(users(:regular_user))
+          delete api_v1_admin_admin_account_path(users(:llm_admin_user))
+          assert_response :unauthorized
+        end
+
         test "DELETE destroy returns 401 when not logged in" do
           delete api_v1_admin_admin_account_path(users(:user_viewer))
           assert_response :unauthorized

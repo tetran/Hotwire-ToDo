@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { adminAccountsApi, User } from '../../lib/api'
 import Avatar from '../../components/Avatar'
 import Badge from '../../components/Badge'
@@ -68,12 +67,12 @@ export const AdminAccountsIndexPage = () => {
               className="text-xs text-slate-700 placeholder-slate-400 outline-none bg-transparent"
             />
           </div>
-          <Link
-            to="/admin/admin-accounts/new"
-            className="rounded-lg bg-[#6366f1] px-4 py-2 text-sm font-medium text-white shadow-md shadow-indigo-500/20 transition hover:bg-[#5558e8]"
+          <span
+            className="rounded-lg bg-slate-300 px-4 py-2 text-sm font-medium text-white cursor-not-allowed"
+            title="Coming soon"
           >
             New Admin Account
-          </Link>
+          </span>
         </div>
       </div>
 
