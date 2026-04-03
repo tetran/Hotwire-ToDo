@@ -16,6 +16,8 @@ import { PermissionsIndexPage } from './pages/permissions/PermissionsIndexPage'
 import { PermissionDetailPage } from './pages/permissions/PermissionDetailPage'
 import { AdminAccountsIndexPage } from './pages/admin-accounts/AdminAccountsIndexPage'
 import { AdminAccountNewPage } from './pages/admin-accounts/AdminAccountNewPage'
+import { AdminAccountDetailPage } from './pages/admin-accounts/AdminAccountDetailPage'
+import { AdminAccountRolesEditPage } from './pages/admin-accounts/AdminAccountRolesEditPage'
 import { LlmProvidersIndexPage } from './pages/llm-providers/LlmProvidersIndexPage'
 import { LlmProviderDetailPage } from './pages/llm-providers/LlmProviderDetailPage'
 import { LlmProviderEditPage } from './pages/llm-providers/LlmProviderEditPage'
@@ -44,6 +46,16 @@ const App = () => (
           <Route path="admin-accounts/new" element={
             <ProtectedRoute requiredCapability={{ resource: 'User', action: 'write' }}>
               <AdminAccountNewPage />
+            </ProtectedRoute>
+          } />
+          <Route path="admin-accounts/:id" element={
+            <ProtectedRoute requiredCapability={{ resource: 'Admin', action: 'read' }}>
+              <AdminAccountDetailPage />
+            </ProtectedRoute>
+          } />
+          <Route path="admin-accounts/:id/roles" element={
+            <ProtectedRoute requiredCapability={{ resource: 'User', action: 'write' }}>
+              <AdminAccountRolesEditPage />
             </ProtectedRoute>
           } />
           <Route path="users" element={

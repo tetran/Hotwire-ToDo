@@ -180,6 +180,13 @@ export interface CreateAdminAccountInput {
   role_ids: number[]
 }
 
+export type PermissionMatrix = Record<ResourceType, Record<Action, boolean>>
+
+export interface AdminAccountDetail extends User {
+  roles: { id: number; name: string; description: string | null; system_role: boolean }[]
+  permission_matrix: PermissionMatrix
+}
+
 export const adminAccountsApi = {
   list: (params?: { q?: string }, options?: { signal?: AbortSignal }) => {
     const query = new URLSearchParams()
@@ -187,10 +194,14 @@ export const adminAccountsApi = {
     const qs = query.toString()
     return api.get<User[]>(qs ? `/admin_accounts?${qs}` : '/admin_accounts', options)
   },
+  get: (id: number) => api.get<AdminAccountDetail>(`/admin_accounts/${id}`),
   create: (data: CreateAdminAccountInput) =>
     api.post<User>('/admin_accounts', { admin_account: data }),
   delete: (id: number) => api.delete<void>(`/admin_accounts/${id}`),
   revoke: (id: number) => api.post<void>(`/admin_accounts/${id}/revocation`),
+  getRoles: (id: number) => api.get<Role[]>(`/admin_accounts/${id}/roles`),
+  updateRoles: (id: number, roleIds: number[]) =>
+    api.patch<Role[]>(`/admin_accounts/${id}/roles`, { role_ids: roleIds }),
 }
 
 export const rolesApi = {

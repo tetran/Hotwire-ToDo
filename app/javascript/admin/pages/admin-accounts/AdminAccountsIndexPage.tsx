@@ -133,13 +133,13 @@ export const AdminAccountsIndexPage = () => {
               <tr key={account.id} className="transition-colors hover:bg-slate-50/50">
                 <td className="px-5 py-3.5 text-xs text-slate-400" style={{ fontFamily: 'DM Mono, monospace' }}>{account.id}</td>
                 <td className="px-5 py-3.5">
-                  <div className="flex items-center gap-3">
+                  <Link to={`/admin/admin-accounts/${account.id}`} className="flex items-center gap-3 hover:opacity-80 transition">
                     <Avatar name={account.name ?? account.email} size="sm" />
                     <div>
                       <p className="text-sm font-medium text-slate-700">{account.name}</p>
                       <p className="text-xs text-slate-400">{account.email}</p>
                     </div>
-                  </div>
+                  </Link>
                 </td>
                 <td className="px-5 py-3.5">
                   <div className="flex flex-wrap gap-1">

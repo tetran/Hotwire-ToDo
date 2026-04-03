@@ -274,6 +274,104 @@ module Api
           delete api_v1_admin_admin_account_path(id: 0)
           assert_response :not_found
         end
+
+        # show
+        test "GET show returns 401 when not logged in" do
+          get api_v1_admin_admin_account_path(users(:admin_user))
+          assert_response :unauthorized
+        end
+
+        test "GET show returns 401 when logged in as regular user" do
+          login_as(users(:regular_user))
+          get api_v1_admin_admin_account_path(users(:admin_user))
+          assert_response :unauthorized
+        end
+
+        test "GET show returns 200 with account detail" do
+          login_as_admin_api
+          target = users(:user_manager)
+          get api_v1_admin_admin_account_path(target)
+          assert_response :success
+          json = response.parsed_body
+          assert_equal target.id, json["id"]
+          assert_equal target.email, json["email"]
+          assert_equal target.name, json["name"]
+          assert json.key?("created_at")
+          assert json.key?("updated_at")
+          assert_not json.key?("password_digest")
+        end
+
+        test "GET show includes roles with detail fields" do
+          login_as_admin_api
+          get api_v1_admin_admin_account_path(users(:user_manager))
+          assert_response :success
+          roles = response.parsed_body["roles"]
+          assert_kind_of Array, roles
+          assert_equal 1, roles.size
+          role = roles.first
+          assert role.key?("id")
+          assert role.key?("name")
+          assert role.key?("description")
+          assert role.key?("system_role")
+        end
+
+        test "GET show includes permission_matrix with all resource types and actions" do
+          login_as_admin_api
+          get api_v1_admin_admin_account_path(users(:user_manager))
+          assert_response :success
+          matrix = response.parsed_body["permission_matrix"]
+          assert_kind_of Hash, matrix
+
+          booleans = [true, false]
+          Permission::RESOURCE_TYPES.each do |rt|
+            assert matrix.key?(rt), "Missing resource type: #{rt}"
+            Permission::ACTIONS.each do |action|
+              assert booleans.include?(matrix[rt][action]),
+                     "Expected boolean for #{rt}:#{action}"
+            end
+          end
+        end
+
+        test "GET show permission_matrix reflects actual permissions" do
+          login_as_admin_api
+          # user_manager has User:read/write/delete and Admin:read
+          get api_v1_admin_admin_account_path(users(:user_manager))
+          assert_response :success
+          matrix = response.parsed_body["permission_matrix"]
+
+          assert_equal true, matrix["User"]["read"]
+          assert_equal true, matrix["User"]["write"]
+          assert_equal true, matrix["User"]["delete"]
+          assert_equal false, matrix["User"]["manage"]
+          assert_equal true, matrix["Admin"]["read"]
+          assert_equal false, matrix["Admin"]["write"]
+          assert_equal false, matrix["Project"]["read"]
+        end
+
+        test "GET show permission_matrix manage implies read/write/delete" do
+          login_as_admin_api
+          # admin role has User:manage
+          get api_v1_admin_admin_account_path(users(:admin_user))
+          assert_response :success
+          matrix = response.parsed_body["permission_matrix"]
+
+          assert_equal true, matrix["User"]["manage"]
+          assert_equal true, matrix["User"]["read"]
+          assert_equal true, matrix["User"]["write"]
+          assert_equal true, matrix["User"]["delete"]
+        end
+
+        test "GET show returns 404 for non-admin user" do
+          login_as_admin_api
+          get api_v1_admin_admin_account_path(users(:regular_user))
+          assert_response :not_found
+        end
+
+        test "GET show returns 404 for non-existent user" do
+          login_as_admin_api
+          get api_v1_admin_admin_account_path(id: 0)
+          assert_response :not_found
+        end
       end
     end
   end
