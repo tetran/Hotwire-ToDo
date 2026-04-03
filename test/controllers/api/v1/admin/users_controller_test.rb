@@ -48,18 +48,12 @@ module Api
           assert_not user.key?("password_digest")
         end
 
-        test "GET index response includes roles for each user" do
+        test "GET index response does not include roles" do
           login_as_admin_api
           get api_v1_admin_users_path
           assert_response :success
           user = response.parsed_body.first
-          assert user.key?("roles")
-          assert_kind_of Array, user["roles"]
-          unless user["roles"].empty?
-            role = user["roles"].first
-            assert role.key?("id")
-            assert role.key?("name")
-          end
+          assert_not user.key?("roles")
         end
 
         # show
@@ -175,11 +169,10 @@ module Api
           assert_response :no_content
         end
 
-        test "DELETE destroy returns 403 when trying to delete self" do
+        test "DELETE destroy returns 404 when trying to delete self (admin accounts are scoped out)" do
           login_as_admin_api
           delete api_v1_admin_user_path(users(:admin_user))
-          assert_response :forbidden
-          assert_equal "Cannot delete yourself", response.parsed_body["error"]
+          assert_response :not_found
         end
 
         # 操作別認可テスト
@@ -262,6 +255,27 @@ module Api
           assert_response :success
           json = response.parsed_body
           assert json.none? { |u| u["email"] == users(:admin_user).email }
+        end
+
+        # boundary: admin accounts are not accessible via UsersController
+        test "GET show returns 404 for admin account" do
+          login_as_admin_api
+          get api_v1_admin_user_path(users(:llm_admin_user))
+          assert_response :not_found
+        end
+
+        test "PATCH update returns 404 for admin account" do
+          login_as_admin_api
+          patch api_v1_admin_user_path(users(:llm_admin_user)), params: { user: { name: "Hacked" } }
+          assert_response :not_found
+        end
+
+        test "DELETE destroy returns 404 for admin account" do
+          login_as_admin_api
+          assert_no_difference "User.count" do
+            delete api_v1_admin_user_path(users(:llm_admin_user))
+          end
+          assert_response :not_found
         end
 
         test "GET index with empty q param returns all non-admin users" do

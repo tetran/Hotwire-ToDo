@@ -8,11 +8,8 @@ module Api
         before_action -> { require_capability!("User", "delete") }, only: %i[destroy]
 
         def index
-          users = User.non_admin_accounts.includes(:roles).search(params[:q]).order(:id)
-          render json: users.as_json(
-            only: %i[id email name created_at updated_at],
-            include: { roles: { only: %i[id name] } },
-          )
+          users = User.non_admin_accounts.search(params[:q]).order(:id)
+          render json: users.as_json(only: %i[id email name created_at updated_at])
         end
 
         def show
@@ -49,7 +46,7 @@ module Api
         private
 
           def set_user
-            @user = User.find_by(id: params[:id])
+            @user = User.non_admin_accounts.find_by(id: params[:id])
             render json: { error: "Not found" }, status: :not_found unless @user
           end
 
