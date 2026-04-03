@@ -2,8 +2,8 @@ module Api
   module V1
     module Admin
       class AdminAccountsController < ApplicationController
-        before_action :set_admin_account, only: %i[destroy]
-        before_action -> { require_capability!("Admin", "read") }, only: %i[index]
+        before_action :set_admin_account, only: %i[show destroy]
+        before_action -> { require_capability!("Admin", "read") }, only: %i[index show]
         before_action -> { require_capability!("User", "write") }, only: %i[create]
         before_action -> { require_capability!("User", "delete") }, only: %i[destroy]
         before_action :protect_privilege_escalation, only: %i[create]
@@ -15,6 +15,24 @@ module Api
             only: %i[id email name created_at updated_at],
             include: { roles: { only: %i[id name] } },
           )
+        end
+
+        def show
+          granted = @admin_account.roles.joins(:permissions)
+                                  .pluck("permissions.resource_type", "permissions.action")
+                                  .to_set
+
+          matrix = Permission::RESOURCE_TYPES.index_with do |rt|
+            has_manage = granted.include?([rt, "manage"])
+            Permission::ACTIONS.index_with do |action|
+              granted.include?([rt, action]) || (has_manage && action != "manage")
+            end
+          end
+
+          render json: @admin_account.as_json(
+            only: %i[id email name created_at updated_at],
+            include: { roles: { only: %i[id name description system_role] } },
+          ).merge(permission_matrix: matrix)
         end
 
         def create

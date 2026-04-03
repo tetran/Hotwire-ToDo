@@ -45,8 +45,9 @@ Rails.application.routes.draw do
     namespace :v1 do
       namespace :admin do
         root "dashboard#index"
-        resources :admin_accounts, only: %i[index create destroy] do
+        resources :admin_accounts, only: %i[index show create destroy] do
           resource :revocation, only: [:create], module: :admin_accounts
+          resource :roles, only: %i[show update], module: :admin_accounts
         end
         resources :users, only: %i[index show create update destroy] do
           resource :roles, only: %i[show update], controller: "user_roles"
