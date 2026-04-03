@@ -8,7 +8,7 @@ module Api
         before_action -> { require_capability!("User", "delete") }, only: %i[destroy]
 
         def index
-          users = User.includes(:roles).search(params[:q]).order(:id)
+          users = User.non_admin_accounts.includes(:roles).search(params[:q]).order(:id)
           render json: users.as_json(
             only: %i[id email name created_at updated_at],
             include: { roles: { only: %i[id name] } },

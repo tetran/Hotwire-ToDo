@@ -18,14 +18,21 @@ module Api
           assert_equal "Unauthorized", response.parsed_body["error"]
         end
 
-        test "GET index returns 200 with user list when logged in as admin" do
+        test "GET index returns 200 with non-admin user list when logged in as admin" do
           login_as_admin_api
           get api_v1_admin_users_path
           assert_response :success
           json = response.parsed_body
           assert_kind_of Array, json
           emails = json.pluck("email")
-          assert_includes emails, users(:admin_user).email
+          # Non-admin users should be included
+          assert_includes emails, users(:regular_user).email
+          assert_includes emails, users(:no_role_user).email
+          # Admin accounts should NOT be included
+          assert_not_includes emails, users(:admin_user).email
+          assert_not_includes emails, users(:user_manager).email
+          assert_not_includes emails, users(:user_viewer).email
+          assert_not_includes emails, users(:llm_admin_user).email
         end
 
         test "GET index response includes expected fields" do
@@ -232,30 +239,37 @@ module Api
         end
 
         # search
-        test "GET index with q param filters users by name" do
+        test "GET index with q param filters non-admin users by name" do
           login_as_admin_api
-          get api_v1_admin_users_path, params: { q: "Admin" }
+          get api_v1_admin_users_path, params: { q: "Regular" }
           assert_response :success
           json = response.parsed_body
-          assert json.all? { |u| u["name"]&.downcase&.include?("admin") || u["email"]&.downcase&.include?("admin") }
-          assert json.none? { |u| u["email"] == "norole@example.com" }
+          assert json.all? { |u| u["name"]&.downcase&.include?("regular") || u["email"]&.downcase&.include?("regular") }
         end
 
-        test "GET index with q param filters users by email" do
+        test "GET index with q param filters non-admin users by email" do
           login_as_admin_api
-          get api_v1_admin_users_path, params: { q: "manager@" }
+          get api_v1_admin_users_path, params: { q: "norole@" }
           assert_response :success
           json = response.parsed_body
           assert_equal 1, json.size
-          assert_equal "manager@example.com", json.first["email"]
+          assert_equal "norole@example.com", json.first["email"]
         end
 
-        test "GET index with empty q param returns all users" do
+        test "GET index with q param does not return admin accounts" do
+          login_as_admin_api
+          get api_v1_admin_users_path, params: { q: "admin" }
+          assert_response :success
+          json = response.parsed_body
+          assert json.none? { |u| u["email"] == users(:admin_user).email }
+        end
+
+        test "GET index with empty q param returns all non-admin users" do
           login_as_admin_api
           get api_v1_admin_users_path, params: { q: "" }
           assert_response :success
-          all_count = User.count
-          assert_equal all_count, response.parsed_body.size
+          non_admin_count = User.non_admin_accounts.count
+          assert_equal non_admin_count, response.parsed_body.size
         end
       end
     end

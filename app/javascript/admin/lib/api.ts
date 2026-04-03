@@ -173,6 +173,16 @@ export const usersApi = {
   updateRoles: (id: number, roleIds: number[]) => api.patch<Role[]>(`/users/${id}/roles`, { role_ids: roleIds }),
 }
 
+export const adminAccountsApi = {
+  list: (params?: { q?: string }, options?: { signal?: AbortSignal }) => {
+    const query = new URLSearchParams()
+    if (params?.q) query.set('q', params.q)
+    const qs = query.toString()
+    return api.get<User[]>(qs ? `/admin_accounts?${qs}` : '/admin_accounts', options)
+  },
+  delete: (id: number) => api.delete<void>(`/admin_accounts/${id}`),
+}
+
 export const rolesApi = {
   list: () => api.get<Role[]>('/roles'),
   get: (id: number) => api.get<Role>(`/roles/${id}`),
