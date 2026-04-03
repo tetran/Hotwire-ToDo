@@ -17,13 +17,14 @@ ALWAYS update `.progress/issue-XXXXX.md` during work. Update the progress file *
 #### Steps
 1. **Create a GitHub Issue** - This can be skipped if the issue number is specified.
 2. **Create a progress file** - Create an `issue-XXXXX.md` file in `.progress`. `XXXXX` is the issue number (5 digits with zero padding. e.g. `issue-00005.md` for issue #5).
-3. **Create a plan** - Review the requirements and design the implementation approach. Use plan mode. Consult the client for any undecided specifications.
+3. **Create a plan** - Review the requirements and design the implementation approach. Use plan mode. Consult the client for any undecided specifications. Get a review from a specialized agent at least once.
 4. **Confirm the plan** - Confirm with the client if the plan can be proceeded. If the plan is accepted, exit plan mode.
-5. **Document the plan** - Document the plan in the issue as a comment.
+5. **Document the plan** - Document the plan in the issue as a comment. Include everything exactly as it is stated and approved in the plan file.
 6. **Create a Git Branch** - Create a feature branch for the issue. ALL feature branches should be derived from the LATEST main branch.
 7. **Implement** - Write code and tests
 8. **Testing** - Ensure all unit tests and system tests pass.
-9. **Create a Pull Request** - Create a PR and request review.
+9. **Local Review** - Ask codex (`/codex-review`) for review the changes.
+10. **Create a Pull Request** - Create a PR and request review.
 
 ### Lightweight Flow
 
