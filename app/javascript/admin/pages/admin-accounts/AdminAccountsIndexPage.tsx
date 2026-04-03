@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { usersApi, User } from '../../lib/api'
+import { adminAccountsApi, User } from '../../lib/api'
+import { useAuth } from '../../contexts/AuthContext'
 import Avatar from '../../components/Avatar'
+import Badge from '../../components/Badge'
 
-export const UsersIndexPage = () => {
-  const [users, setUsers] = useState<User[]>([])
+export const AdminAccountsIndexPage = () => {
+  const { can } = useAuth()
+  const [accounts, setAccounts] = useState<User[]>([])
   const [error, setError] = useState('')
+  const [deleteError, setDeleteError] = useState('')
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
+  const canDelete = can('User', 'delete')
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedQuery(searchQuery), 300)
@@ -19,13 +23,13 @@ export const UsersIndexPage = () => {
     const controller = new AbortController()
     setError('')
     setLoading(true)
-    usersApi.list(debouncedQuery ? { q: debouncedQuery } : undefined, { signal: controller.signal })
+    adminAccountsApi.list(debouncedQuery ? { q: debouncedQuery } : undefined, { signal: controller.signal })
       .then(data => {
-        if (!controller.signal.aborted) setUsers(data)
+        if (!controller.signal.aborted) setAccounts(data)
       })
       .catch(err => {
         if (!controller.signal.aborted) {
-          setError(err instanceof Error ? err.message : 'Failed to load users')
+          setError(err instanceof Error ? err.message : 'Failed to load admin accounts')
         }
       })
       .finally(() => {
@@ -35,12 +39,12 @@ export const UsersIndexPage = () => {
   }, [debouncedQuery])
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this user?')) return
+    if (!confirm('Are you sure you want to delete this admin account?')) return
     try {
-      await usersApi.delete(id)
-      setUsers(users.filter(u => u.id !== id))
+      await adminAccountsApi.delete(id)
+      setAccounts(accounts.filter(a => a.id !== id))
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete user')
+      setDeleteError(err instanceof Error ? err.message : 'Failed to delete admin account')
     }
   }
 
@@ -51,8 +55,8 @@ export const UsersIndexPage = () => {
       {/* Page header */}
       <div className="flex items-end justify-between">
         <div>
-          <p className="text-[10px] font-semibold tracking-[0.2em] text-slate-400" style={{ fontFamily: 'DM Mono, monospace' }}>MANAGEMENT</p>
-          <h1 className="text-2xl font-bold text-slate-800" style={{ fontFamily: 'Syne, sans-serif' }}>Users</h1>
+          <p className="text-[10px] font-semibold tracking-[0.2em] text-slate-400" style={{ fontFamily: 'DM Mono, monospace' }}>ADMIN</p>
+          <h1 className="text-2xl font-bold text-slate-800" style={{ fontFamily: 'Syne, sans-serif' }}>Admin Accounts</h1>
         </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2">
@@ -63,12 +67,26 @@ export const UsersIndexPage = () => {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search users..."
+              placeholder="Search admin accounts..."
               className="text-xs text-slate-700 placeholder-slate-400 outline-none bg-transparent"
             />
           </div>
+          <span
+            className="rounded-lg bg-slate-300 px-4 py-2 text-sm font-medium text-white cursor-not-allowed"
+            title="Coming soon"
+          >
+            New Admin Account
+          </span>
         </div>
       </div>
+
+      {/* Delete error */}
+      {deleteError && (
+        <div className="flex items-center justify-between rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-600">
+          <span>{deleteError}</span>
+          <button onClick={() => setDeleteError('')} className="ml-4 text-rose-400 hover:text-rose-600">✕</button>
+        </div>
+      )}
 
       {/* Table */}
       <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -77,53 +95,60 @@ export const UsersIndexPage = () => {
             <tr className="border-b border-slate-100">
               <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">ID</th>
               <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">User</th>
+              <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">Role</th>
               <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">Created At</th>
               <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
-            {loading && users.length === 0 && (
+            {loading && accounts.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-5 py-10 text-center text-sm text-slate-400">
+                <td colSpan={5} className="px-5 py-10 text-center text-sm text-slate-400">
                   Loading...
                 </td>
               </tr>
             )}
-            {!loading && users.length === 0 && (
+            {!loading && accounts.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-5 py-10 text-center text-sm text-slate-400">
-                  No users found
+                <td colSpan={5} className="px-5 py-10 text-center text-sm text-slate-400">
+                  No admin accounts found
                 </td>
               </tr>
             )}
-            {users.map(user => (
-              <tr key={user.id} className="transition-colors hover:bg-slate-50/50">
-                <td className="px-5 py-3.5 text-xs text-slate-400" style={{ fontFamily: 'DM Mono, monospace' }}>{user.id}</td>
+            {accounts.map(account => (
+              <tr key={account.id} className="transition-colors hover:bg-slate-50/50">
+                <td className="px-5 py-3.5 text-xs text-slate-400" style={{ fontFamily: 'DM Mono, monospace' }}>{account.id}</td>
                 <td className="px-5 py-3.5">
                   <div className="flex items-center gap-3">
-                    <Avatar name={user.name ?? user.email} size="sm" />
+                    <Avatar name={account.name ?? account.email} size="sm" />
                     <div>
-                      <p className="text-sm font-medium text-slate-700">{user.name}</p>
-                      <p className="text-xs text-slate-400">{user.email}</p>
+                      <p className="text-sm font-medium text-slate-700">{account.name}</p>
+                      <p className="text-xs text-slate-400">{account.email}</p>
                     </div>
                   </div>
                 </td>
-                <td className="px-5 py-3.5 text-xs text-slate-400">{new Date(user.created_at).toLocaleDateString()}</td>
                 <td className="px-5 py-3.5">
-                  <div className="flex items-center gap-2">
-                    <Link
-                      to={`/admin/users/${user.id}/edit`}
-                      className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
-                    >
-                      Edit
-                    </Link>
+                  <div className="flex flex-wrap gap-1">
+                    {(account.roles ?? []).map(role => (
+                      <Badge
+                        key={role.id}
+                        variant={role.name === 'admin' ? 'danger' : role.name === 'user_manager' ? 'warning' : 'info'}
+                      >
+                        {role.name}
+                      </Badge>
+                    ))}
+                  </div>
+                </td>
+                <td className="px-5 py-3.5 text-xs text-slate-400">{new Date(account.created_at).toLocaleDateString()}</td>
+                <td className="px-5 py-3.5">
+                  {canDelete && (
                     <button
-                      onClick={() => handleDelete(user.id)}
+                      onClick={() => handleDelete(account.id)}
                       className="rounded-md border border-rose-200 px-2.5 py-1 text-xs font-medium text-rose-500 transition hover:bg-rose-50"
                     >
                       Delete
                     </button>
-                  </div>
+                  )}
                 </td>
               </tr>
             ))}

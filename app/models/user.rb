@@ -14,11 +14,21 @@ class User < ApplicationRecord
 
   normalizes :email, with: ->(email) { email.strip.downcase }
 
+  scope :admin_accounts, lambda {
+    joins(roles: :permissions)
+      .where(permissions: { resource_type: "Admin", action: %w[read manage] })
+      .distinct
+  }
+
+  scope :non_admin_accounts, lambda {
+    where.not(id: admin_accounts.select(:id))
+  }
+
   scope :search, lambda { |query|
     return all if query.blank?
 
     sanitized = sanitize_sql_like(query.strip)
-    where("LOWER(name) LIKE LOWER(:q) OR LOWER(email) LIKE LOWER(:q)", q: "%#{sanitized}%")
+    where("LOWER(users.name) LIKE LOWER(:q) OR LOWER(users.email) LIKE LOWER(:q)", q: "%#{sanitized}%")
   }
 
   has_many :comments, dependent: :restrict_with_error

@@ -13,9 +13,9 @@ test.describe('Admin ユーザー管理', () => {
     await page.goto('/admin/users')
 
     await expect(page.getByRole('heading', { name: 'Users' })).toBeVisible({ timeout: 10000 })
-    await expect(page.getByRole('link', { name: 'New User' })).toBeVisible()
     await expect(page.getByRole('columnheader', { name: 'User' })).toBeVisible()
-    await expect(page.getByRole('columnheader', { name: 'Role' })).toBeVisible()
+    await expect(page.getByRole('columnheader', { name: 'Created At' })).toBeVisible()
+    await expect(page.getByRole('columnheader', { name: 'Actions' })).toBeVisible()
   })
 
   test('ユーザーを新規作成できること', async ({ page }) => {
