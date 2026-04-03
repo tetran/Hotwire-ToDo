@@ -173,6 +173,13 @@ export const usersApi = {
   updateRoles: (id: number, roleIds: number[]) => api.patch<Role[]>(`/users/${id}/roles`, { role_ids: roleIds }),
 }
 
+export interface CreateAdminAccountInput {
+  email: string
+  name: string
+  password: string
+  role_ids: number[]
+}
+
 export const adminAccountsApi = {
   list: (params?: { q?: string }, options?: { signal?: AbortSignal }) => {
     const query = new URLSearchParams()
@@ -180,7 +187,10 @@ export const adminAccountsApi = {
     const qs = query.toString()
     return api.get<User[]>(qs ? `/admin_accounts?${qs}` : '/admin_accounts', options)
   },
+  create: (data: CreateAdminAccountInput) =>
+    api.post<User>('/admin_accounts', { admin_account: data }),
   delete: (id: number) => api.delete<void>(`/admin_accounts/${id}`),
+  revoke: (id: number) => api.post<void>(`/admin_accounts/${id}/revocation`),
 }
 
 export const rolesApi = {

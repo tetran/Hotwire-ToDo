@@ -91,6 +91,145 @@ module Api
         end
 
         # destroy
+        # create
+        test "POST create returns 401 when not logged in" do
+          post api_v1_admin_admin_accounts_path, params: {
+            admin_account: {
+              email: "new@example.com", name: "New Admin",
+              password: "password123", role_ids: [roles(:user_viewer).id]
+            },
+          }
+          assert_response :unauthorized
+        end
+
+        test "POST create returns 401 when logged in as regular user" do
+          login_as(users(:regular_user))
+          post api_v1_admin_admin_accounts_path, params: {
+            admin_account: {
+              email: "new@example.com", name: "New Admin",
+              password: "password123", role_ids: [roles(:user_viewer).id]
+            },
+          }
+          assert_response :unauthorized
+        end
+
+        test "POST create returns 403 when logged in as read-only admin" do
+          login_as_admin_api_read_only
+          post api_v1_admin_admin_accounts_path, params: {
+            admin_account: {
+              email: "new@example.com", name: "New Admin",
+              password: "password123", role_ids: [roles(:user_viewer).id]
+            },
+          }
+          assert_response :forbidden
+        end
+
+        test "POST create creates admin account with roles" do
+          login_as_admin_api
+          viewer_role = roles(:user_viewer)
+          assert_difference "User.count", 1 do
+            post api_v1_admin_admin_accounts_path, params: {
+              admin_account: {
+                email: "newadmin@example.com", name: "New Admin",
+                password: "password123", role_ids: [viewer_role.id]
+              },
+            }
+          end
+          assert_response :created
+          json = response.parsed_body
+          assert_equal "newadmin@example.com", json["email"]
+          assert_equal "New Admin", json["name"]
+          assert_equal 1, json["roles"].size
+          assert_equal viewer_role.name, json["roles"].first["name"]
+          assert User.admin_accounts.exists?(email: "newadmin@example.com")
+        end
+
+        test "POST create returns 422 when role_ids is empty" do
+          login_as_admin_api
+          assert_no_difference "User.count" do
+            post api_v1_admin_admin_accounts_path, params: {
+              admin_account: {
+                email: "new@example.com", name: "New Admin",
+                password: "password123", role_ids: []
+              },
+            }
+          end
+          assert_response :unprocessable_entity
+          assert_equal "At least one role is required", response.parsed_body["error"]
+        end
+
+        test "POST create returns 422 when no role has admin access" do
+          login_as_admin_api
+          assert_no_difference "User.count" do
+            post api_v1_admin_admin_accounts_path, params: {
+              admin_account: {
+                email: "new@example.com", name: "New Admin",
+                password: "password123", role_ids: [roles(:regular).id]
+              },
+            }
+          end
+          assert_response :unprocessable_entity
+          assert_equal "At least one role with admin access is required",
+                       response.parsed_body["error"]
+        end
+
+        test "POST create returns 422 with validation errors on blank email" do
+          login_as_admin_api
+          assert_no_difference "User.count" do
+            post api_v1_admin_admin_accounts_path, params: {
+              admin_account: {
+                email: "", name: "New Admin",
+                password: "password123", role_ids: [roles(:user_viewer).id]
+              },
+            }
+          end
+          assert_response :unprocessable_entity
+          assert response.parsed_body.key?("errors")
+        end
+
+        test "POST create returns 422 with duplicate email" do
+          login_as_admin_api
+          assert_no_difference "User.count" do
+            post api_v1_admin_admin_accounts_path, params: {
+              admin_account: {
+                email: users(:admin_user).email, name: "Dup",
+                password: "password123", role_ids: [roles(:user_viewer).id]
+              },
+            }
+          end
+          assert_response :unprocessable_entity
+          assert response.parsed_body.key?("errors")
+        end
+
+        test "POST create returns 422 when role_id does not exist" do
+          login_as_admin_api
+          assert_no_difference "User.count" do
+            post api_v1_admin_admin_accounts_path, params: {
+              admin_account: {
+                email: "new@example.com", name: "New Admin",
+                password: "password123", role_ids: [0]
+              },
+            }
+          end
+          assert_response :unprocessable_entity
+          assert_equal "Some roles were not found", response.parsed_body["error"]
+        end
+
+        test "POST create returns 403 on privilege escalation" do
+          # user_manager doesn't have LlmProvider permissions
+          login_as_admin_api(users(:user_manager))
+          assert_no_difference "User.count" do
+            post api_v1_admin_admin_accounts_path, params: {
+              admin_account: {
+                email: "new@example.com", name: "New Admin",
+                password: "password123", role_ids: [roles(:llm_admin).id]
+              },
+            }
+          end
+          assert_response :forbidden
+        end
+
+        # destroy
         test "DELETE destroy returns 401 when logged in as regular user" do
           login_as(users(:regular_user))
           delete api_v1_admin_admin_account_path(users(:llm_admin_user))
