@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react'
 import { adminAccountsApi, User } from '../../lib/api'
+import { useAuth } from '../../contexts/AuthContext'
 import Avatar from '../../components/Avatar'
 import Badge from '../../components/Badge'
 
 export const AdminAccountsIndexPage = () => {
+  const { can } = useAuth()
   const [accounts, setAccounts] = useState<User[]>([])
   const [error, setError] = useState('')
+  const [deleteError, setDeleteError] = useState('')
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
+  const canDelete = can('User', 'delete')
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedQuery(searchQuery), 300)
@@ -40,7 +44,7 @@ export const AdminAccountsIndexPage = () => {
       await adminAccountsApi.delete(id)
       setAccounts(accounts.filter(a => a.id !== id))
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete admin account')
+      setDeleteError(err instanceof Error ? err.message : 'Failed to delete admin account')
     }
   }
 
@@ -75,6 +79,14 @@ export const AdminAccountsIndexPage = () => {
           </span>
         </div>
       </div>
+
+      {/* Delete error */}
+      {deleteError && (
+        <div className="flex items-center justify-between rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-600">
+          <span>{deleteError}</span>
+          <button onClick={() => setDeleteError('')} className="ml-4 text-rose-400 hover:text-rose-600">✕</button>
+        </div>
+      )}
 
       {/* Table */}
       <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
@@ -129,12 +141,14 @@ export const AdminAccountsIndexPage = () => {
                 </td>
                 <td className="px-5 py-3.5 text-xs text-slate-400">{new Date(account.created_at).toLocaleDateString()}</td>
                 <td className="px-5 py-3.5">
-                  <button
-                    onClick={() => handleDelete(account.id)}
-                    className="rounded-md border border-rose-200 px-2.5 py-1 text-xs font-medium text-rose-500 transition hover:bg-rose-50"
-                  >
-                    Delete
-                  </button>
+                  {canDelete && (
+                    <button
+                      onClick={() => handleDelete(account.id)}
+                      className="rounded-md border border-rose-200 px-2.5 py-1 text-xs font-medium text-rose-500 transition hover:bg-rose-50"
+                    >
+                      Delete
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
