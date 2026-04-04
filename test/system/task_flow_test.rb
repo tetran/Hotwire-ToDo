@@ -34,6 +34,7 @@ class TaskFlowTest < ApplicationSystemTestCase
     parent = tasks(:parent_task)
 
     sign_in_as(user)
+    assert_selector ".project-selector"
     open_project_menu
     click_link "Test Project Two"
 

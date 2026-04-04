@@ -6,4 +6,4 @@
   <% end %>
 <% end %>
 <%= turbo_stream.update Task.new, partial: "tasks/add_task_btn" %>
-<%= turbo_stream.update "notification", partial: "shared/notification", locals: { message: t("controllers.tasks/batches.create.success", count: @tasks.length), status: "success" } %>
+<%= turbo_stream.update "notification", partial: "shared/notification", locals: { message: t("controllers.tasks/batches.create.success", count: @tasks.length + (@parent_task ? 1 : 0)), status: "success" } %>

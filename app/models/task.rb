@@ -72,10 +72,7 @@ class Task < ApplicationRecord
   def complete!
     transaction do
       update(completed: true)
-      if subtasks.any?
-        subtasks.uncompleted.update_all(completed: true, updated_at: Time.current)
-        broadcast_replace_to(project, partial: "tasks/task", locals: { task: reload })
-      end
+      subtasks.uncompleted.update_all(completed: true, updated_at: Time.current) if subtasks.any?
     end
   end
 
@@ -118,6 +115,7 @@ class Task < ApplicationRecord
     end
 
     def broadcast_task_update
+      subtasks.load if parent? && !subtasks.loaded?
       broadcast_replace_to project, partial: "tasks/task", locals: { task: self }
     end
 

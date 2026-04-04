@@ -1,5 +1,6 @@
+<% has_subtasks = task.subtasks.loaded? ? task.subtasks.any? : task.subtasks.exists? %>
 <%= turbo_frame_tag task do %>
-<div class="<%= task.subtasks.any? ? 'task-card-wrapper task-card-wrapper--has-subtasks' : '' %>" <% if task.subtasks.any? %>data-controller="expand-collapse"<% end %>>
+<div class="<%= has_subtasks ? 'task-card-wrapper task-card-wrapper--has-subtasks' : '' %>" <% if has_subtasks %>data-controller="expand-collapse"<% end %>>
   <div class="task-card <%= task.completed ? "task-card--complete" : "" %> <%= task.overdue? ? "overdue" : "" %>">
     <div class="task-card__content">
       <% if task.completed %>
@@ -42,7 +43,7 @@
       </div>
     <% end %>
   </div>
-  <% if task.subtasks.any? %>
+  <% if has_subtasks %>
     <div class="task-card__subtask-badge" data-action="click->expand-collapse#toggle">
       <span class="material-symbols-outlined" data-expand-collapse-target="icon">expand_more</span>
       <span><%= task.subtasks.count(&:completed?) %>/<%= task.subtasks.size %></span>
