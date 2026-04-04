@@ -102,7 +102,7 @@ module Api
           end
 
           def record_admin_login(user)
-            user.admin_login_histories.create!(ip_address: request.remote_ip, user_agent: request.user_agent)
+            user.admin_login_histories.create(ip_address: request.remote_ip, user_agent: request.user_agent)
           end
 
           def user_json(user)
