@@ -15,7 +15,7 @@ class UsersController < ApplicationController
     if @user.save
       sign_in(@user)
       send_email_verification(@user)
-      redirect_to project_url(@user.inbox_project.id), success: "Welcome! You have signed up successfully!"
+      redirect_to project_url(@user.inbox_project.id), success: t("controllers.users.create.success")
     else
       render :new, status: :unprocessable_content
     end
@@ -26,7 +26,7 @@ class UsersController < ApplicationController
       current_user.assign_attributes(update_params)
       locale_changed = current_user.locale_changed?
       if current_user.save
-        format.html { redirect_to projects_url, success: "Your profile has been updated!" }
+        format.html { redirect_to projects_url, success: t("controllers.users.update.success") }
         unless locale_changed
           format.json { render :show, status: :ok }
           format.turbo_stream

@@ -35,7 +35,7 @@
         <%= link_to edit_task_path(task), class: "task-card__edit" do %>
           <span class="material-symbols-outlined">edit</span>
         <% end %>
-        <%= button_to task_path(task), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "task-card__delete" do %>
+        <%= button_to task_path(task), method: :delete, data: { turbo_confirm: t("tasks.task.confirm_delete") }, class: "task-card__delete" do %>
           <span class="material-symbols-outlined">delete</span>
         <% end %>
       </div>

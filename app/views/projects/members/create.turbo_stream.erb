@@ -8,7 +8,7 @@
 <%= turbo_stream.update "project_member_form", partial: "projects/members/form", locals: { project: @project } %>
 
 <%# 通知 %>
-<%= turbo_stream.update "notification", partial: "shared/notification", locals: { message: "\"#{@user.user_name}\" was added to this project!", status: "success" } %>
+<%= turbo_stream.update "notification", partial: "shared/notification", locals: { message: t("controllers.projects/members.create.added", name: @user.user_name), status: "success" } %>
 
 <%# 各タスクのassignリストを更新 %>
 <% @project.tasks.each do |task| %>

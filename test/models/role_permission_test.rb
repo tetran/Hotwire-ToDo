@@ -32,13 +32,13 @@ class RolePermissionTest < ActiveSupport::TestCase
   test "should require role" do
     @role_permission.role = nil
     assert_not @role_permission.valid?
-    assert_includes @role_permission.errors[:role], "must exist"
+    assert @role_permission.errors[:role].any?
   end
 
   test "should require permission" do
     @role_permission.permission = nil
     assert_not @role_permission.valid?
-    assert_includes @role_permission.errors[:permission], "must exist"
+    assert @role_permission.errors[:permission].any?
   end
 
   test "should require unique combination of role and permission" do
@@ -46,7 +46,7 @@ class RolePermissionTest < ActiveSupport::TestCase
     duplicate_role_permission = RolePermission.new(role: @role, permission: @permission)
 
     assert_not duplicate_role_permission.valid?
-    assert_includes duplicate_role_permission.errors[:role_id], "has already been taken"
+    assert duplicate_role_permission.errors.where(:role_id, :taken).any?
   end
 
   test "should allow same role with different permissions" do

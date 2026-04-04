@@ -6,12 +6,12 @@ class AuthenticationTest < ApplicationSystemTestCase
     password = "HoboTest!Str0ng#2024"
 
     visit signup_path
-    fill_in "Email", with: email
-    fill_in "Password", with: password
-    click_button "Sign up"
+    fill_in I18n.t("activerecord.attributes.user.email"), with: email
+    fill_in I18n.t("activerecord.attributes.user.password"), with: password
+    click_button I18n.t("users.new.submit")
 
-    assert_selector ".project-name", text: "Inbox"
-    assert_button "Add Task"
+    assert_selector ".project-name", text: I18n.t("project.inbox")
+    assert_button I18n.t("tasks.add_task_btn.add_task")
 
     submit_logout
     assert_current_path login_path
@@ -21,9 +21,9 @@ class AuthenticationTest < ApplicationSystemTestCase
     user = users(:regular_user)
 
     visit login_path
-    fill_in "Email", with: user.email
-    fill_in "Password", with: "HoboTest!Str0ng#2024"
-    click_button "Login"
+    fill_in I18n.t("activerecord.attributes.user.email"), with: user.email
+    fill_in I18n.t("activerecord.attributes.user.password"), with: "HoboTest!Str0ng#2024"
+    click_button I18n.t("sessions.new.submit")
     assert_current_path project_path(user.inbox_project)
 
     submit_logout

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_04_004435) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_04_013348) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -270,7 +270,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_04_004435) do
   create_table "users", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "email", null: false
-    t.string "locale", default: "en", null: false
+    t.string "locale", default: "ja", null: false
     t.string "name"
     t.string "password_digest", null: false
     t.string "time_zone", default: "UTC", null: false

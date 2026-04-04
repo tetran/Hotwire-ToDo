@@ -47,13 +47,13 @@ class LlmProviderTest < ActiveSupport::TestCase
   test "should require name" do
     @provider.name = nil
     assert_not @provider.valid?
-    assert_includes @provider.errors[:name], "can't be blank"
+    assert @provider.errors[:name].present?
   end
 
   test "should require api_key_encrypted" do
     @provider.api_key = nil
     assert_not @provider.valid?
-    assert_includes @provider.errors[:api_key_encrypted], "can't be blank"
+    assert @provider.errors[:api_key_encrypted].present?
   end
 
   test "should require unique name" do
@@ -62,7 +62,7 @@ class LlmProviderTest < ActiveSupport::TestCase
       api_key: "another-key",
     )
     assert_not duplicate.valid?
-    assert_includes duplicate.errors[:name], "has already been taken"
+    assert duplicate.errors[:name].present?
   end
 
   test "should encrypt and decrypt api_key" do

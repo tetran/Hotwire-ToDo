@@ -13,25 +13,25 @@ class PermissionTest < ActiveSupport::TestCase
   test "should require resource_type" do
     @permission.resource_type = nil
     assert_not @permission.valid?
-    assert_includes @permission.errors[:resource_type], "can't be blank"
+    assert @permission.errors[:resource_type].present?
   end
 
   test "should require action" do
     @permission.action = nil
     assert_not @permission.valid?
-    assert_includes @permission.errors[:action], "can't be blank"
+    assert @permission.errors[:action].present?
   end
 
   test "should validate resource_type inclusion" do
     @permission.resource_type = "InvalidType"
     assert_not @permission.valid?
-    assert_includes @permission.errors[:resource_type], "is not included in the list"
+    assert @permission.errors.where(:resource_type, :inclusion).any?
   end
 
   test "should validate action inclusion" do
     @permission.action = "invalid_action"
     assert_not @permission.valid?
-    assert_includes @permission.errors[:action], "is not included in the list"
+    assert @permission.errors.where(:action, :inclusion).any?
   end
 
   test "should require unique combination of resource_type and action" do
@@ -39,7 +39,7 @@ class PermissionTest < ActiveSupport::TestCase
     @permission.resource_type = "User"
     @permission.action = "read"
     assert_not @permission.valid?
-    assert_includes @permission.errors[:resource_type], "has already been taken"
+    assert @permission.errors.where(:resource_type, :taken).any?
   end
 
   test "should allow same action for different resource_types" do

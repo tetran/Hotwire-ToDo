@@ -10,7 +10,8 @@ module Projects
           format.turbo_stream
         else
           format.turbo_stream do
-            view = { partial: "shared/simple_error_message", locals: { message: "Failed" } }
+            message = t("controllers.projects/members.create.failure")
+            view = { partial: "shared/simple_error_message", locals: { message: } }
             render turbo_stream: turbo_stream.replace("project_member_error", view),
                    status: :unprocessable_content
           end

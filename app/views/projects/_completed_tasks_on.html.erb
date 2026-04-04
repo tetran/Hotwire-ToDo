@@ -4,11 +4,11 @@
     <%= link_to tasks_completes_path(project_id: @project.id),
                 class: "completed-tasks__action-link",
                 data: { turbo_frame: "completed-tasks" } do %>
-      <span>Hide completed tasks</span>
+      <span><%= t("projects.completed_tasks_on.hide") %></span>
       <span class="material-symbols-outlined">expand_less</span>
     <% end %>
   </div>
 <% else %>
-  <%= render partial: "shared/notification", locals: { status: :warning, message: "There are no completed tasks." } %>
+  <%= render partial: "shared/notification", locals: { status: :warning, message: t("projects.completed_tasks_on.empty") } %>
   <%= render "projects/completed_tasks_off" %>
 <% end %>

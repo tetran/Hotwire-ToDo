@@ -8,10 +8,10 @@ class TaskFlowTest < ApplicationSystemTestCase
     open_project_menu
     click_link "Test Project Two"
 
-    click_button "Add Task"
+    click_button I18n.t("tasks.add_task_btn.add_task")
     task_name = "Write system tests"
     within("turbo-frame#new_task") do
-      fill_in "Task name", with: task_name
+      fill_in I18n.t("tasks.form.task_name"), with: task_name
       find(".task-form__submit").click
     end
 

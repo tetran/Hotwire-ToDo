@@ -1,5 +1,5 @@
 <main class="auth-form">
-  <h1 class="auth-form__title">Sign up</h1>
+  <h1 class="auth-form__title"><%= t(".title") %></h1>
 
   <%= render_errors_for @user %>
 
@@ -15,8 +15,8 @@
     </div>
 
     <div class="auth-form__actions">
-      <%= form.submit "Sign up", class: "primary" %>
+      <%= form.submit t(".submit"), class: "primary" %>
     </div>
   <% end %>
-  <p>Already signed up? <%= link_to "Login", login_path %></p>
+  <p><%= t(".already_signed_up") %> <%= link_to t(".login"), login_path %></p>
 </main>

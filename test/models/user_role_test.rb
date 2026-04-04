@@ -32,13 +32,13 @@ class UserRoleTest < ActiveSupport::TestCase
   test "should require user" do
     @user_role.user = nil
     assert_not @user_role.valid?
-    assert_includes @user_role.errors[:user], "must exist"
+    assert @user_role.errors[:user].any?
   end
 
   test "should require role" do
     @user_role.role = nil
     assert_not @user_role.valid?
-    assert_includes @user_role.errors[:role], "must exist"
+    assert @user_role.errors[:role].any?
   end
 
   test "should require unique combination of user and role" do
@@ -46,7 +46,7 @@ class UserRoleTest < ActiveSupport::TestCase
     duplicate_user_role = UserRole.new(user: @user, role: @role)
 
     assert_not duplicate_user_role.valid?
-    assert_includes duplicate_user_role.errors[:user_id], "has already been taken"
+    assert duplicate_user_role.errors.where(:user_id, :taken).any?
   end
 
   test "should allow same user with different roles" do

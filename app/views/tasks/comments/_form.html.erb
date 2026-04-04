@@ -1,9 +1,9 @@
 <div class="task-comments__form">
   <%= render_errors_for @comment %>
   <%= form_with model: [@comment.task, @comment] do |f| %>
-    <%= f.text_area :content, class: "task-comments__text-area", rows: 2, placeholder: "Comment", autofocus: true %>
+    <%= f.text_area :content, class: "task-comments__text-area", rows: 2, placeholder: t("tasks.comments.form.comment"), autofocus: true %>
     <div class="form-actions task-comments__actions">
-      <%= link_to "Cancel", task_path(@comment.task), class: "btn task-comments__cancel" %>
+      <%= link_to t("tasks.comments.form.cancel"), task_path(@comment.task), class: "btn task-comments__cancel" %>
       <%= f.submit class: "task-comments__submit primary" %>
     </div>
   <% end %>

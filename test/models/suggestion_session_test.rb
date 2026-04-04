@@ -40,7 +40,7 @@ class SuggestionSessionTest < ActiveSupport::TestCase
   test "invalid without goal" do
     session = SuggestionSession.new(project: @project, requested_by: @user)
     assert_not session.valid?
-    assert_includes session.errors[:goal], "can't be blank"
+    assert session.errors.added?(:goal, :blank)
   end
 
   test "invalid with goal exceeding 100 characters" do

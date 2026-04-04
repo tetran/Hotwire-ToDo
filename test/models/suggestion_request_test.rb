@@ -103,6 +103,6 @@ class SuggestionRequestTest < ActiveSupport::TestCase
   test "invalid without suggestion_session" do
     request = SuggestionRequest.new(raw_request: "{}")
     assert_not request.valid?
-    assert_includes request.errors[:suggestion_session], "must exist"
+    assert request.errors[:suggestion_session].any?
   end
 end

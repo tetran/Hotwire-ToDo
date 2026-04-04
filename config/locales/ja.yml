@@ -31,16 +31,44 @@ ja:
   activerecord:
     attributes:
       user:
+        name: "ユーザー名"
         email: "メールアドレス"
         password_challenge: "現在のパスワード"
         password: "パスワード"
         password_confirmation: "パスワード（確認）"
         totp: "二要素認証"
+        avatar: "アバター"
+        time_zone: "タイムゾーン"
+        locale: "言語"
+      task:
+        name: "タスク名"
+        description: "説明"
+        due_date: "期限日"
+        start_date: "開始日"
+      project:
+        name: "プロジェクト名"
+      comment:
+        body: "コメント"
+      password_reset:
+        email: "メールアドレス"
+      suggestion_session:
+        goal: "目標"
+        context: "背景"
+        start_date: "開始日"
+        due_date: "期限日"
     errors:
       messages:
         invalid: "が不正です"
         blank: "を入力してください"
+        inclusion: "は一覧にありません"
+        taken: "はすでに使用されています"
+        required: "を入力してください"
         too_short: "は%{count}文字以上で入力してください"
+        too_long: "は%{count}文字以内で入力してください"
+        record_invalid: "バリデーションに失敗しました: %{errors}"
+        not_a_number: "は数値で入力してください"
+        greater_than_or_equal_to: "は%{count}以上の値にしてください"
+        less_than_or_equal_to: "は%{count}以下の値にしてください"
         too_many_requests: "リクエスト数の上限に達しました。しばらく時間をおいてから再度お試しください。"
       models:
         user:
@@ -87,6 +115,236 @@ ja:
     write: "編集"
     delete: "削除"
     manage: "管理"
+  sessions:
+    new:
+      title: "ログイン"
+      submit: "ログイン"
+      no_account: "アカウントをお持ちでない方は"
+      sign_up: "新規登録"
+      forgot_password: "パスワードをお忘れの方は"
+      reset_password: "パスワードをリセット"
+  users:
+    new:
+      title: "新規登録"
+      submit: "新規登録"
+      already_signed_up: "すでにアカウントをお持ちの方は"
+      login: "ログイン"
+    user_display:
+      title: "ユーザー情報"
+      save_notice: "変更を保存するには「保存」ボタンをクリックしてください。"
+      user_name: "ユーザー名"
+      select_avatar: "新しいアバターを選択"
+      change_email: "メールアドレスを変更"
+      change_password: "パスワードを変更"
+      two_fa_setting: "二要素認証設定"
+      cancel: "キャンセル"
+  password_resets:
+    new:
+      title: "パスワードリセット"
+      submit: "パスワードをリセット"
+      back_to_login: "ログインに戻る"
+    edit:
+      title: "パスワードリセット"
+      submit: "パスワードをリセット"
+      back_to_login: "ログインに戻る"
+  totp:
+    challenges:
+      new:
+        title: "ログイン"
+        instruction: "スマートフォンの認証アプリを開き、表示される6桁のコードを入力してください："
+        submit: "確認"
+        back_to_login: "ログインに戻る"
+    settings:
+      show:
+        title: "二要素認証"
+        replace_title: "既存の二要素認証設定を置き換えますか？"
+        replace_description: "アカウントはすでに二要素認証で保護されています。新しいスマートフォンや認証アプリに切り替える場合は、設定を置き換えることができます。"
+        replace_warning: "続行しますか？既存の二要素認証設定は使用できなくなります。"
+        replace_button: "二要素認証を置き換え"
+        upgrade_title: "二要素認証でセキュリティを強化"
+        step1_title: "ステップ1: 認証アプリを入手"
+        step1_description: "まず、スマートフォンに二要素認証アプリが必要です。"
+        step1_skip: "すでにお持ちの場合は、ステップ2へお進みください。"
+        step1_recommend: "お持ちでない場合は、Microsoft Authenticatorをお勧めします"
+        step2_title: "ステップ2: スキャンしてコードを入力"
+        step2_description: "認証アプリを開き、「QRコードをスキャン」または「+」をタップし、下のQRコードにスマートフォンのカメラを向けてください。"
+        qr_caption: "カメラをここに向けてください"
+        code_instruction: "カメラでスキャンすると、アプリが6桁のコードを生成します。ここに入力してください："
+        cancel: "キャンセル"
+  projects:
+    header:
+      add_project: "プロジェクトを追加"
+      search_placeholder: "タスクを検索..."
+      members: "メンバー"
+      greeting: "こんにちは、%{name} ！"
+      setting: "設定"
+      logout: "ログアウト"
+      confirm_archive: "このプロジェクトをアーカイブしますか？"
+      confirm_logout: "ログアウトしますか？"
+    form:
+      edit_project: "プロジェクトを編集"
+      new_project: "新規プロジェクト"
+      project_name: "プロジェクト名"
+      cancel: "キャンセル"
+    member_row:
+      you: "自分"
+      confirm_leave: "プロジェクトから退出しますか？"
+      confirm_remove: "%{name}をプロジェクトから削除しますか？"
+    members:
+      form:
+        email: "メールアドレス"
+        add: "追加"
+    completed_tasks_off:
+      show: "完了したタスクを表示"
+    completed_tasks_on:
+      hide: "完了したタスクを非表示"
+      empty: "完了したタスクはありません。"
+  tasks:
+    show:
+      comments: "コメント"
+    new:
+      manual: "手動"
+      ask_ai: "AIに聞く"
+    form:
+      task_name: "タスク名"
+      description: "説明"
+      cancel: "キャンセル"
+    task:
+      confirm_delete: "本当に削除しますか？"
+    add_task_btn:
+      add_task: "タスクを追加"
+    ask_ai:
+      goal: "目標"
+      context: "背景"
+      cancel: "キャンセル"
+      suggest: "提案する"
+      patience: "少し時間がかかる場合があります。しばらくお待ちください。"
+    suggestions:
+      title: "提案"
+      task_name: "タスク名"
+      description: "説明"
+      create_tasks: "タスクを作成"
+    assignees:
+      unassign: "割り当て解除"
+      you: "自分"
+    searches:
+      index:
+        results: "「%{query}」の検索結果: %{count}件"
+        show_completed: "完了を表示"
+        no_tasks_found: "タスクが見つかりません。"
+    comments:
+      form:
+        comment: "コメント"
+        cancel: "キャンセル"
+      comment:
+        confirm_delete: "本当に削除しますか？"
+      add_comment:
+        comment: "コメント"
+  emails:
+    edit:
+      title: "メールアドレスの変更"
+      not_verified: "メールアドレスが確認されていません。メールアドレスを確認してください。"
+      verify_email: "メールアドレスを確認"
+      new_email: "新しいメールアドレス"
+      current_password: "現在のパスワード"
+      cancel: "キャンセル"
+      submit: "メールアドレスを変更"
+  passwords:
+    edit:
+      title: "パスワードの変更"
+      current_password: "現在のパスワード"
+      new_password: "新しいパスワード"
+      confirm_password: "新しいパスワード（確認）"
+      cancel: "キャンセル"
+  user_mailer:
+    email_verification:
+      subject: "メールアドレスの確認"
+      greeting: "こんにちは、"
+      instruction: "メールアドレスを確認してください。"
+      action: "メールアドレスを確認する"
+    password_reset:
+      subject: "パスワードのリセット"
+      greeting: "こんにちは、"
+      instruction: "パスワードをリセットしてください。"
+      action: "パスワードをリセットする"
+  controllers:
+    sessions:
+      create:
+        success: "ログインしました！"
+        failure: "メールアドレスまたはパスワードが正しくありません"
+    users:
+      create:
+        success: "ようこそ！アカウント登録が完了しました！"
+      update:
+        success: "プロフィールを更新しました！"
+    passwords:
+      update:
+        success: "パスワードを更新しました。"
+    password_resets:
+      create:
+        success: "パスワードリセットの手順をメールで送信しました"
+      update:
+        success: "パスワードを更新しました。"
+      invalid_token: "パスワードリセットリンクが無効です"
+    projects:
+      create:
+        success: "プロジェクトを作成しました。"
+      update:
+        success: "プロジェクトを更新しました。"
+    projects/archives:
+      create:
+        success: "プロジェクト「%{name}」をアーカイブしました。"
+      destroy:
+        success: "プロジェクト「%{name}」のアーカイブを解除しました。"
+    projects/members:
+      create:
+        failure: "追加に失敗しました"
+        added: "「%{name}」をプロジェクトに追加しました！"
+      destroy:
+        removed: "「%{name}」をプロジェクトから削除しました！"
+    emails:
+      update:
+        success: "メールアドレスを更新しました。"
+    email_verifications:
+      show:
+        success: "メールアドレスを確認しました！"
+      create:
+        success: "確認メールを送信しました。受信トレイをご確認ください。"
+      invalid_token: "メール確認リンクが無効です"
+    totp/challenges:
+      create:
+        success: "ログインしました！"
+        invalid_code: "コードが正しくありません"
+        invalid_token: "認証リンクが無効です"
+    totp/settings:
+      create:
+        success: "二要素認証を有効にしました。"
+        invalid_code: "コードが正しくありません"
+      update:
+        success: "二要素認証の設定をリセットしました。"
+    tasks:
+      create:
+        success: "タスクを作成しました。"
+      update:
+        success: "タスクを更新しました。"
+      destroy:
+        success: "タスクを削除しました。"
+    tasks/comments:
+      create:
+        success: "コメントを投稿しました。"
+      update:
+        success: "コメントを更新しました。"
+      destroy:
+        success: "コメントを削除しました。"
+        failure: "コメントを削除できませんでした。"
+    tasks/completes:
+      create:
+        success: "「%{name}」を完了しました！"
+      destroy:
+        success: "「%{name}」を未完了に戻しました。"
+    tasks/batches:
+      create:
+        success: "%{count}件のタスクを作成しました。"
   suggestions:
     no_config: "タスク提案は現在利用できません。管理者にお問い合わせください。"
     llm_error: "提案を取得できませんでした。しばらくしてからもう一度お試しください。"

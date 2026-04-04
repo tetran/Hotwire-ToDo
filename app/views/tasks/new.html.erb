@@ -1,8 +1,8 @@
 <%= turbo_frame_tag @task do %>
   <div data-controller="tabs" class="tab-base new-task">
     <div role="tablist" class="tab-tabs">
-      <button role="tab" data-action="click->tabs#changeTab" data-tabs-target="tab" data-panel="form1" class="tab <%= @show_suggestion ? "" : "active" %>">Manual</button>
-      <button role="tab" data-action="click->tabs#changeTab" data-tabs-target="tab" data-panel="form2" class="tab <%= @show_suggestion ? "active" : "" %>">Ask AI</button>
+      <button role="tab" data-action="click->tabs#changeTab" data-tabs-target="tab" data-panel="form1" class="tab <%= @show_suggestion ? "" : "active" %>"><%= t("tasks.new.manual") %></button>
+      <button role="tab" data-action="click->tabs#changeTab" data-tabs-target="tab" data-panel="form2" class="tab <%= @show_suggestion ? "active" : "" %>"><%= t("tasks.new.ask_ai") %></button>
     </div>
     <%= render "tasks/form", task: @task %>
     <%= render "tasks/ask_ai" %>

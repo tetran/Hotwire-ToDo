@@ -1,9 +1,9 @@
 <main class="auth-form">
-  <h1 class="auth-form__title">Login</h1>
+  <h1 class="auth-form__title"><%= t(".title") %></h1>
   <%= form_with(url: totp_challenge_path) do |form| %>
     <div class="auth-form__field">
       <%= form.label :code do %>
-        <h4>Open the 2FA authenticator app on your phone and type the six digit code below:</h4>
+        <h4><%= t(".instruction") %></h4>
       <% end %>
       <% if @err_message.present? %>
         <ul class="form__error">
@@ -15,8 +15,8 @@
 
     <div class="auth-form__actions">
       <%= form.hidden_field :token, value: @token %>
-      <%= form.submit "Verify", class: "primary" %>
+      <%= form.submit t(".submit"), class: "primary" %>
     </div>
   <% end %>
-  <p><%= link_to "Back to login", login_path %></p>
+  <p><%= link_to t(".back_to_login"), login_path %></p>
 </main>

@@ -3,13 +3,17 @@ class UserMailer < ApplicationMailer
     @user = params[:user]
     @sid = @user.generate_token_for(:email_verification)
 
-    mail to: @user.email, subject: "Verify your email"
+    I18n.with_locale(@user.locale) do
+      mail to: @user.email, subject: t(".subject")
+    end
   end
 
   def password_reset
     @user = params[:user]
     @sid = @user.generate_token_for(:password_reset)
 
-    mail to: @user.email, subject: "Reset your password"
+    I18n.with_locale(@user.locale) do
+      mail to: @user.email, subject: t(".subject")
+    end
   end
 end

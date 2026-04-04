@@ -4,9 +4,9 @@
     <div class="form-item-inline">
       <div class="project-members__form-item form-item-inline__input">
         <%= label_tag :email, "", class: "visually-hidden" %>
-        <%= text_field_tag :email, "", class: "project-members__form-input", placeholder: "Email" %>
+        <%= text_field_tag :email, "", class: "project-members__form-input", placeholder: t("projects.members.form.email") %>
       </div>
-      <%= submit_tag "Add", class: "form-item-inline__button project-member__submit--button primary" %>
+      <%= submit_tag t("projects.members.form.add"), class: "form-item-inline__button project-member__submit--button primary" %>
     </div>
   <% end %>
 </div>

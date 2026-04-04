@@ -12,10 +12,10 @@ module Totp
 
       if @totp.verify(params[:code])
         sign_in(@user)
-        redirect_to project_url(@user.inbox_project.id), success: "Logged in!"
+        redirect_to project_url(@user.inbox_project.id), success: t("controllers.totp/challenges.create.success")
       else
         @token = @user.generate_token_for(:totp_verification)
-        @err_message = "Invalid code"
+        @err_message = t("controllers.totp/challenges.create.invalid_code")
         render :new, status: :unprocessable_content
       end
     end
@@ -25,7 +25,7 @@ module Totp
       def set_user_from_token
         @user = User.find_by_token_for!(:totp_verification, params[:token])
       rescue StandardError
-        redirect_to root_path, error: "That password reset link is invalid"
+        redirect_to root_path, error: t("controllers.totp/challenges.create.invalid_token")
       end
   end
 end

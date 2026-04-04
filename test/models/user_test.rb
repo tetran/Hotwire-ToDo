@@ -261,6 +261,23 @@ class UserTest < ActiveSupport::TestCase
     assert_equal user1.id, results.first.id
   end
 
+  # locale validation
+  test "should accept valid locale ja" do
+    @user.locale = "ja"
+    assert @user.valid?
+  end
+
+  test "should accept valid locale en" do
+    @user.locale = "en"
+    assert @user.valid?
+  end
+
+  test "should reject invalid locale" do
+    @user.locale = "fr"
+    assert_not @user.valid?
+    assert @user.errors[:locale].present?
+  end
+
   test "non_admin_accounts works chained with search" do
     regular1 = User.create!(email: "search_reg@test.com", password: "password123", name: "Search Regular")
     User.create!(email: "other_reg@test.com", password: "password123", name: "Other Regular")

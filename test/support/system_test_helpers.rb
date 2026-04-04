@@ -1,9 +1,9 @@
 module SystemTestHelpers
   def sign_in_as(user)
     visit login_path
-    fill_in "Email", with: user.email
-    fill_in "Password", with: "HoboTest!Str0ng#2024"
-    click_button "Login"
+    fill_in I18n.t("activerecord.attributes.user.email"), with: user.email
+    fill_in I18n.t("activerecord.attributes.user.password"), with: "HoboTest!Str0ng#2024"
+    click_button I18n.t("sessions.new.submit")
   end
 
   def open_project_menu

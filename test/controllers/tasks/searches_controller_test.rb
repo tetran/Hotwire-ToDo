@@ -30,7 +30,7 @@ module Tasks
       login_as(users(:admin_user))
       get tasks_searches_path, params: { q: @task.name }
       assert_response :success
-      assert_match(/0 results/, response.body)
+      assert_includes(response.body, I18n.t("tasks.searches.index.results", count: 0, query: @task.name))
     end
 
     test "should filter completed tasks" do
@@ -39,7 +39,7 @@ module Tasks
 
       get tasks_searches_path, params: { q: @task.name, completed: "false" }
       assert_response :success
-      assert_match(/0 results/, response.body)
+      assert_includes(response.body, I18n.t("tasks.searches.index.results", count: 0, query: @task.name))
 
       get tasks_searches_path, params: { q: @task.name, completed: "true" }
       assert_response :success
