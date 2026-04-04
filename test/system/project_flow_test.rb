@@ -9,10 +9,10 @@ class ProjectFlowTest < ApplicationSystemTestCase
     assert_text "Test Project One"
     assert_text "Test Project Two"
 
-    click_link "Add project"
+    click_link I18n.t("projects.header.add_project")
     project_name = "Client Onboarding"
     within("dialog.modal-base") do
-      fill_in "Project name", with: project_name
+      fill_in I18n.t("projects.form.project_name"), with: project_name
       find(".project-form__submit").click
     end
 
@@ -25,7 +25,7 @@ class ProjectFlowTest < ApplicationSystemTestCase
 
     updated_name = "Client Onboarding v2"
     within("dialog.modal-base") do
-      fill_in "Project name", with: updated_name
+      fill_in I18n.t("projects.form.project_name"), with: updated_name
       find(".project-form__submit").click
     end
 
