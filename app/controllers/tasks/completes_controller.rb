@@ -9,7 +9,11 @@ module Tasks
     def index
       return unless params[:show]
 
-      @completed_tasks = @project.tasks.completed.with_rich_text_description_and_embeds.order(updated_at: :desc)
+      @completed_tasks = @project
+                         .tasks.root_tasks.completed
+                         .includes(:subtasks)
+                         .with_rich_text_description_and_embeds
+                         .order(updated_at: :desc)
     end
 
     def create

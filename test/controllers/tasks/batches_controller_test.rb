@@ -105,6 +105,45 @@ module Tasks
       end
     end
 
+    test "creates parent task from session goal with subtasks" do
+      assert_difference "Task.count", 3 do # 1 parent + 2 subtasks
+        post tasks_batches_path, params: {
+          project_id: @project.id,
+          suggestion_session_id: @session.id,
+          suggestion_response_id: @response_record.id,
+          tasks: {
+            @suggested_tasks[0].id => { checked: "1", name: "Task A", description: "Desc A", due_date: Date.current },
+            @suggested_tasks[1].id => { checked: "1", name: "Task B", description: "Desc B", due_date: Date.current },
+            @suggested_tasks[2].id => { checked: "0", name: "Task C", description: "Desc C", due_date: Date.current },
+          },
+        }, as: :turbo_stream
+      end
+
+      parent = Task.find_by(name: "Test goal")
+      assert_not_nil parent
+      assert_nil parent.parent_id
+      assert_equal @project, parent.project
+      assert_equal 2, parent.subtasks.count
+      assert_equal ["Task A", "Task B"], parent.subtasks.order(:created_at).pluck(:name)
+    end
+
+    test "truncates parent task name from goal exceeding 100 chars" do
+      long_goal = "a" * 100 # SuggestionSession validates max 100
+      @session.update!(goal: long_goal)
+      assert_difference "Task.count", 2 do # 1 parent + 1 subtask
+        post tasks_batches_path, params: {
+          project_id: @project.id,
+          suggestion_session_id: @session.id,
+          tasks: {
+            @suggested_tasks[0].id => { checked: "1", name: "Task A", description: "Desc A", due_date: Date.current },
+          },
+        }, as: :turbo_stream
+      end
+
+      parent = Task.where(parent_id: nil).order(:created_at).last
+      assert_equal 100, parent.name.length
+    end
+
     test "outcome recording is idempotent" do
       SuggestionOutcomeService.record_adoption(
         suggestion_response: @response_record,

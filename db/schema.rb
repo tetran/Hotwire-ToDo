@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_04_013348) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_04_121127) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -250,10 +250,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_04_013348) do
     t.bigint "created_by_id"
     t.date "due_date", null: false
     t.string "name", null: false
+    t.integer "parent_id"
     t.bigint "project_id", null: false
     t.datetime "updated_at", null: false
     t.index ["assignee_id"], name: "index_tasks_on_assignee_id"
     t.index ["created_by_id"], name: "index_tasks_on_created_by_id"
+    t.index ["parent_id"], name: "index_tasks_on_parent_id"
     t.index ["project_id"], name: "index_tasks_on_project_id"
   end
 
@@ -305,6 +307,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_04_013348) do
   add_foreign_key "suggestion_sessions", "projects"
   add_foreign_key "suggestion_sessions", "users", column: "requested_by_id"
   add_foreign_key "tasks", "projects"
+  add_foreign_key "tasks", "tasks", column: "parent_id", on_delete: :cascade
   add_foreign_key "tasks", "users", column: "assignee_id"
   add_foreign_key "tasks", "users", column: "created_by_id"
   add_foreign_key "user_roles", "roles"

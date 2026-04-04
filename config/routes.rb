@@ -22,6 +22,7 @@ Rails.application.routes.draw do
     resources :searches, only: [:index]
   end
   resources :tasks, only: %i[show new create edit update destroy] do
+    resources :subtasks, only: %i[new create], module: :tasks
     resources :comments, only: %i[new create edit update destroy], module: :tasks
     resource :complete, only: %i[create destroy], module: :tasks
     resource :assign, only: %i[create destroy], module: :tasks

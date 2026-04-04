@@ -71,6 +71,12 @@ ja:
         less_than_or_equal_to: "は%{count}以下の値にしてください"
         too_many_requests: "リクエスト数の上限に達しました。しばらく時間をおいてから再度お試しください。"
       models:
+        task:
+          attributes:
+            parent_id:
+              nested_too_deep: "サブタスクにサブタスクは作成できません"
+            project_id:
+              must_match_parent: "は親タスクと同じプロジェクトにしてください"
         user:
           attributes:
             email:
@@ -202,6 +208,8 @@ ja:
   tasks:
     show:
       comments: "コメント"
+      subtasks: "サブタスク"
+      add_subtask: "サブタスクを追加"
     new:
       manual: "手動"
       ask_ai: "AIに聞く"

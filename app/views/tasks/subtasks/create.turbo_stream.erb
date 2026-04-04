@@ -1,0 +1,12 @@
+<%= turbo_stream.append "show-subtasks-#{@task.id}", partial: "tasks/subtask", locals: { subtask: @subtask } %>
+<%= turbo_stream.update "show-subtasks-header-#{@task.id}" do %>
+  <h4 class="show-task__subtasks-title">
+    <%= t("tasks.show.subtasks") %> (<%= @task.subtasks.count(&:completed?) %>/<%= @task.subtasks.size %>)
+  </h4>
+<% end %>
+<%= turbo_stream.update "new_subtask" do %>
+  <%= button_to new_task_subtask_path(@task), class: "add-task primary", method: :get, data: { turbo_frame: "new_subtask" } do %>
+    <%= t("tasks.show.add_subtask") %>
+  <% end %>
+<% end %>
+<%= turbo_stream.update @task, partial: "tasks/task", locals: { task: @task.reload } %>

@@ -15,7 +15,7 @@ module Tasks
         sanitized_query = ActiveRecord::Base.sanitize_sql_like(@query)
         sql = "LOWER(tasks.name) LIKE LOWER(:q) OR LOWER(action_text_rich_texts.body) LIKE LOWER(:q)"
         scope
-          .preload(:project, :rich_text_description)
+          .preload(:project, :parent, :rich_text_description)
           .left_joins(:rich_text_description)
           .where(sql, q: "%#{sanitized_query.downcase}%")
           .order(updated_at: :desc)

@@ -17,6 +17,35 @@
       </div>
     <% end %>
 
+    <% if @task.subtask? %>
+      <div class="show-task__parent">
+        <span class="material-symbols-outlined">subdirectory_arrow_right</span>
+        <%= link_to @task.parent.name, @task.parent, data: { turbo_frame: "modal" } %>
+      </div>
+    <% end %>
+
+    <% unless @task.subtask? %>
+      <div class="show-task__subtasks">
+        <div id="show-subtasks-header-<%= @task.id %>">
+          <% if @subtasks.any? %>
+            <h4 class="show-task__subtasks-title">
+              <%= t("tasks.show.subtasks") %> (<%= @subtasks.count(&:completed?) %>/<%= @subtasks.size %>)
+            </h4>
+          <% end %>
+        </div>
+        <div id="show-subtasks-<%= @task.id %>" class="show-task__subtasks-list">
+          <%= render partial: "tasks/subtask", collection: @subtasks, as: :subtask %>
+        </div>
+        <% unless @task.completed? %>
+          <%= turbo_frame_tag "new_subtask" do %>
+            <%= button_to new_task_subtask_path(@task), class: "add-task primary", method: :get, data: { turbo_frame: "new_subtask" } do %>
+              <%= t("tasks.show.add_subtask") %>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+
     <div class="task-comments">
       <div class="task-comments__history">
         <% if @comments.present? %>

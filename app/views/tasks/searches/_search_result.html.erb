@@ -8,6 +8,12 @@
         <span class="search-result__description"><%= truncate(task.description.to_plain_text, length: 50) %></span>
       <% end %>
     </div>
+    <% if task.subtask? %>
+      <span class="search-result__parent">
+        <span class="material-symbols-outlined">subdirectory_arrow_right</span>
+        <%= task.parent.name %>
+      </span>
+    <% end %>
     <span class="search-result__project"># <%= task.project.display_name %></span>
   <% end %>
 </li>
