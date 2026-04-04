@@ -147,7 +147,7 @@ class SuggestionLlmServiceTest < ActiveSupport::TestCase
     end
   end
 
-  # === Temperature changes across retries ===
+  # === Temperature and max_tokens across retries ===
 
   test "uses decreasing temperature across retries" do
     temperatures = []
@@ -166,6 +166,17 @@ class SuggestionLlmServiceTest < ActiveSupport::TestCase
     assert_equal 0.7, temperatures[0]
     assert_equal 0.3, temperatures[1]
     assert_equal 0.3, temperatures[2]
+  end
+
+  test "passes max_tokens to LLM client" do
+    mock_client = build_mock_client
+    mock_client.expects(:chat).once.with do |args|
+      args[:max_tokens] == 8192
+    end.returns(@valid_response)
+    LlmClientFactory.stubs(:create_client_from_model).returns(mock_client)
+
+    service = SuggestionLlmService.new(entry: @entry, session: @session, variables: @variables)
+    service.call
   end
 
   # === Instrumentation ===
