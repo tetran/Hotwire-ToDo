@@ -9,5 +9,4 @@
     <%= t("tasks.show.add_subtask") %>
   <% end %>
 <% end %>
-<%= turbo_stream.append "subtasks-#{@task.id}", partial: "tasks/subtask", locals: { subtask: @subtask } %>
 <%= turbo_stream.update @task, partial: "tasks/task", locals: { task: @task.reload } %>

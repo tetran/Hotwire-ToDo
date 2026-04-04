@@ -56,12 +56,9 @@ class TaskFlowTest < ApplicationSystemTestCase
     assert_no_selector "dialog.modal-base[open]"
 
     # Complete parent task — should cascade
-    parent_frame = first("turbo-frame#task_#{parent.id}")
-    within(parent_frame) do
-      first(".task-card__complete-check").click
-    end
+    find("turbo-frame#task_#{parent.id} .task-card__complete-check", match: :first).click
 
-    assert_no_selector "turbo-frame#task_#{parent.id} > .task-card:not(.task-card--subtask)"
+    assert_no_selector "turbo-frame#task_#{parent.id}"
 
     # Verify cascade
     assert parent.reload.completed?
