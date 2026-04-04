@@ -96,8 +96,13 @@ module Api
             reset_session
             session[:user_id] = user_id if user_id
             admin_sign_in(user)
+            record_admin_login(user)
             loaded_user = User.includes(roles: :permissions).find(user.id)
             render json: { user: user_json(loaded_user), csrf_token: form_authenticity_token }
+          end
+
+          def record_admin_login(user)
+            user.admin_login_histories.create(ip_address: request.remote_ip, user_agent: request.user_agent)
           end
 
           def user_json(user)

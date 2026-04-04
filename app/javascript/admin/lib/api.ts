@@ -16,6 +16,7 @@ export interface User {
   name: string
   created_at: string
   updated_at: string
+  last_sign_in_at?: string | null
   roles?: { id: number; name: string }[]
 }
 
@@ -180,6 +181,11 @@ export interface CreateAdminAccountInput {
   role_ids: number[]
 }
 
+export interface UpdateAdminAccountInput {
+  email: string
+  name: string
+}
+
 export type PermissionMatrix = Record<ResourceType, Record<Action, boolean>>
 
 export interface AdminAccountDetail extends User {
@@ -197,6 +203,8 @@ export const adminAccountsApi = {
   get: (id: number) => api.get<AdminAccountDetail>(`/admin_accounts/${id}`),
   create: (data: CreateAdminAccountInput) =>
     api.post<User>('/admin_accounts', { admin_account: data }),
+  update: (id: number, data: UpdateAdminAccountInput) =>
+    api.patch<User>(`/admin_accounts/${id}`, { admin_account: data }),
   delete: (id: number) => api.delete<void>(`/admin_accounts/${id}`),
   revoke: (id: number) => api.post<void>(`/admin_accounts/${id}/revocation`),
   getRoles: (id: number) => api.get<Role[]>(`/admin_accounts/${id}/roles`),

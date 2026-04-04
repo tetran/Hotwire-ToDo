@@ -111,20 +111,21 @@ export const AdminAccountsIndexPage = () => {
               <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">User</th>
               <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">Role</th>
               <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">Created At</th>
+              <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">Last Login</th>
               <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
             {loading && accounts.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-5 py-10 text-center text-sm text-slate-400">
+                <td colSpan={6} className="px-5 py-10 text-center text-sm text-slate-400">
                   Loading...
                 </td>
               </tr>
             )}
             {!loading && accounts.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-5 py-10 text-center text-sm text-slate-400">
+                <td colSpan={6} className="px-5 py-10 text-center text-sm text-slate-400">
                   No admin accounts found
                 </td>
               </tr>
@@ -154,8 +155,21 @@ export const AdminAccountsIndexPage = () => {
                   </div>
                 </td>
                 <td className="px-5 py-3.5 text-xs text-slate-400">{new Date(account.created_at).toLocaleDateString()}</td>
+                <td className="px-5 py-3.5 text-xs text-slate-400">
+                  {account.last_sign_in_at
+                    ? new Date(account.last_sign_in_at).toLocaleDateString()
+                    : <span className="text-slate-300">Never</span>}
+                </td>
                 <td className="px-5 py-3.5">
                   <div className="flex items-center gap-2">
+                    {canWrite && (
+                      <Link
+                        to={`/admin/admin-accounts/${account.id}/edit`}
+                        className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
+                      >
+                        Edit
+                      </Link>
+                    )}
                     {canWrite && (
                       <button
                         onClick={() => handleRevoke(account.id)}

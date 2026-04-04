@@ -225,6 +225,40 @@ module Api
           assert_not_equal first_id, session.id.public_id
         end
 
+        # admin_login_histories
+        test "POST create records login history on successful login" do
+          user = users(:admin_user)
+          assert_difference "AdminLoginHistory.count", 1 do
+            post api_v1_admin_session_path, params: { email: user.email, password: TEST_PASSWORD }, as: :json
+          end
+          assert_response :success
+          history = user.admin_login_histories.last
+          assert_not_nil history
+          assert_in_delta Time.current, history.created_at, 5.seconds
+          assert_not_nil history.ip_address
+        end
+
+        test "POST create records login history after TOTP completion" do
+          user = users(:admin_totp_user)
+          assert_no_difference "AdminLoginHistory.count" do
+            post api_v1_admin_session_path, params: { email: user.email, password: TEST_PASSWORD }, as: :json
+          end
+          assert_response :ok
+          totp = ROTP::TOTP.new(user.totp_secret, issuer: "Hobo Todo")
+          assert_difference "AdminLoginHistory.count", 1 do
+            post api_v1_admin_session_path, params: { totp_code: totp.now }, as: :json
+          end
+          assert_response :success
+          assert_equal 1, user.admin_login_histories.count
+        end
+
+        test "POST create does not record login history on failed login" do
+          assert_no_difference "AdminLoginHistory.count" do
+            post api_v1_admin_session_path, params: { email: "wrong@example.com", password: "wrong" }, as: :json
+          end
+          assert_response :unauthorized
+        end
+
         test "DELETE destroy でログアウト時にセッション ID がローテーションされる" do
           login_as_admin_api(users(:admin_user))
           old_id = session.id.public_id

@@ -46,6 +46,8 @@ class User < ApplicationRecord
   has_many :user_roles, dependent: :destroy
   has_many :roles, through: :user_roles
 
+  has_many :admin_login_histories, dependent: :destroy
+
   before_validation :generate_totp_secret, on: :create
   after_create :create_inbox_project
 
