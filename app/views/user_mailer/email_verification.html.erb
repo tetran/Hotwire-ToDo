@@ -1,5 +1,5 @@
-<p>Hello,</p>
+<p><%= t(".greeting") %></p>
 
-<p>Please verify your email.</p>
+<p><%= t(".instruction") %></p>
 
-<p><%= link_to "Verify email", email_verification_url(@sid) %></p>
+<p><%= link_to t(".action"), email_verification_url(@sid) %></p>

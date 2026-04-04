@@ -6,7 +6,7 @@
           <%=  comment.user.user_name %>
         </div>
         <div class="comment-card__header__date">
-          <%= comment.created_at.strftime("%Y/%m/%d %H:%M") %>
+          <%= l(comment.created_at, format: :long) %>
         </div>
       </div>
       <div class="comment-card__content">
@@ -19,7 +19,7 @@
       <%= link_to edit_task_comment_path(comment.task, comment), class: "comment-card__edit" do %>
         <span class="material-symbols-outlined">edit</span>
       <% end %>
-      <%= button_to task_comment_path(comment.task, comment), method: :delete, data: { turbo_confirm: "Are you sure?" }, class: "comment-card__delete" do %>
+      <%= button_to task_comment_path(comment.task, comment), method: :delete, data: { turbo_confirm: t("tasks.comments.comment.confirm_delete") }, class: "comment-card__delete" do %>
         <span class="material-symbols-outlined">delete</span>
       <% end %>
     </div>

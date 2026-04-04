@@ -1,4 +1,4 @@
-<%= render "shared/modal", options: { base_class: "project-form", header_title: "#{project.persisted? ? "Edit" : "New"} Project" } do %>
+<%= render "shared/modal", options: { base_class: "project-form", header_title: project.persisted? ? t("projects.form.edit_project") : t("projects.form.new_project") } do %>
   <%# TODO: "_top"なくしたい %>
   <%= form_with(model: project, data: { turbo_frame: "_top" }) do |form| %>
     <% if project.errors.any? %>
@@ -7,11 +7,11 @@
 
     <div class="project-form__item task-form__name">
       <%= form.label :name, class: "visually-hidden" %>
-      <%= form.text_field :name, autofocus: true, class: "project-form__name--input", placeholder: "Project name" %>
+      <%= form.text_field :name, autofocus: true, class: "project-form__name--input", placeholder: t("projects.form.project_name") %>
     </div>
 
     <div class="form-actions project-form__actions">
-      <%= button_tag "Cancel", type: "button", class: "btn project-form__cancel", data: { action: "turbo-modal#hideModal" } %>
+      <%= button_tag t("projects.form.cancel"), type: "button", class: "btn project-form__cancel", data: { action: "turbo-modal#hideModal" } %>
       <%= form.submit class: "project-form__submit primary" %>
     </div>
   <% end %>

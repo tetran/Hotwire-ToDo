@@ -11,12 +11,12 @@
 
       <div class="task-suggestion-form__item task-suggestion-form__goal">
         <%= form.label :goal, class: "visually-hidden" %>
-        <%= form.text_field :goal, autofocus: true, class: "task-form__name--input full-width-input", placeholder: "Your goal" %>
+        <%= form.text_field :goal, autofocus: true, class: "task-form__name--input full-width-input", placeholder: t("tasks.ask_ai.goal") %>
       </div>
 
       <div class="task-suggestion-form__item task-suggestion-form__context">
         <%= form.label :context, class: "visually-hidden" %>
-        <%= form.text_area :context, class: "task-form__description--input full-width-input", placeholder: "Context" %>
+        <%= form.text_area :context, class: "task-form__description--input full-width-input", placeholder: t("tasks.ask_ai.context") %>
       </div>
 
       <div class="task-suggestion-form__item task-suggestion-form__start-date">
@@ -31,11 +31,11 @@
 
       <div class="form-actions task-suggestion-form__actions">
         <%= form.hidden_field :project_id %>
-        <%= link_to "Cancel", project_path(@suggestion_session&.project_id || @project&.id), class: "btn btn-light task-suggestion-form__cancel" %>
-        <%= form.submit "Suggest",
+        <%= link_to t("tasks.ask_ai.cancel"), project_path(@suggestion_session&.project_id || @project&.id), class: "btn btn-light task-suggestion-form__cancel" %>
+        <%= form.submit t("tasks.ask_ai.suggest"),
                         class: "task-suggestion-form__submit primary",
                         data: {
-                          confirm: "It may take a little time. Please be patient.",
+                          confirm: t("tasks.ask_ai.patience"),
                           "submit-target": "submit"
                         } %>
       </div>

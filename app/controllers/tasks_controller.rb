@@ -22,7 +22,7 @@ class TasksController < ApplicationController
 
     respond_to do |format|
       if @task.save
-        format.html { redirect_to task_url(@task), success: "Task was successfully created." }
+        format.html { redirect_to task_url(@task), success: t("controllers.tasks.create.success") }
         format.turbo_stream
       else
         set_suggestion_variables
@@ -35,7 +35,7 @@ class TasksController < ApplicationController
   def update
     respond_to do |format|
       if @task.update(task_params)
-        format.html { redirect_to task_url(@task), success: "Task was successfully updated." }
+        format.html { redirect_to task_url(@task), success: t("controllers.tasks.update.success") }
         format.turbo_stream
       else
         format.html { render :edit, status: :unprocessable_content }
@@ -48,7 +48,7 @@ class TasksController < ApplicationController
     @task.destroy!
 
     respond_to do |format|
-      format.html { redirect_to tasks_url, success: "Task was successfully destroyed." }
+      format.html { redirect_to tasks_url, success: t("controllers.tasks.destroy.success") }
       format.turbo_stream
     end
   end

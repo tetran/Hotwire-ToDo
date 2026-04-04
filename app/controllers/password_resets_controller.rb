@@ -12,7 +12,7 @@ class PasswordResetsController < ApplicationController
     @password_reset = PasswordReset.new(params[:password_reset].permit(:email))
     if @password_reset.valid?
       send_password_reset
-      redirect_to login_path, success: "Check your email for reset instructions"
+      redirect_to login_path, success: t("controllers.password_resets.create.success")
     else
       render :new, status: :unprocessable_content
     end
@@ -21,7 +21,7 @@ class PasswordResetsController < ApplicationController
   def update
     @user.assign_attributes(update_params)
     if @user.save(context: :update_password)
-      redirect_to login_path, success: "Password updated successfully."
+      redirect_to login_path, success: t("controllers.password_resets.update.success")
     else
       render :edit, status: :unprocessable_content
     end
@@ -37,7 +37,7 @@ class PasswordResetsController < ApplicationController
     def set_user_from_token
       @user = User.find_by_token_for!(:password_reset, params[:id])
     rescue StandardError
-      redirect_to root_path, error: "That password reset link is invalid"
+      redirect_to root_path, error: t("controllers.password_resets.invalid_token")
     end
 
     def update_params

@@ -2,11 +2,11 @@
   <li class="menu-list__member">
     <% if member == current_user %>
       <div class="menu-list__member-info">
-        <%= user_icon(member) %> You
+        <%= user_icon(member) %> <%= t("projects.member_row.you") %>
       </div>
       <div class="menu-list__member__actions horizontal-actions">
         <% if project.members.length > 1 %>
-          <%= button_to project_member_path(project, member), method: :delete, data: { turbo_confirm: "Are you sure to leave the project?", turbo_frame: "_top" }, class: "" do %>
+          <%= button_to project_member_path(project, member), method: :delete, data: { turbo_confirm: t("projects.member_row.confirm_leave"), turbo_frame: "_top" }, class: "" do %>
             <span class="material-symbols-outlined">exit_to_app</span>
           <% end %>
         <% end %>
@@ -16,7 +16,7 @@
         <%= user_icon(member) %> <%= member.user_name %>
       </div>
       <div class="menu-list__member__actions horizontal-actions">
-        <%= button_to project_member_path(project, member), method: :delete, data: { turbo_confirm: "Are you sure you want to remove #{member.user_name}?" }, class: "" do %>
+        <%= button_to project_member_path(project, member), method: :delete, data: { turbo_confirm: t("projects.member_row.confirm_remove", name: member.user_name) }, class: "" do %>
           <span class="material-symbols-outlined">delete</span>
         <% end %>
       </div>

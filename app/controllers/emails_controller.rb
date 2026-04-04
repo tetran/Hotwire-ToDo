@@ -6,7 +6,7 @@ class EmailsController < ApplicationController
   def update
     respond_to do |format|
       if current_user.update(email_params.merge(verified: false))
-        @message = current_user.email_previously_changed? ? "Email updated successfully." : ""
+        @message = current_user.email_previously_changed? ? t("controllers.emails.update.success") : ""
         format.turbo_stream
       else
         format.html { render :edit, status: :unprocessable_content }

@@ -54,6 +54,7 @@ class User < ApplicationRecord
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, presence: true, length: { minimum: 8 }, on: %i[create update_password]
   validates :password, confirmation: true, on: :update_password
+  validates :locale, inclusion: { in: ->(_) { I18n.available_locales.map(&:to_s) } }
 
   def participating_projects
     # Inboxを最初に表示するため`dedicated`の降順でソート

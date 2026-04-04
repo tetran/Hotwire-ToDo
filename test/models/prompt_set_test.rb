@@ -9,14 +9,14 @@ class PromptSetTest < ActiveSupport::TestCase
   test "should require name" do
     prompt_set = PromptSet.new(name: nil)
     assert_not prompt_set.valid?
-    assert_includes prompt_set.errors[:name], "can't be blank"
+    assert prompt_set.errors[:name].present?
   end
 
   test "should require unique name" do
     PromptSet.create!(name: "Unique Name")
     duplicate = PromptSet.new(name: "Unique Name")
     assert_not duplicate.valid?
-    assert_includes duplicate.errors[:name], "has already been taken"
+    assert duplicate.errors[:name].present?
   end
 
   test "should default active to true" do

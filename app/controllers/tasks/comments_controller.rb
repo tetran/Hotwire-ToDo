@@ -15,7 +15,7 @@ module Tasks
 
       respond_to do |format|
         if @comment.save
-          format.html { redirect_to @task, notice: "Comment was successfully created." }
+          format.html { redirect_to @task, notice: t("controllers.tasks/comments.create.success") }
           format.turbo_stream
         else
           format.html { render :new, status: :unprocessable_content }
@@ -28,7 +28,7 @@ module Tasks
 
       respond_to do |format|
         if @comment.editable_by?(current_user) && @comment.update(comment_params)
-          format.html { redirect_to @task, notice: "Comment was successfully updated." }
+          format.html { redirect_to @task, notice: t("controllers.tasks/comments.update.success") }
           format.turbo_stream
         else
           format.html { render :edit, status: :unprocessable_content }
@@ -41,10 +41,10 @@ module Tasks
 
       respond_to do |format|
         if @comment.editable_by?(current_user) && @comment.destroy
-          format.html { redirect_to @task, notice: "Comment was successfully destroyed." }
+          format.html { redirect_to @task, notice: t("controllers.tasks/comments.destroy.success") }
           format.turbo_stream
         else
-          format.html { redirect_to @task, alert: "Comment could not be destroyed." }
+          format.html { redirect_to @task, alert: t("controllers.tasks/comments.destroy.failure") }
         end
       end
     end

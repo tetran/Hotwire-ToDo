@@ -4,7 +4,7 @@
        data-controller="suggestion-abandonment"
        data-suggestion-abandonment-url-value="<%= tasks_suggestion_abandonment_path(last_request.suggestion_session) %>"
        data-suggestion-abandonment-response-id-value="<%= last_request.response.id %>">
-    <h2 class="task-suggestions-title">Suggestions</h2>
+    <h2 class="task-suggestions-title"><%= t("tasks.suggestions.title") %></h2>
     <%= form_with url: tasks_batches_path,
                   data: { turbo_frame: "_top",
                                   action: "turbo:submit-end->suggestion-abandonment#markSubmitted" } do |batch_form| %>
@@ -17,11 +17,11 @@
             <div class="task-suggestion__main">
               <div class="task-suggestion__name">
                 <%= task_form.label :name, class: "visually-hidden" %>
-                <%= task_form.text_field :name, class: "full-width-input", placeholder: "Task name" %>
+                <%= task_form.text_field :name, class: "full-width-input", placeholder: t("tasks.suggestions.task_name") %>
               </div>
               <div class="task-suggestion__description">
                 <%= task_form.label :description, class: "visually-hidden" %>
-                <%= task_form.text_area :description, class: "full-width-input", rows: 3, placeholder: "Description" %>
+                <%= task_form.text_area :description, class: "full-width-input", rows: 3, placeholder: t("tasks.suggestions.description") %>
               </div>
               <div class="task-suggestion__due-date">
                 <%= task_form.label :due_date %>
@@ -33,7 +33,7 @@
       <% end %>
 
       <div class="form-actions">
-        <%= batch_form.submit "Create tasks", class: "primary" %>
+        <%= batch_form.submit t("tasks.suggestions.create_tasks"), class: "primary" %>
       </div>
     <% end %>
   </div>

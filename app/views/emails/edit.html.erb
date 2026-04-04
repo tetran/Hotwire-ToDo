@@ -1,9 +1,9 @@
 <%= turbo_frame_tag "modal" do %>
-  <%= render "shared/modal", options: { base_class: "show-user", header_title: "Change email" } do %>
+  <%= render "shared/modal", options: { base_class: "show-user", header_title: t("emails.edit.title") } do %>
     <% unless current_user.verified? %>
       <p class="show-user__item__description">
-        Your email is not verified. Please verify your email.
-        <%= button_to "Verify your email", email_verifications_path, class: "", data: { } %>
+        <%= t("emails.edit.not_verified") %>
+        <%= button_to t("emails.edit.verify_email"), email_verifications_path, class: "", data: { } %>
       </p>
       <hr>
     <% end %>
@@ -14,17 +14,17 @@
 
       <div class="show-user__item">
         <%= form.label :email %>
-        <%= form.text_field :email, placeholder: "New Email", class: "full-width-input", data: { } %>
+        <%= form.text_field :email, placeholder: t("emails.edit.new_email"), class: "full-width-input", data: { } %>
       </div>
 
       <div class="show-user__item">
         <%= form.label :password_challenge %>
-        <%= form.password_field :password_challenge, placeholder: "Current Password", class: "full-width-input", data: { } %>
+        <%= form.password_field :password_challenge, placeholder: t("emails.edit.current_password"), class: "full-width-input", data: { } %>
       </div>
 
       <div class="form-actions">
-        <%= link_to "Cancel", user_path, class: "btn", data: { } %>
-        <%= form.submit "Change email", class: "primary" %>
+        <%= link_to t("emails.edit.cancel"), user_path, class: "btn", data: { } %>
+        <%= form.submit t("emails.edit.submit"), class: "primary" %>
       </div>
     <% end %>
   <% end %>

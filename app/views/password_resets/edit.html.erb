@@ -1,5 +1,5 @@
 <main class="auth-form">
-  <h1 class="auth-form__title">Password Reset</h1>
+  <h1 class="auth-form__title"><%= t(".title") %></h1>
   <%= form_with model: @user, url: password_reset_path, method: :patch, data: { } do |form| %>
     <%= render_errors_for @user if @user.errors.any? %>
 
@@ -14,8 +14,8 @@
     </div>
 
     <div class="auth-form__actions">
-      <%= form.submit "Reset Password", class: "primary" %>
+      <%= form.submit t(".submit"), class: "primary" %>
     </div>
   <% end %>
-  <p><%= link_to "Back to login", login_path %></p>
+  <p><%= link_to t(".back_to_login"), login_path %></p>
 </main>

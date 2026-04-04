@@ -3,14 +3,14 @@
     <div class="search-results">
       <div class="search-results__header">
         <span class="search-results__count">
-          <%= @tasks.length %> results for "<%= h(@query) %>"
+          <%= t("tasks.searches.index.results", count: @tasks.length, query: h(@query)) %>
         </span>
         <div class="search-results__filter">
           <%= link_to tasks_searches_path(q: @query, completed: !@show_completed),
                       class: "search-results__filter-toggle",
                       data: { turbo_frame: "search_results" } do %>
             <span class="material-symbols-outlined"><%= @show_completed ? "check_box" : "check_box_outline_blank" %></span>
-            Show completed
+            <%= t("tasks.searches.index.show_completed") %>
           <% end %>
         </div>
       </div>
@@ -21,7 +21,7 @@
         </ul>
       <% else %>
         <div class="search-results__empty">
-          No tasks found.
+          <%= t("tasks.searches.index.no_tasks_found") %>
         </div>
       <% end %>
     </div>

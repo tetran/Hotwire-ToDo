@@ -32,7 +32,7 @@ class ProjectsController < ApplicationController
 
     respond_to do |format|
       if @project.save
-        format.html { redirect_to project_url(@project), success: "Project was successfully created." }
+        format.html { redirect_to project_url(@project), success: t("controllers.projects.create.success") }
       else
         format.html { render :new, status: :unprocessable_content }
         format.turbo_stream do
@@ -48,7 +48,7 @@ class ProjectsController < ApplicationController
       if @project.update(project_params)
         format.html do
           redirect_to project_url(session[:current_project_id] || @project.id),
-                      success: "Project was successfully updated."
+                      success: t("controllers.projects.update.success")
         end
       else
         format.html { render :edit, status: :unprocessable_content }

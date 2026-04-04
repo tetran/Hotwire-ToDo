@@ -13,13 +13,13 @@ class PromptTest < ActiveSupport::TestCase
   test "should require role" do
     prompt = @prompt_set.prompts.new(role: nil, body: "Hello", position: 1)
     assert_not prompt.valid?
-    assert_includes prompt.errors[:role], "can't be blank"
+    assert prompt.errors.added?(:role, :blank)
   end
 
   test "should require role to be system or user" do
     prompt = @prompt_set.prompts.new(role: "assistant", body: "Hello", position: 1)
     assert_not prompt.valid?
-    assert_includes prompt.errors[:role], "is not included in the list"
+    assert prompt.errors.where(:role, :inclusion).any?
   end
 
   test "should accept system role" do
@@ -35,19 +35,19 @@ class PromptTest < ActiveSupport::TestCase
   test "should require body" do
     prompt = @prompt_set.prompts.new(role: "system", body: nil, position: 1)
     assert_not prompt.valid?
-    assert_includes prompt.errors[:body], "can't be blank"
+    assert prompt.errors.added?(:body, :blank)
   end
 
   test "should limit body to 1000 characters" do
     prompt = @prompt_set.prompts.new(role: "system", body: "a" * 1001, position: 1)
     assert_not prompt.valid?
-    assert_includes prompt.errors[:body], "is too long (maximum is 1000 characters)"
+    assert prompt.errors.added?(:body, :too_long, count: 1000)
   end
 
   test "should require position" do
     prompt = @prompt_set.prompts.new(role: "system", body: "Hello", position: nil)
     assert_not prompt.valid?
-    assert_includes prompt.errors[:position], "can't be blank"
+    assert prompt.errors.added?(:position, :blank)
   end
 
   test "render should replace variables" do
@@ -89,7 +89,7 @@ class PromptTest < ActiveSupport::TestCase
     @prompt_set.prompts.create!(role: "system", body: "First", position: 1)
     duplicate = @prompt_set.prompts.new(role: "user", body: "Second", position: 1)
     assert_not duplicate.valid?
-    assert_includes duplicate.errors[:position], "has already been taken"
+    assert duplicate.errors.where(:position, :taken).any?
   end
 
   test "should allow same position across different prompt_sets" do

@@ -11,7 +11,7 @@ class SessionsController < ApplicationController
       redirect_to new_totp_challenge_path(token: @user.generate_token_for(:totp_verification))
     else
       sign_in(@user)
-      redirect_to project_url(@user.inbox_project.id), success: "Logged in!"
+      redirect_to project_url(@user.inbox_project.id), success: t("controllers.sessions.create.success")
     end
   end
 
@@ -34,12 +34,13 @@ class SessionsController < ApplicationController
           render turbo_stream: turbo_stream.update("notification",
                                                    partial: "shared/notification",
                                                    locals: { status: "error",
-                                                             message: "Email or password is invalid" }),
+                                                             message: t("controllers.sessions.create.failure") }),
                  status: :unprocessable_content
         end
         format.html do
-          redirect_to login_path(email_hint: params[:email]), flash: { error: "Email or password is invalid" },
-                                                              status: :unprocessable_content
+          redirect_to login_path(email_hint: params[:email]),
+                      flash: { error: t("controllers.sessions.create.failure") },
+                      status: :unprocessable_content
         end
       end
     end

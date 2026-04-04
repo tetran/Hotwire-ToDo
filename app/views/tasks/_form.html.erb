@@ -6,12 +6,12 @@
 
     <div class="task-form__item task-form__name">
       <%= form.label :name, class: "visually-hidden" %>
-      <%= form.text_field :name, autofocus: true, class: "task-form__name--input full-width-input", placeholder: "Task name" %>
+      <%= form.text_field :name, autofocus: true, class: "task-form__name--input full-width-input", placeholder: t("tasks.form.task_name") %>
     </div>
 
     <div class="task-form__item task-form__description">
       <%= form.label :description, class: "visually-hidden" %>
-      <%= form.rich_text_area :description, class: "task-form__description--input", placeholder: "Description" %>
+      <%= form.rich_text_area :description, class: "task-form__description--input", placeholder: t("tasks.form.description") %>
     </div>
 
     <div class="task-form__item task-form__due-date">
@@ -21,7 +21,7 @@
 
     <div class="form-actions task-form__actions">
       <%= hidden_field_tag :project_id, task.project_id %>
-      <%= link_to "Cancel", project_path(task.project_id, c: 1, t: task.id), class: "btn btn-light task-form__cancel" %>
+      <%= link_to t("tasks.form.cancel"), project_path(task.project_id, c: 1, t: task.id), class: "btn btn-light task-form__cancel" %>
       <%= form.submit class: "task-form__submit primary" %>
     </div>
   <% end %>

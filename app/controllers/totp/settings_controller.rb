@@ -10,11 +10,11 @@ module Totp
       respond_to do |format|
         if @totp.verify(params[:code])
           current_user.update!(totp_enabled: true)
-          @message = "Enable two-factor authentication successfully."
+          @message = t("controllers.totp/settings.create.success")
           format.turbo_stream
         else
           set_totp_url
-          @err_message = "Invalid code"
+          @err_message = t("controllers.totp/settings.create.invalid_code")
           format.html { render :show, status: :unprocessable_content }
         end
       end
@@ -24,7 +24,7 @@ module Totp
       respond_to do |format|
         current_user.regenerate_totp_secret!
 
-        @message = "Your two-factor authentication setting has been reset successfully."
+        @message = t("controllers.totp/settings.update.success")
         format.turbo_stream
       end
     end

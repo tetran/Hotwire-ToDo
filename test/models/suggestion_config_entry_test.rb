@@ -4,11 +4,11 @@ class SuggestionConfigEntryTest < ActiveSupport::TestCase
   test "should require weight between 1 and 100" do
     entry = SuggestionConfigEntry.new(weight: 0)
     entry.valid?
-    assert_includes entry.errors[:weight], "must be greater than or equal to 1"
+    assert entry.errors.where(:weight, :greater_than_or_equal_to).any?
 
     entry.weight = 101
     entry.valid?
-    assert_includes entry.errors[:weight], "must be less than or equal to 100"
+    assert entry.errors.where(:weight, :less_than_or_equal_to).any?
   end
 
   test "should accept weight of 1" do
@@ -19,7 +19,7 @@ class SuggestionConfigEntryTest < ActiveSupport::TestCase
       weight: 1,
     )
     entry.valid?
-    assert_not_includes entry.errors[:weight], "must be greater than or equal to 1"
+    assert_not entry.errors.where(:weight, :greater_than_or_equal_to).any?
   end
 
   test "should accept weight of 100" do
@@ -30,7 +30,7 @@ class SuggestionConfigEntryTest < ActiveSupport::TestCase
       weight: 100,
     )
     entry.valid?
-    assert_not_includes entry.errors[:weight], "must be less than or equal to 100"
+    assert_not entry.errors.where(:weight, :less_than_or_equal_to).any?
   end
 
   test "should belong to suggestion_config" do
@@ -60,6 +60,6 @@ class SuggestionConfigEntryTest < ActiveSupport::TestCase
       weight: 50,
     )
     assert_not duplicate.valid?
-    assert_includes duplicate.errors[:llm_model_id], "has already been taken"
+    assert duplicate.errors.where(:llm_model_id, :taken).any?
   end
 end

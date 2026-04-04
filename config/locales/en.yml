@@ -31,8 +31,29 @@ en:
   activerecord:
     attributes:
       user:
+        name: "User name"
+        email: "Email"
         password_challenge: "Current Password"
+        password: "Password"
+        password_confirmation: "Password Confirmation"
         totp: "Two-factor Authentication"
+        avatar: "Avatar"
+        time_zone: "Time zone"
+        locale: "Language"
+      task:
+        name: "Task name"
+        description: "Description"
+        due_date: "Due date"
+        start_date: "Start date"
+      project:
+        name: "Project name"
+      comment:
+        body: "Comment"
+      suggestion_session:
+        goal: "Goal"
+        context: "Context"
+        start_date: "Start date"
+        due_date: "Due date"
     errors:
       messages:
         too_many_requests: "Too many requests. Please try again later."
@@ -76,6 +97,236 @@ en:
     write: "write"
     delete: "delete"
     manage: "manage"
+  sessions:
+    new:
+      title: "Login"
+      submit: "Login"
+      no_account: "Don't have an account?"
+      sign_up: "Sign up"
+      forgot_password: "Forgot your password?"
+      reset_password: "Reset password"
+  users:
+    new:
+      title: "Sign up"
+      submit: "Sign up"
+      already_signed_up: "Already signed up?"
+      login: "Login"
+    user_display:
+      title: "User info"
+      save_notice: "Click \"Save User\" button to persist changes."
+      user_name: "User name"
+      select_avatar: "Select new avatar"
+      change_email: "Change email"
+      change_password: "Change password"
+      two_fa_setting: "2FA Setting"
+      cancel: "Cancel"
+  password_resets:
+    new:
+      title: "Password Reset"
+      submit: "Reset Password"
+      back_to_login: "Back to login"
+    edit:
+      title: "Password Reset"
+      submit: "Reset Password"
+      back_to_login: "Back to login"
+  totp:
+    challenges:
+      new:
+        title: "Login"
+        instruction: "Open the 2FA authenticator app on your phone and type the six digit code below:"
+        submit: "Verify"
+        back_to_login: "Back to login"
+    settings:
+      show:
+        title: "Two-factor Authentication"
+        replace_title: "Replace your existing 2FA setup?"
+        replace_description: "Your account is already protected with two-factor authentication. You can replace that setup if you want to switch to a new phone or authenticator app."
+        replace_warning: "Do you want to continue? Your existing 2FA setup will no longer work."
+        replace_button: "Replace 2FA setup"
+        upgrade_title: "Upgrade your security with 2FA"
+        step1_title: "Step 1: Get an Authenticator App"
+        step1_description: "First, you'll need a 2FA authenticator app on your phone."
+        step1_skip: "If you already have one, skip to step 2."
+        step1_recommend: "If you don't have one, or you aren't sure, we recommend Microsoft Authenticator"
+        step2_title: "Step 2: Scan + Enter the Code"
+        step2_description: "Next, open the authenticator app, tap \"Scan QR code\" or \"+\", and, when it asks, point your phone's camera at this QR code picture below."
+        qr_caption: "Point your camera here"
+        code_instruction: "After scanning with your camera, the app will generate a six-digit code. Enter it here:"
+        cancel: "Cancel"
+  projects:
+    header:
+      add_project: "Add project"
+      search_placeholder: "Search tasks..."
+      members: "Members"
+      greeting: "Hello, %{name} !"
+      setting: "Setting"
+      logout: "Logout"
+      confirm_archive: "Archive this project?"
+      confirm_logout: "Logout?"
+    form:
+      edit_project: "Edit Project"
+      new_project: "New Project"
+      project_name: "Project name"
+      cancel: "Cancel"
+    member_row:
+      you: "You"
+      confirm_leave: "Are you sure to leave the project?"
+      confirm_remove: "Are you sure you want to remove %{name}?"
+    members:
+      form:
+        email: "Email"
+        add: "Add"
+    completed_tasks_off:
+      show: "Show completed tasks"
+    completed_tasks_on:
+      hide: "Hide completed tasks"
+      empty: "There are no completed tasks."
+  tasks:
+    show:
+      comments: "Comments"
+    new:
+      manual: "Manual"
+      ask_ai: "Ask AI"
+    form:
+      task_name: "Task name"
+      description: "Description"
+      cancel: "Cancel"
+    task:
+      confirm_delete: "Are you sure?"
+    add_task_btn:
+      add_task: "Add Task"
+    ask_ai:
+      goal: "Your goal"
+      context: "Context"
+      cancel: "Cancel"
+      suggest: "Suggest"
+      patience: "It may take a little time. Please be patient."
+    suggestions:
+      title: "Suggestions"
+      task_name: "Task name"
+      description: "Description"
+      create_tasks: "Create tasks"
+    assignees:
+      unassign: "Unassign"
+      you: "You"
+    searches:
+      index:
+        results: "%{count} results for \"%{query}\""
+        show_completed: "Show completed"
+        no_tasks_found: "No tasks found."
+    comments:
+      form:
+        comment: "Comment"
+        cancel: "Cancel"
+      comment:
+        confirm_delete: "Are you sure?"
+      add_comment:
+        comment: "Comment"
+  emails:
+    edit:
+      title: "Change email"
+      not_verified: "Your email is not verified. Please verify your email."
+      verify_email: "Verify your email"
+      new_email: "New Email"
+      current_password: "Current Password"
+      cancel: "Cancel"
+      submit: "Change email"
+  passwords:
+    edit:
+      title: "Change password"
+      current_password: "Current Password"
+      new_password: "New Password"
+      confirm_password: "Confirm New Password"
+      cancel: "Cancel"
+  user_mailer:
+    email_verification:
+      subject: "Verify your email"
+      greeting: "Hello,"
+      instruction: "Please verify your email."
+      action: "Verify email"
+    password_reset:
+      subject: "Reset your password"
+      greeting: "Hello,"
+      instruction: "Please reset your password."
+      action: "Reset password"
+  controllers:
+    sessions:
+      create:
+        success: "Logged in!"
+        failure: "Email or password is invalid"
+    users:
+      create:
+        success: "Welcome! You have signed up successfully!"
+      update:
+        success: "Your profile has been updated!"
+    passwords:
+      update:
+        success: "Password updated successfully."
+    password_resets:
+      create:
+        success: "Check your email for reset instructions"
+      update:
+        success: "Password updated successfully."
+      invalid_token: "That password reset link is invalid"
+    projects:
+      create:
+        success: "Project was successfully created."
+      update:
+        success: "Project was successfully updated."
+    projects/archives:
+      create:
+        success: "Project \"%{name}\" was archived."
+      destroy:
+        success: "Project \"%{name}\" was unarchived."
+    projects/members:
+      create:
+        failure: "Failed"
+        added: "\"%{name}\" was added to this project!"
+      destroy:
+        removed: "\"%{name}\" was removed from this project!"
+    emails:
+      update:
+        success: "Email updated successfully."
+    email_verifications:
+      show:
+        success: "Your email has been verified!"
+      create:
+        success: "A verification email has been sent to your email address. Please check your inbox."
+      invalid_token: "That email verification link is invalid"
+    totp/challenges:
+      create:
+        success: "Logged in!"
+        invalid_code: "Invalid code"
+        invalid_token: "That password reset link is invalid"
+    totp/settings:
+      create:
+        success: "Enabled two-factor authentication successfully."
+        invalid_code: "Invalid code"
+      update:
+        success: "Your two-factor authentication setting has been reset successfully."
+    tasks:
+      create:
+        success: "Task was successfully created."
+      update:
+        success: "Task was successfully updated."
+      destroy:
+        success: "Task was successfully destroyed."
+    tasks/comments:
+      create:
+        success: "Comment was successfully created."
+      update:
+        success: "Comment was successfully updated."
+      destroy:
+        success: "Comment was successfully destroyed."
+        failure: "Comment could not be destroyed."
+    tasks/completes:
+      create:
+        success: "\"%{name}\" has been completed!"
+      destroy:
+        success: "\"%{name}\" has become incomplete."
+    tasks/batches:
+      create:
+        success: "%{count} tasks were created successfully."
   suggestions:
     no_config: "Task suggestions are not currently available. Please contact the administrator."
     llm_error: "Unable to generate suggestions. Please try again later."

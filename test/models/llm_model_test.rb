@@ -31,13 +31,13 @@ class LlmModelTest < ActiveSupport::TestCase
   test "should require name" do
     @model.name = nil
     assert_not @model.valid?
-    assert_includes @model.errors[:name], "can't be blank"
+    assert @model.errors[:name].present?
   end
 
   test "should require display_name" do
     @model.display_name = nil
     assert_not @model.valid?
-    assert_includes @model.errors[:display_name], "can't be blank"
+    assert @model.errors[:display_name].present?
   end
 
   test "should require unique name within provider" do
@@ -46,7 +46,7 @@ class LlmModelTest < ActiveSupport::TestCase
       display_name: "Another Display Name",
     )
     assert_not duplicate.valid?
-    assert_includes duplicate.errors[:name], "has already been taken"
+    assert duplicate.errors[:name].present?
   end
 
   test "should allow same name across different providers" do

@@ -18,7 +18,7 @@
                 <% end %>
 
                 <%# TODO: Turboでできたらしたい %>
-                <%= button_to project_archive_path(project), data: { turbo_confirm: "Archive this project?" }, class: "project-selector__list-item__archive" do %>
+                <%= button_to project_archive_path(project), data: { turbo_confirm: t("projects.header.confirm_archive") }, class: "project-selector__list-item__archive" do %>
                   <span class="material-symbols-outlined">archive</span>
                 <% end %>
               </div>
@@ -29,7 +29,7 @@
       <div class="project-selector__action">
         <%= link_to new_project_path, class: "project-selector__add-button", data: { turbo_frame: "modal" } do %>
           <span class="material-symbols-outlined">add</span>
-          Add project
+          <%= t("projects.header.add_project") %>
         <% end %>
       </div>
     </nav>
@@ -40,7 +40,7 @@
       <span class="material-symbols-outlined search-form__icon">search</span>
       <input type="text"
              class="search-form__input"
-             placeholder="Search tasks..."
+             placeholder="<%= t("projects.header.search_placeholder") %>"
              data-search-target="input"
              data-action="input->search#search blur->search#collapse">
     </div>
@@ -57,7 +57,7 @@
         <% end %>
 
         <nav class="menu-navigation hidden" data-project-members-target="menu">
-          <h4 class="menu-navigation__header">Members</h4>
+          <h4 class="menu-navigation__header"><%= t("projects.header.members") %></h4>
           <ul class="menu-list">
             <%= turbo_frame_tag "project_members" do %>
               <%= render partial: "member_row", collection: @members, as: :member, locals: { project: @project } %>
@@ -77,19 +77,19 @@
 
       <nav class="menu-navigation hidden" data-menu-target="menu">
         <h4 class="menu-navigation__header menu-navigation__username">
-          Hello, <%= turbo_frame_tag "header_user_name" do %><%= current_user.user_name %><% end %> !
+          <%= t("projects.header.greeting", name: content_tag(:span, current_user.user_name, id: "header_user_name")).html_safe %>
         </h4>
         <ul class="menu-list">
           <li>
             <%= link_to user_path, class: "menu-list__setting label-with-icon", data: { turbo_frame: "modal", action: "menu#hideMenu" } do %>
               <span class="material-symbols-outlined">settings</span>
-              Setting
+              <%= t("projects.header.setting") %>
             <% end %>
           </li>
           <li>
-            <%= button_to logout_path, method: :delete, class: "menu-list__logout-btn label-with-icon", data: { turbo_confirm: "Logout?" } do %>
+            <%= button_to logout_path, method: :delete, class: "menu-list__logout-btn label-with-icon", data: { turbo_confirm: t("projects.header.confirm_logout") } do %>
               <span class="material-symbols-outlined">logout</span>
-              Logout
+              <%= t("projects.header.logout") %>
             <% end %>
           </li>
         </ul>
