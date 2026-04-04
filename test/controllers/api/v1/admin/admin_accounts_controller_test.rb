@@ -372,6 +372,113 @@ module Api
           get api_v1_admin_admin_account_path(id: 0)
           assert_response :not_found
         end
+
+        # last_sign_in_at in responses
+        test "GET index includes last_sign_in_at field" do
+          login_as_admin_api
+          get api_v1_admin_admin_accounts_path
+          assert_response :success
+          admin_account = response.parsed_body.first
+          assert admin_account.key?("last_sign_in_at")
+        end
+
+        test "GET show includes last_sign_in_at field" do
+          login_as_admin_api
+          get api_v1_admin_admin_account_path(users(:admin_user))
+          assert_response :success
+          assert response.parsed_body.key?("last_sign_in_at")
+        end
+
+        # update
+        test "PATCH update returns 401 when not logged in" do
+          patch api_v1_admin_admin_account_path(users(:user_manager)), params: {
+            admin_account: { name: "Updated" },
+          }
+          assert_response :unauthorized
+        end
+
+        test "PATCH update returns 401 when logged in as regular user" do
+          login_as(users(:regular_user))
+          patch api_v1_admin_admin_account_path(users(:user_manager)), params: {
+            admin_account: { name: "Updated" },
+          }
+          assert_response :unauthorized
+        end
+
+        test "PATCH update returns 403 when logged in as read-only admin" do
+          login_as_admin_api_read_only
+          patch api_v1_admin_admin_account_path(users(:user_manager)), params: {
+            admin_account: { name: "Updated" },
+          }
+          assert_response :forbidden
+        end
+
+        test "PATCH update updates name and email" do
+          login_as_admin_api
+          target = users(:user_manager)
+          patch api_v1_admin_admin_account_path(target), params: {
+            admin_account: { name: "New Name", email: "newemail@example.com" },
+          }
+          assert_response :success
+          json = response.parsed_body
+          assert_equal "New Name", json["name"]
+          assert_equal "newemail@example.com", json["email"]
+          target.reload
+          assert_equal "New Name", target.name
+          assert_equal "newemail@example.com", target.email
+        end
+
+        test "PATCH update response includes expected fields" do
+          login_as_admin_api
+          target = users(:user_manager)
+          patch api_v1_admin_admin_account_path(target), params: {
+            admin_account: { name: "Updated Name" },
+          }
+          assert_response :success
+          json = response.parsed_body
+          assert json.key?("id")
+          assert json.key?("email")
+          assert json.key?("name")
+          assert json.key?("created_at")
+          assert json.key?("updated_at")
+          assert json.key?("last_sign_in_at")
+          assert json.key?("roles")
+          assert_not json.key?("password_digest")
+        end
+
+        test "PATCH update returns 422 with blank email" do
+          login_as_admin_api
+          patch api_v1_admin_admin_account_path(users(:user_manager)), params: {
+            admin_account: { email: "" },
+          }
+          assert_response :unprocessable_entity
+          assert response.parsed_body.key?("errors")
+        end
+
+        test "PATCH update returns 422 with duplicate email" do
+          login_as_admin_api
+          patch api_v1_admin_admin_account_path(users(:user_manager)), params: {
+            admin_account: { email: users(:admin_user).email },
+          }
+          assert_response :unprocessable_entity
+          assert response.parsed_body.key?("errors")
+        end
+
+        test "PATCH update returns 404 for non-admin user" do
+          login_as_admin_api
+          patch api_v1_admin_admin_account_path(users(:regular_user)), params: {
+            admin_account: { name: "Updated" },
+          }
+          assert_response :not_found
+        end
+
+        test "PATCH update returns 404 for non-existent user" do
+          login_as_admin_api
+          patch api_v1_admin_admin_account_path(id: 0), params: {
+            admin_account: { name: "Updated" },
+          }
+          assert_response :not_found
+        end
       end
     end
   end

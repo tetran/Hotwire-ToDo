@@ -49,12 +49,20 @@ export const AdminAccountDetailPage = () => {
               style={{ fontFamily: 'Syne, sans-serif' }}>Admin Account Detail</h1>
         </div>
         {canWrite && account && (
-          <Link
-            to={`/admin/admin-accounts/${account.id}/roles`}
-            className="rounded-lg bg-[#6366f1] px-4 py-2 text-sm font-medium text-white shadow-md shadow-indigo-500/20 transition hover:bg-[#5558e8]"
-          >
-            Edit Roles
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link
+              to={`/admin/admin-accounts/${account.id}/edit`}
+              className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
+            >
+              Edit Info
+            </Link>
+            <Link
+              to={`/admin/admin-accounts/${account.id}/roles`}
+              className="rounded-lg bg-[#6366f1] px-4 py-2 text-sm font-medium text-white shadow-md shadow-indigo-500/20 transition hover:bg-[#5558e8]"
+            >
+              Edit Roles
+            </Link>
+          </div>
         )}
       </div>
 
@@ -71,6 +79,11 @@ export const AdminAccountDetailPage = () => {
                 <p className="text-sm text-slate-400">{account.email}</p>
                 <p className="mt-1 text-xs text-slate-400">
                   Created: {new Date(account.created_at).toLocaleDateString()}
+                </p>
+                <p className="text-xs text-slate-400">
+                  Last Login: {account.last_sign_in_at
+                  ? new Date(account.last_sign_in_at).toLocaleDateString()
+                  : <span className="text-slate-300">Never</span>}
                 </p>
               </div>
             </div>

@@ -2,19 +2,25 @@ module Api
   module V1
     module Admin
       class AdminAccountsController < ApplicationController
-        before_action :set_admin_account, only: %i[show destroy]
+        before_action :set_admin_account, only: %i[show update destroy]
         before_action -> { require_capability!("Admin", "read") }, only: %i[index show]
-        before_action -> { require_capability!("User", "write") }, only: %i[create]
+        before_action -> { require_capability!("User", "write") }, only: %i[create update]
         before_action -> { require_capability!("User", "delete") }, only: %i[destroy]
         before_action :protect_privilege_escalation, only: %i[create]
         before_action :validate_and_set_roles, only: %i[create]
 
         def index
           admin_accounts = User.admin_accounts.includes(:roles).search(params[:q]).order(:id)
-          render json: admin_accounts.as_json(
-            only: %i[id email name created_at updated_at],
-            include: { roles: { only: %i[id name] } },
-          )
+          last_logins = AdminLoginHistory
+                        .where(user_id: admin_accounts.select(:id))
+                        .group(:user_id)
+                        .maximum(:created_at)
+          render json: admin_accounts.map { |account|
+            account.as_json(
+              only: %i[id email name created_at updated_at],
+              include: { roles: { only: %i[id name] } },
+            ).merge(last_sign_in_at: last_logins[account.id])
+          }
         end
 
         def show
@@ -32,7 +38,7 @@ module Api
           render json: @admin_account.as_json(
             only: %i[id email name created_at updated_at],
             include: { roles: { only: %i[id name description system_role] } },
-          ).merge(permission_matrix: matrix)
+          ).merge(permission_matrix: matrix, last_sign_in_at: @admin_account.admin_login_histories.maximum(:created_at))
         end
 
         def create
@@ -45,9 +51,20 @@ module Api
           render json: user.as_json(
             only: %i[id email name created_at updated_at],
             include: { roles: { only: %i[id name] } },
-          ), status: :created
+          ).merge(last_sign_in_at: nil), status: :created
         rescue ActiveRecord::RecordInvalid
           render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
+        end
+
+        def update
+          if @admin_account.update(admin_account_update_params)
+            render json: @admin_account.as_json(
+              only: %i[id email name created_at updated_at],
+              include: { roles: { only: %i[id name] } },
+            ).merge(last_sign_in_at: @admin_account.admin_login_histories.maximum(:created_at))
+          else
+            render json: { errors: @admin_account.errors.full_messages }, status: :unprocessable_entity
+          end
         end
 
         def destroy
@@ -69,6 +86,10 @@ module Api
 
           def admin_account_params
             params.expect(admin_account: [:email, :name, :password, { role_ids: [] }])
+          end
+
+          def admin_account_update_params
+            params.expect(admin_account: %i[email name])
           end
 
           def validate_and_set_roles
