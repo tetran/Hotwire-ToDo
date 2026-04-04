@@ -2,12 +2,12 @@
   <h1 class="auth-form__title"><%= t(".title") %></h1>
   <%= form_with(url: login_path) do |form| %>
     <div class="auth-form__field">
-      <%= form.label :email %>
+      <%= form.label :email, User.human_attribute_name(:email) %>
       <%= form.email_field :email, value: params[:email_hint], required: true, autofocus: true %>
     </div>
 
     <div class="auth-form__field">
-      <%= form.label :password %>
+      <%= form.label :password, User.human_attribute_name(:password) %>
       <%= form.password_field :password, required: true %>
     </div>
 

@@ -49,6 +49,8 @@ en:
         name: "Project name"
       comment:
         body: "Comment"
+      password_reset:
+        email: "Email"
       suggestion_session:
         goal: "Goal"
         context: "Context"

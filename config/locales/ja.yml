@@ -49,6 +49,8 @@ ja:
         name: "プロジェクト名"
       comment:
         body: "コメント"
+      password_reset:
+        email: "メールアドレス"
       suggestion_session:
         goal: "目標"
         context: "背景"
