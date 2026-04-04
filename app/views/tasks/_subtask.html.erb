@@ -1,0 +1,36 @@
+<%= turbo_frame_tag subtask do %>
+  <div class="task-card task-card--subtask <%= subtask.completed ? 'task-card--complete' : '' %> <%= subtask.overdue? ? 'overdue' : '' %>">
+    <div class="task-card__content">
+      <% if subtask.completed %>
+        <%= button_tag "", type: :button, class: "task-card__complete-check", disabled: true %>
+      <% else %>
+        <%= button_to "",
+                      task_complete_path(subtask),
+                      method: :post,
+                      class: "task-card__complete-check",
+                      data: { controller: "task", action: "click->task#playComplete" } %>
+      <% end %>
+      <div>
+        <div class="task-card__name">
+          <%= link_to subtask.name, subtask, data: { turbo_frame: "modal" } %>
+        </div>
+        <% if subtask.has_due_date? %>
+          <div class="task-card__due-date">
+            <span class="material-symbols-outlined">event</span>
+            <%= l(subtask.due_date, format: due_date_format(subtask)) %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <% unless subtask.completed %>
+      <div class="task-card__actions horizontal-actions">
+        <%= link_to edit_task_path(subtask), class: "task-card__edit" do %>
+          <span class="material-symbols-outlined">edit</span>
+        <% end %>
+        <%= button_to task_path(subtask), method: :delete, data: { turbo_confirm: t("tasks.task.confirm_delete") }, class: "task-card__delete" do %>
+          <span class="material-symbols-outlined">delete</span>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

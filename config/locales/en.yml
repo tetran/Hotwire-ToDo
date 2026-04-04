@@ -60,6 +60,12 @@ en:
       messages:
         too_many_requests: "Too many requests. Please try again later."
       models:
+        task:
+          attributes:
+            parent_id:
+              nested_too_deep: "cannot add subtask to a subtask"
+            project_id:
+              must_match_parent: "must match parent task's project"
         user:
           attributes:
             email:
@@ -186,6 +192,8 @@ en:
   tasks:
     show:
       comments: "Comments"
+      subtasks: "Subtasks"
+      add_subtask: "Add subtask"
     new:
       manual: "Manual"
       ask_ai: "Ask AI"

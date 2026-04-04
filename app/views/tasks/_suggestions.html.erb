@@ -9,6 +9,7 @@
                   data: { turbo_frame: "_top",
                                   action: "turbo:submit-end->suggestion-abandonment#markSubmitted" } do |batch_form| %>
       <%= hidden_field_tag :project_id, @suggestion_session.project_id %>
+      <%= hidden_field_tag :suggestion_session_id, @suggestion_session.id %>
       <%= hidden_field_tag :suggestion_response_id, last_request.response.id %>
       <% last_request.response.suggested_tasks.each do |task| %>
         <%= fields_for :tasks, task, index: task.id do |task_form| %>

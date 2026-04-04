@@ -13,3 +13,26 @@ two:
   name: Test Task Two
   due_date: 2023-12-05
   completed: false
+
+parent_task:
+  created_by: regular_user
+  project: two
+  name: Parent Task
+  due_date: 2024-01-15
+  completed: false
+
+subtask_one:
+  created_by: regular_user
+  project: two
+  name: Subtask One
+  due_date: 2024-01-15
+  completed: false
+  parent: parent_task
+
+subtask_two:
+  created_by: regular_user
+  project: two
+  name: Subtask Two
+  due_date: 2024-01-15
+  completed: true
+  parent: parent_task

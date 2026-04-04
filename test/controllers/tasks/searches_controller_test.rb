@@ -33,6 +33,15 @@ module Tasks
       assert_includes(response.body, I18n.t("tasks.searches.index.results", count: 0, query: @task.name))
     end
 
+    test "should show parent task name for subtask search results" do
+      login_as(@user)
+      subtask = tasks(:subtask_one)
+      get tasks_searches_path, params: { q: subtask.name }
+      assert_response :success
+      assert_match(/search-result__name.*#{Regexp.escape(subtask.name)}/m, response.body)
+      assert_match(/search-result__parent.*#{Regexp.escape(subtask.parent.name)}/m, response.body)
+    end
+
     test "should filter completed tasks" do
       @task.update!(completed: true)
       login_as(@user)

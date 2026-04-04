@@ -30,7 +30,7 @@ class Project < ApplicationRecord
   end
 
   def uncompleted_tasks
-    tasks.uncompleted.with_rich_text_description_and_embeds
+    tasks.root_tasks.uncompleted.includes(:subtasks).with_rich_text_description_and_embeds
   end
 
   private

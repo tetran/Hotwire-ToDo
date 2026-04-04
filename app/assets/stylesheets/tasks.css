@@ -283,3 +283,79 @@ input.task-suggestion__checkbox {
 .task-suggestion__main {
   flex-grow: 1;
 }
+
+/* Task card wrapper for subtask parents */
+.task-card-wrapper--has-subtasks {
+  border-bottom: solid 1px var(--border);
+  padding-bottom: 6px;
+}
+.task-card-wrapper--has-subtasks > .task-card {
+  border-bottom: none;
+}
+
+/* Subtask badge in task list */
+.task-card__subtask-badge {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.8rem;
+  color: #999;
+  cursor: pointer;
+  padding-left: 1.5rem;
+}
+.task-card__subtask-badge:hover {
+  color: var(--form-text);
+}
+.task-card__subtask-badge .material-symbols-outlined {
+  font-size: 1rem;
+  transition: transform 0.2s;
+}
+
+/* Subtask list in task card */
+.task-card__subtasks {
+  padding-left: 1.5rem;
+}
+.task-card__subtasks .task-card.task-card--subtask {
+  padding: 6px 0;
+}
+
+/* Subtask section in show modal */
+.show-task__subtasks {
+  margin-top: 1.5rem;
+}
+.show-task__subtasks-title {
+  margin-bottom: 0;
+  border-bottom: solid 1px var(--border);
+}
+.show-task__subtasks-list {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+.show-task__subtasks .add-task {
+  margin-top: 0.5rem;
+}
+
+/* Parent link in show modal */
+.show-task__parent {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: #999;
+  margin-top: 0.5rem;
+}
+.show-task__parent .material-symbols-outlined {
+  font-size: 1rem;
+}
+
+/* Search result parent label */
+.search-result__parent {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.75rem;
+  color: #999;
+}
+.search-result__parent .material-symbols-outlined {
+  font-size: 0.9rem;
+}
