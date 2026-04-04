@@ -1,5 +1,6 @@
 class SuggestionLlmService
   MAX_ATTEMPTS = 3
+  MAX_TOKENS = 8192
   TEMPERATURES = [0.7, 0.3, 0.3].freeze
   FINAL_ATTEMPT_PROMPT = <<~PROMPT.squish.freeze
     IMPORTANT: Your response MUST be valid JSON only. No text before or after.
@@ -107,6 +108,7 @@ class SuggestionLlmService
         messages: build_messages(attempt),
         model: entry.llm_model.name,
         temperature: TEMPERATURES[attempt],
+        max_tokens: MAX_TOKENS,
       }.merge(client.json_output_options(**structured_output_options))
     end
 
