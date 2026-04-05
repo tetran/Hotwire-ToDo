@@ -1,6 +1,15 @@
 class TaskSeries
-  module IceCubeRuleBuilder
+  module IceCubeScheduling
     extend ActiveSupport::Concern
+
+    def next_due_date_after(date)
+      return nil if date.nil?
+
+      anchor = date.to_time
+      schedule = IceCube::Schedule.new(anchor)
+      schedule.add_recurrence_rule(build_ice_cube_rule)
+      schedule.next_occurrence(anchor)&.to_date
+    end
 
     private
 

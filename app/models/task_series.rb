@@ -1,6 +1,6 @@
 class TaskSeries < ApplicationRecord
   include WeekdaySupport
-  include IceCubeRuleBuilder
+  include IceCubeScheduling
 
   belongs_to :project
   belongs_to :created_by, class_name: "User"
@@ -23,20 +23,6 @@ class TaskSeries < ApplicationRecord
   validates :until_date, presence: true, if: :end_until?
 
   before_save :derive_rrule
-
-  def schedule(start_date)
-    start_time = start_date.to_time
-    schedule = IceCube::Schedule.new(start_time)
-    schedule.add_recurrence_rule(build_ice_cube_rule)
-    schedule
-  end
-
-  def next_due_date_after(date)
-    anchor = date.to_time
-    schedule = IceCube::Schedule.new(anchor)
-    schedule.add_recurrence_rule(build_ice_cube_rule)
-    schedule.next_occurrence(anchor)&.to_date
-  end
 
   def terminated?
     return true if stopped_at.present?

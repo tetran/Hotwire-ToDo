@@ -88,6 +88,11 @@ class TaskSeriesTest < ActiveSupport::TestCase
     assert_equal Date.new(2027, 4, 6), series.next_due_date_after(Date.new(2026, 4, 6))
   end
 
+  test "next_due_date_after returns nil when date is nil" do
+    series = build_series(frequency: :daily, interval: 1)
+    assert_nil series.next_due_date_after(nil)
+  end
+
   # === terminated? ===
 
   test "terminated? when stopped_at set" do
