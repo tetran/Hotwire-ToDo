@@ -51,6 +51,10 @@ module Tasks
             created_by: @user,
             assignee_id: @task.assignee_id,
             name: @task.name,
+            # The seed task we're about to save is the first occurrence of
+            # the series, so count it. Otherwise, a series with count=1
+            # would still generate one extra follow-up task on completion.
+            occurrences_generated: 1,
           ),
         )
         series.description = @task.description.to_s if @task.description.present?

@@ -218,6 +218,50 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
     assert_not_nil series.reload.stopped_at
   end
 
+  test "create with end_mode=count seeds occurrences_generated so seed counts as first" do
+    login_as_regular_user
+    project = projects(:two)
+
+    post tasks_url, params: {
+      project_id: project.id,
+      task: { name: "1回だけタスク", due_date: Date.current },
+      recurrence: {
+        frequency: "daily", interval: "1",
+        end_mode: "count", count: "1"
+      },
+    }
+
+    series = Task.order(:id).last.task_series
+    assert_not_nil series
+    assert_equal 1, series.occurrences_generated,
+                 "seed task must count as the first occurrence"
+    assert series.terminated?, "count=1 series should be exhausted after seed"
+  end
+
+  test "update converts non-recurring task into a recurring series" do
+    login_as_regular_user
+    task = tasks(:two)
+    assert_nil task.task_series
+
+    assert_difference("TaskSeries.count", 1) do
+      patch task_url(task), params: {
+        scope: "",
+        task: { name: task.name, due_date: task.due_date },
+        recurrence: {
+          frequency: "weekly", interval: "1",
+          by_weekday: %w[mo], end_mode: "infinite"
+        },
+      }
+    end
+
+    assert_redirected_to task_url(task)
+    task.reload
+    assert_not_nil task.task_series_id
+    assert_equal "weekly", task.task_series.frequency
+    assert_equal "mo", task.task_series.by_weekday
+    assert_equal 1, task.task_series.occurrences_generated
+  end
+
   test "update scope=all_future clears stale by_weekday when switching from weekly to daily" do
     login_as_regular_user
     task = tasks(:recurring_weekly)
