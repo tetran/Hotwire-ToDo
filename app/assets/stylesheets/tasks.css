@@ -93,6 +93,9 @@
   border-color: transparent;
 }
 
+.show-task {
+  position: relative;
+}
 .show-task .modal-header {
   justify-content: right;
 }
@@ -335,17 +338,29 @@ input.task-suggestion__checkbox {
   margin-top: 0.5rem;
 }
 
-/* Parent link in show modal */
+/* Parent link in show modal - positioned in the header */
 .show-task__parent {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
   display: flex;
   align-items: center;
   gap: 4px;
   font-size: 0.8rem;
   color: #999;
-  margin-top: 0.5rem;
+  max-width: calc(100% - 4rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .show-task__parent .material-symbols-outlined {
   font-size: 1rem;
+  flex-shrink: 0;
+}
+.show-task__parent a {
+  color: #999;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Search result parent label */
