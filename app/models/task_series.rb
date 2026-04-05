@@ -85,7 +85,7 @@ class TaskSeries < ApplicationRecord
     end
 
     def apply_template_to(sibling)
-      sibling.update!(name: name, assignee_id: assignee_id)
+      sibling.assign_attributes(name: name, assignee_id: assignee_id)
       sibling.description = description.to_s
       sibling.save!
     end

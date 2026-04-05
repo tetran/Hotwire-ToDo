@@ -15,6 +15,7 @@ class TaskSeries
         when "weekly"  then weekly_ice_cube_rule
         when "monthly" then IceCube::Rule.monthly(interval)
         when "yearly"  then IceCube::Rule.yearly(interval)
+        else raise ArgumentError, "Unknown frequency: #{frequency.inspect}"
         end
       end
 

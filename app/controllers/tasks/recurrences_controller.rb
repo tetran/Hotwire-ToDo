@@ -3,7 +3,9 @@ module Tasks
     include TaskDependent
 
     def destroy
-      @task.task_series&.stop!
+      return head :unprocessable_content if @task.task_series.nil?
+
+      @task.task_series.stop!
       respond_to do |format|
         format.turbo_stream
       end

@@ -30,6 +30,14 @@ module Tasks
       assert_equal before_count, Task.where(task_series_id: @task.task_series_id).count
     end
 
+    test "destroy on a non-recurring task returns unprocessable_content" do
+      non_recurring = tasks(:two)
+      assert_nil non_recurring.task_series
+
+      delete task_recurrence_path(non_recurring), as: :turbo_stream
+      assert_response :unprocessable_content
+    end
+
     test "non-member cannot access the task recurrence" do
       delete logout_path
       follow_redirect!
