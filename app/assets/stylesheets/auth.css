@@ -1,8 +1,8 @@
 .auth-form {
-  max-width: 400px;
+  max-width: var(--auth-max-width);
   margin: 0 auto;
   padding: 15px;
-  border-radius: 5px;
+  border-radius: var(--radius-md);
 }
 .auth-form input {
   box-sizing: border-box;
