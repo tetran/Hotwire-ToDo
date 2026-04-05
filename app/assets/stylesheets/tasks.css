@@ -4,19 +4,19 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-3);
 }
 
 .task-card__content {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-2);
   align-items: flex-start;
 }
 .task-card__complete-check {
   width: 16px;
   height: 16px;
   border: solid 1px var(--selection);
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   background: none;
   padding: 0;
   margin: 0;
@@ -33,16 +33,16 @@
   color: var(--form-text);
 }
 .task-card__description {
-  font-size: 0.8rem;
-  color: #999;
-  margin-top: 0.5rem;
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  margin-top: var(--space-2);
 }
 .task-card__due-date {
   display: flex;
   gap: 4px;
-  font-size: 0.8rem;
-  color: #999;
-  margin-top: 0.5rem;
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  margin-top: var(--space-2);
 }
 .task-card__due-date .material-symbols-outlined {
   font-size: 1rem;
@@ -50,17 +50,17 @@
 
 /* Completed */
 .task-card.task-card--complete .task-card__name a {
-  color: #999;
+  color: var(--color-muted);
   text-decoration: line-through;
 }
 .task-card.task-card--complete .task-card__complete-check {
-  background: #999;
+  background: var(--color-muted);
 }
 
 /* Overdue */
 .task-card.overdue .task-card__due-date,
 .show-task.overdue .show-task__due-date {
-  color: #fc5050;
+  color: var(--color-error);
 }
 
 .add-task {
@@ -70,19 +70,19 @@
 /* Task Form */
 .task-form,
 .task-suggestion-form {
-  border-radius: 8px;
-  padding: 1rem;
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
 }
 .edit-task .task-form {
   border: solid 1px var(--border);
 }
 .task-form__item {
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-4);
 }
 .task-form__description {
   border: solid 1px var(--border);
-  padding: 0.5rem;
-  border-radius: 6px;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
 }
 .task-form__description trix-editor:focus {
   box-shadow: 0 0 0 2px var(--focus);
@@ -96,23 +96,23 @@
   justify-content: right;
 }
 .show-task__name {
-  margin-top: 0.5rem;
+  margin-top: var(--space-2);
 }
 .show-task__description {
-  margin-top: 1rem;
-  margin-bottom: 3rem;
-  font-size: 0.9rem;
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-8);
+  font-size: var(--text-sm);
 }
 .show-task__description .trix-content ol,
 .show-task__description .trix-content ul {
-  margin-left: 1rem;
-  margin-right: 1rem;
+  margin-left: var(--space-4);
+  margin-right: var(--space-4);
 }
 .show-task__due-date {
   display: flex;
   gap: 4px;
-  margin-top: 0.5rem;
-  font-size: 0.8rem;
+  margin-top: var(--space-2);
+  font-size: var(--text-xs);
 }
 .show-task__due-date .material-symbols-outlined {
   font-size: 1rem;
@@ -120,46 +120,46 @@
 
 /* Comment Area */
 .task-comments {
-  margin-top: 2rem;
+  margin-top: var(--space-6);
 }
 .task-comments__title {
   margin-bottom: 0;
   border-bottom: solid 1px var(--border);
 }
 .task-comments__history {
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-4);
 }
 .task-comments__content {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  padding-left: var(--space-2);
+  padding-right: var(--space-2);
 }
 
 .comment-card {
   padding: 0;
-  margin-top: 1rem;
+  margin-top: var(--space-4);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 0.75rem;
+  gap: var(--space-3);
 }
 .comment-card__header {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 .comment-card__header__user {
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   font-weight: bold;
 }
 .comment-card__header__date {
-  font-size: 0.8rem;
-  color: #999;
+  font-size: var(--text-xs);
+  color: var(--color-muted);
 }
 
 .task-comments__add-comment {
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
 }
 .task-comments__add {
   display: block;
@@ -167,9 +167,9 @@
   width: 100%;
   text-align: left;
   height: 2rem;
-  border-radius: 1rem;
+  border-radius: var(--radius-pill);
   border: solid 1px var(--border);
-  padding: 0 1rem;
+  padding: 0 var(--space-4);
   background: var(--background);
 }
 .task-comments__add:hover {
@@ -201,8 +201,8 @@
 .assignee-list__member {
   display: flex;
   justify-content: space-between;
-  padding: 0.25rem;
-  border-radius: 4px;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
 }
 .assignee-list__member-info {
   flex-grow: 1;
@@ -218,7 +218,7 @@
   text-align: left;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 .assignee-list__member button:hover {
   background: inherit;
@@ -250,26 +250,26 @@
 }
 
 .task-suggestions {
-  margin-top: 1rem;
+  margin-top: var(--space-4);
   border-top: solid 1px var(--border);
 }
 .task-suggestions-title {
-  margin-top: 0.5rem;
+  margin-top: var(--space-2);
 }
 .task-suggestion {
   display: flex;
   justify-content: space-between;
   align-items: start;
-  gap: 0.5rem;
-  padding: 0.5rem;
-  margin: 0.5rem 0;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  margin: var(--space-2) 0;
   border-bottom: solid 1px var(--border);
 }
 input.task-suggestion__checkbox {
   display: inline-block;
   width: 1.2rem;
   height: 1.2rem;
-  margin-top: 0.5rem;
+  margin-top: var(--space-2);
   /*    border: solid 1px var(--selection);*/
   /*    border-radius: 50%;*/
   /*    background: none;*/
@@ -300,10 +300,10 @@ input.task-suggestion__checkbox {
   display: flex;
   align-items: center;
   gap: 2px;
-  font-size: 0.8rem;
-  color: #999;
+  font-size: var(--text-xs);
+  color: var(--color-muted);
   cursor: pointer;
-  padding-left: 1.5rem;
+  padding-left: var(--space-5);
 }
 .task-card__subtask-badge:hover {
   color: var(--form-text);
@@ -315,7 +315,7 @@ input.task-suggestion__checkbox {
 
 /* Subtask list in task card */
 .task-card__subtasks {
-  padding-left: 1.5rem;
+  padding-left: var(--space-5);
 }
 .task-card__subtasks .task-card.task-card--subtask {
   padding: 6px 0;
@@ -323,30 +323,30 @@ input.task-suggestion__checkbox {
 
 /* Subtask section in show modal */
 .show-task__subtasks {
-  margin-top: 1.5rem;
+  margin-top: var(--space-5);
 }
 .show-task__subtasks-title {
   margin-bottom: 0;
   border-bottom: solid 1px var(--border);
 }
 .show-task__subtasks-list {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+  padding-left: var(--space-2);
+  padding-right: var(--space-2);
 }
 .show-task__subtasks .add-task {
-  margin-top: 0.5rem;
+  margin-top: var(--space-2);
 }
 
 /* Parent link in show modal - positioned in the header */
 .show-task__parent {
   position: absolute;
-  top: 0.75rem;
-  left: 0.75rem;
+  top: var(--space-3);
+  left: var(--space-3);
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 0.8rem;
-  color: #999;
+  font-size: var(--text-xs);
+  color: var(--color-muted);
   max-width: calc(100% - 4rem);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -357,7 +357,7 @@ input.task-suggestion__checkbox {
   flex-shrink: 0;
 }
 .show-task__parent a {
-  color: #999;
+  color: var(--color-muted);
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -367,8 +367,8 @@ input.task-suggestion__checkbox {
   display: flex;
   align-items: center;
   gap: 2px;
-  font-size: 0.75rem;
-  color: #999;
+  font-size: var(--text-xs);
+  color: var(--color-muted);
 }
 .search-result__parent .material-symbols-outlined {
   font-size: 0.9rem;

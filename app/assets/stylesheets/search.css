@@ -8,7 +8,7 @@
   align-items: center;
   background: transparent;
   border: none;
-  padding: 0.25rem 0.5rem;
+  padding: var(--space-1) var(--space-2);
   width: 2.5rem;
   transition: width 0.3s ease;
   overflow: hidden;
@@ -30,9 +30,9 @@
   border: none;
   background: transparent;
   margin: 0;
-  padding: 0.5rem 0;
-  padding-left: 0.5rem;
-  font-size: 0.875rem;
+  padding: var(--space-2) 0;
+  padding-left: var(--space-2);
+  font-size: var(--text-sm);
   line-height: 1;
   vertical-align: middle;
   -webkit-appearance: none;
@@ -56,12 +56,12 @@
   left: 50%;
   transform: translate(-50%, -50%);
   width: 90vw;
-  max-width: 600px;
+  max-width: var(--modal-max-width);
   max-height: 70vh;
   background: var(--background);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
   z-index: 1000;
   overflow: hidden;
 }
@@ -71,28 +71,28 @@
 }
 
 .search-results {
-  padding: 1rem;
+  padding: var(--space-4);
 }
 
 .search-results__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 0.75rem;
+  padding-bottom: var(--space-3);
   border-bottom: 1px solid var(--border);
-  margin-bottom: 0.75rem;
+  margin-bottom: var(--space-3);
 }
 
 .search-results__count {
-  font-size: 0.875rem;
+  font-size: var(--text-sm);
   color: var(--text-muted);
 }
 
 .search-results__filter-toggle {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
-  font-size: 0.875rem;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
   color: var(--text-muted);
   text-decoration: none;
 }
@@ -115,7 +115,7 @@
 
 .search-results__empty {
   text-align: center;
-  padding: 2rem;
+  padding: var(--space-6);
   color: var(--text-muted);
 }
 
@@ -131,7 +131,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.75rem 0.5rem;
+  padding: var(--space-3) var(--space-2);
   text-decoration: none;
   color: var(--text-main);
   transition: background-color 0.15s ease;
@@ -144,7 +144,7 @@
 .search-result__task {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: var(--space-1);
   flex: 1;
   min-width: 0;
 }
@@ -162,7 +162,7 @@
 }
 
 .search-result__description {
-  font-size: 0.8125rem;
+  font-size: var(--text-sm);
   color: var(--text-muted);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -170,8 +170,8 @@
 }
 
 .search-result__project {
-  font-size: 0.8125rem;
+  font-size: var(--text-sm);
   color: var(--text-muted);
-  margin-left: 1rem;
+  margin-left: var(--space-4);
   white-space: nowrap;
 }

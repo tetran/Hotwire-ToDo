@@ -5,7 +5,7 @@
 }
 .project-members .menu-navigation {
   right: 0;
-  min-width: 200px;
+  min-width: var(--menu-min-width);
 }
 
 /* Right menu */
@@ -17,21 +17,21 @@
 .menu-list__member {
   display: flex;
   justify-content: space-between;
-  padding: 0.5rem 0.25rem;
+  padding: var(--space-2) var(--space-1);
   margin: 0;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
 }
 .menu-list__member-info {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-2);
 }
 .menu-list__member-info .user-avatar {
   width: 25px;
   height: 25px;
 }
 .project-members__form {
-  padding: 0.5rem;
+  padding: var(--space-2);
 }
 .menu-list__member__actions button:hover {
   scale: 1.2;
@@ -78,10 +78,10 @@
   scale: 1.2;
 }
 .project-selector__action {
-  padding: 0.5rem 0.25rem;
+  padding: var(--space-2) var(--space-1);
 }
 .project-selector__add-button {
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   display: inline-block;
   box-sizing: border-box;
   width: 100%;
@@ -96,37 +96,37 @@
 }
 
 .modal-base.project-form .modal-body {
-  padding: 1rem 0;
+  padding: var(--space-4) 0;
 }
 .project-form__item {
-  padding: 0 1rem;
+  padding: 0 var(--space-4);
 }
 .project-form__name--input {
   box-sizing: border-box;
   width: 100%;
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-4);
 }
 
 .completed-tasks {
-  padding: 1rem 0;
+  padding: var(--space-4) 0;
 }
 .completed-tasks__action {
   display: flex;
   justify-content: flex-start;
-  margin-top: 0.5rem;
+  margin-top: var(--space-2);
 }
 .completed-tasks__action-link {
   display: flex;
   align-items: center;
   color: var(--form-text);
-  padding: 0.5rem;
-  border-radius: 4px;
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
 }
 .completed-tasks__action-link:hover {
   text-decoration: none;
-  background-color: #ccc;
+  background-color: var(--color-surface-hover);
 }
 
 .tasks-container {
-  padding: 0 0.5rem;
+  padding: 0 var(--space-2);
 }

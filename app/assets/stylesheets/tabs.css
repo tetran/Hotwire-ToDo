@@ -1,10 +1,10 @@
 .tab-base {
   border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  padding: var(--space-2);
 }
 .tab-tabs {
-  padding: 0.25rem 0.5rem;
+  padding: var(--space-1) var(--space-2);
   border-bottom: 1px solid var(--border);
 }
 .tab {
@@ -14,5 +14,5 @@
   background: none;
 }
 .tab.active {
-  background-color: #ddd;
+  background-color: var(--color-surface-active);
 }
