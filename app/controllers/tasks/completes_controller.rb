@@ -11,7 +11,7 @@ module Tasks
 
       @completed_tasks = @project
                          .tasks.root_tasks.completed
-                         .includes(:subtasks)
+                         .includes(:subtasks, :task_series)
                          .with_rich_text_description_and_embeds
                          .order(updated_at: :desc)
     end

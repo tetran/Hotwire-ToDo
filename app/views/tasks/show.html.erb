@@ -16,10 +16,10 @@
         <%= l(@task.due_date, format: due_date_format(@task)) %>
       </div>
     <% end %>
-    <% if @task.recurring? %>
+    <% if @task.active_task_series %>
       <div class="show-task__recurrence">
         <span class="material-symbols-outlined">repeat</span>
-        <%= @task.task_series.human_label %>
+        <%= @task.active_task_series.human_label %>
       </div>
     <% end %>
 
