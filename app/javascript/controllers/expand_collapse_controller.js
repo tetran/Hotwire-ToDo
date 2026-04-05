@@ -6,6 +6,9 @@ export default class extends Controller {
 
   connect() {
     if (!this.hasKeyValue) return
+    // Only restore the "expanded" state — the template always renders
+    // content with `hidden`, so a stored "collapsed" value matches the
+    // default and requires no action.
     if (sessionStorage.getItem(this.storageKey) === 'expanded') {
       this.contentTarget.hidden = false
       this.iconTarget.textContent = 'expand_less'
