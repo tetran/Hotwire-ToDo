@@ -27,6 +27,29 @@ module Tasks
       assert_not @parent.reload.completed?
     end
 
+    test "completing subtask returns replace stream keeping it visible as completed" do
+      post task_complete_path(@subtask_one), as: :turbo_stream
+      assert_response :success
+
+      # サブタスクの partial を差し替える turbo-stream が返ること
+      assert_match 'action="replace"', response.body
+      assert_match %(target="#{ActionView::RecordIdentifier.dom_id(@subtask_one)}"), response.body
+      # 完了状態のクラスが含まれていること（グレー＋取り消し線表示）
+      assert_match "task-card--complete", response.body
+      # モーダル見出しバッジを更新する turbo-stream も含まれていること
+      assert_match %(target="show-subtasks-header-#{@subtask_one.parent_id}"), response.body
+      # 通知ストリームも併せて返ること
+      assert_match 'target="notification"', response.body
+    end
+
+    test "completing root task returns remove stream" do
+      post task_complete_path(@parent), as: :turbo_stream
+      assert_response :success
+
+      assert_match 'action="remove"', response.body
+      assert_match %(target="#{ActionView::RecordIdentifier.dom_id(@parent)}"), response.body
+    end
+
     test "completed tasks index shows root tasks with subtasks nested" do
       @parent.complete!
       project = projects(:two)
