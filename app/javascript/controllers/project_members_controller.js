@@ -10,7 +10,7 @@ export default class extends Controller {
 
   clear() {
     this.formTarget.reset()
-    const errors = this.formTarget.querySelectorAll('.simple-error')
+    const errors = this.formTarget.querySelectorAll('.field-error')
     errors.forEach(error => {
       error.remove()
     })

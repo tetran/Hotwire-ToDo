@@ -235,7 +235,7 @@
   background: inherit;
 }
 .assigned-to-me .menu-button--assignee .user-initial-sign {
-  background-color: #f2dede;
+  background-color: var(--color-highlight-bg);
 }
 .menu-button--assignee .user-initial-sign:hover {
   background: var(--button-base);
