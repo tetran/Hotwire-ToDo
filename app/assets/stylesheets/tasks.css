@@ -22,10 +22,6 @@
   margin: 0;
   vertical-align: middle;
 }
-.task-card__complete-check:focus {
-  outline: none;
-  box-shadow: none;
-}
 .task-card__complete-check:hover {
   background: var(--form-text);
 }
@@ -188,11 +184,14 @@
 }
 
 .comment-card__actions {
-  display: none;
-  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
 }
-.comment-card:hover .comment-card__actions {
-  visibility: visible;
+.comment-card:hover .comment-card__actions,
+.comment-card:focus-within .comment-card__actions {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* assignees */

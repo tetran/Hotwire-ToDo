@@ -15,5 +15,4 @@
 }
 .tab.active {
   background-color: var(--color-surface-active);
-  box-shadow: none;
 }
