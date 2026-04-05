@@ -38,7 +38,7 @@
         <hr>
         <li class="assignee-list__member assignee-list__unassign">
           <div class="assignee-list__member-info">
-            <%= button_to task_assign_path(task), method: :delete, class: "label-with-icon" do %>
+            <%= button_to task_assign_path(task), method: :delete, class: "btn danger label-with-icon" do %>
               <span class="material-symbols-outlined user-avatar">person_off</span>
               <%= t("tasks.assignees.unassign") %>
             <% end %>

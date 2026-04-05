@@ -26,6 +26,7 @@
 
   /* ---- Overlays / shadows ---- */
   --overlay-scrim: rgba(0, 0, 0, 0.3);
+  --overlay-scrim-strong: rgba(0, 0, 0, 0.5);
   --overlay-hover: rgba(0, 0, 0, 0.1);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 0 10px rgba(0, 0, 0, 0.3);
@@ -188,8 +189,6 @@
 .horizontal-actions a {
   display: inline-block;
   color: var(--text-main);
-  border-radius: var(--radius-md);
-  padding: 2px;
   transition:
     background-color 0.1s linear,
     border-color 0.1s linear,
@@ -197,25 +196,21 @@
     box-shadow 0.1s linear,
     transform 0.1s ease;
 }
-.horizontal-actions a:hover {
-  background: var(--overlay-hover);
-}
 .horizontal-actions a:active {
   transform: translateY(2px);
 }
 .horizontal-actions button {
-  background: none;
   border: none;
-  padding: 2px;
   margin: 0;
 }
-.horizontal-actions button:hover {
-  background: var(--overlay-hover);
-}
 
+.label-with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
 .label-with-icon .material-symbols-outlined {
   font-size: 1.2rem;
-  vertical-align: -4px;
 }
 
 .user-initial-sign {
