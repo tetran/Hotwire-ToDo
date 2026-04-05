@@ -3,8 +3,10 @@
   <%= turbo_stream.update "show-subtasks-header-#{@task.parent_id}", partial: "tasks/subtasks_header", locals: { subtasks: @task.parent.subtasks } %>
 <% else %>
   <%= turbo_stream.remove @task %>
-  <% if @task.generated_next %>
-    <%= turbo_stream.append "tasks", partial: "tasks/task", locals: { task: @task.generated_next } %>
-  <% end %>
+  <%# The generated next-instance task is appended to the list via
+      Task#broadcast_task_create (after_create_commit). Rendering an
+      explicit append here would cause a duplicate card in the sender's
+      DOM, since the submitting client is subscribed to the project's
+      turbo_stream channel. %>
 <% end %>
 <%= turbo_stream.update "notification", partial: "shared/notification", locals: { message: t("controllers.tasks/completes.create.success", name: @task.name), status: "success" } %>

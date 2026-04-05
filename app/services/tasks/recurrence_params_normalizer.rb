@@ -13,6 +13,8 @@ module Tasks
     end
 
     def by_weekday
+      return nil unless weekly?
+
       normalize_by_weekday(@params[:by_weekday])
     end
 
@@ -53,10 +55,23 @@ module Tasks
 
       def optional_attrs
         attrs = {}
-        attrs[:by_weekday] = by_weekday if @params.key?(:by_weekday)
+        attrs[:by_weekday] = by_weekday if include_by_weekday_key?
         attrs[:count] = @params[:count].presence if @params.key?(:count)
         attrs[:until_date] = @params[:until_date].presence if @params.key?(:until_date)
         attrs
+      end
+
+      def include_by_weekday_key?
+        # When frequency is being set/changed, always emit by_weekday so
+        # stale weekday values are cleared on non-weekly frequencies.
+        # Otherwise, emit only when the client submitted the key.
+        @params.key?(:by_weekday) || @params.key?(:frequency)
+      end
+
+      def weekly?
+        return true unless @params.key?(:frequency)
+
+        @params[:frequency].to_s == "weekly"
       end
 
       def changed_present_fields?(series)
@@ -70,7 +85,18 @@ module Tasks
       end
 
       def changed_nullable_fields?(series)
-        nullable_changed?(:count, series.count) || nullable_changed?(:until_date, series.until_date)
+        # Count/until_date are only meaningful for their respective end_mode.
+        # The form always submits these fields, so comparing them blindly
+        # would flag spurious template changes when the user edited only
+        # non-template fields (e.g., task name) on a series with
+        # end_mode=infinite.
+        mode = effective_end_mode(series)
+        (mode == "count" && nullable_changed?(:count, series.count)) ||
+          (mode == "until" && nullable_changed?(:until_date, series.until_date))
+      end
+
+      def effective_end_mode(series)
+        @params[:end_mode].presence&.to_s || series.end_mode.to_s
       end
 
       def nullable_changed?(field, current)

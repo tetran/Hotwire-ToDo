@@ -157,4 +157,25 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
     assert_equal 2, series.interval
     assert_nil series.by_weekday
   end
+
+  test "update scope=all_future clears stale by_weekday when switching from weekly to daily" do
+    login_as_regular_user
+    task = tasks(:recurring_weekly)
+    series = task.task_series
+    assert_equal "mo,we,fr", series.by_weekday
+
+    # Simulate the form submitting stale by_weekday checkboxes (hidden by JS
+    # but still present in the DOM) while the user switches frequency to daily.
+    patch task_url(task), params: {
+      scope: "all_future",
+      task: { name: task.name, due_date: task.due_date },
+      recurrence: { frequency: "daily", interval: "1",
+                    by_weekday: %w[mo we fr], end_mode: "infinite" },
+    }
+
+    assert_redirected_to task_url(task)
+    series.reload
+    assert_equal "daily", series.frequency
+    assert_nil series.by_weekday
+  end
 end
