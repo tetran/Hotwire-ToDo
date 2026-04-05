@@ -359,8 +359,12 @@ ja:
         success: "タスクを作成しました。"
       update:
         success: "タスクを更新しました。"
+        template_change_requires_all_future: "この変更は『今後すべて』でのみ可能です"
       destroy:
         success: "タスクを削除しました。"
+    tasks/recurrences:
+      destroy:
+        success: "繰り返しを停止しました。"
     tasks/comments:
       create:
         success: "コメントを投稿しました。"
@@ -381,6 +385,15 @@ ja:
     no_config: "タスク提案は現在利用できません。管理者にお問い合わせください。"
     llm_error: "提案を取得できませんでした。しばらくしてからもう一度お試しください。"
   task_series:
+    frequencies:
+      daily: "毎日"
+      weekly: "毎週"
+      monthly: "毎月"
+      yearly: "毎年"
+    end_modes:
+      infinite: "無期限"
+      count: "回数指定"
+      until: "期日指定"
     weekdays:
       mo: "月"
       tu: "火"

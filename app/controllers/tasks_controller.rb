@@ -19,10 +19,16 @@ class TasksController < ApplicationController
 
   # POST /tasks
   def create
-    @task = @project.tasks.build(task_params.merge(created_by: current_user))
+    creator = Tasks::Creator.new(
+      project: @project,
+      user: current_user,
+      task_params: task_params,
+      recurrence_params: recurrence_params,
+    )
+    @task = creator.call
 
     respond_to do |format|
-      if @task.save
+      if creator.success?
         format.html { redirect_to task_url(@task), success: t("controllers.tasks.create.success") }
         format.turbo_stream
       else
@@ -34,13 +40,18 @@ class TasksController < ApplicationController
 
   # PATCH/PUT /tasks/1
   def update
-    respond_to do |format|
-      if @task.update(task_params)
-        format.html { redirect_to task_url(@task), success: t("controllers.tasks.update.success") }
-        format.turbo_stream
-      else
-        format.html { render :edit, status: :unprocessable_content }
-      end
+    updater = Tasks::Updater.new(
+      task: @task,
+      task_params: task_params,
+      recurrence_params: recurrence_params,
+      scope: scope_param,
+    )
+
+    if updater.template_change_blocked?
+      flash.now[:error] = t("controllers.tasks.update.template_change_requires_all_future")
+      render :edit, status: :unprocessable_content
+    else
+      respond_update(updater)
     end
   end
 
@@ -56,12 +67,10 @@ class TasksController < ApplicationController
 
   private
 
-    # Use callbacks to share common setup or constraints between actions.
     def set_task
       @task = current_user.tasks.find(params[:id])
     end
 
-    # Only allow a list of trusted parameters through.
     def task_params
       params.expect(task: %i[name due_date description assignee])
     end
@@ -78,5 +87,27 @@ class TasksController < ApplicationController
         due_date: Time.zone.today + 3.months,
       )
       @show_suggestion = false
+    end
+
+    def recurrence_params
+      rp = params[:recurrence] || params.dig(:task, :recurrence)
+      return nil unless rp.is_a?(ActionController::Parameters) || rp.is_a?(Hash)
+
+      rp
+    end
+
+    def scope_param
+      params[:scope].presence_in(%w[only_this all_future]) || "only_this"
+    end
+
+    def respond_update(updater)
+      respond_to do |format|
+        if updater.call
+          format.html { redirect_to task_url(@task), success: t("controllers.tasks.update.success") }
+          format.turbo_stream
+        else
+          format.html { render :edit, status: :unprocessable_content }
+        end
+      end
     end
 end

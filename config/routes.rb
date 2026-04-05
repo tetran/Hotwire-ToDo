@@ -26,6 +26,7 @@ Rails.application.routes.draw do
     resources :comments, only: %i[new create edit update destroy], module: :tasks
     resource :complete, only: %i[create destroy], module: :tasks
     resource :assign, only: %i[create destroy], module: :tasks
+    resource :recurrence, only: %i[destroy], module: :tasks
   end
 
   resource :user, only: %i[show update destroy]
