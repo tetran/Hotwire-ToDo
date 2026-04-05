@@ -27,11 +27,7 @@
     <% unless @task.subtask? %>
       <div class="show-task__subtasks">
         <div id="show-subtasks-header-<%= @task.id %>">
-          <% if @subtasks.any? %>
-            <h4 class="show-task__subtasks-title">
-              <%= t("tasks.show.subtasks") %> (<%= @subtasks.count(&:completed?) %>/<%= @subtasks.size %>)
-            </h4>
-          <% end %>
+          <%= render "tasks/subtasks_header", subtasks: @subtasks %>
         </div>
         <div id="show-subtasks-<%= @task.id %>" class="show-task__subtasks-list">
           <%= render partial: "tasks/subtask", collection: @subtasks, as: :subtask %>

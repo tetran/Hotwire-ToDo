@@ -1,0 +1,5 @@
+<% if subtasks.any? %>
+  <h4 class="show-task__subtasks-title">
+    <%= t("tasks.show.subtasks") %> (<%= subtasks.count(&:completed?) %>/<%= subtasks.size %>)
+  </h4>
+<% end %>
