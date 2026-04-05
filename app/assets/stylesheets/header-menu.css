@@ -65,3 +65,9 @@
 .menu-list li a:hover {
   text-decoration: none;
 }
+
+@media (max-width: 640px) {
+  .menu-navigation {
+    min-width: min(var(--menu-min-width), 90vw);
+  }
+}
