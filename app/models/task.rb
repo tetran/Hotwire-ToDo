@@ -5,6 +5,7 @@ class Task < ApplicationRecord
   belongs_to :created_by, class_name: "User"
   belongs_to :assignee, class_name: "User", optional: true
   belongs_to :parent, class_name: "Task", optional: true, inverse_of: :subtasks
+  belongs_to :task_series, optional: true
   has_many :subtasks, class_name: "Task", foreign_key: :parent_id, dependent: :destroy, inverse_of: :parent
   has_many :comments, dependent: :destroy
 
@@ -17,6 +18,9 @@ class Task < ApplicationRecord
   validates :name, presence: true, length: { maximum: 100 }
   validate :parent_must_be_root_task
   validate :subtask_same_project_as_parent
+  validate :no_series_on_subtask
+
+  attr_reader :generated_next
 
   scope :inbox, -> { where(project: user.inbox_project) }
   scope :completed, -> { where(completed: true) }
@@ -70,11 +74,16 @@ class Task < ApplicationRecord
   def display_due_date = has_due_date? ? due_date : ""
 
   def complete!
+    return if completed?
+
     transaction do
       update(completed: true)
       subtasks.uncompleted.update_all(completed: true, updated_at: Time.current) if subtasks.any?
+      @generated_next = task_series.generate_next_instance!(from_task: self) if task_series && !task_series.terminated?
     end
   end
+
+  def recurring? = task_series_id.present?
 
   def uncomplete!
     update(completed: false)
@@ -102,6 +111,12 @@ class Task < ApplicationRecord
       return unless parent_id.present? && parent&.parent_id.present?
 
       errors.add(:parent_id, :nested_too_deep)
+    end
+
+    def no_series_on_subtask
+      return unless parent_id.present? && task_series_id.present?
+
+      errors.add(:task_series_id, :not_allowed_on_subtask)
     end
 
     def subtask_same_project_as_parent

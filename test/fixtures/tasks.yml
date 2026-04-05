@@ -36,3 +36,12 @@ subtask_two:
   due_date: 2024-01-15
   completed: true
   parent: parent_task
+
+recurring_weekly:
+  created_by: regular_user
+  project: two
+  assignee: regular_user
+  name: 週次定例ミーティング
+  due_date: 2026-04-06
+  completed: false
+  task_series: weekly_mwf

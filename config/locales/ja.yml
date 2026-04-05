@@ -77,6 +77,13 @@ ja:
               nested_too_deep: "サブタスクにサブタスクは作成できません"
             project_id:
               must_match_parent: "は親タスクと同じプロジェクトにしてください"
+            task_series_id:
+              not_allowed_on_subtask: "はサブタスクには設定できません"
+        task_series:
+          attributes:
+            by_weekday:
+              only_for_weekly: "は週次の繰り返しでのみ指定できます"
+              invalid: "に不正な曜日コードが含まれています"
         user:
           attributes:
             email:
@@ -356,3 +363,25 @@ ja:
   suggestions:
     no_config: "タスク提案は現在利用できません。管理者にお問い合わせください。"
     llm_error: "提案を取得できませんでした。しばらくしてからもう一度お試しください。"
+  task_series:
+    weekdays:
+      mo: "月"
+      tu: "火"
+      we: "水"
+      th: "木"
+      fr: "金"
+      sa: "土"
+      su: "日"
+    humanize:
+      every_daily: "毎日"
+      every_weekly: "毎週"
+      every_monthly: "毎月"
+      every_yearly: "毎年"
+      every_n_daily: "%{n}日ごと"
+      every_n_weekly: "%{n}週間ごと"
+      every_n_monthly: "%{n}ヶ月ごと"
+      every_n_yearly: "%{n}年ごと"
+      weekly_on_days: "%{base}%{days}曜日"
+      weekday_separator: "・"
+      end_count: "（全%{n}回）"
+      end_until: "（%{date}まで）"

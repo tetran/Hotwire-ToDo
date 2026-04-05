@@ -14,6 +14,8 @@ class SuggestionRequestTest < ActiveSupport::TestCase
     PromptSet,
     Comment,
     Task,
+    TaskSeriesSubtask,
+    TaskSeries,
     ProjectMember,
     Project,
     LlmModel,

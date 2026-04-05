@@ -114,4 +114,75 @@ class TaskTest < ActiveSupport::TestCase
   test "parent? returns false for task without subtasks" do
     assert_not @root_task.parent?
   end
+
+  # === Recurring tasks ===
+
+  test "recurring? returns true when task_series_id present" do
+    assert tasks(:recurring_weekly).recurring?
+    assert_not @root_task.recurring?
+  end
+
+  test "complete! generates next instance for recurring task" do
+    series = TaskSeries.create!(project: projects(:two), created_by: users(:regular_user), name: "daily",
+                                frequency: :daily, interval: 1, end_mode: :infinite)
+    task = Task.create!(name: "first", project: projects(:two), created_by: users(:regular_user),
+                        due_date: Date.new(2026, 4, 6), task_series: series)
+    task.complete!
+    assert_not_nil task.generated_next
+    assert_equal Date.new(2026, 4, 7), task.generated_next.due_date
+    assert_equal series.id, task.generated_next.task_series_id
+  end
+
+  test "complete! is idempotent when already completed" do
+    series = TaskSeries.create!(project: projects(:two), created_by: users(:regular_user), name: "d",
+                                frequency: :daily, interval: 1, end_mode: :infinite)
+    task = Task.create!(name: "t", project: projects(:two), created_by: users(:regular_user),
+                        due_date: Date.new(2026, 4, 6), task_series: series)
+    task.complete!
+    series.reload
+    count_before = series.occurrences_generated
+    task.complete!
+    assert_equal count_before, series.reload.occurrences_generated
+  end
+
+  test "complete! on past-due recurring task still generates next" do
+    series = TaskSeries.create!(project: projects(:two), created_by: users(:regular_user), name: "d",
+                                frequency: :daily, interval: 1, end_mode: :infinite)
+    task = Task.create!(name: "old", project: projects(:two), created_by: users(:regular_user),
+                        due_date: Date.current - 30, task_series: series)
+    task.complete!
+    assert_not_nil task.generated_next
+    assert_equal Date.current - 29, task.generated_next.due_date
+  end
+
+  test "complete! on subtask does not generate series instance" do
+    series = TaskSeries.create!(project: projects(:two), created_by: users(:regular_user), name: "d",
+                                frequency: :daily, interval: 1, end_mode: :infinite)
+    parent = Task.create!(name: "p", project: projects(:two), created_by: users(:regular_user), due_date: Date.current,
+                          task_series: series)
+    child = Task.create!(name: "c", project: projects(:two), created_by: users(:regular_user), due_date: Date.current,
+                         parent: parent)
+    child.complete!
+    assert_nil child.generated_next
+  end
+
+  test "no_series_on_subtask validation rejects subtask with task_series_id" do
+    series = TaskSeries.create!(project: projects(:two), created_by: users(:regular_user), name: "d",
+                                frequency: :daily, interval: 1, end_mode: :infinite)
+    child = Task.new(name: "c", project: projects(:two), created_by: users(:regular_user), due_date: Date.current,
+                     parent: @parent, task_series: series)
+    assert_not child.valid?
+    assert child.errors[:task_series_id].any?
+  end
+
+  test "partial unique index prevents two pending tasks per series" do
+    series = TaskSeries.create!(project: projects(:two), created_by: users(:regular_user), name: "d",
+                                frequency: :daily, interval: 1, end_mode: :infinite)
+    Task.create!(name: "first", project: projects(:two), created_by: users(:regular_user), due_date: Date.current,
+                 task_series: series)
+    assert_raises(ActiveRecord::RecordNotUnique) do
+      Task.create!(name: "second", project: projects(:two), created_by: users(:regular_user),
+                   due_date: Date.current + 1, task_series: series)
+    end
+  end
 end
