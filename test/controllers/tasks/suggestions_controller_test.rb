@@ -61,7 +61,7 @@ module Tasks
       }
 
       assert_response :success
-      assert_includes response.body, "simple-error"
+      assert_includes response.body, "field-error"
       assert_includes response.body, "task-suggestion-form"
     end
 
@@ -78,7 +78,7 @@ module Tasks
       }
 
       assert_response :success
-      assert_includes response.body, "simple-error"
+      assert_includes response.body, "field-error"
       assert_includes response.body, "task-suggestion-form"
     end
 
