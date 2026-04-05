@@ -49,3 +49,23 @@ input[type="submit"].primary:hover,
 button.primary:hover {
   background-color: var(--button-primary-hover) !important;
 }
+
+.btn.danger {
+  color: var(--color-error);
+}
+.btn.danger:hover {
+  background: var(--color-error-bg);
+}
+
+.btn.btn--icon,
+.horizontal-actions a,
+.horizontal-actions button {
+  padding: 2px;
+  background: transparent;
+  border-radius: var(--radius-md);
+}
+.btn.btn--icon:hover,
+.horizontal-actions a:hover,
+.horizontal-actions button:hover {
+  background: var(--overlay-hover);
+}

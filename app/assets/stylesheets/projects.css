@@ -82,14 +82,15 @@
 }
 .project-selector__add-button {
   font-size: var(--text-sm);
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
   box-sizing: border-box;
   width: 100%;
   color: var(--form-text);
 }
 .project-selector__add-button .material-symbols-outlined {
   font-size: 1.4rem;
-  vertical-align: -6px;
 }
 .project-selector__add-button:hover .material-symbols-outlined {
   scale: 1.2;
