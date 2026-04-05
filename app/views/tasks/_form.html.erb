@@ -1,5 +1,5 @@
 <div id="form1" class="tab-panel <%= @show_suggestion ? "hidden" : "" %>" role="tabpanel" data-tabs-target="tabPanel">
-  <% series = task.task_series %>
+  <% series = task.active_task_series %>
   <%= form_with(model: task,
                 class: "task-form",
                 data: {
@@ -97,17 +97,13 @@
     <div class="form-actions task-form__actions">
       <%= hidden_field_tag :project_id, task.project_id %>
       <%= link_to t("tasks.form.cancel"), project_path(task.project_id, c: 1, t: task.id), class: "btn btn-light task-form__cancel" %>
+      <% if task.persisted? && series.present? %>
+        <%= link_to t("tasks.form.recurrence.stop"),
+              task_recurrence_path(task),
+              data: { turbo_method: :delete, turbo_confirm: t("tasks.form.recurrence.stop_confirm") },
+              class: "btn btn-light task-form__recurrence-stop" %>
+      <% end %>
       <%= form.submit class: "task-form__submit primary" %>
-    </div>
-  <% end %>
-
-  <% if task.persisted? && task.task_series.present? %>
-    <div class="task-form__recurrence-stop">
-      <%= button_to t("tasks.form.recurrence.stop"),
-            task_recurrence_path(task),
-            method: :delete,
-            data: { turbo_confirm: t("tasks.form.recurrence.stop_confirm") },
-            class: "btn btn-light" %>
     </div>
   <% end %>
 </div>

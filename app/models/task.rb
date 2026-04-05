@@ -85,6 +85,17 @@ class Task < ApplicationRecord
 
   def recurring? = task_series_id.present?
 
+  # Returns the attached TaskSeries only when it is still active (not stopped
+  # and not past its count/until termination). Use this wherever editing the
+  # series or judging "is this task currently recurring?" matters; a stopped
+  # or exhausted series should behave as if there is no series at all.
+  def active_task_series
+    return nil if task_series.nil?
+    return nil if task_series.terminated?
+
+    task_series
+  end
+
   def uncomplete!
     update(completed: false)
   end

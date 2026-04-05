@@ -125,7 +125,7 @@ class RecurringTasksTest < ApplicationSystemTestCase
 
     # Click Stop and accept the turbo-confirm dialog.
     accept_confirm do
-      click_button I18n.t("tasks.form.recurrence.stop")
+      click_link I18n.t("tasks.form.recurrence.stop")
     end
 
     # Wait for the notification stream to confirm DELETE completed.
@@ -133,6 +133,11 @@ class RecurringTasksTest < ApplicationSystemTestCase
 
     # Series is stopped in DB.
     assert_not_nil task.task_series.reload.stopped_at
+
+    # Re-opening the edit form shows recurrence as "none" with no stop button.
+    visit edit_task_path(task)
+    assert_equal "none", find("#task_recurrence_frequency").value
+    assert_no_link I18n.t("tasks.form.recurrence.stop")
 
     # Navigate back to project page and verify badge is gone.
     visit project_path(task.project)
@@ -147,5 +152,32 @@ class RecurringTasksTest < ApplicationSystemTestCase
     end
     assert_no_selector "turbo-frame#task_#{task.id}"
     assert_equal 0, task.task_series.reload.tasks.uncompleted.count
+  end
+
+  test "setting recurrence again after stopping creates a new active series" do
+    task = tasks(:recurring_weekly)
+    original_series_id = task.task_series_id
+    task.task_series.stop!
+
+    sign_in_as(@user)
+    assert_selector ".project-selector"
+    visit edit_task_path(task)
+
+    # Old stopped series is treated as absent; form shows "繰り返さない".
+    assert_equal "none", find("#task_recurrence_frequency").value
+
+    # User picks a new frequency and submits.
+    select I18n.t("task_series.frequencies.daily"), from: "task_recurrence_frequency"
+    find(".task-form__submit").click
+
+    using_wait_time(5) do
+      assert_no_selector ".task-form__submit"
+    end
+
+    task.reload
+    assert_not_nil task.task_series, "task must be attached to a series"
+    assert_not_equal original_series_id, task.task_series_id, "a new series should be created"
+    assert_equal "daily", task.task_series.frequency
+    assert_nil task.task_series.stopped_at
   end
 end

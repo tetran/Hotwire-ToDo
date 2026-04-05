@@ -489,9 +489,6 @@ input.task-suggestion__checkbox {
 .task-form__recurrence-count {
   width: 5rem;
 }
-.task-form__recurrence-stop {
-  margin-top: var(--space-2);
-}
 
 /* Scope dialog (shown on edit when template fields change) */
 .task-form__scope-dialog-description {

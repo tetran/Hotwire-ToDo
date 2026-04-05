@@ -8,12 +8,12 @@ module Tasks
     end
 
     def template_change_blocked?
-      return false unless @task.task_series
+      return false unless @task.active_task_series
       return false if @scope == "all_future"
       return false if @recurrence.blank?
       return false if @recurrence.enabled_submitted? && !@recurrence.enabled?
 
-      @recurrence.template_changed?(@task.task_series)
+      @recurrence.template_changed?(@task.active_task_series)
     end
 
     def call
@@ -33,7 +33,7 @@ module Tasks
 
       def apply_recurrence_changes!
         if stop_series_requested?
-          @task.task_series.stop!
+          @task.active_task_series.stop!
         elsif start_series_requested?
           start_new_series!
         elsif apply_series_changes?
@@ -42,14 +42,14 @@ module Tasks
       end
 
       def stop_series_requested?
-        return false unless @task.task_series
+        return false unless @task.active_task_series
         return false unless @recurrence.enabled_submitted?
 
         !@recurrence.enabled?
       end
 
       def start_series_requested?
-        return false if @task.task_series
+        return false if @task.active_task_series
 
         @recurrence.enabled?
       end
@@ -72,11 +72,11 @@ module Tasks
       end
 
       def apply_series_changes?
-        @scope == "all_future" && @task.task_series
+        @scope == "all_future" && @task.active_task_series
       end
 
       def apply_series_changes!
-        series = @task.task_series
+        series = @task.active_task_series
         series.sync_from_task!(@task)
         apply_template_updates!(series)
         series.propagate_to_pending!(except: @task)
