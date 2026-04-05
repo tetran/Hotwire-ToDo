@@ -1,5 +1,7 @@
 # README
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ## What is this?
 
 This is a sample todo list application to try Rails 8 & Hotwire.
@@ -62,3 +64,7 @@ the following environment variables to use OpenAI API.
 
 - OPENAI_ACCESS_TOKEN: OpenAI API access token
 - OPENAI_ORGANIZATION_ID: OpenAI organization ID
+
+## License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
