@@ -13,7 +13,6 @@
   padding: 8px;
   border: none;
   border-radius: 6px;
-  outline: none;
   transition:
     background-color 0.1s linear,
     border-color 0.1s linear,
@@ -24,6 +23,13 @@
 .btn:hover {
   text-decoration: none;
   background: var(--button-hover);
+}
+.menu-button:focus-visible,
+.menu-list li button:focus-visible,
+.task-card__complete-check:focus-visible,
+.btn:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }
 .btn:active {
   transform: translateY(2px);
