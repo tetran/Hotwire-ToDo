@@ -31,12 +31,12 @@
   margin-top: var(--space-2);
   margin-bottom: 0;
 }
-.form__error li {
+.field-error {
   color: var(--color-error);
-  list-style: none;
-  margin-bottom: 6px;
   font-size: var(--text-sm);
+  list-style: none;
   padding: 0 0 var(--space-2) var(--space-2);
+  margin: 0;
 }
 
 .full-width-input {

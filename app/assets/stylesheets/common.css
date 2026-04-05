@@ -23,6 +23,7 @@
   --color-muted: #999999;
   --color-surface-hover: #cccccc;
   --color-surface-active: #dddddd;
+  --color-highlight-bg: #e0f4f9;
 
   /* ---- Overlays / shadows ---- */
   --overlay-scrim: rgba(0, 0, 0, 0.3);
@@ -74,13 +75,6 @@
   clip: rect(0, 0, 0, 0) !important;
   white-space: nowrap !important;
   border: 0 !important;
-}
-
-.simple-error {
-  color: var(--color-error);
-  font-size: var(--text-sm);
-  padding: 0 0 var(--space-2) var(--space-2);
-  margin: 0;
 }
 
 .notification {
