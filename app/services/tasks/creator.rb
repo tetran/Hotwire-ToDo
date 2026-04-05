@@ -30,7 +30,14 @@ module Tasks
 
       def create_with_series
         Task.transaction do
-          @task.task_series = build_series
+          series = build_series
+          unless series.save
+            merge_series_errors_into_task(series)
+            raise ActiveRecord::Rollback
+          end
+
+          create_series_subtasks(series)
+          @task.task_series = series
           raise ActiveRecord::Rollback unless @task.save
 
           @success = true
@@ -47,14 +54,18 @@ module Tasks
           ),
         )
         series.description = @task.description.to_s if @task.description.present?
-        series.save!
-        create_series_subtasks(series)
         series
       end
 
       def create_series_subtasks(series)
         @recurrence.subtask_names.each_with_index do |name, index|
           series.series_subtasks.create!(name: name, position: index)
+        end
+      end
+
+      def merge_series_errors_into_task(series)
+        series.errors.each do |error|
+          @task.errors.add(:base, error.full_message)
         end
       end
   end

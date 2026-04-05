@@ -158,6 +158,69 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
     assert_nil series.by_weekday
   end
 
+  test "create with invalid recurrence combo returns 422 and does not create task/series" do
+    login_as_regular_user
+    project = projects(:two)
+
+    assert_no_difference(["Task.count", "TaskSeries.count"]) do
+      post tasks_url, params: {
+        project_id: project.id,
+        task: { name: "定例会議", due_date: Date.current },
+        recurrence: {
+          enabled: "1",
+          frequency: "weekly",
+          interval: "1",
+          by_weekday: %w[mo],
+          end_mode: "count",
+          # count intentionally missing → invalid
+        },
+      }
+    end
+
+    assert_response :unprocessable_content
+    # Response should be the re-rendered :new form, not a generic error page.
+    assert_select "form.task-form"
+  end
+
+  test "update with invalid recurrence rolls back and returns 422 without partial write" do
+    login_as_regular_user
+    task = tasks(:recurring_weekly)
+    series = task.task_series
+    original_name = task.name
+    original_series_frequency = series.frequency
+
+    patch task_url(task), params: {
+      scope: "all_future",
+      task: { name: "changed", due_date: task.due_date },
+      recurrence: {
+        enabled: "1",
+        frequency: "daily",
+        interval: "0", # invalid
+        end_mode: "infinite",
+      },
+    }
+
+    assert_response :unprocessable_content
+    assert_equal original_name, task.reload.name
+    assert_equal original_series_frequency, series.reload.frequency
+  end
+
+  test "update with enabled=0 stops the series" do
+    login_as_regular_user
+    task = tasks(:recurring_weekly)
+    series = task.task_series
+    assert_nil series.stopped_at
+
+    patch task_url(task), params: {
+      scope: "only_this",
+      task: { name: task.name, due_date: task.due_date },
+      recurrence: { enabled: "0", frequency: "weekly", interval: "1", end_mode: "infinite" },
+    }
+
+    assert_redirected_to task_url(task)
+    assert_not_nil series.reload.stopped_at
+  end
+
   test "update scope=all_future clears stale by_weekday when switching from weekly to daily" do
     login_as_regular_user
     task = tasks(:recurring_weekly)

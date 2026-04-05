@@ -12,6 +12,12 @@ module Tasks
       ActiveModel::Type::Boolean.new.cast(@params[:enabled])
     end
 
+    def enabled_submitted?
+      return false if @params.blank?
+
+      @params.key?(:enabled)
+    end
+
     def by_weekday
       return nil unless weekly?
 

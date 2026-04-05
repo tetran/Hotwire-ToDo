@@ -244,6 +244,32 @@ class TaskSeriesTest < ActiveSupport::TestCase
     assert_includes series.description.to_s, "new body"
   end
 
+  test "sync_from_task! clears description when task description is blank" do
+    series = create_series!(frequency: :daily, interval: 1)
+    series.description = "old"
+    series.save!
+    task = Task.create!(name: "n", project: @project, created_by: @user, due_date: Date.current,
+                        task_series: series)
+    task.description = ""
+    task.save!
+    series.sync_from_task!(task)
+    assert series.reload.description.to_plain_text.strip.blank?,
+           "expected series description to be cleared, got: #{series.description.to_plain_text.inspect}"
+  end
+
+  test "propagate_to_pending! clears sibling description when series description is blank" do
+    series = create_series!(frequency: :daily, interval: 1)
+    pending = Task.create!(name: "n", project: @project, created_by: @user, due_date: Date.current,
+                           task_series: series)
+    pending.description = "old"
+    pending.save!
+    # Series description left blank
+    edited = Task.new(id: -1)
+    series.propagate_to_pending!(except: edited)
+    assert pending.reload.description.to_plain_text.strip.blank?,
+           "expected sibling description to be cleared, got: #{pending.description.to_plain_text.inspect}"
+  end
+
   test "propagate_to_pending! updates sibling pending tasks" do
     # Typical scope: there's 0-1 pending sibling because of the partial unique index.
     # Exercise the common case: one pending task that is NOT the edited one.

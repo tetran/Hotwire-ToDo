@@ -36,6 +36,7 @@
 
         <div class="task-form__recurrence-fields">
           <label class="task-form__recurrence-enable">
+            <%= hidden_field_tag "task[recurrence][enabled]", "0" %>
             <%= check_box_tag "task[recurrence][enabled]", "1", series.present?, data: { recurrence_form_target: "enabled" } %>
             <%= t("tasks.form.recurrence.enable") %>
           </label>

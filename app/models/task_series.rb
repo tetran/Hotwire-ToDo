@@ -66,7 +66,7 @@ class TaskSeries < ApplicationRecord
 
   def sync_from_task!(task)
     assign_attributes(name: task.name, assignee_id: task.assignee_id)
-    self.description = task.description.to_s if task.description.present?
+    self.description = task.description.to_s
     save!
   end
 
@@ -86,8 +86,6 @@ class TaskSeries < ApplicationRecord
 
     def apply_template_to(sibling)
       sibling.update!(name: name, assignee_id: assignee_id)
-      return if description.blank?
-
       sibling.description = description.to_s
       sibling.save!
     end
