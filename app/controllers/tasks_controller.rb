@@ -93,7 +93,9 @@ class TasksController < ApplicationController
       rp = params[:recurrence] || params.dig(:task, :recurrence)
       return nil unless rp.is_a?(ActionController::Parameters) || rp.is_a?(Hash)
 
-      rp
+      rp = ActionController::Parameters.new(rp) if rp.is_a?(Hash)
+      rp.permit(:frequency, :interval, :end_mode, :count, :until_date,
+                by_weekday: [], subtask_names: [])
     end
 
     def scope_param

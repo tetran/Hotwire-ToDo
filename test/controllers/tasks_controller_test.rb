@@ -122,7 +122,7 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
 
     assert_redirected_to task_url(task)
     assert_equal "新タスク名", series.reload.name
-    assert_equal "新しい説明", series.description.to_s.strip.gsub(/<[^>]*>/, "").strip
+    assert_equal "新しい説明", ActionController::Base.helpers.strip_tags(series.description.to_s).strip
   end
 
   test "update scope=only_this rejects frequency change with 422" do
