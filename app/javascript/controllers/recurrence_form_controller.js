@@ -4,12 +4,13 @@ import { Controller } from '@hotwired/stimulus'
 // Attached to the <form> element.
 //
 // Responsibilities:
+// - Hide all recurrence detail fields when frequency="none" (not recurring)
 // - Toggle weekday fieldset visibility based on frequency=weekly
 // - On submit: when editing an existing recurring task, detect whether
 //   template fields changed and, if so, open the scope dialog to let the
 //   user choose "only this" vs "all future" before submitting.
 export default class extends Controller {
-  static targets = ['weeklyOnly', 'frequency', 'scope', 'enabled']
+  static targets = ['weeklyOnly', 'frequency', 'scope', 'details']
   static values = {
     hasSeries: String,
     isPersisted: String,
@@ -18,13 +19,21 @@ export default class extends Controller {
   connect() {
     this.hasSeries = this.hasSeriesValue === 'true'
     this.isPersisted = this.isPersistedValue === 'true'
+    this.toggleDetails()
     this.toggleWeeklyOnly()
     this.initialTemplateSnapshot = this.captureTemplateSnapshot()
     this.submitting = false
   }
 
   onFrequencyChange() {
+    this.toggleDetails()
     this.toggleWeeklyOnly()
+  }
+
+  toggleDetails() {
+    if (!this.hasDetailsTarget || !this.hasFrequencyTarget) return
+    const isNone = this.frequencyTarget.value === 'none'
+    this.detailsTarget.hidden = isNone
   }
 
   toggleWeeklyOnly() {
@@ -37,8 +46,9 @@ export default class extends Controller {
     if (this.submitting) return
     if (!this.isPersisted || !this.hasSeries) return
 
-    // If user disabled recurrence entirely, skip the dialog.
-    if (this.hasEnabledTarget && !this.enabledTarget.checked) {
+    // If user chose "none" (don't recur), skip the dialog — the backend
+    // will stop the series based on the frequency value.
+    if (this.hasFrequencyTarget && this.frequencyTarget.value === 'none') {
       this.setScope('only_this')
       return
     }

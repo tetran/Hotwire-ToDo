@@ -59,7 +59,6 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
             project_id: project.id,
             task: { name: "定例会議", due_date: Date.current },
             recurrence: {
-              enabled: "1",
               frequency: "weekly",
               interval: "1",
               by_weekday: %w[mo we],
@@ -80,7 +79,7 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
     assert_equal %w[アジェンダ準備 議事録作成], series.series_subtasks.order(:position).pluck(:name)
   end
 
-  test "create without recurrence enabled does not create series" do
+  test "create without recurrence (frequency=none) does not create series" do
     login_as_regular_user
     project = projects(:two)
 
@@ -88,7 +87,7 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
       post tasks_url, params: {
         project_id: project.id,
         task: { name: "単発タスク", due_date: Date.current },
-        recurrence: { enabled: "0", frequency: "weekly" },
+        recurrence: { frequency: "none" },
       }
     end
 
@@ -167,7 +166,6 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
         project_id: project.id,
         task: { name: "定例会議", due_date: Date.current },
         recurrence: {
-          enabled: "1",
           frequency: "weekly",
           interval: "1",
           by_weekday: %w[mo],
@@ -193,7 +191,6 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
       scope: "all_future",
       task: { name: "changed", due_date: task.due_date },
       recurrence: {
-        enabled: "1",
         frequency: "daily",
         interval: "0", # invalid
         end_mode: "infinite",
@@ -205,7 +202,7 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
     assert_equal original_series_frequency, series.reload.frequency
   end
 
-  test "update with enabled=0 stops the series" do
+  test "update with frequency=none stops the series" do
     login_as_regular_user
     task = tasks(:recurring_weekly)
     series = task.task_series
@@ -214,7 +211,7 @@ class TasksControllerTest < ActionDispatch::IntegrationTest
     patch task_url(task), params: {
       scope: "only_this",
       task: { name: task.name, due_date: task.due_date },
-      recurrence: { enabled: "0", frequency: "weekly", interval: "1", end_mode: "infinite" },
+      recurrence: { frequency: "none", interval: "1", end_mode: "infinite" },
     }
 
     assert_redirected_to task_url(task)

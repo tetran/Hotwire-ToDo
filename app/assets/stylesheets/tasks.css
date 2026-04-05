@@ -395,87 +395,92 @@ input.task-suggestion__checkbox {
 }
 
 /* Recurrence section inside the task form */
-.task-form__recurrence {
-  margin-top: var(--space-4);
-  padding-top: var(--space-3);
-  border-top: solid 1px var(--border);
-}
-.task-form__recurrence-summary {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  cursor: pointer;
-  font-size: var(--text-sm);
-  color: var(--form-text);
-  list-style: revert;
-}
-.task-form__recurrence-summary .material-symbols-outlined {
-  font-size: 1.1rem;
-  color: var(--color-accent);
-}
-.task-form__recurrence-fields {
+.task-form__recurrence-details {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
   margin-top: var(--space-3);
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--border);
 }
-.task-form__recurrence-enable {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: var(--text-sm);
+.task-form__recurrence-details[hidden] {
+  display: none;
 }
 .task-form__recurrence-row {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
   font-size: var(--text-sm);
 }
 .task-form__recurrence-row label {
-  min-width: 5rem;
   color: var(--color-muted);
 }
 .task-form__recurrence-interval {
   width: 4rem;
 }
 .task-form__recurrence-weekdays {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-2);
-  border: solid 1px var(--border);
-  border-radius: var(--radius-md);
-  padding: var(--space-2);
+  border: 0;
+  padding: 0;
+  margin: 0;
   font-size: var(--text-sm);
 }
 .task-form__recurrence-weekdays legend {
   font-size: var(--text-xs);
   color: var(--color-muted);
-  padding: 0 var(--space-1);
+  padding: 0;
+  margin-bottom: var(--space-1);
+}
+.task-form__recurrence-weekdays-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: var(--space-1);
 }
 .task-form__recurrence-weekday {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-1);
+  justify-content: center;
+  padding: var(--space-1) var(--space-2);
+  border: solid 1px var(--border);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
+  color: var(--form-text);
+  cursor: pointer;
+  user-select: none;
+}
+.task-form__recurrence-weekday:has(input:checked) {
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+.task-form__recurrence-weekday:focus-within {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
 .task-form__recurrence-end {
+  border: 0;
+  padding: 0;
+  margin: 0;
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  border: solid 1px var(--border);
-  border-radius: var(--radius-md);
-  padding: var(--space-2);
   font-size: var(--text-sm);
 }
 .task-form__recurrence-end legend {
   font-size: var(--text-xs);
   color: var(--color-muted);
-  padding: 0 var(--space-1);
+  padding: 0;
+  margin-bottom: var(--space-1);
 }
 .task-form__recurrence-end-option {
   display: flex;
   align-items: center;
   gap: var(--space-2);
   flex-wrap: wrap;
+  color: var(--color-muted);
+}
+.task-form__recurrence-end-option:has(input:checked) {
+  color: var(--form-text);
+  font-weight: 500;
 }
 .task-form__recurrence-count,
 .task-form__recurrence-until {

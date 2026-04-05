@@ -15,13 +15,12 @@ class RecurringTasksTest < ApplicationSystemTestCase
     within("turbo-frame#new_task") do
       fill_in I18n.t("tasks.form.task_name"), with: task_name
 
-      # Open the recurrence <details> section and enable it.
-      find(".task-form__recurrence-summary").click
-      check I18n.t("tasks.form.recurrence.enable")
-
-      # Choose weekly mo/we/fr.
+      # Pick a frequency (selecting any non-"none" value enables recurrence
+      # and reveals the detail fields).
       select I18n.t("task_series.frequencies.weekly"),
              from: "task_recurrence_frequency"
+
+      # Choose weekly mo/we/fr.
       check "task_recurrence_by_weekday_mo"
       check "task_recurrence_by_weekday_we"
       check "task_recurrence_by_weekday_fr"

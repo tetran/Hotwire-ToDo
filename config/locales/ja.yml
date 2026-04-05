@@ -225,9 +225,8 @@ ja:
       description: "説明"
       cancel: "キャンセル"
       recurrence:
-        summary: "繰り返し"
-        enable: "このタスクを繰り返す"
-        frequency_label: "頻度"
+        frequency_label: "繰り返し"
+        frequency_none: "繰り返さない"
         interval_label: "間隔"
         weekday_label: "曜日"
         end_label: "終了条件"

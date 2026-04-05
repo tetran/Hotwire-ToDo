@@ -28,30 +28,19 @@
     </div>
 
     <% unless task.subtask? %>
-      <details class="task-form__recurrence" <%= "open" if series.present? %>>
-        <summary class="task-form__recurrence-summary">
-          <span class="material-symbols-outlined">repeat</span>
-          <%= t("tasks.form.recurrence.summary") %>
-        </summary>
+      <div class="task-form__item task-form__recurrence">
+        <%= label_tag "task_recurrence_frequency", t("tasks.form.recurrence.frequency_label") %>
+        <%
+          frequency_options = [[t("tasks.form.recurrence.frequency_none"), "none"]] +
+            TaskSeries.frequencies.keys.map { |k| [t("task_series.frequencies.#{k}", default: k.to_s), k] }
+          selected_frequency = series&.frequency || "none"
+        %>
+        <%= select_tag "task[recurrence][frequency]",
+              options_for_select(frequency_options, selected_frequency),
+              id: "task_recurrence_frequency",
+              data: { recurrence_form_target: "frequency", action: "change->recurrence-form#onFrequencyChange" } %>
 
-        <div class="task-form__recurrence-fields">
-          <label class="task-form__recurrence-enable">
-            <%= hidden_field_tag "task[recurrence][enabled]", "0" %>
-            <%= check_box_tag "task[recurrence][enabled]", "1", series.present?, data: { recurrence_form_target: "enabled" } %>
-            <%= t("tasks.form.recurrence.enable") %>
-          </label>
-
-          <div class="task-form__recurrence-row">
-            <label for="task_recurrence_frequency"><%= t("tasks.form.recurrence.frequency_label") %></label>
-            <%= select_tag "task[recurrence][frequency]",
-                  options_for_select(
-                    TaskSeries.frequencies.keys.map { |k| [t("task_series.frequencies.#{k}", default: k.to_s), k] },
-                    series&.frequency || "weekly"
-                  ),
-                  id: "task_recurrence_frequency",
-                  data: { recurrence_form_target: "frequency", action: "change->recurrence-form#onFrequencyChange" } %>
-          </div>
-
+        <div class="task-form__recurrence-details" data-recurrence-form-target="details">
           <div class="task-form__recurrence-row">
             <label for="task_recurrence_interval"><%= t("tasks.form.recurrence.interval_label") %></label>
             <%= number_field_tag "task[recurrence][interval]", series&.interval || 1, min: 1, id: "task_recurrence_interval", class: "task-form__recurrence-interval" %>
@@ -59,13 +48,15 @@
 
           <fieldset class="task-form__recurrence-weekdays" data-recurrence-form-target="weeklyOnly">
             <legend><%= t("tasks.form.recurrence.weekday_label") %></legend>
-            <% selected_weekdays = series&.by_weekday.to_s.split(",") %>
-            <% TaskSeries::WeekdaySupport::WEEKDAYS.each do |code| %>
-              <label class="task-form__recurrence-weekday">
-                <%= check_box_tag "task[recurrence][by_weekday][]", code, selected_weekdays.include?(code), id: "task_recurrence_by_weekday_#{code}" %>
-                <%= t("task_series.weekdays.#{code}", default: code.to_s) %>
-              </label>
-            <% end %>
+            <div class="task-form__recurrence-weekdays-grid">
+              <% selected_weekdays = series&.by_weekday.to_s.split(",") %>
+              <% TaskSeries::WeekdaySupport::WEEKDAYS.each do |code| %>
+                <label class="task-form__recurrence-weekday">
+                  <%= check_box_tag "task[recurrence][by_weekday][]", code, selected_weekdays.include?(code), id: "task_recurrence_by_weekday_#{code}", class: "visually-hidden" %>
+                  <%= t("task_series.weekdays.#{code}", default: code.to_s) %>
+                </label>
+              <% end %>
+            </div>
           </fieldset>
 
           <fieldset class="task-form__recurrence-end">
@@ -87,12 +78,8 @@
               <%= date_field_tag "task[recurrence][until_date]", series&.until_date, id: "task_recurrence_until_date", class: "task-form__recurrence-until" %>
             </label>
           </fieldset>
-
-          <%# The "stop recurrence" action is rendered as a separate form
-              OUTSIDE the main task <form> (see below) to avoid HTML-invalid
-              nested forms. A placeholder here keeps layout stable. %>
         </div>
-      </details>
+      </div>
     <% end %>
 
     <%= hidden_field_tag :scope, "", data: { recurrence_form_target: "scope" } %>

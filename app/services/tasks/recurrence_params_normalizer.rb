@@ -6,16 +6,23 @@ module Tasks
       @params = params
     end
 
+    # Recurrence is driven by the frequency select. The "none" option (or a
+    # missing/blank value) represents "don't recur". Any other value means
+    # the user wants a series.
     def enabled?
       return false if @params.blank?
 
-      ActiveModel::Type::Boolean.new.cast(@params[:enabled])
+      freq = @params[:frequency].to_s
+      freq.present? && freq != "none"
     end
 
+    # True when the form rendered the recurrence UI at all — detected by the
+    # presence of the frequency key, which is always submitted for non-subtask
+    # forms.
     def enabled_submitted?
       return false if @params.blank?
 
-      @params.key?(:enabled)
+      @params.key?(:frequency)
     end
 
     def by_weekday
