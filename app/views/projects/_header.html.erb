@@ -35,18 +35,21 @@
     </nav>
   </div>
 
-  <div class="search-container" data-controller="search" data-action="keyup@window->search#closeWithKeyboard click@window->search#closeBackground">
-    <div class="search-form" data-search-target="form" data-action="click->search#expand">
+  <div class="search-container" data-controller="search">
+    <button type="button" class="search-trigger" data-action="click->search#open" aria-label="<%= t("projects.header.search_placeholder") %>">
       <span class="material-symbols-outlined search-form__icon">search</span>
-      <input type="text"
-             class="search-form__input"
-             placeholder="<%= t("projects.header.search_placeholder") %>"
-             data-search-target="input"
-             data-action="input->search#search blur->search#collapse">
-    </div>
-    <div class="search-modal hidden" data-search-target="modal">
+    </button>
+    <dialog class="modal-base search-modal" data-search-target="modal" data-action="close->search#onClose click->search#onBackdropClick">
+      <div class="search-form">
+        <span class="material-symbols-outlined search-form__icon">search</span>
+        <input type="text"
+               class="search-form__input"
+               placeholder="<%= t("projects.header.search_placeholder") %>"
+               data-search-target="input"
+               data-action="input->search#search">
+      </div>
       <%= turbo_frame_tag "search_results" %>
-    </div>
+    </dialog>
   </div>
 
   <div class="project-header__right">

@@ -1,7 +1,7 @@
 import { Controller } from '@hotwired/stimulus'
 
 export default class extends Controller {
-  static targets = ['form', 'input', 'modal']
+  static targets = ['input', 'modal']
 
   connect() {
     this.debounceTimeout = null
@@ -13,18 +13,9 @@ export default class extends Controller {
     }
   }
 
-  expand() {
-    if (!this.formTarget.classList.contains('expanded')) {
-      this.formTarget.classList.add('expanded')
-    }
+  open() {
+    this.modalTarget.showModal()
     this.inputTarget.focus()
-  }
-
-  collapse() {
-    if (this.inputTarget.value.trim().length === 0) {
-      this.formTarget.classList.remove('expanded')
-      this.hideModal()
-    }
   }
 
   search() {
@@ -39,45 +30,31 @@ export default class extends Controller {
 
   performSearch() {
     const query = this.inputTarget.value.trim()
+    const frame = this.modalTarget.querySelector('turbo-frame')
+    if (!frame) return
+
     if (query.length === 0) {
-      this.hideModal()
+      frame.removeAttribute('src')
+      frame.innerHTML = ''
       return
     }
 
-    this.showModal()
+    const url = `/tasks/searches?q=${encodeURIComponent(query)}`
+    frame.setAttribute('src', url)
+  }
+
+  onClose() {
+    this.inputTarget.value = ''
     const frame = this.modalTarget.querySelector('turbo-frame')
     if (frame) {
-      const url = `/tasks/searches?q=${encodeURIComponent(query)}`
-      frame.setAttribute('src', url)
+      frame.removeAttribute('src')
+      frame.innerHTML = ''
     }
   }
 
-  close() {
-    this.hideModal()
-    this.inputTarget.value = ''
-    this.formTarget.classList.remove('expanded')
-  }
-
-  showModal() {
-    this.modalTarget.classList.remove('hidden')
-  }
-
-  hideModal() {
-    this.modalTarget.classList.add('hidden')
-  }
-
-  closeWithKeyboard(event) {
-    if (event.key === 'Escape') {
-      this.close()
-    }
-  }
-
-  closeBackground(event) {
-    if (!this.formTarget.classList.contains('expanded')) {
-      return
-    }
-    if (!this.element.contains(event.target)) {
-      this.close()
+  onBackdropClick(event) {
+    if (event.target === this.modalTarget) {
+      this.modalTarget.close()
     }
   }
 }

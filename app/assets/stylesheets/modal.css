@@ -34,3 +34,11 @@
   overflow-y: scroll;
   scroll-behavior: smooth;
 }
+
+@media (max-width: 640px) {
+  .modal-base {
+    width: 95vw;
+    padding: var(--space-2);
+    margin-top: var(--space-2);
+  }
+}
