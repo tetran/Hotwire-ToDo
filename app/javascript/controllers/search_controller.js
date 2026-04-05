@@ -53,7 +53,17 @@ export default class extends Controller {
   }
 
   onBackdropClick(event) {
-    if (event.target === this.modalTarget) {
+    // When showModal() is used, clicks on the ::backdrop pseudo-element
+    // may register with event.target pointing to the dialog itself, or may
+    // behave inconsistently across browsers. Use bounding-rect detection to
+    // reliably identify clicks outside the visible dialog box.
+    const rect = this.modalTarget.getBoundingClientRect()
+    const outside =
+      event.clientX < rect.left ||
+      event.clientX > rect.right ||
+      event.clientY < rect.top ||
+      event.clientY > rect.bottom
+    if (outside) {
       this.modalTarget.close()
     }
   }
