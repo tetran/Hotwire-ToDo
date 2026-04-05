@@ -57,7 +57,8 @@ The admin panel (`/admin`) is a React SPA. When modifying the Admin area, do NOT
 - `docs/process/WORKFLOW.md` — ALWAYS read before starting any task
 - `docs/conventions/ROUTING.md` — RESTful principles and naming conventions
 - `docs/conventions/ACTIVE_RECORD_QUERIES.md` — `present?`/`exists?`/`count`/`size`/`length` usage rules
-- `docs/design/DESIGN_SYSTEM.md` — UI components, colors, typography
+- `docs/design/ADMIN_DESIGN_SYSTEM.md` — Admin SPA UI components, colors, typography
+- `docs/design/USER_DESIGN_SYSTEM.md` — User-facing (Hotwire) UI components, colors, typography
 - `docs/specs/ADMIN_PERMISSIONS_MATRIX.md` — Resource × action permission definitions
 - `docs/guides/ADMIN_PERMISSION_TESTING_GUIDE.md` — Test patterns and helper methods
 - `docs/guides/ADMIN_SETUP.md` — Master admin user creation and env var setup
