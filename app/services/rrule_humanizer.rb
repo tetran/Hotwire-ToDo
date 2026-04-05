@@ -35,7 +35,8 @@ class RruleHumanizer
       days = weekday_list
       return base if days.blank?
 
-      I18n.t("task_series.humanize.weekly_on_days", base: base, days: days)
+      key = series.interval.to_i <= 1 ? :weekly_on_days : :weekly_on_days_interval
+      I18n.t("task_series.humanize.#{key}", base: base, days: days)
     end
 
     def weekday_list

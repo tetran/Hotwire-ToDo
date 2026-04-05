@@ -15,6 +15,11 @@
       <div>
         <div class="task-card__name">
           <%= link_to task.name, task, data: { turbo_frame: "modal" } %>
+          <% if task.recurring? %>
+            <span class="task-card__recurrence" title="<%= task.task_series.human_label %>">
+              <span class="material-symbols-outlined">repeat</span>
+            </span>
+          <% end %>
         </div>
         <% if task.description.present? %>
           <div class="task-card__description">

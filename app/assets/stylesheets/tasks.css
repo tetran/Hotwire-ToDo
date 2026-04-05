@@ -47,6 +47,16 @@
 .task-card__due-date .material-symbols-outlined {
   font-size: 1rem;
 }
+.task-card__recurrence {
+  display: inline-flex;
+  align-items: center;
+  margin-left: var(--space-1);
+  color: var(--color-accent);
+  vertical-align: middle;
+}
+.task-card__recurrence .material-symbols-outlined {
+  font-size: 1rem;
+}
 
 /* Completed */
 .task-card.task-card--complete .task-card__name a {
@@ -115,6 +125,16 @@
   font-size: var(--text-xs);
 }
 .show-task__due-date .material-symbols-outlined {
+  font-size: 1rem;
+}
+.show-task__recurrence {
+  display: flex;
+  gap: 4px;
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+.show-task__recurrence .material-symbols-outlined {
   font-size: 1rem;
 }
 
