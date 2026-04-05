@@ -44,6 +44,12 @@
           <div class="task-form__recurrence-row">
             <label for="task_recurrence_interval"><%= t("tasks.form.recurrence.interval_label") %></label>
             <%= number_field_tag "task[recurrence][interval]", series&.interval || 1, min: 1, id: "task_recurrence_interval", class: "task-form__recurrence-interval" %>
+            <% TaskSeries.frequencies.keys.each do |freq| %>
+              <span class="task-form__recurrence-interval-unit"
+                    data-recurrence-form-target="intervalUnit"
+                    data-frequency="<%= freq %>"
+                    hidden><%= t("tasks.form.recurrence.interval_units.#{freq}") %></span>
+            <% end %>
           </div>
 
           <fieldset class="task-form__recurrence-weekdays" data-recurrence-form-target="weeklyOnly">

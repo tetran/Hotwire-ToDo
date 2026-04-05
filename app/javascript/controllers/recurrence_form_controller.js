@@ -10,7 +10,7 @@ import { Controller } from '@hotwired/stimulus'
 //   template fields changed and, if so, open the scope dialog to let the
 //   user choose "only this" vs "all future" before submitting.
 export default class extends Controller {
-  static targets = ['weeklyOnly', 'frequency', 'scope', 'details']
+  static targets = ['weeklyOnly', 'frequency', 'scope', 'details', 'intervalUnit']
   static values = {
     hasSeries: String,
     isPersisted: String,
@@ -21,6 +21,7 @@ export default class extends Controller {
     this.isPersisted = this.isPersistedValue === 'true'
     this.toggleDetails()
     this.toggleWeeklyOnly()
+    this.toggleIntervalUnit()
     this.initialTemplateSnapshot = this.captureTemplateSnapshot()
     this.submitting = false
   }
@@ -28,6 +29,15 @@ export default class extends Controller {
   onFrequencyChange() {
     this.toggleDetails()
     this.toggleWeeklyOnly()
+    this.toggleIntervalUnit()
+  }
+
+  toggleIntervalUnit() {
+    if (!this.hasIntervalUnitTarget || !this.hasFrequencyTarget) return
+    const current = this.frequencyTarget.value
+    this.intervalUnitTargets.forEach((el) => {
+      el.hidden = el.dataset.frequency !== current
+    })
   }
 
   toggleDetails() {

@@ -228,10 +228,15 @@ ja:
         frequency_label: "繰り返し"
         frequency_none: "繰り返さない"
         interval_label: "間隔"
+        interval_units:
+          daily: "日"
+          weekly: "週"
+          monthly: "月"
+          yearly: "年"
         weekday_label: "曜日"
         end_label: "終了条件"
         count_label: "回"
-        until_label: "期日"
+        until_label: "終了日"
         stop: "繰り返しを停止"
         stop_confirm: "繰り返しを停止します。よろしいですか？"
         scope_dialog:
@@ -385,14 +390,14 @@ ja:
     llm_error: "提案を取得できませんでした。しばらくしてからもう一度お試しください。"
   task_series:
     frequencies:
-      daily: "毎日"
-      weekly: "毎週"
-      monthly: "毎月"
-      yearly: "毎年"
+      daily: "日ごと"
+      weekly: "週ごと"
+      monthly: "月ごと"
+      yearly: "年ごと"
     end_modes:
       infinite: "無期限"
       count: "回数指定"
-      until: "期日指定"
+      until: "終了日指定"
     weekdays:
       mo: "月"
       tu: "火"
