@@ -1,5 +1,13 @@
 <div id="form1" class="tab-panel <%= @show_suggestion ? "hidden" : "" %>" role="tabpanel" data-tabs-target="tabPanel">
-  <%= form_with(model: task, class: "task-form") do |form| %>
+  <% series = task.task_series %>
+  <%= form_with(model: task,
+                class: "task-form",
+                data: {
+                  controller: "recurrence-form",
+                  action: "submit->recurrence-form#onSubmit",
+                  recurrence_form_has_series_value: series.present?.to_s,
+                  recurrence_form_is_persisted_value: task.persisted?.to_s
+                }) do |form| %>
     <% if task.errors.any? %>
       <%= render_errors_for task %>
     <% end %>
@@ -18,6 +26,85 @@
       <%= form.label :due_date, class: "" %>
       <%= form.date_field :due_date, value: task.display_due_date, min: Time.zone.today %>
     </div>
+
+    <% unless task.subtask? %>
+      <details class="task-form__recurrence" <%= "open" if series.present? %>>
+        <summary class="task-form__recurrence-summary">
+          <span class="material-symbols-outlined">repeat</span>
+          <%= t("tasks.form.recurrence.summary") %>
+        </summary>
+
+        <div class="task-form__recurrence-fields">
+          <label class="task-form__recurrence-enable">
+            <%= check_box_tag "task[recurrence][enabled]", "1", series.present?, data: { recurrence_form_target: "enabled" } %>
+            <%= t("tasks.form.recurrence.enable") %>
+          </label>
+
+          <div class="task-form__recurrence-row">
+            <label for="task_recurrence_frequency"><%= t("tasks.form.recurrence.frequency_label") %></label>
+            <%= select_tag "task[recurrence][frequency]",
+                  options_for_select(
+                    TaskSeries.frequencies.keys.map { |k| [t("task_series.frequencies.#{k}", default: k.to_s), k] },
+                    series&.frequency || "weekly"
+                  ),
+                  id: "task_recurrence_frequency",
+                  data: { recurrence_form_target: "frequency", action: "change->recurrence-form#onFrequencyChange" } %>
+          </div>
+
+          <div class="task-form__recurrence-row">
+            <label for="task_recurrence_interval"><%= t("tasks.form.recurrence.interval_label") %></label>
+            <%= number_field_tag "task[recurrence][interval]", series&.interval || 1, min: 1, id: "task_recurrence_interval", class: "task-form__recurrence-interval" %>
+          </div>
+
+          <fieldset class="task-form__recurrence-weekdays" data-recurrence-form-target="weeklyOnly">
+            <legend><%= t("tasks.form.recurrence.weekday_label") %></legend>
+            <% selected_weekdays = series&.by_weekday.to_s.split(",") %>
+            <% TaskSeries::WeekdaySupport::WEEKDAYS.each do |code| %>
+              <label class="task-form__recurrence-weekday">
+                <%= check_box_tag "task[recurrence][by_weekday][]", code, selected_weekdays.include?(code), id: "task_recurrence_by_weekday_#{code}" %>
+                <%= t("task_series.weekdays.#{code}", default: code.to_s) %>
+              </label>
+            <% end %>
+          </fieldset>
+
+          <fieldset class="task-form__recurrence-end">
+            <legend><%= t("tasks.form.recurrence.end_label") %></legend>
+            <% current_end_mode = series&.end_mode || "infinite" %>
+            <label class="task-form__recurrence-end-option">
+              <%= radio_button_tag "task[recurrence][end_mode]", "infinite", current_end_mode == "infinite", id: "task_recurrence_end_mode_infinite" %>
+              <span><%= t("task_series.end_modes.infinite") %></span>
+            </label>
+            <label class="task-form__recurrence-end-option">
+              <%= radio_button_tag "task[recurrence][end_mode]", "count", current_end_mode == "count", id: "task_recurrence_end_mode_count" %>
+              <span><%= t("task_series.end_modes.count") %></span>
+              <%= number_field_tag "task[recurrence][count]", series&.count || 10, min: 1, id: "task_recurrence_count", class: "task-form__recurrence-count" %>
+              <span><%= t("tasks.form.recurrence.count_label") %></span>
+            </label>
+            <label class="task-form__recurrence-end-option">
+              <%= radio_button_tag "task[recurrence][end_mode]", "until", current_end_mode == "until", id: "task_recurrence_end_mode_until" %>
+              <span><%= t("task_series.end_modes.until") %></span>
+              <%= date_field_tag "task[recurrence][until_date]", series&.until_date, id: "task_recurrence_until_date", class: "task-form__recurrence-until" %>
+            </label>
+          </fieldset>
+
+          <% if series.present? %>
+            <div class="task-form__recurrence-stop">
+              <%= button_to t("tasks.form.recurrence.stop"),
+                    task_recurrence_path(task),
+                    method: :delete,
+                    form: { data: { turbo_confirm: t("tasks.form.recurrence.stop_confirm") } },
+                    class: "btn btn-light" %>
+            </div>
+          <% end %>
+        </div>
+      </details>
+    <% end %>
+
+    <%= hidden_field_tag :scope, "", data: { recurrence_form_target: "scope" } %>
+
+    <% if task.persisted? && series.present? %>
+      <%= render "tasks/scope_dialog", task: task %>
+    <% end %>
 
     <div class="form-actions task-form__actions">
       <%= hidden_field_tag :project_id, task.project_id %>

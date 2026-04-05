@@ -373,3 +373,110 @@ input.task-suggestion__checkbox {
 .search-result__parent .material-symbols-outlined {
   font-size: 0.9rem;
 }
+
+/* Recurrence section inside the task form */
+.task-form__recurrence {
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: solid 1px var(--border);
+}
+.task-form__recurrence-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  color: var(--form-text);
+  list-style: revert;
+}
+.task-form__recurrence-summary .material-symbols-outlined {
+  font-size: 1.1rem;
+  color: var(--color-accent);
+}
+.task-form__recurrence-fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+.task-form__recurrence-enable {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+}
+.task-form__recurrence-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+}
+.task-form__recurrence-row label {
+  min-width: 5rem;
+  color: var(--color-muted);
+}
+.task-form__recurrence-interval {
+  width: 4rem;
+}
+.task-form__recurrence-weekdays {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  border: solid 1px var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2);
+  font-size: var(--text-sm);
+}
+.task-form__recurrence-weekdays legend {
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  padding: 0 var(--space-1);
+}
+.task-form__recurrence-weekday {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.task-form__recurrence-end {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border: solid 1px var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2);
+  font-size: var(--text-sm);
+}
+.task-form__recurrence-end legend {
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  padding: 0 var(--space-1);
+}
+.task-form__recurrence-end-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.task-form__recurrence-count,
+.task-form__recurrence-until {
+  width: auto;
+}
+.task-form__recurrence-count {
+  width: 5rem;
+}
+.task-form__recurrence-stop {
+  margin-top: var(--space-2);
+}
+
+/* Scope dialog (shown on edit when template fields change) */
+.task-form__scope-dialog-description {
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  margin: 0 0 var(--space-3) 0;
+}
+.task-form__scope-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}

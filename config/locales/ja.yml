@@ -224,6 +224,23 @@ ja:
       task_name: "タスク名"
       description: "説明"
       cancel: "キャンセル"
+      recurrence:
+        summary: "繰り返し"
+        enable: "このタスクを繰り返す"
+        frequency_label: "頻度"
+        interval_label: "間隔"
+        weekday_label: "曜日"
+        end_label: "終了条件"
+        count_label: "回"
+        until_label: "期日"
+        stop: "繰り返しを停止"
+        stop_confirm: "繰り返しを停止します。よろしいですか？"
+        scope_dialog:
+          title: "編集範囲を選択"
+          description: "この繰り返しタスクのテンプレートが変更されました。どの範囲に適用しますか？"
+          only_this: "この回のみ"
+          all_future: "今後すべて"
+          cancel: "キャンセル"
     task:
       confirm_delete: "本当に削除しますか？"
     add_task_btn:
