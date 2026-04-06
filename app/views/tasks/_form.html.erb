@@ -1,5 +1,5 @@
 <div id="form1" class="tab-panel <%= @show_suggestion ? "hidden" : "" %>" role="tabpanel" data-tabs-target="tabPanel">
-  <% series = task.active_task_series %>
+  <% series = task.configured_task_series %>
   <%= form_with(model: task,
                 class: "task-form",
                 data: {

@@ -123,6 +123,19 @@ class TaskSeriesTest < ActiveSupport::TestCase
     assert_not series.terminated?
   end
 
+  # === configured? ===
+
+  test "configured? when stopped_at is nil" do
+    series = build_series(frequency: :daily, interval: 1)
+    assert series.configured?
+  end
+
+  test "not configured? when stopped_at is set" do
+    series = build_series(frequency: :daily, interval: 1)
+    series.stopped_at = Time.current
+    assert_not series.configured?
+  end
+
   # === stop! ===
 
   test "stop! sets stopped_at" do

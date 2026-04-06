@@ -32,6 +32,10 @@ class TaskSeries < ApplicationRecord
     false
   end
 
+  def configured?
+    stopped_at.blank?
+  end
+
   def stop!
     update!(stopped_at: Time.current)
   end
@@ -87,6 +91,8 @@ class TaskSeries < ApplicationRecord
     def build_next_instance(from_task, next_date)
       new_task = nil
       transaction do
+        lock!
+        return nil if terminated?
         return nil if tasks.exists?(completed: false)
 
         new_task = create_next_task(from_task, next_date)

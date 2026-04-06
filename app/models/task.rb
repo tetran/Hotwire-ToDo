@@ -85,13 +85,13 @@ class Task < ApplicationRecord
 
   def recurring? = task_series_id.present?
 
-  # Returns the attached TaskSeries only when it is still active (not stopped
-  # and not past its count/until termination). Use this wherever editing the
-  # series or judging "is this task currently recurring?" matters; a stopped
-  # or exhausted series should behave as if there is no series at all.
-  def active_task_series
+  # Returns the attached TaskSeries only when its configuration is still
+  # in place — i.e., the user has not explicitly stopped it. A series that
+  # hit its count or until-date has naturally completed but remains
+  # "configured as recurring", so only stopped_at counts as revocation.
+  def configured_task_series
     return nil if task_series.nil?
-    return nil if task_series.terminated?
+    return nil unless task_series.configured?
 
     task_series
   end
