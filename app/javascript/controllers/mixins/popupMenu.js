@@ -1,7 +1,7 @@
 export const popupMenu = controller => {
   Object.assign(controller, {
     toggleMenu(e) {
-      e.stopPropagation()
+      e?.stopPropagation()
       this._closeOtherMenus()
       this.menuTarget.classList.toggle('hidden')
     },
