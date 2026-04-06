@@ -10,8 +10,12 @@ module SystemTestHelpers
     selector = ".project-selector[data-controller='menu']"
     find(selector)
     wait_for_stimulus_controller(selector, "menu")
-    find("#{selector} .menu-button").click
-    find("#{selector} .menu-navigation:not(.hidden)")
+
+    3.times do |i|
+      find("#{selector} .menu-button").click
+      break if has_css?("#{selector} .menu-navigation:not(.hidden)", wait: 1)
+      raise "Project menu failed to stay open after 3 attempts" if i == 2
+    end
   end
 
   private
