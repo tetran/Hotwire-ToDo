@@ -1,0 +1,2 @@
+<%= turbo_stream.replace @task, partial: "tasks/task", locals: { task: @task } %>
+<%= turbo_stream.update "notification", partial: "shared/notification", locals: { message: t("controllers.tasks/recurrences.destroy.success"), status: "success" } %>

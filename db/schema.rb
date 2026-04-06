@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_04_121127) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_05_144220) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -243,6 +243,37 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_04_121127) do
     t.index ["requested_by_id"], name: "index_suggestion_sessions_on_requested_by_id"
   end
 
+  create_table "task_series", force: :cascade do |t|
+    t.integer "assignee_id"
+    t.string "by_weekday"
+    t.integer "count"
+    t.datetime "created_at", null: false
+    t.integer "created_by_id", null: false
+    t.integer "end_mode", default: 0, null: false
+    t.integer "frequency", null: false
+    t.integer "interval", default: 1, null: false
+    t.string "name", limit: 100, null: false
+    t.integer "occurrences_generated", default: 0, null: false
+    t.integer "project_id", null: false
+    t.string "rrule", null: false
+    t.datetime "stopped_at"
+    t.date "until_date"
+    t.datetime "updated_at", null: false
+    t.index ["assignee_id"], name: "index_task_series_on_assignee_id"
+    t.index ["created_by_id"], name: "index_task_series_on_created_by_id"
+    t.index ["project_id"], name: "index_task_series_on_project_id"
+    t.index ["stopped_at"], name: "index_task_series_on_stopped_at"
+  end
+
+  create_table "task_series_subtasks", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name", limit: 100, null: false
+    t.integer "position", default: 0, null: false
+    t.integer "task_series_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["task_series_id"], name: "index_task_series_subtasks_on_task_series_id"
+  end
+
   create_table "tasks", force: :cascade do |t|
     t.bigint "assignee_id"
     t.boolean "completed", default: false, null: false
@@ -252,11 +283,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_04_121127) do
     t.string "name", null: false
     t.integer "parent_id"
     t.bigint "project_id", null: false
+    t.integer "task_series_id"
     t.datetime "updated_at", null: false
     t.index ["assignee_id"], name: "index_tasks_on_assignee_id"
     t.index ["created_by_id"], name: "index_tasks_on_created_by_id"
     t.index ["parent_id"], name: "index_tasks_on_parent_id"
     t.index ["project_id"], name: "index_tasks_on_project_id"
+    t.index ["task_series_id"], name: "index_tasks_on_pending_task_series_id", unique: true, where: "completed = FALSE"
+    t.index ["task_series_id"], name: "index_tasks_on_task_series_id"
   end
 
   create_table "user_roles", force: :cascade do |t|
@@ -306,7 +340,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_04_121127) do
   add_foreign_key "suggestion_responses", "suggestion_requests"
   add_foreign_key "suggestion_sessions", "projects"
   add_foreign_key "suggestion_sessions", "users", column: "requested_by_id"
+  add_foreign_key "task_series", "projects"
+  add_foreign_key "task_series", "users", column: "assignee_id"
+  add_foreign_key "task_series", "users", column: "created_by_id"
+  add_foreign_key "task_series_subtasks", "task_series", on_delete: :cascade
   add_foreign_key "tasks", "projects"
+  add_foreign_key "tasks", "task_series"
   add_foreign_key "tasks", "tasks", column: "parent_id", on_delete: :cascade
   add_foreign_key "tasks", "users", column: "assignee_id"
   add_foreign_key "tasks", "users", column: "created_by_id"

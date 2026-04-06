@@ -390,6 +390,119 @@ Fullscreen overlay (`loader.css`): `rgba(0,0,0,0.5)` backdrop, three concentric 
 
 **Note**: the loader colors are independent of the design palette (legacy decorative choice). **Target**: either refactor to a single cyan spinner using `var(--color-accent)` or explicitly document the current multi-color spinner as an intentional "working" visual.
 
+### 5.15 Collapsible Section
+
+Native `<details>/<summary>` used for opt-in settings that stay inline with a form. Rendered as a **card**:
+
+```css
+.collapsible-section {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+}
+.collapsible-section[open] { padding-bottom: var(--space-3); }
+.collapsible-section > summary {
+  font-size: var(--text-sm);
+  color: var(--form-text);
+  cursor: pointer;
+}
+.collapsible-section[open] > summary { font-weight: 500; }
+```
+
+- `summary` aligns with small-icon conventions (§10): icon at `var(--color-muted)`, **not** `var(--color-accent)` — the accent color is reserved for state indicators (badges, checked chips), not for static decoration.
+- Body content appears with `margin-top: var(--space-3)` after open.
+
+### 5.16 Fieldset Group
+
+Logical groups of related form fields inside a form use `<fieldset>` + `<legend>` **without a border**. The legend acts as a small section heading:
+
+```css
+.fieldset-group { border: 0; padding: 0; margin: 0; }
+.fieldset-group > legend {
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  padding: 0;
+  margin-bottom: var(--space-1);
+}
+```
+
+Avoid the native browser `<fieldset>` border — it creates a **box-in-box** look when placed inside a card (§5.15). Use nested fieldsets only for semantic grouping; rely on spacing (`gap: var(--space-2)`) and the small legend caption for visual separation.
+
+### 5.17 Toggle Chip
+
+Pill-shaped multi-select control for compact sets (days of week, tags, enum options). Each chip is a `<label>` wrapping a `.visually-hidden` checkbox (§ common.css), so the label itself becomes the interactive surface.
+
+```css
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
+  color: var(--form-text);
+  background: transparent;
+  cursor: pointer;
+  user-select: none;
+}
+.chip:has(input:checked) {
+  background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+.chip:focus-within {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+```
+
+- **Accessibility**: `:focus-within` outline is **required** — without it, keyboard users lose focus tracking once the native checkbox is hidden.
+- **Contrast**: the selected state uses a **tinted background** (12% accent over page) with accent-colored text. This meets WCAG AA (~4.5:1 for `#0096bf` over tinted background on white) while a solid `#fff` on `#0096bf` fill would fall to ~3.4:1.
+- **Layout**: for fixed-arity sets (7 weekdays, 12 months) use a CSS grid (`grid-template-columns: repeat(N, 1fr); gap: var(--space-1)`) for rhythm. For variable sets, use flex-wrap.
+
+**Used by**: `.task-form__recurrence-weekday` (see `tasks.css:397-`).
+
+### 5.18 Conditional Sub-input
+
+A radio or checkbox that reveals/activates an inline sub-input (e.g. "after [N] times", "until [date]"). The row is a single flex line so the radio and its dependent controls read as one unit:
+
+```css
+.conditional-option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  color: var(--color-muted);
+}
+.conditional-option:has(input:checked) {
+  color: var(--form-text);
+  font-weight: 500;
+}
+```
+
+- **Do not** dim non-selected rows with `opacity` — it visually collides with the `:disabled` convention. Use `var(--color-muted)` instead.
+- The sub-input stays enabled even when its row is not selected; tabbing into the sub-input should implicitly activate its radio in a Stimulus controller (see `recurrence_form_controller.js` for the reference pattern).
+
+**Used by**: `.task-form__recurrence-end-option` (see `tasks.css:397-`).
+
+### 5.19 Inline Numeric Unit Input
+
+A number input paired with a unit select (and optional suffix) on one line — e.g. `[ 2 ] [Weeks] every`. Reserves fewer vertical lines than a labeled 2-row layout:
+
+```css
+.numeric-unit {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  font-size: var(--text-sm);
+}
+.numeric-unit input[type="number"] { width: 4rem; }
+```
+
+Use when the semantic reading is a natural-language phrase ("every 2 weeks", "2 週間ごと"). Keep the number field first (it carries primary focus) and position any fixed suffix text (`ごと`, `every`) at the end.
+
 ---
 
 ## 6. Layout System

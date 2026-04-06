@@ -1,0 +1,9 @@
+agenda_intro:
+  task_series: weekly_mwf
+  name: 前回の振り返り
+  position: 0
+
+agenda_main:
+  task_series: weekly_mwf
+  name: 今週のアップデート
+  position: 1

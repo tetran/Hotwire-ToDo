@@ -77,6 +77,13 @@ ja:
               nested_too_deep: "サブタスクにサブタスクは作成できません"
             project_id:
               must_match_parent: "は親タスクと同じプロジェクトにしてください"
+            task_series_id:
+              not_allowed_on_subtask: "はサブタスクには設定できません"
+        task_series:
+          attributes:
+            by_weekday:
+              only_for_weekly: "は週次の繰り返しでのみ指定できます"
+              invalid: "に不正な曜日コードが含まれています"
         user:
           attributes:
             email:
@@ -217,6 +224,27 @@ ja:
       task_name: "タスク名"
       description: "説明"
       cancel: "キャンセル"
+      recurrence:
+        frequency_label: "繰り返し"
+        frequency_none: "繰り返さない"
+        interval_label: "間隔"
+        interval_units:
+          daily: "日"
+          weekly: "週"
+          monthly: "月"
+          yearly: "年"
+        weekday_label: "曜日"
+        end_label: "終了条件"
+        count_label: "回"
+        until_label: "終了日"
+        stop: "繰り返しを停止"
+        stop_confirm: "繰り返しを停止します。よろしいですか？"
+        scope_dialog:
+          title: "編集範囲を選択"
+          description: "この繰り返しタスクのテンプレートが変更されました。どの範囲に適用しますか？"
+          only_this: "この回のみ"
+          all_future: "今後すべて"
+          cancel: "キャンセル"
     task:
       confirm_delete: "本当に削除しますか？"
     add_task_btn:
@@ -335,8 +363,12 @@ ja:
         success: "タスクを作成しました。"
       update:
         success: "タスクを更新しました。"
+        template_change_requires_all_future: "この変更は『今後すべて』でのみ可能です"
       destroy:
         success: "タスクを削除しました。"
+    tasks/recurrences:
+      destroy:
+        success: "繰り返しを停止しました。"
     tasks/comments:
       create:
         success: "コメントを投稿しました。"
@@ -356,3 +388,35 @@ ja:
   suggestions:
     no_config: "タスク提案は現在利用できません。管理者にお問い合わせください。"
     llm_error: "提案を取得できませんでした。しばらくしてからもう一度お試しください。"
+  task_series:
+    frequencies:
+      daily: "日ごと"
+      weekly: "週ごと"
+      monthly: "月ごと"
+      yearly: "年ごと"
+    end_modes:
+      infinite: "無期限"
+      count: "回数指定"
+      until: "終了日指定"
+    weekdays:
+      mo: "月"
+      tu: "火"
+      we: "水"
+      th: "木"
+      fr: "金"
+      sa: "土"
+      su: "日"
+    humanize:
+      every_daily: "毎日"
+      every_weekly: "毎週"
+      every_monthly: "毎月"
+      every_yearly: "毎年"
+      every_n_daily: "%{n}日ごと"
+      every_n_weekly: "%{n}週間ごと"
+      every_n_monthly: "%{n}ヶ月ごと"
+      every_n_yearly: "%{n}年ごと"
+      weekly_on_days: "%{base}%{days}"
+      weekly_on_days_interval: "%{base}（%{days}）"
+      weekday_separator: "・"
+      end_count: "（全%{n}回）"
+      end_until: "（%{date}まで）"

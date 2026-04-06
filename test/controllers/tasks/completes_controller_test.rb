@@ -50,6 +50,40 @@ module Tasks
       assert_match %(target="#{ActionView::RecordIdentifier.dom_id(@parent)}"), response.body
     end
 
+    test "completing recurring task with active series generates next task via broadcast" do
+      recurring = tasks(:recurring_weekly)
+      post task_complete_path(recurring), as: :turbo_stream
+      assert_response :success
+
+      # The response removes the completed task card; the next-instance card
+      # is delivered to subscribed clients via Task#broadcast_task_create
+      # (see app/views/tasks/completes/create.turbo_stream.erb).
+      assert_match 'action="remove"', response.body
+      # The new task was generated in the DB
+      assert TaskSeries.find(recurring.task_series_id).tasks.uncompleted.exists?
+    end
+
+    test "completing recurring task with stopped series does not generate a new task" do
+      recurring = tasks(:recurring_weekly)
+      recurring.task_series.stop!
+      post task_complete_path(recurring), as: :turbo_stream
+      assert_response :success
+
+      assert_not TaskSeries.find(recurring.task_series_id).tasks.uncompleted.exists?
+    end
+
+    test "completing twice does not generate a second pending instance" do
+      recurring = tasks(:recurring_weekly)
+      post task_complete_path(recurring), as: :turbo_stream
+      assert_response :success
+      series_id = recurring.task_series_id
+
+      before_count = Task.where(task_series_id: series_id).count
+      post task_complete_path(recurring), as: :turbo_stream
+      assert_response :success
+      assert_equal before_count, Task.where(task_series_id: series_id).count
+    end
+
     test "completed tasks index shows root tasks with subtasks nested" do
       @parent.complete!
       project = projects(:two)

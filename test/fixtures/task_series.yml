@@ -1,0 +1,33 @@
+weekly_mwf:
+  project: two
+  created_by: regular_user
+  assignee: regular_user
+  name: 週次定例ミーティング
+  frequency: 1
+  interval: 1
+  by_weekday: "mo,we,fr"
+  end_mode: 0
+  occurrences_generated: 1
+  rrule: "FREQ=WEEKLY;BYDAY=MO,WE,FR"
+
+daily_limited:
+  project: two
+  created_by: regular_user
+  name: 日次レポート
+  frequency: 0
+  interval: 1
+  end_mode: 1
+  count: 5
+  occurrences_generated: 1
+  rrule: "FREQ=DAILY;COUNT=5"
+
+monthly_until:
+  project: two
+  created_by: regular_user
+  name: 月次棚卸
+  frequency: 2
+  interval: 1
+  end_mode: 2
+  until_date: 2027-01-01
+  occurrences_generated: 0
+  rrule: "FREQ=MONTHLY;UNTIL=20270101T000000Z"

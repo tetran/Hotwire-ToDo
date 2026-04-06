@@ -1,0 +1,25 @@
+<dialog class="modal-base task-form__scope-dialog"
+        data-controller="recurrence-scope-dialog"
+        data-recurrence-scope-dialog-target="dialog"
+        data-action="click->recurrence-scope-dialog#onBackdropClick">
+  <div class="modal-header">
+    <h3 class="modal-header__title"><%= t("tasks.form.recurrence.scope_dialog.title") %></h3>
+    <button type="button" class="modal-header__close" data-action="recurrence-scope-dialog#cancel" aria-label="<%= t("tasks.form.recurrence.scope_dialog.cancel") %>">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p class="task-form__scope-dialog-description"><%= t("tasks.form.recurrence.scope_dialog.description") %></p>
+    <div class="task-form__scope-dialog-actions">
+      <button type="button" class="btn btn-light" data-action="recurrence-scope-dialog#chooseOnlyThis">
+        <%= t("tasks.form.recurrence.scope_dialog.only_this") %>
+      </button>
+      <button type="button" class="btn primary" data-action="recurrence-scope-dialog#chooseAllFuture">
+        <%= t("tasks.form.recurrence.scope_dialog.all_future") %>
+      </button>
+      <button type="button" class="btn btn-light task-form__scope-dialog-cancel" data-action="recurrence-scope-dialog#cancel">
+        <%= t("tasks.form.recurrence.scope_dialog.cancel") %>
+      </button>
+    </div>
+  </div>
+</dialog>
