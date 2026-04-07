@@ -1,0 +1,11 @@
+<%= turbo_frame_tag "task_#{task.id}_due_date" do %>
+  <%= link_to edit_task_inline_field_path(task, "due_date"),
+              class: "show-task__due-date show-task__editable #{task.has_due_date? ? '' : 'show-task__editable--empty'}" do %>
+    <span class="material-symbols-outlined">event</span>
+    <% if task.has_due_date? %>
+      <%= l(task.due_date, format: due_date_format(task)) %>
+    <% else %>
+      <%= t("tasks.inline_fields.add_due_date") %>
+    <% end %>
+  <% end %>
+<% end %>

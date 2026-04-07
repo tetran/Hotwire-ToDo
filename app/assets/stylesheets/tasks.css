@@ -138,6 +138,82 @@
   font-size: 1rem;
 }
 
+/* Inline Edit */
+.show-task__editable {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.show-task__editable:hover {
+  background-color: var(--surface-hover);
+}
+.show-task__editable--empty {
+  color: var(--color-muted);
+  font-style: italic;
+}
+.show-task__editable-overlay {
+  display: none;
+  position: absolute;
+  top: var(--space-1);
+  right: var(--space-1);
+  color: var(--color-muted);
+  text-decoration: none;
+}
+.show-task__editable-overlay .material-symbols-outlined {
+  font-size: 1rem;
+}
+.show-task__description.show-task__editable {
+  position: relative;
+}
+.show-task__description.show-task__editable:hover .show-task__editable-overlay {
+  display: block;
+}
+a.show-task__name.show-task__editable {
+  font-size: var(--text-lg);
+  font-weight: bold;
+}
+a.show-task__due-date.show-task__editable {
+  display: inline-flex;
+}
+.show-task__inline-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: 100%;
+  overflow: hidden;
+  padding: var(--space-1);
+}
+.show-task__name--input {
+  width: 100%;
+  font-size: var(--text-lg);
+  font-weight: bold;
+  box-sizing: border-box;
+  padding: var(--space-2) var(--space-3);
+}
+.show-task__description--input,
+.show-task__inline-form trix-editor {
+  width: 100%;
+  max-width: 100%;
+  font-size: var(--text-sm);
+  box-sizing: border-box;
+}
+.show-task__inline-form trix-toolbar {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.show-task__due-date--input {
+  font-size: var(--text-xs);
+}
+.show-task__inline-actions {
+  display: flex;
+  gap: var(--space-2);
+  justify-content: flex-end;
+  margin-top: var(--space-1);
+}
+
 /* Comment Area */
 .task-comments {
   margin-top: var(--space-6);

@@ -1,0 +1,6 @@
+<%= turbo_frame_tag "task_#{task.id}_name" do %>
+  <%= link_to edit_task_inline_field_path(task, "name"),
+              class: "show-task__name show-task__editable" do %>
+    <%= task.name %>
+  <% end %>
+<% end %>

@@ -1,0 +1,30 @@
+<%= turbo_frame_tag "task_#{@task.id}_#{@field}" do %>
+  <%= form_with model: @task,
+                url: task_inline_field_path(@task, @field),
+                method: :patch,
+                class: "show-task__inline-form" do |f| %>
+    <%= render_errors_for @task %>
+    <% case @field %>
+    <% when "name" %>
+      <%= f.text_field :name,
+                       autofocus: true,
+                       class: "show-task__name--input",
+                       maxlength: 100 %>
+    <% when "description" %>
+      <%= f.rich_text_area :description,
+                           class: "show-task__description--input" %>
+    <% when "due_date" %>
+      <%= f.date_field :due_date,
+                       value: @task.has_due_date? ? @task.due_date : nil,
+                       autofocus: true,
+                       class: "show-task__due-date--input" %>
+    <% end %>
+    <div class="show-task__inline-actions">
+      <%= link_to t("tasks.inline_fields.cancel"),
+                  task_path(@task),
+                  data: { turbo_frame: "task_#{@task.id}_#{@field}" },
+                  class: "btn btn-light btn--sm" %>
+      <%= f.submit t("tasks.inline_fields.save"), class: "primary btn--sm" %>
+    </div>
+  <% end %>
+<% end %>
