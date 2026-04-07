@@ -43,7 +43,7 @@ ja:
       task:
         name: "タスク名"
         description: "説明"
-        due_date: "期限日"
+        due_date: "締切日"
         start_date: "開始日"
       project:
         name: "プロジェクト名"
@@ -55,7 +55,7 @@ ja:
         goal: "目標"
         context: "背景"
         start_date: "開始日"
-        due_date: "期限日"
+        due_date: "締切日"
     errors:
       messages:
         invalid: "が不正です"
