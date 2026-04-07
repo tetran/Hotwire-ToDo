@@ -54,6 +54,7 @@ The admin panel (`/admin`) is a React SPA. When modifying the Admin area, do NOT
 
 ## Documentation
 
+- `docs/findings/` — Accumulated development findings and insights, one file per topic
 - `docs/process/WORKFLOW.md` — ALWAYS read before starting any task
 - `docs/conventions/ROUTING.md` — RESTful principles and naming conventions
 - `docs/conventions/ACTIVE_RECORD_QUERIES.md` — `present?`/`exists?`/`count`/`size`/`length` usage rules
