@@ -2,10 +2,8 @@
   <% if task.description.present? %>
     <div class="show-task__description show-task__editable">
       <%= task.description %>
-      <%= link_to edit_task_inline_field_path(task, "description"),
-                  class: "show-task__editable-overlay" do %>
-        <span class="material-symbols-outlined">edit</span>
-      <% end %>
+      <%= link_to "", edit_task_inline_field_path(task, "description"),
+                  class: "show-task__editable-overlay" %>
     </div>
   <% else %>
     <%= link_to edit_task_inline_field_path(task, "description"),

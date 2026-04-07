@@ -145,31 +145,22 @@
   color: inherit;
   border-radius: var(--radius-sm);
   cursor: pointer;
+  padding: var(--space-1);
   transition: background-color 0.15s ease;
 }
 .show-task__editable:hover {
-  background-color: var(--surface-hover);
+  background-color: var(--color-highlight-bg);
 }
 .show-task__editable--empty {
   color: var(--color-muted);
   font-style: italic;
 }
 .show-task__editable-overlay {
-  display: none;
   position: absolute;
-  top: var(--space-1);
-  right: var(--space-1);
-  color: var(--color-muted);
-  text-decoration: none;
-}
-.show-task__editable-overlay .material-symbols-outlined {
-  font-size: 1rem;
+  inset: 0;
 }
 .show-task__description.show-task__editable {
   position: relative;
-}
-.show-task__description.show-task__editable:hover .show-task__editable-overlay {
-  display: block;
 }
 a.show-task__name.show-task__editable {
   font-size: var(--text-lg);
