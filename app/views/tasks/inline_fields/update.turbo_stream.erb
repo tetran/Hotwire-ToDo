@@ -1,0 +1,3 @@
+<%= turbo_stream.replace "task_#{@task.id}_#{@field}" do %>
+  <%= render "tasks/inline_fields/display_#{@field}", task: @task %>
+<% end %>

@@ -25,7 +25,7 @@ ALWAYS update `.progress/issue-XXXXX.md` during work. Update the progress file *
 8. **Testing** - Ensure all unit tests and system tests pass.
 9. **Local Review** - Ask codex (`/codex-review`) for review the changes.
 10. **Create a Pull Request** - Create a PR and request review.
-11. **Retrospective** - Reflect on the work and save any reusable development findings (conventions, pitfalls, patterns) to `docs/findings/` as one file per topic.
+11. **Retrospective** - Reflect on the work and save any reusable development findings (conventions, pitfalls, patterns) to `docs/findings/` as one file per topic, named `issue-{number}-{topic}.md`.
 
 ### Lightweight Flow
 

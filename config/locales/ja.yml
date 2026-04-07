@@ -245,6 +245,11 @@ ja:
           only_this: "この回のみ"
           all_future: "今後すべて"
           cancel: "キャンセル"
+    inline_fields:
+      save: "保存"
+      cancel: "キャンセル"
+      add_description: "説明を追加"
+      add_due_date: "期限を追加"
     task:
       confirm_delete: "本当に削除しますか？"
     add_task_btn:

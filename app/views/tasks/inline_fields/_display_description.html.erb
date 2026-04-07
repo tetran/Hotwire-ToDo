@@ -1,0 +1,14 @@
+<%= turbo_frame_tag "task_#{task.id}_description" do %>
+  <% if task.description.present? %>
+    <div class="show-task__description show-task__editable">
+      <%= task.description %>
+      <%= link_to "", edit_task_inline_field_path(task, "description"),
+                  class: "show-task__editable-overlay" %>
+    </div>
+  <% else %>
+    <%= link_to edit_task_inline_field_path(task, "description"),
+                class: "show-task__description show-task__editable show-task__editable--empty" do %>
+      <%= t("tasks.inline_fields.add_description") %>
+    <% end %>
+  <% end %>
+<% end %>

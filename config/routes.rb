@@ -24,6 +24,7 @@ Rails.application.routes.draw do
   resources :tasks, only: %i[show new create edit update destroy] do
     resources :subtasks, only: %i[new create], module: :tasks
     resources :comments, only: %i[new create edit update destroy], module: :tasks
+    resources :inline_fields, only: %i[edit update], module: :tasks
     resource :complete, only: %i[create destroy], module: :tasks
     resource :assign, only: %i[create destroy], module: :tasks
     resource :recurrence, only: %i[destroy], module: :tasks

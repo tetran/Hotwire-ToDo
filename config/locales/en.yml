@@ -201,6 +201,11 @@ en:
       task_name: "Task name"
       description: "Description"
       cancel: "Cancel"
+    inline_fields:
+      save: "Save"
+      cancel: "Cancel"
+      add_description: "Add description"
+      add_due_date: "Add due date"
     task:
       confirm_delete: "Are you sure?"
     add_task_btn:
