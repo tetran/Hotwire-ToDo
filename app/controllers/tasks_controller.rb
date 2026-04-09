@@ -45,6 +45,7 @@ class TasksController < ApplicationController
       task_params: task_params,
       recurrence_params: recurrence_params,
       scope: scope_param,
+      user: current_user,
     )
 
     if updater.template_change_blocked?
@@ -57,6 +58,12 @@ class TasksController < ApplicationController
 
   # DELETE /tasks/1
   def destroy
+    Events::Recorder.record(
+      event_name: "task_deleted",
+      user: current_user,
+      project: @task.project,
+      task: @task,
+    )
     @task.destroy!
 
     respond_to do |format|

@@ -1,10 +1,12 @@
 module Tasks
   class Updater
-    def initialize(task:, task_params:, recurrence_params:, scope:)
+    def initialize(task:, task_params:, recurrence_params:, scope:, user: nil)
       @task = task
       @task_params = task_params
       @recurrence = RecurrenceParamsNormalizer.new(recurrence_params)
       @scope = scope
+      @user = user
+      @captured_changes = {}
     end
 
     def template_change_blocked?
@@ -20,13 +22,16 @@ module Tasks
       Task.transaction do
         raise ActiveRecord::Rollback unless @task.update(@task_params)
 
+        @captured_changes = @task.saved_changes.dup
         apply_recurrence_changes!
       rescue ActiveRecord::RecordInvalid => e
         merge_record_errors_into_task(e.record)
         raise ActiveRecord::Rollback
       end
 
-      @task.errors.empty? && @task.persisted?
+      success = @task.errors.empty? && @task.persisted?
+      record_events if success && @user
+      success
     end
 
     private
@@ -87,6 +92,39 @@ module Tasks
 
         attrs = @recurrence.template_update_attrs
         series.update!(attrs) if attrs.any?
+      end
+
+      def record_events
+        changed_fields = @captured_changes.keys - %w[updated_at]
+        return if changed_fields.empty?
+
+        Events::Recorder.record(
+          event_name: "task_updated",
+          user: @user,
+          project: @task.project,
+          task: @task,
+          metadata: { changed_fields: changed_fields },
+        )
+
+        if @captured_changes.key?("assignee_id")
+          old_id, new_id = @captured_changes["assignee_id"]
+          Events::Recorder.record(
+            event_name: "assignee_changed",
+            user: @user,
+            project: @task.project,
+            task: @task,
+            metadata: { old_assignee_id: old_id, new_assignee_id: new_id },
+          )
+        end
+
+        return unless @captured_changes.key?("due_date")
+
+        Events::Recorder.record(
+          event_name: "due_date_set",
+          user: @user,
+          project: @task.project,
+          task: @task,
+        )
       end
 
       def merge_record_errors_into_task(record)

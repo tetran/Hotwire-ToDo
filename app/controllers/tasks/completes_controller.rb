@@ -17,7 +17,13 @@ module Tasks
     end
 
     def create
-      @task.complete!
+      @task.complete!(completed_by: current_user)
+      Events::Recorder.record(
+        event_name: "task_completed",
+        user: current_user,
+        project: @task.project,
+        task: @task,
+      )
       respond_to do |format|
         format.turbo_stream
       end

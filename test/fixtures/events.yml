@@ -1,0 +1,43 @@
+task_created_event:
+  event_name: task_created
+  occurred_at: <%= 2.days.ago %>
+  user: regular_user
+  project: two
+  task: two
+  feature_category: basic_operation
+  metadata: '{}'
+
+task_completed_event:
+  event_name: task_completed
+  occurred_at: <%= 1.day.ago %>
+  user: regular_user
+  project: two
+  task: two
+  feature_category: basic_operation
+  metadata: '{}'
+
+comment_posted_event:
+  event_name: comment_posted
+  occurred_at: <%= 3.hours.ago %>
+  user: admin_user
+  project: one
+  task: one
+  feature_category: collaboration
+  metadata: '{}'
+
+project_created_event:
+  event_name: project_created
+  occurred_at: <%= 5.days.ago %>
+  user: admin_user
+  project: one
+  feature_category: basic_operation
+  metadata: '{}'
+
+assignee_changed_event:
+  event_name: assignee_changed
+  occurred_at: <%= 12.hours.ago %>
+  user: regular_user
+  project: two
+  task: two
+  feature_category: collaboration
+  metadata: '{"old_assignee_id": null, "new_assignee_id": 1}'

@@ -52,12 +52,20 @@ The admin panel (`/admin`) is a React SPA. When modifying the Admin area, do NOT
 3. **Admin with insufficient capability** → 403
 4. **Admin with proper capability** → 200 + response body assertions
 
+## Testing Discipline
+
+- **Run domain test suites**: During development, run the domain test suite that covers your changes (e.g., `bin/rails test:task`). See `docs/conventions/TESTING.md` for available suites and guidelines. Run the full suite (`bin/rails test`) only once before requesting review.
+- **Wait for test results**: Once you start a test run, wait for it to complete before doing anything else. Never re-run tests without confirming the previous run's results. The full suite takes 5+ minutes — use `run_in_background` and wait for the completion notification.
+
 ## Documentation
 
 - `docs/findings/` — Accumulated development findings and insights, one file per topic, named `issue-{number}-{topic}.md`
 - `docs/process/WORKFLOW.md` — ALWAYS read before starting any task
 - `docs/conventions/ROUTING.md` — RESTful principles and naming conventions
 - `docs/conventions/ACTIVE_RECORD_QUERIES.md` — `present?`/`exists?`/`count`/`size`/`length` usage rules
+- `docs/conventions/ADMIN_UI.md` — Admin SPA UI development conventions (React + Tailwind)
+- `docs/conventions/USER_UI.md` — User-facing UI development conventions (Rails + Hotwire + Water.css)
+- `docs/conventions/TESTING.md` — Test execution policy and domain test suites
 - `docs/design/ADMIN_DESIGN_SYSTEM.md` — Admin SPA UI components, colors, typography
 - `docs/design/USER_DESIGN_SYSTEM.md` — User-facing (Hotwire) UI components, colors, typography
 - `docs/specs/ADMIN_PERMISSIONS_MATRIX.md` — Resource × action permission definitions

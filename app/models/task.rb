@@ -73,8 +73,10 @@ class Task < ApplicationRecord
 
   def display_due_date = has_due_date? ? due_date : ""
 
-  def complete!
+  def complete!(completed_by: nil)
     return if completed?
+
+    @completed_by = completed_by
 
     transaction do
       update(completed: true)

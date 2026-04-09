@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_05_144220) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_09_001506) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -66,6 +66,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_05_144220) do
     t.bigint "user_id", null: false
     t.index ["task_id"], name: "index_comments_on_task_id"
     t.index ["user_id"], name: "index_comments_on_user_id"
+  end
+
+  create_table "events", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "event_name", null: false
+    t.string "feature_category", null: false
+    t.json "metadata", default: {}
+    t.datetime "occurred_at", null: false
+    t.integer "project_id"
+    t.integer "task_id"
+    t.datetime "updated_at", null: false
+    t.integer "user_id", null: false
+    t.index ["event_name"], name: "index_events_on_event_name"
+    t.index ["feature_category"], name: "index_events_on_feature_category"
+    t.index ["occurred_at"], name: "index_events_on_occurred_at"
+    t.index ["project_id"], name: "index_events_on_project_id"
+    t.index ["task_id"], name: "index_events_on_task_id"
+    t.index ["user_id"], name: "index_events_on_user_id"
   end
 
   create_table "llm_models", force: :cascade do |t|
@@ -322,6 +340,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_05_144220) do
   add_foreign_key "admin_login_histories", "users"
   add_foreign_key "comments", "tasks"
   add_foreign_key "comments", "users"
+  add_foreign_key "events", "projects"
+  add_foreign_key "events", "tasks"
+  add_foreign_key "events", "users"
   add_foreign_key "llm_models", "llm_providers"
   add_foreign_key "project_members", "projects"
   add_foreign_key "project_members", "users"

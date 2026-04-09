@@ -59,6 +59,7 @@ Rails.application.routes.draw do
           resource :permissions, only: %i[show update], controller: "role_permissions"
         end
         resources :permissions, only: %i[index show]
+        resources :events, only: [:index]
         resources :llm_providers, only: %i[index show update] do
           resources :llm_models
           resources :available_models, only: [:index]

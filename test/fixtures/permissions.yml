@@ -100,3 +100,8 @@ comment_manage:
   resource_type: Comment
   action: manage
   description: Manage comments
+
+event_log_read:
+  resource_type: EventLog
+  action: read
+  description: Read event logs

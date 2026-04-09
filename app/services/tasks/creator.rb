@@ -19,6 +19,7 @@ module Tasks
         @success = @task.save
       end
 
+      record_event if @success
       @task
     end
 
@@ -65,6 +66,15 @@ module Tasks
         @recurrence.subtask_names.each_with_index do |name, index|
           series.series_subtasks.create!(name: name, position: index)
         end
+      end
+
+      def record_event
+        Events::Recorder.record(
+          event_name: "task_created",
+          user: @user,
+          project: @project,
+          task: @task,
+        )
       end
 
       def merge_series_errors_into_task(series)
