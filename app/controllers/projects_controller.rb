@@ -28,10 +28,11 @@ class ProjectsController < ApplicationController
   def edit; end
 
   def create
-    @project = Project.new(project_params.merge(owner: current_user, dedicated: false))
+    @project = build_project
 
     respond_to do |format|
       if @project.save
+        record_project_created_event
         format.html { redirect_to project_url(@project), success: t("controllers.projects.create.success") }
       else
         format.html { render :new, status: :unprocessable_content }
@@ -68,6 +69,14 @@ class ProjectsController < ApplicationController
 
     def project_params
       params.expect(project: %i[name archived])
+    end
+
+    def build_project
+      Project.new(project_params.merge(owner: current_user, dedicated: false))
+    end
+
+    def record_project_created_event
+      Events::Recorder.record(event_name: "project_created", user: current_user, project: @project)
     end
 
     def redirect_to_inbox

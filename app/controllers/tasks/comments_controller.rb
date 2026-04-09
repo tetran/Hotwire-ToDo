@@ -15,6 +15,12 @@ module Tasks
 
       respond_to do |format|
         if @comment.save
+          Events::Recorder.record(
+            event_name: "comment_posted",
+            user: current_user,
+            project: @task.project,
+            task: @task,
+          )
           format.html { redirect_to @task, notice: t("controllers.tasks/comments.create.success") }
           format.turbo_stream
         else

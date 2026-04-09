@@ -30,7 +30,7 @@ Rails.application.routes.draw do
     resource :recurrence, only: %i[destroy], module: :tasks
   end
 
-  resource :user, only: %i[show update destroy]
+  resource :user, only: %i[show update]
   resource :email, only: %i[edit update]
   resource :password, only: %i[edit update]
   resources :email_verifications, only: %i[show create]
@@ -48,17 +48,18 @@ Rails.application.routes.draw do
     namespace :v1 do
       namespace :admin do
         root "dashboard#index"
-        resources :admin_accounts, only: %i[index show create update destroy] do
+        resources :admin_accounts, only: %i[index show create update] do
           resource :revocation, only: [:create], module: :admin_accounts
           resource :roles, only: %i[show update], module: :admin_accounts
         end
-        resources :users, only: %i[index show create update destroy] do
+        resources :users, only: %i[index show create update] do
           resource :roles, only: %i[show update], controller: "user_roles"
         end
         resources :roles, only: %i[index show create update destroy] do
           resource :permissions, only: %i[show update], controller: "role_permissions"
         end
         resources :permissions, only: %i[index show]
+        resources :events, only: [:index]
         resources :llm_providers, only: %i[index show update] do
           resources :llm_models
           resources :available_models, only: [:index]

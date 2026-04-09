@@ -82,6 +82,10 @@ admin_llm_provider_delete:
   role: admin
   permission: llm_provider_delete
 
+admin_event_log_read:
+  role: admin
+  permission: event_log_read
+
 # User manager gets user management permissions (read/write/delete) and admin read access only
 user_manager_user_read:
   role: user_manager

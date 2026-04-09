@@ -52,6 +52,9 @@ Layout/LineLength:
 Layout/AccessModifierIndentation:
   EnforcedStyle: indent
 
+Layout/ArrayAlignment:
+  EnforcedStyle: with_fixed_indentation
+
 Layout/IndentationConsistency:
   EnforcedStyle: indented_internal_methods
 

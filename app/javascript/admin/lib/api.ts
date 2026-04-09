@@ -1,4 +1,4 @@
-export type ResourceType = 'User' | 'Project' | 'Task' | 'Comment' | 'Admin' | 'LlmProvider'
+export type ResourceType = 'User' | 'Project' | 'Task' | 'Comment' | 'Admin' | 'LlmProvider' | 'EventLog'
 export type Action = 'read' | 'write' | 'delete' | 'manage'
 export type Capabilities = Record<ResourceType, Record<Action, boolean>>
 
@@ -372,6 +372,54 @@ export const promptSetsApi = {
   get: (id: number) => api.get<PromptSet>(`/prompt_sets/${id}`),
   create: (data: CreatePromptSetInput) => api.post<PromptSet>('/prompt_sets', { prompt_set: data }),
   update: (id: number, data: UpdatePromptSetInput) => api.patch<PromptSet>(`/prompt_sets/${id}`, { prompt_set: data }),
+}
+
+export interface EventLog {
+  id: number
+  event_name: string
+  occurred_at: string
+  feature_category: string
+  metadata: Record<string, unknown>
+  user: { id: number; name: string; email: string }
+  project: { id: number; name: string } | null
+  task: { id: number; name: string } | null
+}
+
+export interface EventLogMeta {
+  page: number
+  per_page: number
+  total_count: number
+  total_pages: number
+}
+
+export interface EventLogListResponse {
+  events: EventLog[]
+  meta: EventLogMeta
+}
+
+export interface EventLogListParams {
+  page?: number
+  per_page?: number
+  user_id?: number
+  project_id?: number
+  event_name?: string
+  from?: string
+  to?: string
+}
+
+export const eventsApi = {
+  list: (params?: EventLogListParams, options?: { signal?: AbortSignal }) => {
+    const query = new URLSearchParams()
+    if (params?.page) query.set('page', String(params.page))
+    if (params?.per_page) query.set('per_page', String(params.per_page))
+    if (params?.user_id) query.set('user_id', String(params.user_id))
+    if (params?.project_id) query.set('project_id', String(params.project_id))
+    if (params?.event_name) query.set('event_name', params.event_name)
+    if (params?.from) query.set('from', params.from)
+    if (params?.to) query.set('to', params.to)
+    const qs = query.toString()
+    return api.get<EventLogListResponse>(qs ? `/events?${qs}` : '/events', options)
+  },
 }
 
 export const suggestionConfigsApi = {

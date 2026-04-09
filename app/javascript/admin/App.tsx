@@ -31,6 +31,7 @@ import { PromptSetEditPage } from './pages/prompt-sets/PromptSetEditPage'
 import { SuggestionConfigsIndexPage } from './pages/suggestion-configs/SuggestionConfigsIndexPage'
 import { SuggestionConfigNewPage } from './pages/suggestion-configs/SuggestionConfigNewPage'
 import { SuggestionConfigDetailPage } from './pages/suggestion-configs/SuggestionConfigDetailPage'
+import { EventsIndexPage } from './pages/events/EventsIndexPage'
 
 const App = () => (
   <BrowserRouter>
@@ -172,6 +173,11 @@ const App = () => (
           <Route path="suggestion-configs/:id" element={
             <ProtectedRoute requiredCapability={{ resource: 'LlmProvider', action: 'read' }}>
               <SuggestionConfigDetailPage />
+            </ProtectedRoute>
+          } />
+          <Route path="events" element={
+            <ProtectedRoute requiredCapability={{ resource: 'EventLog', action: 'read' }}>
+              <EventsIndexPage />
             </ProtectedRoute>
           } />
         </Route>

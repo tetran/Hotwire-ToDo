@@ -148,33 +148,6 @@ module Api
           assert response.parsed_body.key?("errors")
         end
 
-        # destroy
-        test "DELETE destroy returns 401 when not logged in" do
-          delete api_v1_admin_user_path(users(:no_role_user))
-          assert_response :unauthorized
-        end
-
-        test "DELETE destroy returns 401 when logged in as regular user" do
-          login_as(users(:regular_user))
-          delete api_v1_admin_user_path(users(:no_role_user))
-          assert_response :unauthorized
-        end
-
-        test "DELETE destroy deletes a user when logged in as admin" do
-          login_as_admin_api
-          target = users(:no_role_user)
-          assert_difference "User.count", -1 do
-            delete api_v1_admin_user_path(target)
-          end
-          assert_response :no_content
-        end
-
-        test "DELETE destroy returns 404 when trying to delete self (admin accounts are scoped out)" do
-          login_as_admin_api
-          delete api_v1_admin_user_path(users(:admin_user))
-          assert_response :not_found
-        end
-
         # 操作別認可テスト
         test "POST create returns 403 when logged in as read-only admin" do
           login_as_admin_api_read_only
@@ -189,12 +162,6 @@ module Api
           assert_response :forbidden
         end
 
-        test "DELETE destroy returns 403 when logged in as read-only admin" do
-          login_as_admin_api_read_only
-          delete api_v1_admin_user_path(users(:no_role_user))
-          assert_response :forbidden
-        end
-
         test "POST create succeeds when logged in as user_manager" do
           login_as_admin_api(users(:user_manager))
           assert_difference "User.count", 1 do
@@ -202,14 +169,6 @@ module Api
                  params: { user: { email: "mgrnew@example.com", password: "password123", name: "Mgr New" } }
           end
           assert_response :created
-        end
-
-        test "DELETE destroy succeeds when logged in as user_manager (has User:delete)" do
-          login_as_admin_api(users(:user_manager))
-          assert_difference "User.count", -1 do
-            delete api_v1_admin_user_path(users(:no_role_user))
-          end
-          assert_response :no_content
         end
 
         # リソース単位の read 認可テスト（User:read が必要）

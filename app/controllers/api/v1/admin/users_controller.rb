@@ -2,10 +2,9 @@ module Api
   module V1
     module Admin
       class UsersController < ApplicationController
-        before_action :set_user, only: %i[show update destroy]
+        before_action :set_user, only: %i[show update]
         before_action -> { require_capability!("User", "read") }, only: %i[index show]
         before_action -> { require_capability!("User", "write") }, only: %i[create update]
-        before_action -> { require_capability!("User", "delete") }, only: %i[destroy]
 
         def index
           users = User.non_admin_accounts.search(params[:q]).order(:id)
@@ -31,16 +30,6 @@ module Api
           else
             render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
           end
-        end
-
-        def destroy
-          if @user == current_admin
-            render json: { error: "Cannot delete yourself" }, status: :forbidden
-            return
-          end
-
-          @user.force_destroy
-          head :no_content
         end
 
         private

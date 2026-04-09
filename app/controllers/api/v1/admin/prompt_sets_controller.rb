@@ -12,15 +12,16 @@ module Api
         end
 
         def show
-          render json: @prompt_set.as_json(include: { prompts: { except: %i[created_at updated_at] } })
-                                  .merge(in_use: in_use?)
+          render json: @prompt_set
+            .as_json(include: { prompts: { except: %i[created_at updated_at] } })
+            .merge(in_use: in_use?)
         end
 
         def create
           prompt_set = PromptSet.new(prompt_set_params)
           if prompt_set.save
-            render json: prompt_set.as_json(include: { prompts: { except: %i[created_at updated_at] } }),
-                   status: :created
+            json = prompt_set.as_json(include: { prompts: { except: %i[created_at updated_at] } })
+            render json: json, status: :created
           else
             render json: { errors: prompt_set.errors }, status: :unprocessable_entity
           end
@@ -28,8 +29,9 @@ module Api
 
         def update
           if @prompt_set.update(prompt_set_params)
-            render json: @prompt_set.as_json(include: { prompts: { except: %i[created_at
-                                                                              updated_at] } }).merge(in_use: in_use?)
+            render json: @prompt_set
+              .as_json(include: { prompts: { except: %i[created_at updated_at] } })
+              .merge(in_use: in_use?)
           else
             render json: { errors: @prompt_set.errors }, status: :unprocessable_entity
           end

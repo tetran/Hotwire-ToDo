@@ -12,6 +12,7 @@ class SuggestionRequestTest < ActiveSupport::TestCase
     SuggestionConfig,
     Prompt,
     PromptSet,
+    Event,
     Comment,
     Task,
     TaskSeriesSubtask,
