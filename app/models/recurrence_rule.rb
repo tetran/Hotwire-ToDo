@@ -17,7 +17,7 @@ class RecurrenceRule
     @frequency = attrs.fetch(:frequency).to_s
     @interval = attrs.fetch(:interval, 1).to_i
     @by_weekday = normalize_by_weekday(attrs[:by_weekday])
-    @end_mode = attrs.fetch(:end_mode, "infinite").to_s
+    @end_mode = (attrs[:end_mode] || "infinite").to_s
     @count = attrs[:count]&.to_i
     @until_date = attrs[:until_date]
     freeze
