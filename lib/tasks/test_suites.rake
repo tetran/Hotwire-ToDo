@@ -1,8 +1,7 @@
 namespace :test do
   desc "Run task domain tests (Task, Comment, Event models + controllers + services)"
   task task: :environment do
-    $LOAD_PATH << "test"
-    Rails::TestUnit::Runner.run([
+    Rails::TestUnit::Runner.run_from_rake("test", [
       "test/models/task_test.rb",
       "test/models/comment_test.rb",
       "test/models/event_test.rb",
@@ -15,8 +14,7 @@ namespace :test do
 
   desc "Run project domain tests (Project, ProjectMember models + controllers)"
   task project: :environment do
-    $LOAD_PATH << "test"
-    Rails::TestUnit::Runner.run([
+    Rails::TestUnit::Runner.run_from_rake("test", [
       "test/models/project_test.rb",
       "test/models/project_member_test.rb",
       "test/controllers/projects_controller_test.rb",
@@ -26,8 +24,7 @@ namespace :test do
 
   desc "Run auth domain tests (User, sessions, passwords, email, TOTP)"
   task auth: :environment do
-    $LOAD_PATH << "test"
-    Rails::TestUnit::Runner.run([
+    Rails::TestUnit::Runner.run_from_rake("test", [
       "test/models/user_test.rb",
       "test/controllers/sessions_controller_test.rb",
       "test/controllers/passwords_controller_test.rb",
@@ -41,8 +38,7 @@ namespace :test do
 
   desc "Run suggestion domain tests (Suggestion models + services + controllers)"
   task suggestion: :environment do
-    $LOAD_PATH << "test"
-    Rails::TestUnit::Runner.run([
+    Rails::TestUnit::Runner.run_from_rake("test", [
       "test/models/suggestion_session_test.rb",
       "test/models/suggestion_request_test.rb",
       "test/models/suggestion_response_test.rb",
@@ -63,8 +59,7 @@ namespace :test do
 
   desc "Run admin domain tests (Admin API controllers + roles/permissions models)"
   task admin: :environment do
-    $LOAD_PATH << "test"
-    Rails::TestUnit::Runner.run([
+    Rails::TestUnit::Runner.run_from_rake("test", [
       "test/models/role_test.rb",
       "test/models/permission_test.rb",
       "test/models/role_permission_test.rb",
@@ -79,8 +74,7 @@ namespace :test do
 
   desc "Run LLM domain tests (LLM models + clients + services)"
   task llm: :environment do
-    $LOAD_PATH << "test"
-    Rails::TestUnit::Runner.run([
+    Rails::TestUnit::Runner.run_from_rake("test", [
       "test/models/llm_model_test.rb",
       "test/models/llm_provider_test.rb",
       "test/lib/llm_client",
