@@ -47,7 +47,7 @@ vendor/bundle
 .progress/*.md
 
 # Ignore findings (keep directory)
-docs/findings/*.md
+.findings/*.md
 
 # Ignore Claude local settings
 .claude/settings.local.json
@@ -68,4 +68,3 @@ node_modules/
 # Vite uses dotenv and suggests to ignore local-only env files. See
 # https://vitejs.dev/guide/env-and-mode.html#env-files
 *.local
-
