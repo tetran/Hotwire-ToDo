@@ -1,6 +1,4 @@
 class RecurrenceRule
-  include Comparable
-
   WEEKDAYS = %w[mo tu we th fr sa su].freeze
   WEEKDAY_TO_SYMBOL = {
     "mo" => :monday,
