@@ -6,6 +6,7 @@ namespace :test do
       "test/models/comment_test.rb",
       "test/models/event_test.rb",
       "test/models/task_series_test.rb",
+      "test/models/recurrence_rule_test.rb",
       "test/controllers/tasks_controller_test.rb",
       "test/controllers/tasks",
       "test/services/events",
