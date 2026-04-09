@@ -17,7 +17,7 @@ module Tasks
     end
 
     def create
-      @task.complete!(completed_by: current_user)
+      @task.complete!
       Events::Recorder.record(
         event_name: "task_completed",
         user: current_user,
