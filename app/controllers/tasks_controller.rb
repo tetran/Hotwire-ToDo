@@ -59,11 +59,13 @@ class TasksController < ApplicationController
   # DELETE /tasks/1
   def destroy
     project = @task.project
+    task_metadata = { task_id: @task.id, task_name: @task.name }
     @task.destroy!
     Events::Recorder.record(
       event_name: "task_deleted",
       user: current_user,
       project: project,
+      metadata: task_metadata,
     )
 
     respond_to do |format|

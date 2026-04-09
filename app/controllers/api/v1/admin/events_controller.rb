@@ -5,7 +5,7 @@ module Api
         before_action -> { require_capability!("EventLog", "read") }
 
         def index
-          filtered = Event.filter_by(params)
+          filtered = Event.filter_by(filter_params)
           page, per_page = pagination_params
           total_count = filtered.count
 
@@ -24,6 +24,10 @@ module Api
         end
 
         private
+
+          def filter_params
+            params.permit(:user_id, :project_id, :event_name, :from, :to).to_h
+          end
 
           def pagination_params
             page = [params.fetch(:page, 1).to_i, 1].max
