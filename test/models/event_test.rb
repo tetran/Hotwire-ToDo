@@ -86,7 +86,7 @@ class EventTest < ActiveSupport::TestCase
     assert_includes Event::EVENT_NAMES, "comment_posted"
     assert_includes Event::EVENT_NAMES, "project_created"
     assert_includes Event::EVENT_NAMES, "assignee_changed"
-    assert_includes Event::EVENT_NAMES, "due_date_set"
+    assert_includes Event::EVENT_NAMES, "due_date_changed"
   end
 
   test "FEATURE_CATEGORIES maps every event name to a category" do

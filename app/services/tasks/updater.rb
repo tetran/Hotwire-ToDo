@@ -120,7 +120,7 @@ module Tasks
         return unless @captured_changes.key?("due_date")
 
         Events::Recorder.record(
-          event_name: "due_date_set",
+          event_name: "due_date_changed",
           user: @user,
           project: @task.project,
           task: @task,

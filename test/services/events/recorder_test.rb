@@ -32,7 +32,7 @@ module Events
       event = Events::Recorder.record(event_name: "comment_posted", user: @user)
       assert_equal "collaboration", event.feature_category
 
-      event = Events::Recorder.record(event_name: "due_date_set", user: @user)
+      event = Events::Recorder.record(event_name: "due_date_changed", user: @user)
       assert_equal "planning", event.feature_category
 
       event = Events::Recorder.record(event_name: "task_deleted", user: @user)

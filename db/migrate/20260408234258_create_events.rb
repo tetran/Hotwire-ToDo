@@ -3,7 +3,7 @@ class CreateEvents < ActiveRecord::Migration[8.1]
     create_table :events do |t|
       t.string :event_name, null: false
       t.datetime :occurred_at, null: false
-      t.references :user, null: false, foreign_key: { on_delete: :nullify }
+      t.references :user, null: false, foreign_key: true
       t.references :project, foreign_key: { on_delete: :nullify }
       t.references :task, foreign_key: { on_delete: :nullify }
       t.string :feature_category, null: false

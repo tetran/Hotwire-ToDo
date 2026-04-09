@@ -229,52 +229,6 @@ module Api
           assert_response :forbidden
         end
 
-        # destroy
-        test "DELETE destroy returns 401 when logged in as regular user" do
-          login_as(users(:regular_user))
-          delete api_v1_admin_admin_account_path(users(:llm_admin_user))
-          assert_response :unauthorized
-        end
-
-        test "DELETE destroy returns 401 when not logged in" do
-          delete api_v1_admin_admin_account_path(users(:user_viewer))
-          assert_response :unauthorized
-        end
-
-        test "DELETE destroy returns 403 when logged in as read-only admin" do
-          login_as_admin_api_read_only
-          delete api_v1_admin_admin_account_path(users(:llm_admin_user))
-          assert_response :forbidden
-        end
-
-        test "DELETE destroy deletes admin account" do
-          login_as_admin_api
-          target = users(:llm_admin_user)
-          assert_difference "User.count", -1 do
-            delete api_v1_admin_admin_account_path(target)
-          end
-          assert_response :no_content
-        end
-
-        test "DELETE destroy returns 403 when trying to delete self" do
-          login_as_admin_api
-          delete api_v1_admin_admin_account_path(users(:admin_user))
-          assert_response :forbidden
-          assert_equal "Cannot delete yourself", response.parsed_body["error"]
-        end
-
-        test "DELETE destroy returns 404 for non-admin user" do
-          login_as_admin_api
-          delete api_v1_admin_admin_account_path(users(:no_role_user))
-          assert_response :not_found
-        end
-
-        test "DELETE destroy returns 404 for non-existent user" do
-          login_as_admin_api
-          delete api_v1_admin_admin_account_path(id: 0)
-          assert_response :not_found
-        end
-
         # show
         test "GET show returns 401 when not logged in" do
           get api_v1_admin_admin_account_path(users(:admin_user))

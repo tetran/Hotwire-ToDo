@@ -55,8 +55,9 @@ module Api
           end
 
           def suggestion_config_params
-            params.expect(suggestion_config: [{ entries_attributes: [%i[id llm_model_id prompt_set_id weight
-                                                                        _destroy]] }])
+            params.expect(
+              suggestion_config: [{ entries_attributes: [%i[id llm_model_id prompt_set_id weight _destroy]] }],
+            )
           end
 
           def config_json(config)

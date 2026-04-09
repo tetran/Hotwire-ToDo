@@ -9,7 +9,7 @@ const EVENT_BADGE_COLORS: Record<string, { bg: string; text: string; ring: strin
   comment_posted: { bg: 'bg-violet-500/15', text: 'text-violet-400', ring: 'ring-violet-500/30' },
   project_created: { bg: 'bg-teal-500/15', text: 'text-teal-400', ring: 'ring-teal-500/30' },
   assignee_changed: { bg: 'bg-orange-500/15', text: 'text-orange-400', ring: 'ring-orange-500/30' },
-  due_date_set: { bg: 'bg-pink-500/15', text: 'text-pink-400', ring: 'ring-pink-500/30' },
+  due_date_changed: { bg: 'bg-pink-500/15', text: 'text-pink-400', ring: 'ring-pink-500/30' },
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -20,7 +20,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 const EVENT_NAMES = [
   'task_created', 'task_completed', 'task_updated', 'task_deleted',
-  'comment_posted', 'project_created', 'assignee_changed', 'due_date_set',
+  'comment_posted', 'project_created', 'assignee_changed', 'due_date_changed',
 ]
 
 export const EventsIndexPage = () => {

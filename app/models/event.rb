@@ -7,7 +7,7 @@ class Event < ApplicationRecord
     comment_posted
     project_created
     assignee_changed
-    due_date_set
+    due_date_changed
   ].freeze
 
   FEATURE_CATEGORIES = {
@@ -18,7 +18,7 @@ class Event < ApplicationRecord
     "comment_posted" => "collaboration",
     "project_created" => "basic_operation",
     "assignee_changed" => "collaboration",
-    "due_date_set" => "planning",
+    "due_date_changed" => "planning",
   }.freeze
 
   belongs_to :user
@@ -41,8 +41,18 @@ class Event < ApplicationRecord
     scope = scope.by_user(params[:user_id]) if params[:user_id].present?
     scope = scope.by_project(params[:project_id]) if params[:project_id].present?
     scope = scope.by_event_name(params[:event_name]) if params[:event_name].present?
-    scope = scope.occurred_from(Time.zone.parse(params[:from])) if params[:from].present?
-    scope = scope.occurred_to(Time.zone.parse(params[:to])) if params[:to].present?
+    if params[:from].present? && (from_time = safe_parse_time(params[:from]))
+      scope = scope.occurred_from(from_time)
+    end
+    if params[:to].present? && (to_time = safe_parse_time(params[:to]))
+      scope = scope.occurred_to(to_time)
+    end
     scope
   }
+
+  def self.safe_parse_time(value)
+    Time.zone.parse(value)
+  rescue ArgumentError
+    nil
+  end
 end

@@ -2,10 +2,9 @@ module Api
   module V1
     module Admin
       class AdminAccountsController < ApplicationController
-        before_action :set_admin_account, only: %i[show update destroy]
+        before_action :set_admin_account, only: %i[show update]
         before_action -> { require_capability!("Admin", "read") }, only: %i[index show]
         before_action -> { require_capability!("User", "write") }, only: %i[create update]
-        before_action -> { require_capability!("User", "delete") }, only: %i[destroy]
         before_action :protect_privilege_escalation, only: %i[create]
         before_action :validate_and_set_roles, only: %i[create]
 
@@ -65,16 +64,6 @@ module Api
           else
             render json: { errors: @admin_account.errors.full_messages }, status: :unprocessable_entity
           end
-        end
-
-        def destroy
-          if @admin_account == current_admin
-            render json: { error: "Cannot delete yourself" }, status: :forbidden
-            return
-          end
-
-          @admin_account.force_destroy
-          head :no_content
         end
 
         private

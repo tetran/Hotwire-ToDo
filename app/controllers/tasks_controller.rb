@@ -58,13 +58,13 @@ class TasksController < ApplicationController
 
   # DELETE /tasks/1
   def destroy
+    project = @task.project
+    @task.destroy!
     Events::Recorder.record(
       event_name: "task_deleted",
       user: current_user,
-      project: @task.project,
-      task: @task,
+      project: project,
     )
-    @task.destroy!
 
     respond_to do |format|
       format.html { redirect_to tasks_url, success: t("controllers.tasks.destroy.success") }

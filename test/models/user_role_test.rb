@@ -20,6 +20,7 @@ class UserRoleTest < ActiveSupport::TestCase
     SuggestionResponse.delete_all
     SuggestionRequest.delete_all
     SuggestionSession.delete_all
+    Event.delete_all
     Task.delete_all
     TaskSeriesSubtask.delete_all
     TaskSeries.delete_all
