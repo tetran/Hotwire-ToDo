@@ -1,7 +1,4 @@
 class TaskSeries < ApplicationRecord
-  include WeekdaySupport
-  include IceCubeScheduling
-
   belongs_to :project
   belongs_to :created_by, class_name: "User"
   belongs_to :assignee, class_name: "User", optional: true
@@ -21,8 +18,30 @@ class TaskSeries < ApplicationRecord
   validates :interval, numericality: { only_integer: true, greater_than_or_equal_to: 1 }
   validates :count, numericality: { only_integer: true, greater_than_or_equal_to: 1 }, if: :end_count?
   validates :until_date, presence: true, if: :end_until?
+  validate :by_weekday_format
+  validate :by_weekday_only_for_weekly
 
+  before_validation :normalize_by_weekday
   before_save :derive_rrule
+
+  def recurrence_rule
+    RecurrenceRule.new(
+      frequency: frequency,
+      interval: interval,
+      by_weekday: by_weekday,
+      end_mode: end_mode,
+      count: count,
+      until_date: until_date,
+    )
+  end
+
+  def next_due_date_after(date)
+    recurrence_rule.next_date_after(date)
+  end
+
+  def human_label
+    recurrence_rule.humanize
+  end
 
   def terminated?
     return true if stopped_at.present?
@@ -38,10 +57,6 @@ class TaskSeries < ApplicationRecord
 
   def stop!
     update!(stopped_at: Time.current)
-  end
-
-  def human_label
-    RruleHumanizer.new(self).to_s
   end
 
   def generate_next_instance!(from_task:)
@@ -67,6 +82,27 @@ class TaskSeries < ApplicationRecord
   end
 
   private
+
+    def normalize_by_weekday
+      return if by_weekday.blank?
+
+      codes = by_weekday.to_s.downcase.split(",").map(&:strip).compact_blank.uniq
+      self.by_weekday = codes.join(",")
+    end
+
+    def by_weekday_format
+      return if by_weekday.blank?
+
+      invalid = by_weekday.split(",").reject { |c| RecurrenceRule::WEEKDAYS.include?(c) }
+      errors.add(:by_weekday, :invalid) if invalid.any?
+    end
+
+    def by_weekday_only_for_weekly
+      return if by_weekday.blank?
+      return if weekly?
+
+      errors.add(:by_weekday, :only_for_weekly)
+    end
 
     def pending_siblings_except(except)
       scope = tasks.where(completed: false)
@@ -133,6 +169,6 @@ class TaskSeries < ApplicationRecord
     end
 
     def derive_rrule
-      self.rrule = build_ice_cube_rule.to_ical
+      self.rrule = recurrence_rule.to_ical
     end
 end

@@ -56,7 +56,7 @@
             <legend><%= t("tasks.form.recurrence.weekday_label") %></legend>
             <div class="task-form__recurrence-weekdays-grid">
               <% selected_weekdays = series&.by_weekday.to_s.split(",") %>
-              <% TaskSeries::WeekdaySupport::WEEKDAYS.each do |code| %>
+              <% RecurrenceRule::WEEKDAYS.each do |code| %>
                 <label class="task-form__recurrence-weekday">
                   <%= check_box_tag "task[recurrence][by_weekday][]", code, selected_weekdays.include?(code), id: "task_recurrence_by_weekday_#{code}", class: "visually-hidden" %>
                   <%= t("task_series.weekdays.#{code}", default: code.to_s) %>
