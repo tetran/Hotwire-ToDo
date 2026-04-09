@@ -66,6 +66,7 @@ namespace :test do
       "test/models/user_role_test.rb",
       "test/models/admin_login_history_test.rb",
       "test/models/system_roles_permissions_test.rb",
+      "test/models/admin_policy_test.rb",
       "test/controllers/admin_controller_test.rb",
       "test/controllers/api/v1/admin",
       "test/controllers/concerns/authorization_test.rb",

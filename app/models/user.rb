@@ -71,31 +71,13 @@ class User < ApplicationRecord
     save!
   end
 
-  # ロールベース認可メソッド
-  def admin?
-    roles.exists?(name: "admin", system_role: true)
+  # ロールベース認可メソッド（AdminPolicy に委譲）
+  def policy
+    @policy ||= AdminPolicy.new(self)
   end
 
-  def has_permission?(resource_type, action)
-    roles.joins(:permissions)
-         .exists?(permissions: { resource_type: resource_type, action: action })
-  end
-
-  def can_read?(resource_type)
-    has_permission?(resource_type, "read") || has_permission?(resource_type, "manage")
-  end
-
-  def can_write?(resource_type)
-    has_permission?(resource_type, "write") || has_permission?(resource_type, "manage")
-  end
-
-  def can_delete?(resource_type)
-    has_permission?(resource_type, "delete") || has_permission?(resource_type, "manage")
-  end
-
-  def can_manage?(resource_type)
-    has_permission?(resource_type, "manage")
-  end
+  delegate :admin?, :has_permission?, :can_read?, :can_write?,
+           :can_delete?, :can_manage?, to: :policy
 
   def force_destroy
     comments.destroy_all
