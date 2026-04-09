@@ -25,7 +25,7 @@ ALWAYS update `.progress/issue-XXXXX.md` during work. Update the progress file *
 8. **Testing** - Run the full test suite (`bin/rails test test:system`) once to ensure all tests pass.
 9. **Local Review** - Ask codex (`/codex-review`) for review the changes.
 10. **Create a Pull Request** - Create a PR and request review.
-11. **Retrospective** - Reflect on the work and save any reusable development findings (conventions, pitfalls, patterns) to `docs/findings/` as one file per topic, named `issue-{number}-{topic}.md`.
+11. **Retrospective** - Reflect on the work and save any reusable development findings (conventions, pitfalls, patterns) to `.findings/` as one file per topic, named `issue-{number}-{topic}.md`.
 
 ### Lightweight Flow
 
@@ -36,7 +36,7 @@ For typo fixes, simple bug fixes, and small single-file changes.
 2. **Implement** - Write code and tests. Run the domain test suite for the area you are changing (see `docs/conventions/TESTING.md`).
 3. **Testing** - Run the full test suite (`bin/rails test`) once to ensure all tests pass.
 4. **Create a Pull Request** - Create a PR and request review.
-5. **Retrospective** - Reflect on the work and save any reusable development findings (conventions, pitfalls, patterns) to `docs/findings/` as one file per topic, named `issue-{number}-{topic}.md`.
+5. **Retrospective** - Reflect on the work and save any reusable development findings (conventions, pitfalls, patterns) to `.findings/` as one file per topic, named `issue-{number}-{topic}.md`.
 
 Lightweight flow may skip: Issue creation, progress file, plan creation/confirmation/documentation.
 
