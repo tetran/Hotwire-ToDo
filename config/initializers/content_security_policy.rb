@@ -9,8 +9,10 @@ Rails.application.configure do
 
     policy.script_src :self
     # Allow @vite/client to hot reload javascript changes in development
-    policy.script_src(*policy.script_src, :unsafe_eval,
-                      "http://#{ViteRuby.config.host_with_port}") if Rails.env.development?
+    if Rails.env.development?
+      policy.script_src(*policy.script_src, :unsafe_eval,
+                        "http://#{ViteRuby.config.host_with_port}")
+    end
     # Allow blob: for vite-ruby test builds
     policy.script_src(*policy.script_src, :blob) if Rails.env.test?
 
@@ -21,12 +23,14 @@ Rails.application.configure do
     policy.font_src    :self, "https://fonts.gstatic.com"
     policy.img_src     :self, :data
     policy.connect_src :self
-    policy.connect_src(*policy.connect_src,
-                       "ws://#{ViteRuby.config.host_with_port}",
-                       "http://#{ViteRuby.config.host_with_port}") if Rails.env.development?
+    if Rails.env.development?
+      policy.connect_src(*policy.connect_src,
+                         "ws://#{ViteRuby.config.host_with_port}",
+                         "http://#{ViteRuby.config.host_with_port}")
+    end
   end
 
   # Generate nonces for permitted inline scripts and styles.
   config.content_security_policy_nonce_generator = ->(_request) { SecureRandom.base64(16) }
-  config.content_security_policy_nonce_directives = %w[script-src]
+  config.content_security_policy_nonce_directives = %w[script-src style-src]
 end
