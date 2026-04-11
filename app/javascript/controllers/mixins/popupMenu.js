@@ -22,16 +22,11 @@ export const popupMenu = controller => {
       this.menuTarget.classList.add('hidden')
     },
 
-    // hide modal when clicking ESC
-    // action: "keyup@window->turbo-modal#closeWithKeyboard"
-    closeWithKeyboard(e) {
-      if (e.code === 'Escape') {
-        this.hideMenu()
-      }
-    },
-
     // hide modal when clicking outside of modal
     // action: "click@window->turbo-modal#closeBackground"
+    //
+    // Escape-key handling is delegated to the global
+    // `keyboard-shortcuts` controller (see issue #14).
     closeBackground(e) {
       if (e && this.element.contains(e.target)) {
         return

@@ -1,7 +1,7 @@
 <div class="menu-container assignee-list <%= task.assignee.present? ? "assigned" : "" %> <%= task.assignee == current_user ? "assigned-to-me" : "" %>"
     data-controller="assignees"
     data-assignees-you-value="<%= t('tasks.assignees.you') %>"
-    data-action="keyup@window->assignees#closeWithKeyboard click@window->assignees#closeBackground">
+    data-action="click@window->assignees#closeBackground">
   <%= button_tag type: "button", class: "menu-button menu-button--assignee", data: { action: "assignees#toggleMenu" } do %>
     <% if task.assignee.present? %>
       <%= user_icon(task.assignee) %>

@@ -1,0 +1,66 @@
+.shortcuts-help-modal {
+  max-width: 32rem;
+}
+
+.shortcuts-help-body {
+  padding: var(--space-2) var(--space-3);
+}
+
+.shortcuts-help-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+}
+
+.shortcuts-help-item {
+  display: grid;
+  grid-template-columns: 10rem 1fr;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.shortcuts-help-item:last-child {
+  border-bottom: none;
+}
+
+.shortcuts-help-item__key {
+  margin: 0;
+  text-align: left;
+}
+
+.shortcuts-help-item__key kbd {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  font-family: var(--mono-font, ui-monospace, Menlo, monospace);
+  font-size: 0.9rem;
+  color: var(--form-text);
+  background: var(--overlay-hover, #f2f2f2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm, 4px);
+  box-shadow: 0 1px 0 var(--border);
+  line-height: 1.2;
+}
+
+.shortcuts-help-item__description {
+  margin: 0;
+  color: var(--form-text);
+  font-size: 0.95rem;
+}
+
+.menu-list__shortcuts {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .shortcuts-help-item {
+    grid-template-columns: 7rem 1fr;
+  }
+}

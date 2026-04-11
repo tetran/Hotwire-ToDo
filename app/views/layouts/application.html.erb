@@ -28,7 +28,9 @@
 
   </head>
 
-  <body>
+  <body data-controller="keyboard-shortcuts"
+        data-action="keydown@window->keyboard-shortcuts#handleKeydown"
+        data-keyboard-shortcuts-inbox-id-value="<%= current_user&.inbox_project&.id %>">
     <%= turbo_frame_tag "notification" %>
     <%= turbo_frame_tag "modal" %>
     <%# TODO: Turboでできたらしたい %>
@@ -39,5 +41,6 @@
     <div id="loader-wrapper"><div id="loader"></div></div>
     <%= hidden_field_tag :uid, current_user&.id %>
     <%= audio_tag "complete.mp3", id: "complete-sound" %>
+    <%= render "shared/keyboard_shortcuts_help" if current_user %>
   </body>
 </html>
