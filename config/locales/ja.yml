@@ -212,6 +212,33 @@ ja:
     completed_tasks_on:
       hide: "完了したタスクを非表示"
       empty: "完了したタスクはありません。"
+  shortcuts:
+    menu_label: "キーボードショートカット"
+    help:
+      title: "キーボードショートカット"
+      close: "閉じる"
+      items:
+        focus_search:
+          key: "/"
+          description: "タスク検索ボックスにフォーカス"
+        new_task:
+          key: "n"
+          description: "現在のプロジェクトに新規タスクを作成"
+        open_help:
+          key: "?"
+          description: "このショートカット一覧を表示"
+        close_modal:
+          key: "Esc"
+          description: "モーダル／メニューを閉じる"
+        submit_form:
+          key: "⌘/Ctrl + Enter"
+          description: "編集中のフォームを送信"
+        go_inbox:
+          key: "g → i"
+          description: "Inbox に移動"
+        go_projects:
+          key: "g → p"
+          description: "プロジェクト一覧に移動"
   tasks:
     show:
       comments: "コメント"

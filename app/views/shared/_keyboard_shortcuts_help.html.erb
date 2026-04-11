@@ -1,0 +1,23 @@
+<dialog class="modal-base shortcuts-help-modal"
+        data-keyboard-shortcuts-target="helpDialog"
+        data-action="click->keyboard-shortcuts#onHelpBackdropClick">
+  <div class="modal-header">
+    <h3 class="modal-header__title"><%= t("shortcuts.help.title") %></h3>
+    <%= button_tag type: "button",
+                   class: "modal-header__close",
+                   aria: { label: t("shortcuts.help.close") },
+                   data: { action: "click->keyboard-shortcuts#closeHelp" } do %>
+      <span class="material-symbols-outlined">close</span>
+    <% end %>
+  </div>
+  <div class="modal-body shortcuts-help-body">
+    <dl class="shortcuts-help-list">
+      <% t("shortcuts.help.items").each_value do |item| %>
+        <div class="shortcuts-help-item">
+          <dt class="shortcuts-help-item__key"><kbd><%= item[:key] %></kbd></dt>
+          <dd class="shortcuts-help-item__description"><%= item[:description] %></dd>
+        </div>
+      <% end %>
+    </dl>
+  </div>
+</dialog>

@@ -189,6 +189,33 @@ en:
     completed_tasks_on:
       hide: "Hide completed tasks"
       empty: "There are no completed tasks."
+  shortcuts:
+    menu_label: "Keyboard shortcuts"
+    help:
+      title: "Keyboard shortcuts"
+      close: "Close"
+      items:
+        focus_search:
+          key: "/"
+          description: "Focus the task search box"
+        new_task:
+          key: "n"
+          description: "Create a new task in the current project"
+        open_help:
+          key: "?"
+          description: "Show this shortcut list"
+        close_modal:
+          key: "Esc"
+          description: "Close the open modal or menu"
+        submit_form:
+          key: "⌘/Ctrl + Enter"
+          description: "Submit the current form"
+        go_inbox:
+          key: "g → i"
+          description: "Go to Inbox"
+        go_projects:
+          key: "g → p"
+          description: "Go to project list"
   tasks:
     show:
       comments: "Comments"

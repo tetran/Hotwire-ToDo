@@ -1,5 +1,5 @@
-<header class="project-header">
-  <div class="menu-container project-selector" data-controller="menu" data-action="keyup@window->menu#closeWithKeyboard click@window->menu#closeBackground">
+<header class="project-header" data-current-project-id="<%= @project.id %>">
+  <div class="menu-container project-selector" data-controller="menu" data-action="click@window->menu#closeBackground">
     <%= button_tag type: "button", class: "menu-button", data: { action: "menu#toggleMenu" } do %>
       <h2 class="project-name"><%= @project.display_name %></h2>
       <span class="material-symbols-outlined">expand_more</span>
@@ -54,7 +54,7 @@
 
   <div class="project-header__right">
     <% unless @project.inbox? %>
-      <div class="menu-container menu-container--header project-members" data-controller="project-members" data-action="keyup@window->project-members#closeWithKeyboard click@window->project-members#closeBackground">
+      <div class="menu-container menu-container--header project-members" data-controller="project-members" data-action="click@window->project-members#closeBackground">
         <%= button_tag type: "button", class: "menu-button", data: { action: "project-members#toggleMenu project-members#clear" } do %>
           <span class="material-symbols-outlined">group</span>
         <% end %>
@@ -73,7 +73,7 @@
       </div>
     <% end %>
 
-    <div class="menu-container menu-container--header" data-controller="menu" data-action="keyup@window->menu#closeWithKeyboard click@window->menu#closeBackground">
+    <div class="menu-container menu-container--header" data-controller="menu" data-action="click@window->menu#closeBackground">
       <%= button_tag type: "button", class: "menu-button", data: { action: "menu#toggleMenu" } do %>
         <span class="material-symbols-outlined">menu</span>
       <% end %>
@@ -87,6 +87,12 @@
             <%= link_to user_path, class: "menu-list__setting label-with-icon", data: { turbo_frame: "modal", action: "menu#hideMenu" } do %>
               <span class="material-symbols-outlined">settings</span>
               <%= t("projects.header.setting") %>
+            <% end %>
+          </li>
+          <li>
+            <%= button_tag type: "button", class: "menu-list__shortcuts label-with-icon", data: { action: "click->keyboard-shortcuts#openHelp click->menu#hideMenu" } do %>
+              <span class="material-symbols-outlined">keyboard</span>
+              <%= t("shortcuts.menu_label") %>
             <% end %>
           </li>
           <li>
