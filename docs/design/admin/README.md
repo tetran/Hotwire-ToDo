@@ -37,5 +37,5 @@ Hobo Admin is a React SPA built with Vite and TailwindCSS v4, serving as the adm
 - [Page Header Pattern](layouts/page-header.md)
 
 ### Implementation
-- [Implementation Checklist](checklist.md)
+- [New Component Checklist](NEW_COMPONENT_CHECKLIST.md)
 

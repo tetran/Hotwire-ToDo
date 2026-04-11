@@ -59,25 +59,23 @@ The admin panel (`/admin`) is a React SPA. When modifying the Admin area, do NOT
 
 ## Documentation
 
+**Doc hierarchy**: `docs/design/` holds the exhaustive visual specs (for designers and when designing new components); `docs/conventions/*_UI.md` holds the practical rules developers reference day-to-day (Do/Don't, checklists). Convention docs are a curated extract of the design system — fall back to the design system when details are needed. When documenting technical constraints, clearly distinguish **intentional prohibitions** ("do not use X") from **currently not adopted** ("X is not adopted at this time"); use wording that preserves future flexibility for the latter.
+
+### Must-read before acting
+
 - `docs/process/WORKFLOW.md` — ALWAYS read before starting any task
-- `docs/conventions/ROUTING.md` — RESTful principles and naming conventions
-- `docs/conventions/ACTIVE_RECORD_QUERIES.md` — `present?`/`exists?`/`count`/`size`/`length` usage rules
-- `docs/conventions/ADMIN_UI.md` — Admin SPA UI development conventions (React + Tailwind)
-- `docs/conventions/USER_UI.md` — User-facing UI development conventions (Rails + Hotwire + Water.css)
-- `docs/conventions/TESTING.md` — Test execution policy and domain test suites
-- `docs/design/admin/README.md` — Admin SPA design system index (components, colors, typography split per topic)
-- `docs/design/user/README.md` — User-facing (Hotwire) design system index (components, colors, typography split per topic)
-- `docs/specs/ADMIN_PERMISSIONS_MATRIX.md` — Resource × action permission definitions
-- `docs/guides/ADMIN_PERMISSION_TESTING_GUIDE.md` — Test patterns and helper methods
-- `docs/guides/ADMIN_SETUP.md` — Master admin user creation and env var setup
+- `docs/conventions/TESTING.md` — Test execution policy and domain test suites (read before running tests)
 
-### Feature Reference
+### Browse as needed
 
-| Feature | Document |
-|---|---|
-| Admin login / TOTP / session | `docs/features/ADMIN_AUTHENTICATION.md` |
-| Permission checks / ProtectedRoute | `docs/features/ADMIN_AUTHORIZATION.md` |
-| User CRUD | `docs/features/ADMIN_USER_MANAGEMENT.md` |
-| Role CRUD | `docs/features/ADMIN_ROLE_MANAGEMENT.md` |
-| Permission list / detail view | `docs/features/ADMIN_PERMISSION_MANAGEMENT.md` |
-| LLM provider and model management | `docs/features/ADMIN_LLM_PROVIDER_MANAGEMENT.md` |
+- `docs/conventions/` — Coding conventions (ROUTING, ADMIN_UI, USER_UI, etc.)
+- `docs/design/admin/` and `docs/design/user/` — Design system indexes split per topic
+- `docs/features/` — Feature-level implementation docs, one file per feature. Start from `docs/features/README.md` for the full Admin feature catalog
+- `docs/reference/` — Reference tables and design notes (permission matrices, cross-cutting design memos)
+- `docs/guides/` — How-to guides (admin setup, permission testing patterns)
+
+**When creating a new doc**:
+- One feature = one file under `docs/features/`
+- Procedural runbooks / walkthroughs / step-by-step tutorials → `docs/guides/`
+- Descriptive reference tables, matrices, design notes → `docs/reference/`
+- Coding conventions and Do/Don't rules → `docs/conventions/`

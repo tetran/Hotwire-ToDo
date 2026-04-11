@@ -1,4 +1,10 @@
-# /admin React SPA ウォークスルー
+# /admin React SPA オンボーディング
+
+> **Note for AI assistants**: This document is an onboarding tutorial for
+> human developers new to the project (Rails engineers learning the React
+> SPA). Do NOT load this file for implementation, debugging, or review
+> tasks — it contains no authoritative specs. Only reference it when the
+> user explicitly asks about learning material or onboarding.
 
 Rails経験者がこのプロジェクトの `/admin` React SPAを読み解くためのガイドです。
 「Reactチュートリアルは終わらせた」レベルを前提に、実際のコードを追いながら

@@ -1,3 +1,9 @@
+# NOTE: Always use `Rails::TestUnit::Runner.run_from_rake` here, NOT `.run`.
+# `.run` executes in-process via at_exit, inheriting the fully-loaded Rails
+# environment from `:environment`, which breaks session/request handling and
+# causes ALL controller tests to return 403 Forbidden. `run_from_rake` spawns
+# `rails test` as a subprocess so tests run in a clean environment.
+# See docs/conventions/TESTING.md "Maintaining Test Suites".
 namespace :test do
   desc "Run task domain tests (Task, Comment, Event models + controllers + services)"
   task task: :environment do
@@ -83,5 +89,14 @@ namespace :test do
       "test/services/llm_client_factory_test.rb",
       "test/services/model_list_service_test.rb",
     ])
+  end
+
+  desc "Run the full test suite: `bin/rails test` followed by `bin/rails test:system`"
+  task :all do
+    # Shell out so each suite runs in its own clean subprocess.
+    # Do NOT chain via Rake::Task#invoke or Runner.run — both share the parent
+    # process state and break controller tests (see the NOTE at the top of this file).
+    sh "bin/rails test"
+    sh "bin/rails test:system"
   end
 end

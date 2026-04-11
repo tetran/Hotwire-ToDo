@@ -1,6 +1,6 @@
 # Models
 
-モデルが肥大化した場合の分解パターンは [docs/conventions/MODEL_DECOMPOSITION.md](../../docs/conventions/MODEL_DECOMPOSITION.md) を参照。
+モデルが肥大化した場合の分解パターンは [docs/conventions/FAT_MODEL_DECOMPOSITION.md](../../docs/conventions/FAT_MODEL_DECOMPOSITION.md) を参照。
 
 ## 現在適用済みのパターン
 

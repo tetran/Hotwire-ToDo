@@ -32,7 +32,7 @@
           },
           {
             "type": "command",
-            "command": "jq -r '.tool_input.file_path // .tool_response.filePath' | { read -r f; if echo \"$f\" | grep -q '.progress/issue-'; then jq -n '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"progress file updated. Proceed to the next step.\"}}'; fi; }",
+            "command": "jq -r '.tool_input.file_path // .tool_response.filePath' | { read -r f; if echo \"$f\" | grep -q '.progress/issue-'; then jq -n '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"progress file updated. If the current step is complete per its Done criteria, proceed to the next step; otherwise continue the current step.\"}}'; fi; }",
             "statusMessage": "Checking progress file..."
           }
         ]
