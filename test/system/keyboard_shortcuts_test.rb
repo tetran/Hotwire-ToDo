@@ -114,6 +114,45 @@ class KeyboardShortcutsTest < ApplicationSystemTestCase
     assert_selector "dialog.shortcuts-help-modal[open]"
   end
 
+  test "slash still works after a task detail modal is closed via escape" do
+    # Regression for PR #285 review: turbo_modal_controller only clears the
+    # `#modal` frame's `src` attribute on click->hideModal, not on native
+    # Esc dialog close. Relying on `src` for modal-open detection leaves
+    # `/`, `n`, `g` shortcuts permanently disabled after one Esc-close.
+    open_project_menu
+    click_link "Test Project Two"
+    assert_selector ".project-name", text: "Test Project Two"
+    click_link "Test Task Two"
+    assert_selector "dialog.modal-base[open]", text: "Test Task Two"
+
+    dispatch_key("Escape")
+    assert_no_selector "dialog.modal-base[open]"
+    wait_for_keyboard_shortcuts_ready
+
+    dispatch_key("/")
+    assert_selector "dialog.search-modal[open]"
+  end
+
+  test "escape still closes popup menus after a task modal was closed via escape" do
+    # Regression for PR #285 review: the old `_handleEscape` guard used
+    # `#modal[src]`, which persists across native Esc dismissals and
+    # prevented popup menus from closing for the rest of the session.
+    open_project_menu
+    click_link "Test Project Two"
+    assert_selector ".project-name", text: "Test Project Two"
+    click_link "Test Task Two"
+    assert_selector "dialog.modal-base[open]", text: "Test Task Two"
+
+    dispatch_key("Escape")
+    assert_no_selector "dialog.modal-base[open]"
+    wait_for_keyboard_shortcuts_ready
+
+    find(".menu-container--header:not(.project-members) .menu-button").click
+    assert_selector ".menu-container--header:not(.project-members) .menu-navigation:not(.hidden)"
+    dispatch_key("Escape")
+    assert_no_selector ".menu-container--header:not(.project-members) .menu-navigation:not(.hidden)"
+  end
+
   private
 
     # Dispatches a synthetic keydown event directly on window so that the

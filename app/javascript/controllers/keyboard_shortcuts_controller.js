@@ -155,12 +155,10 @@ export default class extends Controller {
       return
     }
 
-    // 3) If turbo-frame "modal" is still populated (task detail overlay),
-    //    do not touch background menus.
-    const modalFrame = document.getElementById('modal')
-    if (modalFrame?.hasAttribute('src')) return
-
-    // 4) Close any open popup menus
+    // 3) Close any open popup menus. No guard on turbo-frame#modal src
+    // attribute: it is not reliably cleared when a task-detail dialog is
+    // dismissed via native Esc, so using it here would leave menus stuck
+    // open for the rest of the session.
     const openMenus = document.querySelectorAll('.menu-navigation:not(.hidden)')
     if (openMenus.length > 0) {
       openMenus.forEach(m => m.classList.add('hidden'))
@@ -235,8 +233,10 @@ export default class extends Controller {
   }
 
   _isModalOpen() {
-    const modalFrame = document.getElementById('modal')
-    if (modalFrame?.hasAttribute('src')) return true
+    // Do not rely on turbo-frame#modal's `src` attribute — it persists after
+    // a task-detail dialog is dismissed via native Esc (turbo_modal_controller
+    // only clears it via click->hideModal). The actually-visible dialog is
+    // the correct signal.
     return document.querySelector('dialog[open]') !== null
   }
 
