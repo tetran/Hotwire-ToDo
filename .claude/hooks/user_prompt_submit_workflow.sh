@@ -16,12 +16,12 @@ if [ -d "$PROGRESS_DIR" ]; then
   done
 
   if [ -n "$REMINDER" ]; then
-    MSG="WORKFLOW: 作業が進んだらすぐに .progress/issue-XXXXX.md ファイルを更新すること。${REMINDER}"
+    MSG="WORKFLOW: Update .progress/issue-XXXXX.md immediately after completing each step.${REMINDER}"
     echo "{\"systemMessage\": \"$MSG\"}"
     exit 0
   fi
 fi
 
 # No active progress files → inject workflow summary
-MSG="WORKFLOW: **作業が進んだらすぐに .progress/issue-XXXXX.md を更新すること。** Standard Flow → 1.Issue作成 2.progress file 3.plan 4.plan確認 5.issueにplan記載 6.ブランチ 7.実装 8.テスト 9.PR。Lightweight Flow（typo/小変更）→ ブランチ・実装・テスト・PRのみ。"
+MSG="WORKFLOW: **Update .progress/issue-XXXXX.md immediately after completing each step.** Full spec: docs/process/WORKFLOW.md. Standard Flow → 1.Issue 2.progress file 3.plan 4.plan confirm 5.post plan to issue 6.branch 7.implement 8.test 9.local-review 10.PR 11.review-response. Lightweight Flow (typo/small change) → branch, implement, test, PR, review-response only."
 echo "{\"systemMessage\": \"$MSG\"}"

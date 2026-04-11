@@ -53,6 +53,3 @@ The user UI is a server-rendered Rails + Hotwire (Turbo Streams, Turbo Frames, S
 - [Page Layout](layouts/page-layout.md)
 - [Navigation](layouts/navigation.md)
 
-### Migration Notes
-- [Migration Notes & Checklist](migration.md)
-

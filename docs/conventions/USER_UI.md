@@ -290,9 +290,70 @@ Material Symbols Outlined のみ使用。
 
 Water.css のデフォルト `box-shadow: 0 0 0 2px var(--focus)` を全入力で統一。
 
+### インライン編集は Turbo Frame をフィールド単位で分ける
+
+ページに既に Turbo Frame（モーダル等）がある状態でインライン編集を追加する場合、編集対象フィールドごとに独自IDの `turbo_frame_tag` で包む。各フィールドが独立して display ↔ edit をトグルできる。
+
+- Frame ID 例: `"task_#{id}_#{field}"`（例: `task_42_name`, `task_42_due_on`）
+- Display partial: frame を edit アクションに遷移させる `link_to`
+- Edit template: 同じ frame タグ内の PATCH フォーム
+- Cancel: 同じ frame を show に戻す link
+- Turbo Stream レスポンス: frame を display partial に差し替え
+
+**Frame ID 衝突に注意**: タスクカードは `turbo_frame_tag @task` (`dom_id`)、モーダルは `turbo_frame_tag "modal"` を使っているので、インラインフィールドは必ずカスタム ID にする。
+
+**バリデーション失敗時の format.turbo_stream 落とし穴**: `format.turbo_stream` ブロック内で HTML テンプレート（例: `edit.html.erb`）を render する場合、`formats: [:html]` を明示しないと Rails が `edit.turbo_stream.erb` を探してエラーになる。
+
+```ruby
+format.turbo_stream { render :edit, formats: [:html], status: :unprocessable_content }
+```
+
+### ActionText を link_to で包まない
+
+ActionText の rich text（例: `task.description`）を `link_to` ブロックの中でレンダリングすると、rich text 自身にリンクや attachment が含まれる場合にネストした `<a>` タグが出力されてしまい、無効な HTML になる。
+
+リッチテキストをクリッカブルにしたい場合は、`<div>` ラッパー + 別途 edit アイコンオーバーレイのパターンを使う。`link_to` はプレーンテキストフィールド（タスク名、期日など）だけに使う。
+
+```erb
+<%# ❌ BAD: description にリンクが含まれるとネスト <a> になる %>
+<%= link_to edit_path do %>
+  <%= task.description %>
+<% end %>
+
+<%# ✅ GOOD: div ラッパー + 別アイコン %>
+<div class="editable">
+  <%= task.description %>
+  <%= link_to edit_path, class: "edit-overlay" do %>
+    <span class="material-symbols-outlined">edit</span>
+  <% end %>
+</div>
+```
+
+### `<input type="date">` の日付フィルタは end_of_day を付ける
+
+`<input type="date">` は `YYYY-MM-DD` を返す。`Time.zone.parse` すると当日の `00:00:00` になるため、`to` フィルタで `..time` とすると当日のイベントが範囲外になる。範囲の末端には必ず `.end_of_day` を付ける:
+
+```ruby
+# ❌ BAD: 当日のイベントが除外される
+scope.where(created_at: ..Time.zone.parse(params[:to]))
+
+# ✅ GOOD
+scope.where(created_at: ..Time.zone.parse(params[:to]).end_of_day)
+```
+
 ---
 
-## 13. 新コンポーネント チェックリスト
+## 13. i18n ラベル
+
+### 類義語衝突チェック
+
+日本語ラベルを追加する時は、既存ラベルと類義・同義にならないかチェックする。特に**同じフォームに並ぶ可能性があるラベル**は要注意。
+
+**例**: 「期日」と「期限日」はほぼ同義 → 「終了日」と「締切日」のように意味を分離した。
+
+---
+
+## 14. 新コンポーネント チェックリスト
 
 1. [ ] Water.css の要素スタイルを最大限活用し、カスタム CSS は構造レイアウトとブランド差別化のみ
 2. [ ] BEM 命名: `block__element--modifier`

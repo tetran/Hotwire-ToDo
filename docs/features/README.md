@@ -102,4 +102,4 @@
 
 ## 認可モデル
 
-詳細は [ADMIN_PERMISSIONS_MATRIX.md](ADMIN_PERMISSIONS_MATRIX.md) を参照。
+詳細は [../reference/ADMIN_PERMISSIONS_MATRIX.md](../reference/ADMIN_PERMISSIONS_MATRIX.md) を参照。
