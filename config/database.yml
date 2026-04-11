@@ -9,8 +9,9 @@ development:
 
 test:
   <<: *default
-  database: storage/test.sqlite3
+  database: storage/<%= ENV["RAILS_SYSTEM_TEST"] == "1" ? "system_test" : "test" %>.sqlite3
 
 production:
   <<: *default
   database: <%= ENV.fetch("DATABASE_PATH", "storage/production.sqlite3") %>
+
