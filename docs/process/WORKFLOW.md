@@ -54,7 +54,7 @@ ALWAYS update `.progress/issue-XXXXX.md` during work. Update the progress file *
    - → **Done when**: a feature branch derived from the latest `main` is checked out.
 7. **Implement** - Write code and tests. During development, run the domain test suite for the area you are changing (see `docs/conventions/TESTING.md`). Do not run the full test suite at this stage.
    - → **Done when**: the domain test suite for the changed area passes and the implementation matches the plan.
-8. **Testing** - Run the full test suite (`bin/rails test:all`) once to ensure all tests pass. This runs `bin/rails test` followed by `bin/rails test:system`, each in a clean subprocess. The full suite takes 5+ minutes — run it via `Bash` with `run_in_background: true` and wait for the completion notification. Never re-run the suite before the previous run's result is confirmed.
+8. **Testing** - Run the full test suite (`bin/rails test:all`) once to ensure all tests pass. In Rails 8 this is a single-process invocation that runs every file matching `test/**/*_test.rb` (unit and system tests share the same process and database connection). The full suite takes 5+ minutes — run it via `Bash` with `run_in_background: true` and wait for the completion notification. Never re-run the suite before the previous run's result is confirmed.
    - → **Done when**: `bin/rails test:all` exits 0.
 9. **Local Review** - Ask codex (`/codex-review`) for review the changes.
    - → **Done when**: `/codex-review` has responded and no blocker-level issues remain open.
