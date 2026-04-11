@@ -90,13 +90,4 @@ namespace :test do
       "test/services/model_list_service_test.rb",
     ])
   end
-
-  desc "Run the full test suite: `bin/rails test` followed by `bin/rails test:system`"
-  task all: :environment do
-    # Shell out so each suite runs in its own clean subprocess.
-    # Do NOT chain via Rake::Task#invoke or Runner.run — both share the parent
-    # process state and break controller tests (see the NOTE at the top of this file).
-    sh "bin/rails test"
-    sh "bin/rails test:system"
-  end
 end
