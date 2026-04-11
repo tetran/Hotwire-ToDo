@@ -110,6 +110,10 @@ class KeyboardShortcutsTest < ApplicationSystemTestCase
 
   test "hamburger menu shortcut link opens the help modal" do
     find(".menu-container--header:not(.project-members) .menu-button").click
+    # Explicitly wait for the menu to open before looking for the child
+    # link — headless Chrome on CI can otherwise race the toggle and fail
+    # the `visible` check on `.menu-list__shortcuts`.
+    assert_selector ".menu-container--header:not(.project-members) .menu-navigation:not(.hidden)"
     find(".menu-list__shortcuts").click
     assert_selector "dialog.shortcuts-help-modal[open]"
   end

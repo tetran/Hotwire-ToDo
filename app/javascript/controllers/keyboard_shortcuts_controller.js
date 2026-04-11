@@ -126,6 +126,13 @@ export default class extends Controller {
 
   _openHelp(e) {
     // Input/composition guards already applied in handleKeydown before reaching here.
+    //
+    // Intentionally asymmetric with `/`, `n`, and `g`: those shortcuts
+    // bail out via `_isModalOpen()` when another dialog is visible, but
+    // `?` must remain reachable at all times (power users rely on the
+    // help list to recover from getting lost inside a stacked modal).
+    // The help `<dialog>` uses top-layer stacking, and Escape closes
+    // each layer in DOM order, so stacking is safe.
     if (!this.hasHelpDialogTarget) return
     if (this.helpDialogTarget.open) return
     e.preventDefault()
