@@ -1,7 +1,7 @@
 # Admin UI Convention
 
 React SPA（Vite + TailwindCSS v4）での Admin 画面開発規約。
-デザインシステムの詳細は `docs/design/ADMIN_DESIGN_SYSTEM.md` を参照。
+デザインシステムの詳細は `docs/design/admin/README.md` を参照（トピック別に分割）。
 
 ---
 

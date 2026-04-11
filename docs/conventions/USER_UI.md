@@ -1,7 +1,7 @@
 # User UI Convention
 
 Rails + Hotwire（Turbo Streams / Frames / Stimulus）でのユーザー画面開発規約。
-デザインシステムの詳細は `docs/design/USER_DESIGN_SYSTEM.md` を参照。
+デザインシステムの詳細は `docs/design/user/README.md` を参照（トピック別に分割）。
 
 ---
 
