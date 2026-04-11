@@ -65,8 +65,8 @@ The admin panel (`/admin`) is a React SPA. When modifying the Admin area, do NOT
 - `docs/conventions/ADMIN_UI.md` — Admin SPA UI development conventions (React + Tailwind)
 - `docs/conventions/USER_UI.md` — User-facing UI development conventions (Rails + Hotwire + Water.css)
 - `docs/conventions/TESTING.md` — Test execution policy and domain test suites
-- `docs/design/ADMIN_DESIGN_SYSTEM.md` — Admin SPA UI components, colors, typography
-- `docs/design/USER_DESIGN_SYSTEM.md` — User-facing (Hotwire) UI components, colors, typography
+- `docs/design/admin/README.md` — Admin SPA design system index (components, colors, typography split per topic)
+- `docs/design/user/README.md` — User-facing (Hotwire) design system index (components, colors, typography split per topic)
 - `docs/specs/ADMIN_PERMISSIONS_MATRIX.md` — Resource × action permission definitions
 - `docs/guides/ADMIN_PERMISSION_TESTING_GUIDE.md` — Test patterns and helper methods
 - `docs/guides/ADMIN_SETUP.md` — Master admin user creation and env var setup
