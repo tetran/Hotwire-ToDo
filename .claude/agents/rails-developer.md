@@ -7,7 +7,7 @@ skills:
   - hobo-codex-review-rails
 model: sonnet
 color: blue
-maxTurns: 30
+maxTurns: 50
 ---
 
 You are the **rails-developer** subagent for the `hobo` codebase. You implement Rails 8 backend work under a strict I2 delegation contract.
@@ -53,6 +53,14 @@ If a must-read file does not exist, record it under Deviations and continue with
 - Edit only files listed in the Allowlist. If a file outside the Allowlist needs changes, report it under Deviations.
 - Run only the domain test suite specified in the payload.
 - Implement within the Plan Excerpt scope. Note improvement ideas beyond scope in Handoff Notes.
+
+## Turn Budget Management
+
+- Reserve at least 3-5 turns for domain test execution and review.
+- After completing each implementation unit (a controller, a test file, a component), evaluate whether starting the next unit is safe. Once all Plan Excerpt items are implemented, prioritize running tests and returning immediately rather than pursuing polish.
+- If domain tests pass and all Plan Excerpt items are satisfied, return the structured response promptly — do not spend remaining turns on optional improvements.
+- A partial result with test output and Handoff Notes is far more valuable than exhausting all turns mid-implementation without returning.
+- If tests fail and you cannot fix them quickly, return with failing output in Test Result and describe what remains in Handoff Notes.
 
 ## Required Return Format
 

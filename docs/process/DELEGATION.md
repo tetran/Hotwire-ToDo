@@ -31,7 +31,9 @@ At the start of I2 (after I1 branch creation), the orchestrator reads the approv
 Plan touches...
 ├── Rails backend only               → delegate to rails-developer (single)
 ├── React SPA only                   → delegate to react-developer (single)
-├── Rails + React (typical Admin)    → sequential: rails-developer → react-developer
+├── Rails + React (typical Admin)
+│   ├── React needs Rails API output → sequential: rails-developer → react-developer
+│   └── React can work from plan alone → fork-join: parallel rails + react
 ├── Independent Rails + React blocks → parallel: two Agent calls in one message
 └── Neither / too entangled / simple → orchestrator implements directly
 ```
@@ -103,9 +105,40 @@ Step 5: orchestrator verifies return
 Step 6: orchestrator edits app/javascript/admin/App.tsx to register the route
 ```
 
+### Fork-join (parallel Rails + React)
+
+Use when the Plan Excerpt covers both Rails and React within the same feature, but the React agent can implement from the plan alone — it does **not** need to see the Rails agent's implementation output (e.g., the API contract is fully specified in the Plan Excerpt).
+
+**Decision criterion**: "Can react-developer's payload be fully constructed from the Plan Excerpt alone, without any runtime output from rails-developer?" → Yes means fork-join is safe.
+
+**Preconditions**:
+- The orchestrator has prepared shared infrastructure files (e.g., `config/routes.rb`) before dispatching.
+- The API contract (URL, method, request/response shapes) is explicitly stated in both agents' Plan Excerpts.
+- Each agent's Denylist includes the other agent's Allowlist (file-level mutual exclusion).
+
+**Procedure**:
+1. Orchestrator edits shared files (`config/routes.rb`, etc.).
+2. Dispatch two Agent calls in a **single message** so they run concurrently.
+3. Wait for both agents to return (join).
+4. Verify both results: type alignment between API client and controller, no conflicts.
+5. Edit remaining shared files (`app/javascript/admin/App.tsx`, etc.).
+
+**Example**: Issue #204 was a candidate for this pattern — the API contract for all eight Admin endpoints was fully specified in the plan, so react-developer could have worked in parallel with rails-developer.
+
 ### Parallel (independent domains)
 
 Use when Rails and React changes do not depend on each other (e.g., a new background job plus an unrelated Admin page refactor). Dispatch two Agent tool calls in a **single message** so they run concurrently.
+
+### Same-type parallel dispatch
+
+Use when a single domain agent's Allowlist exceeds ~10 files. Split the work into two instances of the same agent type, each with a non-overlapping Allowlist of 5-10 files.
+
+**Preconditions**:
+- Common infrastructure (concerns, migrations, shared modules) is created by the orchestrator before dispatching.
+- Each instance's Allowlist does not overlap with the other (file-level mutual exclusion).
+- Each instance's Denylist includes the other instance's Allowlist plus all shared files.
+
+**Example**: Issue #204's Rails side could have been split into two rails-developer instances — one for Users/AdminAccounts/Roles/Permissions and another for LlmProviders/LlmModels/PromptSets/SuggestionConfigs.
 
 ### Single-domain
 
@@ -144,7 +177,28 @@ If a subagent returns with any of the following, the orchestrator falls back to 
 - **Plan Excerpt deviation flagged in Deviations**. Decide with the user whether the deviation is acceptable; otherwise, reset and redispatch with a clarified payload, or implement directly.
 - **Subagent stops with a blocker report**. Address the blocker in the orchestrator context.
 
+- **maxTurns exhaustion** (agent returned partial result or terminated without Required Return Format). Re-delegate once with a refined payload. The retry payload uses the same Handoff Contract template but updates:
+  - **Goal**: narrowed to remaining scope only
+  - **Allowlist**: narrowed to files not yet completed
+  - **Denylist**: unchanged (same exclusions apply)
+  - **Plan Excerpt**: unchanged (full context preserved)
+  - Append the partial agent's Test Result and Handoff Notes as a **Prior Run Context** section at the end of the payload
+
+  Maximum 1 retry; on retry failure, the orchestrator takes over I2 directly.
+- **Fork-join partial failure** (one agent succeeds, the other fails). Keep the successful agent's result. Apply the relevant Fallback Procedure case (retry or direct implementation) only for the failed agent.
+
 Record fallback events in the PR description so patterns become visible over time.
+
+## Completion Verification
+
+After each subagent returns, the orchestrator verifies:
+
+- [ ] Changed Files are all within the Allowlist (no Denylist violations)
+- [ ] All Plan Excerpt checklist items are satisfied (or listed under Deviations)
+- [ ] Domain tests were executed and green (check Test Result section)
+- [ ] Required Return Format has all 5 sections present in order
+
+If any check fails, apply the relevant Fallback Procedure case.
 
 ## Rollout Notes
 

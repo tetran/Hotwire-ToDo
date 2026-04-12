@@ -90,17 +90,24 @@ P4. **Confirm the plan** — Confirm with the client if the plan can be proceede
    - → **Done when**: the client has explicitly approved the plan and plan mode is exited.
 P5. **Document the plan** — Document the plan in the issue as a comment. Include everything exactly as it is stated and approved in the plan file.
    - → **Done when**: the approved plan is posted as a comment on the issue, verbatim from the plan file.
-   - **Phase complete.** Recommended: reset the conversation context (`/clear`) here and resume Implementation Phase in a fresh conversation. On resume, follow the Entry Protocol and read `.progress/issue-XXXXX.md` to locate the current phase/step.
+   - **Phase complete.** Recommended: reset the conversation context (`/clear`) here and resume Implementation Phase in a fresh conversation.
+   - **Quick start**: Use the `/start-implementation-phase` skill to handle the Entry Protocol, progress file update, branch creation (I1), and I2 delegation classification automatically. In a new session, paste:
+     ```
+     /start-implementation-phase <issue-number>
+     ```
+     Example: `/start-implementation-phase 293`
 
 #### Implementation Phase
 
 I1. **Create a Git Branch** — Create a feature branch for the issue. ALL feature branches should be derived from the LATEST main branch.
    - → **Done when**: a feature branch derived from the latest `main` is checked out.
 I2. **Implement** — Write code and tests. During development, run the domain test suite for the area you are changing (see `docs/conventions/TESTING.md`). Do not run the full test suite at this stage.
+   - **Docs/config-only changes** (no application code or test files modified): domain test suite may be skipped.
    - **Delegation option (recommended when applicable)**: If the Plan Excerpt spans Rails backend and React Admin SPA, the orchestrator may delegate implementation to the `rails-developer` and `react-developer` subagents. See [I2 Delegation](#i2-delegation-optional) below and `docs/process/DELEGATION.md` for the full contract. Delegation is opt-in — direct implementation remains valid.
-   - → **Done when**: the domain test suite for the changed area passes and the implementation matches the plan.
+   - → **Done when**: the domain test suite for the changed area passes and the implementation matches the plan (or, for docs/config-only changes, the implementation matches the plan).
 I3. **Testing** — Run the full test suite (`bin/rails test:all`) once to ensure all tests pass. In Rails 8 this is a single-process invocation that runs every file matching `test/**/*_test.rb` (unit and system tests share the same process and database connection). The full suite takes 5+ minutes — run it via `Bash` with `run_in_background: true` and wait for the completion notification. Never re-run the suite before the previous run's result is confirmed.
-   - → **Done when**: `bin/rails test:all` exits 0.
+   - **Docs/config-only changes**: skip this step entirely. Proceed directly to I4.
+   - → **Done when**: `bin/rails test:all` exits 0 (or skipped for docs/config-only changes).
 I4. **Local Review** — Ask codex (`/codex-review`) for review the changes.
    - → **Done when**: `/codex-review` has responded and no blocker-level issues remain open.
 I5. **Create a Pull Request** — Create a PR and request review.
@@ -116,9 +123,11 @@ For typo fixes, simple bug fixes, and small single-file changes.
 1. **Create a Git Branch** - Create a feature branch derived from the LATEST main branch.
    - → **Done when**: a feature branch derived from the latest `main` is checked out.
 2. **Implement** - Write code and tests. Run the domain test suite for the area you are changing (see `docs/conventions/TESTING.md`).
-   - → **Done when**: the domain test suite for the changed area passes.
+   - **Docs/config-only changes** (no application code or test files modified): domain test suite may be skipped.
+   - → **Done when**: the domain test suite for the changed area passes (or, for docs/config-only changes, the implementation is complete).
 3. **Testing** - Run the full test suite (`bin/rails test`) once to ensure all tests pass. The full suite takes 5+ minutes — run it via `Bash` with `run_in_background: true` and wait for the completion notification. Never re-run the suite before the previous run's result is confirmed.
-   - → **Done when**: `bin/rails test` exits 0.
+   - **Docs/config-only changes**: skip this step entirely. Proceed directly to step 4.
+   - → **Done when**: `bin/rails test` exits 0 (or skipped for docs/config-only changes).
 4. **Create a Pull Request** - Create a PR and request review.
    - → **Done when**: the PR exists with a proper title/description and CI has been triggered.
 5. **Review Response** - Execute **all sub-steps** of the [Review Response Protocol](#review-response-protocol) in order. Do NOT skip any.
@@ -155,7 +164,7 @@ If a step cannot complete, do NOT proceed. Return to the appropriate earlier ste
 
 ### Completion Criteria
 
-- Tests are written and all pass
+- Tests are written and all pass (docs/config-only changes: test steps may be skipped)
 - A Pull Request is created
 - **Review Response** step has been performed (review fetched, findings summarized, user consulted)
 
