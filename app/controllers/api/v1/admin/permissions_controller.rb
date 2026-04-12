@@ -5,8 +5,12 @@ module Api
         before_action :set_permission, only: [:show]
 
         def index
-          permissions = Permission.order(:id)
-          render json: permissions.as_json(only: %i[id resource_type action description])
+          scope = Permission.order(:id)
+          pagy, records = paginate(scope)
+          render json: {
+            permissions: records.as_json(only: %i[id resource_type action description]),
+            meta: pagination_meta(pagy),
+          }
         end
 
         def show

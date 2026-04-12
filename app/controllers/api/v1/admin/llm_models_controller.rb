@@ -9,8 +9,12 @@ module Api
         before_action -> { require_capability!("LlmProvider", "delete") }, only: %i[destroy]
 
         def index
-          models = @llm_provider.llm_models.order(:id)
-          render json: models.as_json
+          scope = @llm_provider.llm_models.order(:id)
+          pagy, records = paginate(scope)
+          render json: {
+            llm_models: records.as_json,
+            meta: pagination_meta(pagy),
+          }
         end
 
         def show

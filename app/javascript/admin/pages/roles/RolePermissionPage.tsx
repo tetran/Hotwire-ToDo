@@ -14,11 +14,11 @@ export const RolePermissionPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [all, assigned] = await Promise.all([
-          permissionsApi.list(),
+        const [allResponse, assigned] = await Promise.all([
+          permissionsApi.list({ per_page: 100 }),
           rolesApi.getPermissions(Number(id)),
         ])
-        setAllPermissions(all)
+        setAllPermissions(allResponse.permissions)
         setAssignedIds(new Set(assigned.map(p => p.id)))
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load permissions')

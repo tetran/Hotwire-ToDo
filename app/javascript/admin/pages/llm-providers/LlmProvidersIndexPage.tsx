@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { llmProvidersApi, LlmProvider } from '../../lib/api'
+import { llmProvidersApi, LlmProvider, type PaginationMeta } from '../../lib/api'
 import Badge from '../../components/Badge'
+import Pagination from '../../components/Pagination'
+import { usePagination, useClampPage } from '../../hooks/usePagination'
 
 const providerColors: Record<string, string> = {
   OpenAI: 'from-emerald-400 to-teal-500',
@@ -16,13 +18,28 @@ function providerGradient(name: string): string {
 
 export const LlmProvidersIndexPage = () => {
   const [providers, setProviders] = useState<LlmProvider[]>([])
+  const [meta, setMeta] = useState<PaginationMeta | null>(null)
   const [error, setError] = useState('')
 
+  const { page, perPage, setPage, setPerPage, clampPage } = usePagination()
+  useClampPage(meta, clampPage)
+
   useEffect(() => {
-    llmProvidersApi.list()
-      .then(setProviders)
-      .catch(err => setError(err instanceof Error ? err.message : 'Failed to load providers'))
-  }, [])
+    const controller = new AbortController()
+    llmProvidersApi.list({ page, per_page: perPage }, { signal: controller.signal })
+      .then(response => {
+        if (!controller.signal.aborted) {
+          setProviders(response.llm_providers)
+          setMeta(response.meta)
+        }
+      })
+      .catch(err => {
+        if (!controller.signal.aborted) {
+          setError(err instanceof Error ? err.message : 'Failed to load providers')
+        }
+      })
+    return () => controller.abort()
+  }, [page, perPage])
 
   if (error) return <p className="text-rose-500">{error}</p>
 
@@ -86,6 +103,16 @@ export const LlmProvidersIndexPage = () => {
           </div>
         ))}
       </div>
+
+      {meta && (
+        <Pagination
+          meta={meta}
+          page={page}
+          perPage={perPage}
+          onPageChange={setPage}
+          onPerPageChange={setPerPage}
+        />
+      )}
     </div>
   )
 }

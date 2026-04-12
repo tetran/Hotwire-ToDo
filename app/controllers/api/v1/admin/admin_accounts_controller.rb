@@ -9,16 +9,11 @@ module Api
         before_action :validate_and_set_roles, only: %i[create]
 
         def index
-          admin_accounts = User.admin_accounts.includes(:roles).search(params[:q]).order(:id)
-          last_logins = AdminLoginHistory
-                        .where(user_id: admin_accounts.select(:id))
-                        .group(:user_id)
-                        .maximum(:created_at)
-          render json: admin_accounts.map { |account|
-            account.as_json(
-              only: %i[id email name created_at updated_at],
-              include: { roles: { only: %i[id name] } },
-            ).merge(last_sign_in_at: last_logins[account.id])
+          scope = User.admin_accounts.includes(:roles).search(params[:q]).order(:id)
+          pagy, records = paginate(scope)
+          render json: {
+            admin_accounts: serialize_admin_accounts(records),
+            meta: pagination_meta(pagy),
           }
         end
 
@@ -67,6 +62,19 @@ module Api
         end
 
         private
+
+          def serialize_admin_accounts(records)
+            last_logins = AdminLoginHistory
+                          .where(user_id: records.map(&:id))
+                          .group(:user_id)
+                          .maximum(:created_at)
+            records.map do |account|
+              account.as_json(
+                only: %i[id email name created_at updated_at],
+                include: { roles: { only: %i[id name] } },
+              ).merge(last_sign_in_at: last_logins[account.id])
+            end
+          end
 
           def set_admin_account
             @admin_account = User.admin_accounts.find_by(id: params[:id])

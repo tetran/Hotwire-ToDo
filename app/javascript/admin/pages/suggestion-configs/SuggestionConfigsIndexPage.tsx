@@ -1,19 +1,37 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { SuggestionConfig, suggestionConfigsApi } from '../../lib/api'
+import { SuggestionConfig, suggestionConfigsApi, type PaginationMeta } from '../../lib/api'
 import Badge from '../../components/Badge'
+import Pagination from '../../components/Pagination'
+import { usePagination, useClampPage } from '../../hooks/usePagination'
 
 export const SuggestionConfigsIndexPage = () => {
   const [configs, setConfigs] = useState<SuggestionConfig[]>([])
+  const [meta, setMeta] = useState<PaginationMeta | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
+  const { page, perPage, setPage, setPerPage, clampPage } = usePagination()
+  useClampPage(meta, clampPage)
+
   useEffect(() => {
-    suggestionConfigsApi.list()
-      .then(setConfigs)
-      .catch(err => setError(err.message))
-      .finally(() => setLoading(false))
-  }, [])
+    const controller = new AbortController()
+    setLoading(true)
+    suggestionConfigsApi.list({ page, per_page: perPage }, { signal: controller.signal })
+      .then(response => {
+        if (!controller.signal.aborted) {
+          setConfigs(response.suggestion_configs)
+          setMeta(response.meta)
+        }
+      })
+      .catch(err => {
+        if (!controller.signal.aborted) setError(err.message)
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false)
+      })
+    return () => controller.abort()
+  }, [page, perPage])
 
   if (loading) return <p className="text-sm text-slate-400">Loading…</p>
   if (error) return <p className="text-sm text-rose-500">{error}</p>
@@ -85,6 +103,16 @@ export const SuggestionConfigsIndexPage = () => {
           </tbody>
         </table>
       </div>
+
+      {meta && (
+        <Pagination
+          meta={meta}
+          page={page}
+          perPage={perPage}
+          onPageChange={setPage}
+          onPerPageChange={setPerPage}
+        />
+      )}
     </div>
   )
 }

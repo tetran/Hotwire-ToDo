@@ -33,8 +33,9 @@ module Api
           get api_v1_admin_suggestion_configs_path
           assert_response :success
           json = response.parsed_body
-          assert_kind_of Array, json
-          ids = json.pluck("id")
+          assert json.key?("suggestion_configs")
+          assert json.key?("meta")
+          ids = json["suggestion_configs"].pluck("id")
           assert_includes ids, suggestion_configs(:active_config).id
           assert_includes ids, suggestion_configs(:inactive_config).id
         end
@@ -49,7 +50,7 @@ module Api
           login_as_admin_api
           get api_v1_admin_suggestion_configs_path
           assert_response :success
-          json = response.parsed_body
+          json = response.parsed_body["suggestion_configs"]
           ids = json.pluck("id")
           assert_equal ids.sort.reverse, ids
         end
@@ -58,7 +59,7 @@ module Api
           login_as_admin_api
           get api_v1_admin_suggestion_configs_path
           assert_response :success
-          json = response.parsed_body
+          json = response.parsed_body["suggestion_configs"]
           active = json.find { |c| c["id"] == suggestion_configs(:active_config).id }
           assert active.key?("entries")
           assert_kind_of Array, active["entries"]

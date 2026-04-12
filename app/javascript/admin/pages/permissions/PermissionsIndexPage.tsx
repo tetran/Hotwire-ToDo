@@ -1,25 +1,38 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { permissionsApi, type Permission } from '../../lib/api'
+import { permissionsApi, type Permission, type PaginationMeta } from '../../lib/api'
+import Pagination from '../../components/Pagination'
+import { usePagination, useClampPage } from '../../hooks/usePagination'
 
 export const PermissionsIndexPage = () => {
   const [permissions, setPermissions] = useState<Permission[]>([])
+  const [meta, setMeta] = useState<PaginationMeta | null>(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
 
+  const { page, perPage, setPage, setPerPage, clampPage } = usePagination()
+  useClampPage(meta, clampPage)
+
   useEffect(() => {
-    const fetchPermissions = async () => {
-      try {
-        const data = await permissionsApi.list()
-        setPermissions(data)
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load permissions')
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchPermissions()
-  }, [])
+    const controller = new AbortController()
+    setLoading(true)
+    permissionsApi.list({ page, per_page: perPage }, { signal: controller.signal })
+      .then(response => {
+        if (!controller.signal.aborted) {
+          setPermissions(response.permissions)
+          setMeta(response.meta)
+        }
+      })
+      .catch(err => {
+        if (!controller.signal.aborted) {
+          setError(err instanceof Error ? err.message : 'Failed to load permissions')
+        }
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false)
+      })
+    return () => controller.abort()
+  }, [page, perPage])
 
   if (loading) return <p>Loading...</p>
 
@@ -63,6 +76,16 @@ export const PermissionsIndexPage = () => {
           </tbody>
         </table>
       </div>
+
+      {meta && (
+        <Pagination
+          meta={meta}
+          page={page}
+          perPage={perPage}
+          onPageChange={setPage}
+          onPerPageChange={setPerPage}
+        />
+      )}
     </div>
   )
 }

@@ -23,8 +23,9 @@ module Api
           get api_v1_admin_users_path
           assert_response :success
           json = response.parsed_body
-          assert_kind_of Array, json
-          emails = json.pluck("email")
+          assert json.key?("users")
+          assert json.key?("meta")
+          emails = json["users"].pluck("email")
           # Non-admin users should be included
           assert_includes emails, users(:regular_user).email
           assert_includes emails, users(:no_role_user).email
@@ -39,7 +40,7 @@ module Api
           login_as_admin_api
           get api_v1_admin_users_path
           assert_response :success
-          user = response.parsed_body.first
+          user = response.parsed_body["users"].first
           assert user.key?("id")
           assert user.key?("email")
           assert user.key?("name")
@@ -52,8 +53,55 @@ module Api
           login_as_admin_api
           get api_v1_admin_users_path
           assert_response :success
-          user = response.parsed_body.first
+          user = response.parsed_body["users"].first
           assert_not user.key?("roles")
+        end
+
+        test "GET index response includes pagination meta" do
+          login_as_admin_api
+          get api_v1_admin_users_path
+          assert_response :success
+          meta = response.parsed_body["meta"]
+          assert meta.key?("page")
+          assert meta.key?("per_page")
+          assert meta.key?("total_count")
+          assert meta.key?("total_pages")
+          assert_equal 1, meta["page"]
+        end
+
+        test "GET index respects page and per_page params" do
+          login_as_admin_api
+          get api_v1_admin_users_path, params: { page: 2, per_page: 1 }
+          assert_response :success
+          meta = response.parsed_body["meta"]
+          assert_equal 2, meta["page"]
+          assert_equal 1, meta["per_page"]
+        end
+
+        test "GET index clamps page edge cases" do
+          login_as_admin_api
+          get api_v1_admin_users_path, params: { page: 0 }
+          assert_response :success
+          assert_equal 1, response.parsed_body["meta"]["page"]
+
+          get api_v1_admin_users_path, params: { page: -1 }
+          assert_response :success
+          assert_equal 1, response.parsed_body["meta"]["page"]
+        end
+
+        test "GET index clamps per_page edge cases" do
+          login_as_admin_api
+          get api_v1_admin_users_path, params: { per_page: 0 }
+          assert_response :success
+          assert_equal 1, response.parsed_body["meta"]["per_page"]
+
+          get api_v1_admin_users_path, params: { per_page: -1 }
+          assert_response :success
+          assert_equal 1, response.parsed_body["meta"]["per_page"]
+
+          get api_v1_admin_users_path, params: { per_page: 999 }
+          assert_response :success
+          assert_equal 100, response.parsed_body["meta"]["per_page"]
         end
 
         # show
@@ -195,25 +243,27 @@ module Api
           login_as_admin_api
           get api_v1_admin_users_path, params: { q: "Regular" }
           assert_response :success
-          json = response.parsed_body
-          assert json.all? { |u| u["name"]&.downcase&.include?("regular") || u["email"]&.downcase&.include?("regular") }
+          users = response.parsed_body["users"]
+          assert users.all? { |u|
+            u["name"]&.downcase&.include?("regular") || u["email"]&.downcase&.include?("regular")
+          }
         end
 
         test "GET index with q param filters non-admin users by email" do
           login_as_admin_api
           get api_v1_admin_users_path, params: { q: "norole@" }
           assert_response :success
-          json = response.parsed_body
-          assert_equal 1, json.size
-          assert_equal "norole@example.com", json.first["email"]
+          users = response.parsed_body["users"]
+          assert_equal 1, users.size
+          assert_equal "norole@example.com", users.first["email"]
         end
 
         test "GET index with q param does not return admin accounts" do
           login_as_admin_api
           get api_v1_admin_users_path, params: { q: "admin" }
           assert_response :success
-          json = response.parsed_body
-          assert json.none? { |u| u["email"] == users(:admin_user).email }
+          user_list = response.parsed_body["users"]
+          assert user_list.none? { |u| u["email"] == users(:admin_user).email }
         end
 
         # boundary: admin accounts are not accessible via UsersController
@@ -242,7 +292,7 @@ module Api
           get api_v1_admin_users_path, params: { q: "" }
           assert_response :success
           non_admin_count = User.non_admin_accounts.count
-          assert_equal non_admin_count, response.parsed_body.size
+          assert_equal non_admin_count, response.parsed_body["users"].size
         end
       end
     end

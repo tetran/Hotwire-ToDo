@@ -1,30 +1,44 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { llmModelsApi, LlmModel } from '../../lib/api'
+import { llmModelsApi, LlmModel, type PaginationMeta } from '../../lib/api'
 import Badge from '../../components/Badge'
+import Pagination from '../../components/Pagination'
+import { usePagination, useClampPage } from '../../hooks/usePagination'
 
 export const LlmModelsIndexPage = () => {
   const { id } = useParams<{ id: string }>()
   const providerId = Number(id)
 
   const [models, setModels] = useState<LlmModel[]>([])
+  const [meta, setMeta] = useState<PaginationMeta | null>(null)
   const [error, setError] = useState('')
+  const [refreshKey, setRefreshKey] = useState(0)
 
-  const loadModels = useCallback(() => {
-    llmModelsApi.list(providerId)
-      .then(setModels)
-      .catch(err => setError(err instanceof Error ? err.message : 'Failed to load models'))
-  }, [providerId])
+  const { page, perPage, setPage, setPerPage, clampPage } = usePagination()
+  useClampPage(meta, clampPage)
 
   useEffect(() => {
-    loadModels()
-  }, [loadModels])
+    const controller = new AbortController()
+    llmModelsApi.list(providerId, { page, per_page: perPage }, { signal: controller.signal })
+      .then(response => {
+        if (!controller.signal.aborted) {
+          setModels(response.llm_models)
+          setMeta(response.meta)
+        }
+      })
+      .catch(err => {
+        if (!controller.signal.aborted) {
+          setError(err instanceof Error ? err.message : 'Failed to load models')
+        }
+      })
+    return () => controller.abort()
+  }, [providerId, page, perPage, refreshKey])
 
   const handleDelete = async (modelId: number) => {
     if (!window.confirm('Are you sure you want to delete this model?')) return
     try {
       await llmModelsApi.delete(providerId, modelId)
-      loadModels()
+      setRefreshKey(k => k + 1)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete model')
     }
@@ -114,6 +128,16 @@ export const LlmModelsIndexPage = () => {
           </tbody>
         </table>
       </div>
+
+      {meta && (
+        <Pagination
+          meta={meta}
+          page={page}
+          perPage={perPage}
+          onPageChange={setPage}
+          onPerPageChange={setPerPage}
+        />
+      )}
     </div>
   )
 }

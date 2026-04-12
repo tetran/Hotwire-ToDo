@@ -2,6 +2,8 @@ module Api
   module V1
     module Admin
       class ApplicationController < ::ApplicationController
+        include Paginatable
+
         protect_from_forgery with: :exception
 
         skip_before_action :require_login

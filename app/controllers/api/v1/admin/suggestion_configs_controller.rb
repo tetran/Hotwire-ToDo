@@ -7,8 +7,12 @@ module Api
         before_action -> { require_capability!("LlmProvider", "write") }, only: %i[create update]
 
         def index
-          configs = SuggestionConfig.includes(entries: %i[llm_model prompt_set]).order(id: :desc)
-          render json: configs.map { |c| config_json(c) }
+          scope = SuggestionConfig.includes(entries: %i[llm_model prompt_set]).order(id: :desc)
+          pagy, records = paginate(scope)
+          render json: {
+            suggestion_configs: records.map { |c| config_json(c) },
+            meta: pagination_meta(pagy),
+          }
         end
 
         def show

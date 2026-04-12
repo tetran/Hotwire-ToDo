@@ -27,7 +27,8 @@ module Api
           get api_v1_admin_admin_accounts_path
           assert_response :success
           json = response.parsed_body
-          assert_kind_of Array, json
+          assert json.key?("admin_accounts")
+          assert json.key?("meta")
         end
 
         test "GET index only returns users with admin permissions" do
@@ -35,7 +36,7 @@ module Api
           get api_v1_admin_admin_accounts_path
           assert_response :success
           json = response.parsed_body
-          emails = json.pluck("email")
+          emails = json["admin_accounts"].pluck("email")
 
           # Admin accounts (have roles with Admin:read)
           assert_includes emails, users(:admin_user).email
@@ -52,7 +53,7 @@ module Api
           login_as_admin_api
           get api_v1_admin_admin_accounts_path
           assert_response :success
-          admin_account = response.parsed_body.first
+          admin_account = response.parsed_body["admin_accounts"].first
           assert admin_account.key?("roles")
           assert_kind_of Array, admin_account["roles"]
           role = admin_account["roles"].first
@@ -64,7 +65,7 @@ module Api
           login_as_admin_api
           get api_v1_admin_admin_accounts_path
           assert_response :success
-          admin_account = response.parsed_body.first
+          admin_account = response.parsed_body["admin_accounts"].first
           assert admin_account.key?("id")
           assert admin_account.key?("email")
           assert admin_account.key?("name")
@@ -77,7 +78,7 @@ module Api
           login_as_admin_api
           get api_v1_admin_admin_accounts_path, params: { q: "Admin User" }
           assert_response :success
-          json = response.parsed_body
+          json = response.parsed_body["admin_accounts"]
           assert json.any? { |u| u["email"] == users(:admin_user).email }
           assert json.none? { |u| u["email"] == users(:regular_user).email }
         end
@@ -86,7 +87,7 @@ module Api
           login_as_admin_api
           get api_v1_admin_admin_accounts_path, params: { q: "norole" }
           assert_response :success
-          json = response.parsed_body
+          json = response.parsed_body["admin_accounts"]
           assert_empty json
         end
 
@@ -332,7 +333,7 @@ module Api
           login_as_admin_api
           get api_v1_admin_admin_accounts_path
           assert_response :success
-          admin_account = response.parsed_body.first
+          admin_account = response.parsed_body["admin_accounts"].first
           assert admin_account.key?("last_sign_in_at")
         end
 

@@ -1,5 +1,20 @@
 export type ResourceType = 'User' | 'Project' | 'Task' | 'Comment' | 'Admin' | 'LlmProvider' | 'EventLog'
 export type Action = 'read' | 'write' | 'delete' | 'manage'
+
+export interface PaginationMeta {
+  page: number
+  per_page: number
+  total_count: number
+  total_pages: number
+}
+
+// TODO: Non-index pages fetch dropdown data with per_page: 100 hard cap.
+//       Add a Sentry warning when meta.total_count > fetched length so we
+//       notice before items are silently omitted from selection UIs.
+export interface PaginationParams {
+  page?: number
+  per_page?: number
+}
 export type Capabilities = Record<ResourceType, Record<Action, boolean>>
 
 export interface SessionUser {
@@ -159,12 +174,19 @@ export const api = {
   },
 }
 
+export interface UserListResponse {
+  users: User[]
+  meta: PaginationMeta
+}
+
 export const usersApi = {
-  list: (params?: { q?: string }, options?: { signal?: AbortSignal }) => {
+  list: (params?: { q?: string } & PaginationParams, options?: { signal?: AbortSignal }) => {
     const query = new URLSearchParams()
     if (params?.q) query.set('q', params.q)
+    if (params?.page) query.set('page', String(params.page))
+    if (params?.per_page) query.set('per_page', String(params.per_page))
     const qs = query.toString()
-    return api.get<User[]>(qs ? `/users?${qs}` : '/users', options)
+    return api.get<UserListResponse>(qs ? `/users?${qs}` : '/users', options)
   },
   get: (id: number) => api.get<User>(`/users/${id}`),
   create: (data: CreateUserInput) => api.post<User>('/users', { user: data }),
@@ -193,12 +215,19 @@ export interface AdminAccountDetail extends User {
   permission_matrix: PermissionMatrix
 }
 
+export interface AdminAccountListResponse {
+  admin_accounts: User[]
+  meta: PaginationMeta
+}
+
 export const adminAccountsApi = {
-  list: (params?: { q?: string }, options?: { signal?: AbortSignal }) => {
+  list: (params?: { q?: string } & PaginationParams, options?: { signal?: AbortSignal }) => {
     const query = new URLSearchParams()
     if (params?.q) query.set('q', params.q)
+    if (params?.page) query.set('page', String(params.page))
+    if (params?.per_page) query.set('per_page', String(params.per_page))
     const qs = query.toString()
-    return api.get<User[]>(qs ? `/admin_accounts?${qs}` : '/admin_accounts', options)
+    return api.get<AdminAccountListResponse>(qs ? `/admin_accounts?${qs}` : '/admin_accounts', options)
   },
   get: (id: number) => api.get<AdminAccountDetail>(`/admin_accounts/${id}`),
   create: (data: CreateAdminAccountInput) =>
@@ -212,8 +241,19 @@ export const adminAccountsApi = {
     api.patch<Role[]>(`/admin_accounts/${id}/roles`, { role_ids: roleIds }),
 }
 
+export interface RoleListResponse {
+  roles: Role[]
+  meta: PaginationMeta
+}
+
 export const rolesApi = {
-  list: () => api.get<Role[]>('/roles'),
+  list: (params?: PaginationParams, options?: { signal?: AbortSignal }) => {
+    const query = new URLSearchParams()
+    if (params?.page) query.set('page', String(params.page))
+    if (params?.per_page) query.set('per_page', String(params.per_page))
+    const qs = query.toString()
+    return api.get<RoleListResponse>(qs ? `/roles?${qs}` : '/roles', options)
+  },
   get: (id: number) => api.get<Role>(`/roles/${id}`),
   create: (data: CreateRoleInput) => api.post<Role>('/roles', { role: data }),
   update: (id: number, data: UpdateRoleInput) => api.patch<Role>(`/roles/${id}`, { role: data }),
@@ -223,8 +263,19 @@ export const rolesApi = {
     api.patch<Permission[]>(`/roles/${id}/permissions`, { permission_ids: permissionIds }),
 }
 
+export interface PermissionListResponse {
+  permissions: Permission[]
+  meta: PaginationMeta
+}
+
 export const permissionsApi = {
-  list: () => api.get<Permission[]>('/permissions'),
+  list: (params?: PaginationParams, options?: { signal?: AbortSignal }) => {
+    const query = new URLSearchParams()
+    if (params?.page) query.set('page', String(params.page))
+    if (params?.per_page) query.set('per_page', String(params.per_page))
+    const qs = query.toString()
+    return api.get<PermissionListResponse>(qs ? `/permissions?${qs}` : '/permissions', options)
+  },
   get: (id: number) => api.get<Permission>(`/permissions/${id}`),
 }
 
@@ -279,8 +330,19 @@ export interface AvailableModel {
   display_name?: string
 }
 
+export interface LlmProviderListResponse {
+  llm_providers: LlmProvider[]
+  meta: PaginationMeta
+}
+
 export const llmProvidersApi = {
-  list: () => api.get<LlmProvider[]>('/llm_providers'),
+  list: (params?: PaginationParams, options?: { signal?: AbortSignal }) => {
+    const query = new URLSearchParams()
+    if (params?.page) query.set('page', String(params.page))
+    if (params?.per_page) query.set('per_page', String(params.per_page))
+    const qs = query.toString()
+    return api.get<LlmProviderListResponse>(qs ? `/llm_providers?${qs}` : '/llm_providers', options)
+  },
   get: (id: number) => api.get<LlmProvider>(`/llm_providers/${id}`),
   update: (id: number, data: UpdateLlmProviderInput) => api.patch<LlmProvider>(`/llm_providers/${id}`, { llm_provider: data }),
   getAvailableModels: (id: number) => api.get<AvailableModel[]>(`/llm_providers/${id}/available_models`),
@@ -356,8 +418,19 @@ export interface UpdateSuggestionConfigInput {
   entries_attributes: EntryInput[]
 }
 
+export interface LlmModelListResponse {
+  llm_models: LlmModel[]
+  meta: PaginationMeta
+}
+
 export const llmModelsApi = {
-  list: (providerId: number) => api.get<LlmModel[]>(`/llm_providers/${providerId}/llm_models`),
+  list: (providerId: number, params?: PaginationParams, options?: { signal?: AbortSignal }) => {
+    const query = new URLSearchParams()
+    if (params?.page) query.set('page', String(params.page))
+    if (params?.per_page) query.set('per_page', String(params.per_page))
+    const qs = query.toString()
+    return api.get<LlmModelListResponse>(qs ? `/llm_providers/${providerId}/llm_models?${qs}` : `/llm_providers/${providerId}/llm_models`, options)
+  },
   get: (providerId: number, id: number) => api.get<LlmModel>(`/llm_providers/${providerId}/llm_models/${id}`),
   create: (providerId: number, data: CreateLlmModelInput) =>
     api.post<LlmModel>(`/llm_providers/${providerId}/llm_models`, { llm_model: data }),
@@ -367,8 +440,19 @@ export const llmModelsApi = {
     api.delete<void>(`/llm_providers/${providerId}/llm_models/${id}`),
 }
 
+export interface PromptSetListResponse {
+  prompt_sets: PromptSet[]
+  meta: PaginationMeta
+}
+
 export const promptSetsApi = {
-  list: () => api.get<PromptSet[]>('/prompt_sets'),
+  list: (params?: PaginationParams, options?: { signal?: AbortSignal }) => {
+    const query = new URLSearchParams()
+    if (params?.page) query.set('page', String(params.page))
+    if (params?.per_page) query.set('per_page', String(params.per_page))
+    const qs = query.toString()
+    return api.get<PromptSetListResponse>(qs ? `/prompt_sets?${qs}` : '/prompt_sets', options)
+  },
   get: (id: number) => api.get<PromptSet>(`/prompt_sets/${id}`),
   create: (data: CreatePromptSetInput) => api.post<PromptSet>('/prompt_sets', { prompt_set: data }),
   update: (id: number, data: UpdatePromptSetInput) => api.patch<PromptSet>(`/prompt_sets/${id}`, { prompt_set: data }),
@@ -385,12 +469,8 @@ export interface EventLog {
   task: { id: number; name: string } | null
 }
 
-export interface EventLogMeta {
-  page: number
-  per_page: number
-  total_count: number
-  total_pages: number
-}
+// EventLogMeta is structurally identical to PaginationMeta.
+export type EventLogMeta = PaginationMeta
 
 export interface EventLogListResponse {
   events: EventLog[]
@@ -422,8 +502,19 @@ export const eventsApi = {
   },
 }
 
+export interface SuggestionConfigListResponse {
+  suggestion_configs: SuggestionConfig[]
+  meta: PaginationMeta
+}
+
 export const suggestionConfigsApi = {
-  list: () => api.get<SuggestionConfig[]>('/suggestion_configs'),
+  list: (params?: PaginationParams, options?: { signal?: AbortSignal }) => {
+    const query = new URLSearchParams()
+    if (params?.page) query.set('page', String(params.page))
+    if (params?.per_page) query.set('per_page', String(params.per_page))
+    const qs = query.toString()
+    return api.get<SuggestionConfigListResponse>(qs ? `/suggestion_configs?${qs}` : '/suggestion_configs', options)
+  },
   get: (id: number) => api.get<SuggestionConfig>(`/suggestion_configs/${id}`),
   create: (data: CreateSuggestionConfigInput) =>
     api.post<SuggestionConfig>('/suggestion_configs', { suggestion_config: data }),

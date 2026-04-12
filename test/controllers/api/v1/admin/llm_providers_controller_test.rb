@@ -23,8 +23,9 @@ module Api
           get api_v1_admin_llm_providers_path
           assert_response :success
           json = response.parsed_body
-          assert_kind_of Array, json
-          names = json.pluck("name")
+          assert json.key?("llm_providers")
+          assert json.key?("meta")
+          names = json["llm_providers"].pluck("name")
           assert_includes names, llm_providers(:openai).name
           assert_includes names, llm_providers(:anthropic).name
         end
@@ -33,7 +34,7 @@ module Api
           login_as_admin_api
           get api_v1_admin_llm_providers_path
           assert_response :success
-          json = response.parsed_body
+          json = response.parsed_body["llm_providers"]
           json.each do |provider|
             assert_not provider.key?("api_key_encrypted")
           end
@@ -43,7 +44,7 @@ module Api
           login_as_admin_api
           get api_v1_admin_llm_providers_path
           assert_response :success
-          provider = response.parsed_body.first
+          provider = response.parsed_body["llm_providers"].first
           assert provider.key?("id")
           assert provider.key?("name")
           assert provider.key?("active")
