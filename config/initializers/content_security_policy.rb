@@ -1,6 +1,6 @@
 # Be sure to restart your server when you modify this file.
 
-Rails.application.configure do
+Rails.application.configure do # rubocop:disable Metrics/BlockLength
   config.content_security_policy do |policy|
     policy.default_src :self
     policy.object_src  :none
@@ -32,5 +32,10 @@ Rails.application.configure do
 
   # Generate nonces for permitted inline scripts and styles.
   config.content_security_policy_nonce_generator = ->(_request) { SecureRandom.base64(16) }
-  config.content_security_policy_nonce_directives = %w[script-src style-src]
+  config.content_security_policy_nonce_directives =
+    if Rails.env.development?
+      %w[script-src]
+    else
+      %w[script-src style-src]
+    end
 end
