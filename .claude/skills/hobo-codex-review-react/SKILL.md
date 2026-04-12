@@ -33,7 +33,8 @@ codex review "<request>"
 
 ## Execution procedure
 
-1. Determine the appropriate review scope (`--uncommitted`, `--base`, or `--commit`).
+1. Verify `codex` CLI is available (`which codex`). If not found, report "codex CLI not installed — review skipped" and stop.
+2. Determine the appropriate review scope (`--uncommitted`, `--base`, or `--commit`).
 2. Build `<request>` incorporating the Review focus checklist above and referencing the convention docs so Codex can consult them:
    - `docs/conventions/ADMIN_UI.md`
    - `docs/design/admin/README.md`
