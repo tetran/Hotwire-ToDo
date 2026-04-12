@@ -12,7 +12,7 @@ export const DashboardPage = () => {
   useEffect(() => {
     Promise.all([
       dashboardApi.get(),
-      llmProvidersApi.list({ per_page: 100 }),
+      llmProvidersApi.list({ per_page: 100 }), // low-cardinality; won't exceed 100
     ])
       .then(([dashData, provData]) => {
         setData(dashData)
