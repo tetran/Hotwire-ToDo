@@ -10,5 +10,8 @@ Capybara.automatic_label_click = true
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   include SystemTestHelpers
 
-  driven_by :selenium, using: (ENV["CI"] ? :headless_chrome : :chrome), screen_size: [1400, 1400]
+  # Default to headless so system tests don't steal focus. Set HEADED=1 locally
+  # to see the browser (e.g. for debugging); CI always runs headless.
+  headed = ENV["HEADED"] == "1" && ENV["CI"].blank?
+  driven_by :selenium, using: (headed ? :chrome : :headless_chrome), screen_size: [1400, 1400]
 end

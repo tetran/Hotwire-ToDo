@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { navSections } from '../../components/AdminLayout'
-import { AdminLayout } from '../../components/AdminLayout'
+import { AdminLayout, navSections } from '../../components/AdminLayout'
 
 // Mock useAuth
 const mockCan = vi.fn()
@@ -22,9 +21,9 @@ describe('navSections', () => {
     ])
   })
 
-  it('NAVIGATION contains Dashboard and Users', () => {
+  it('NAVIGATION contains Dashboard, Event Logs, and Users', () => {
     const nav = navSections.find((s) => s.label === 'NAVIGATION')!
-    expect(nav.items.map((i) => i.label)).toEqual(['Dashboard', 'Users'])
+    expect(nav.items.map((i) => i.label)).toEqual(['Dashboard', 'Event Logs', 'Users'])
   })
 
   it('ADMIN contains Admin Accounts, Roles, and Permissions', () => {
