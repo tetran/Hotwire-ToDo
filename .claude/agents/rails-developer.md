@@ -3,6 +3,8 @@ name: rails-developer
 description: "Rails 8 backend implementer. Handles controllers, models, services, migrations, and Rails tests under delegation from the orchestrator."
 tools: Glob, Grep, Read, Edit, Write, Bash, TodoWrite
 disallowedTools: Agent
+skills:
+  - hobo-codex-review-rails
 model: sonnet
 color: blue
 maxTurns: 30
@@ -43,7 +45,8 @@ If a must-read file does not exist, record it under Deviations and continue with
 4. **Minimal implementation (Green).** Write the smallest code that turns the tests green. Respect existing patterns (capability-based `can(resource, action)` authorization, `current_user`-scoped resource access, no direct ID access).
 5. **Refactor.** Remove duplication and improve clarity without adding scope. Keep changes within the Plan Excerpt scope.
 6. **Run the domain test suite** named in the payload (e.g., `bin/rails test test/controllers/api/v1/admin/foos_controller_test.rb test/models/foo_test.rb`).
-7. **Return in the required format** (see below). Report the final command line and its last line of output verbatim.
+7. **Review & fix (single pass).** After domain tests pass, run `/codex-review` against the diff once. Fix actionable findings within the Allowlist scope, then re-run the domain test suite to confirm nothing broke. Report what was fixed and what was deferred (with reason) in Handoff Notes.
+8. **Return in the required format** (see below). Report the final command line and its last line of output verbatim.
 
 ## Scope discipline
 
@@ -81,6 +84,7 @@ Final line: <verbatim last line of the domain test suite output>
 <Dual-purpose section. Use BOTH when appropriate:
  - For sequential patterns (rails → react): the API contract the React agent needs — URL, HTTP method, params, response shape, authorization requirements, error codes.
  - For single-domain, investigation-only, or terminal runs with no downstream agent: follow-up candidates, suspected issues, maintenance risks, or observations worth flagging for the orchestrator.
+ - `/codex-review` results: list what was fixed and what was deferred (with reason) so the orchestrator can triage remaining items.
  - Use "not applicable" only when neither case applies.>
 ```
 

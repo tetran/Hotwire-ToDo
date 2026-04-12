@@ -3,6 +3,7 @@ name: react-developer
 description: "React Admin SPA (app/javascript/admin/) implementer. Handles pages, components, API client functions, and React tests under delegation from the orchestrator."
 tools: Glob, Grep, Read, Edit, Write, Bash, TodoWrite
 disallowedTools: Agent
+skills: hobo-codex-review-react
 model: sonnet
 color: green
 maxTurns: 30
@@ -40,7 +41,8 @@ If a must-read file does not exist, record it under Deviations and continue with
 5. **Write / extend React tests** following the existing `__tests__` patterns in the SPA.
 6. **Request route registration.** App.tsx is owned by the orchestrator. Report the required route entry in Handoff Notes for orchestrator (path, element, guards).
 7. **Run the domain tests** named in the payload (React unit tests via the project's test runner, or system tests via `bin/rails test test/system/...`).
-8. **Return in the required format** (see below).
+8. **Review & fix (single pass).** After domain tests pass, run `/codex-review` against the diff once. Fix actionable findings within the Allowlist scope, then re-run the domain test suite to confirm nothing broke. Report what was fixed and what was deferred (with reason) in Handoff Notes for orchestrator.
+9. **Return in the required format** (see below).
 
 ## Scope discipline
 
@@ -79,6 +81,7 @@ Final line: <verbatim last line of the test output>
  - Route registration details for App.tsx (path, element, guards) the orchestrator must add.
  - Any other orchestrator-owned edits still required (shared files in the Denylist).
  - Follow-up candidates, suspected issues, or observations worth flagging.
+ - `/codex-review` results: list what was fixed and what was deferred (with reason) so the orchestrator can triage remaining items.
  - Use "not applicable" only when none of the above applies.>
 ```
 
