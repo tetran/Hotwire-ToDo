@@ -20,15 +20,15 @@ COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
 [ -z "$COMMAND" ] && exit 0
 
 # Block git write operations.
-# Match git at line start, after &&, after ;, or after | to avoid false positives
-# with commands like: echo "git commit example"
-if echo "$COMMAND" | grep -qE '(^|&&|;|\|)\s*git\s+(branch|commit|push|checkout|switch|merge|rebase|tag|add|stash|reset|clean|cherry-pick|am|apply)\b'; then
+# Match git at line start or after command separators (&&, ||, ;, |, subshell)
+# to avoid false positives with commands like: echo "git commit example"
+if echo "$COMMAND" | grep -qE '(^|&&|\|\||;|\||\()\s*git\s+(branch|commit|push|checkout|switch|merge|rebase|tag|add|stash|reset|clean|cherry-pick|am|apply)\b'; then
   echo "BLOCKED: git write operations are reserved for the orchestrator. Report this under Deviations if it blocks your task." >&2
   exit 2
 fi
 
 # Block gh CLI
-if echo "$COMMAND" | grep -qE '(^|&&|;|\|)\s*gh\s'; then
+if echo "$COMMAND" | grep -qE '(^|&&|\|\||;|\||\()\s*gh\s'; then
   echo "BLOCKED: gh CLI is reserved for the orchestrator." >&2
   exit 2
 fi
@@ -36,7 +36,8 @@ fi
 # Block full test suite runs.
 # "bin/rails test" with no args or "bin/rails test:all" → blocked
 # "bin/rails test test/controllers/..." → allowed (has path argument)
-if echo "$COMMAND" | grep -qE '\bbin/rails\s+test(:all)?\s*$'; then
+# Match end-of-string, or followed by command separator (&&, ||, ;)
+if echo "$COMMAND" | grep -qE '\bbin/rails\s+test(:all)?\s*(;|&&|\|\||$)'; then
   echo "BLOCKED: Full test suite (bin/rails test or bin/rails test:all) is reserved for the orchestrator's I3 step. Run only the domain test suite specified in the payload." >&2
   exit 2
 fi
