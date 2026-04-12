@@ -120,7 +120,7 @@ Use when the Plan Excerpt covers both Rails and React within the same feature, b
 1. Orchestrator edits shared files (`config/routes.rb`, etc.).
 2. Dispatch two Agent calls in a **single message** so they run concurrently.
 3. Wait for both agents to return (join).
-4. Verify both results: type alignment between API client and controller, no conflicts.
+4. Verify both results: type alignment between API client and controller, no conflicts. If post-join verification reveals type mismatches (e.g., field name divergence between Rails response and TypeScript types), treat as a sequential dependency — redispatch react-developer with the Rails agent's actual output as context.
 5. Edit remaining shared files (`app/javascript/admin/App.tsx`, etc.).
 
 **Example**: Issue #204 was a candidate for this pattern — the API contract for all eight Admin endpoints was fully specified in the plan, so react-developer could have worked in parallel with rails-developer.
