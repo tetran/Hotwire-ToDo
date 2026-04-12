@@ -24,7 +24,6 @@ export const SuggestionConfigNewPage = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // All three resources are low-cardinality; won't exceed 100
         const [providersResponse, psResponse] = await Promise.all([
           llmProvidersApi.list({ per_page: 100 }),
           promptSetsApi.list({ per_page: 100 }),

@@ -13,7 +13,7 @@ export const UserRolePage = () => {
   useEffect(() => {
     if (!id) return
     Promise.all([
-      rolesApi.list({ per_page: 100 }), // low-cardinality; won't exceed 100
+      rolesApi.list({ per_page: 100 }),
       usersApi.getRoles(Number(id)),
     ])
       .then(([rolesResponse, userRoles]) => {

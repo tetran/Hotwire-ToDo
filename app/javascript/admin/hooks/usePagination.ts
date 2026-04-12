@@ -36,7 +36,7 @@ export function usePagination(): UsePaginationResult {
           else next.set('page', String(n))
           return next
         },
-        { replace: false }
+        { replace: true }
       )
     },
     [setSearchParams]
@@ -53,7 +53,7 @@ export function usePagination(): UsePaginationResult {
           else next.set('per_page', String(valid))
           return next
         },
-        { replace: false }
+        { replace: true }
       )
     },
     [setSearchParams]

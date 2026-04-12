@@ -12,8 +12,8 @@ export interface PaginationProps {
 export default function Pagination({ meta, page, perPage, onPageChange, onPerPageChange }: PaginationProps) {
   if (meta.total_count === 0) return null
 
-  const start = (page - 1) * perPage + 1
-  const end = Math.min(page * perPage, meta.total_count)
+  const start = (meta.page - 1) * meta.per_page + 1
+  const end = Math.min(meta.page * meta.per_page, meta.total_count)
 
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">

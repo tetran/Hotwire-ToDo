@@ -15,7 +15,7 @@ export const RolePermissionPage = () => {
     const fetchData = async () => {
       try {
         const [allResponse, assigned] = await Promise.all([
-          permissionsApi.list({ per_page: 100 }), // low-cardinality; won't exceed 100
+          permissionsApi.list({ per_page: 100 }),
           rolesApi.getPermissions(Number(id)),
         ])
         setAllPermissions(allResponse.permissions)

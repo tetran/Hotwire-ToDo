@@ -13,7 +13,7 @@ export const AdminAccountRolesEditPage = () => {
   useEffect(() => {
     if (!id) return
     Promise.all([
-      rolesApi.list({ per_page: 100 }), // low-cardinality; won't exceed 100
+      rolesApi.list({ per_page: 100 }),
       adminAccountsApi.getRoles(Number(id)),
     ])
       .then(([rolesResponse, accountRoles]) => {
