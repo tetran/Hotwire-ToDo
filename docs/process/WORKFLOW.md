@@ -40,7 +40,7 @@ Standard Flow is structured in two phases:
 1. **Planning Phase** — From progress file creation to posting the plan as an issue comment.
 2. **Implementation Phase** — From branch creation to Review Response.
 
-**Context reset at the phase boundary is recommended.** At the end of the Planning Phase, all state (issue number, plan body, progress) is persisted externally, so you can `/clear` and resume Implementation in a fresh conversation. On resume, the Entry Protocol uses `.progress/issue-XXXXX.md` to locate the current phase and step.
+**Do NOT proceed to Implementation Phase automatically after Planning Phase.** At the end of the Planning Phase, stop and propose `/clear` to the client. All state is persisted externally, so Implementation should be resumed in a fresh conversation. On resume, the Entry Protocol uses `.progress/issue-XXXXX.md` to locate the current phase and step.
 
 Persisted artifacts at the Planning → Implementation boundary:
 - Issue number (encoded in `.progress/issue-XXXXX.md` filename)
@@ -83,14 +83,15 @@ P1. **Create a progress file** — Create an `issue-XXXXX.md` file in `.progress
    - → **Done when**: the issue number is known, the progress file exists with the template filled in, and P1 is marked as completed.
 P2. **Create user stories** — Invoke the `user-story-creation` skill to clarify requirements and document them in the standard user story format (as the product owner). Reflect the resulting stories into the issue body.
    - → **Done when**: user stories are recorded on the issue.
-P3. **Create a plan** — Review the requirements and design the implementation approach. Use plan mode. Consult the client for any undecided specifications. Review with the `plan-reviewer` agent at least once.
+P3. **Create a plan** — Review the requirements and design the implementation approach. Use plan mode. Consult the client for any undecided specifications.
+   - **Plan Review Loop (mandatory)**: Submit the plan to `plan-reviewer`. Address all actionable findings, then re-submit. Repeat until no actionable findings remain — every revision must be re-reviewed.
    - **Display element semantics**: Before designing badges, labels, icons, or status indicators, agree with the client on what they *semantically represent*. Implementation of display conditions follows from the semantic definition, not the other way around.
-   - → **Done when**: the plan exists in plan mode and `plan-reviewer` has raised no blocker-level concerns.
+   - → **Done when**: the plan exists in plan mode AND the most recent `plan-reviewer` run produced no actionable findings.
 P4. **Confirm the plan** — Confirm with the client if the plan can be proceeded. If the plan is accepted, exit plan mode.
    - → **Done when**: the client has explicitly approved the plan and plan mode is exited.
 P5. **Document the plan** — Document the plan in the issue as a comment. Include everything exactly as it is stated and approved in the plan file.
    - → **Done when**: the approved plan is posted as a comment on the issue, verbatim from the plan file.
-   - **Phase complete.** Recommended: reset the conversation context (`/clear`) here and resume Implementation Phase in a fresh conversation.
+   - **Phase complete — STOP here.** Propose `/clear` to the client and wait for instruction. Do NOT proceed to I1 on your own.
    - **Quick start**: Use the `/start-implementation-phase` skill to handle the Entry Protocol, progress file update, branch creation (I1), and I2 delegation classification automatically. In a new session, paste:
      ```
      /start-implementation-phase <issue-number>
