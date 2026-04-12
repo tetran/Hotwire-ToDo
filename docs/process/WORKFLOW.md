@@ -1,5 +1,12 @@
 # Development Workflow
 
+## Prerequisites
+
+The following Claude Code resources live in the user-global config (`~/.claude/`) and are **not bundled with this repository**. Install them or fall back to equivalent manual effort.
+
+- **`user-story-creation` skill** — Standard Flow P2
+- **`plan-reviewer` agent** — Standard Flow P3
+
 ## Entry Protocol (MANDATORY)
 
 Before doing anything else when starting or resuming a task, you MUST:
