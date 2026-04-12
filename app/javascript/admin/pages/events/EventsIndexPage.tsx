@@ -65,7 +65,7 @@ export const EventsIndexPage = () => {
   const filters = useMemo<EventLogListParams>(() => {
     const params = new URLSearchParams(searchParamsKey)
     return {
-      page: Number(params.get('page')) || 1,
+      page: Math.max(1, Number(params.get('page')) || 1),
       user_id: Number(params.get('user_id')) || undefined,
       project_id: Number(params.get('project_id')) || undefined,
       event_name: params.get('event_name') || undefined,
@@ -333,8 +333,10 @@ export const EventsIndexPage = () => {
                       aria-label={`Filter by user ${displayUserName(event.user)}`}
                       className="cursor-pointer rounded text-left underline-offset-2 transition hover:text-indigo-600 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
                     >
-                      <div className="text-sm font-medium text-slate-700">{event.user.name}</div>
-                      <div className="text-xs text-slate-400">{event.user.email}</div>
+                      <div className="text-sm font-medium text-slate-700">{displayUserName(event.user)}</div>
+                      {event.user.name?.trim() && (
+                        <div className="text-xs text-slate-400">{event.user.email}</div>
+                      )}
                     </button>
                   </td>
                   <td className="px-5 py-3.5 text-sm text-slate-600">
