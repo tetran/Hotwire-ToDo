@@ -8,7 +8,7 @@ module Paginatable
   private
 
     def paginate(collection)
-      pagy(collection, limit: per_page_param)
+      pagy(collection, limit: per_page_param, page: page_param)
     end
 
     def pagination_meta(pagy)
@@ -18,6 +18,10 @@ module Paginatable
         total_count: pagy.count,
         total_pages: pagy.pages,
       }
+    end
+
+    def page_param
+      [params.fetch(:page, 1).to_i, 1].max
     end
 
     def per_page_param

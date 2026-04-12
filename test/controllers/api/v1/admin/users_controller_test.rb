@@ -78,6 +78,17 @@ module Api
           assert_equal 1, meta["per_page"]
         end
 
+        test "GET index clamps page edge cases" do
+          login_as_admin_api
+          get api_v1_admin_users_path, params: { page: 0 }
+          assert_response :success
+          assert_equal 1, response.parsed_body["meta"]["page"]
+
+          get api_v1_admin_users_path, params: { page: -1 }
+          assert_response :success
+          assert_equal 1, response.parsed_body["meta"]["page"]
+        end
+
         test "GET index clamps per_page edge cases" do
           login_as_admin_api
           get api_v1_admin_users_path, params: { per_page: 0 }
