@@ -35,9 +35,9 @@ codex review "<request>"
 
 1. Verify `codex` CLI is available (`which codex`). If not found, report "codex CLI not installed — review skipped" and stop.
 2. Determine the appropriate review scope (`--uncommitted`, `--base`, or `--commit`).
-2. Build `<request>` incorporating the Review focus checklist above and referencing the convention docs so Codex can consult them:
+3. Build `<request>` incorporating the Review focus checklist above and referencing the convention docs so Codex can consult them:
    - `docs/conventions/ADMIN_UI.md`
    - `docs/design/admin/README.md`
    - `app/javascript/admin/lib/api.ts` (for existing patterns)
-3. Run the `codex review` command from the project directory.
-4. Report findings grouped by severity (critical / high / medium / low).
+4. Run the `codex review` command from the project directory.
+5. Report findings grouped by severity (critical / high / medium / low).

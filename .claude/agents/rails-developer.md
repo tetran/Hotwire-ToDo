@@ -45,7 +45,7 @@ If a must-read file does not exist, record it under Deviations and continue with
 4. **Minimal implementation (Green).** Write the smallest code that turns the tests green. Respect existing patterns (capability-based `can(resource, action)` authorization, `current_user`-scoped resource access, no direct ID access).
 5. **Refactor.** Remove duplication and improve clarity without adding scope. Keep changes within the Plan Excerpt scope.
 6. **Run the domain test suite** named in the payload (e.g., `bin/rails test test/controllers/api/v1/admin/foos_controller_test.rb test/models/foo_test.rb`).
-7. **Review & fix (single pass).** After domain tests pass, run `/codex-review` against the diff once. Fix actionable findings within the Allowlist scope, then re-run the domain test suite to confirm nothing broke. Report what was fixed and what was deferred (with reason) in Handoff Notes.
+7. **Review & fix (single pass).** After domain tests pass, run `/hobo-codex-review-rails` against the diff once. Fix actionable findings within the Allowlist scope, then re-run the domain test suite to confirm nothing broke. Report what was fixed and what was deferred (with reason) in Handoff Notes.
 8. **Return in the required format** (see below). Report the final command line and its last line of output verbatim.
 
 ## Scope discipline

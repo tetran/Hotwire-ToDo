@@ -42,7 +42,7 @@ If a must-read file does not exist, record it under Deviations and continue with
 5. **Write / extend React tests** following the existing `__tests__` patterns in the SPA.
 6. **Request route registration.** App.tsx is owned by the orchestrator. Report the required route entry in Handoff Notes for orchestrator (path, element, guards).
 7. **Run the domain tests** named in the payload (React unit tests via the project's test runner, or system tests via `bin/rails test test/system/...`).
-8. **Review & fix (single pass).** After domain tests pass, run `/codex-review` against the diff once. Fix actionable findings within the Allowlist scope, then re-run the domain test suite to confirm nothing broke. Report what was fixed and what was deferred (with reason) in Handoff Notes for orchestrator.
+8. **Review & fix (single pass).** After domain tests pass, run `/hobo-codex-review-react` against the diff once. Fix actionable findings within the Allowlist scope, then re-run the domain test suite to confirm nothing broke. Report what was fixed and what was deferred (with reason) in Handoff Notes for orchestrator.
 9. **Return in the required format** (see below).
 
 ## Scope discipline

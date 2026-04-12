@@ -35,10 +35,10 @@ codex review "<request>"
 
 1. Verify `codex` CLI is available (`which codex`). If not found, report "codex CLI not installed — review skipped" and stop.
 2. Determine the appropriate review scope (`--uncommitted`, `--base`, or `--commit`).
-2. Build `<request>` incorporating the Review focus checklist above and referencing the convention docs so Codex can consult them:
+3. Build `<request>` incorporating the Review focus checklist above and referencing the convention docs so Codex can consult them:
    - `docs/conventions/ROUTING.md`
    - `docs/conventions/ACTIVE_RECORD_QUERIES.md`
    - `docs/conventions/FAT_MODEL_DECOMPOSITION.md`
    - `docs/conventions/TESTING.md`
-3. Run the `codex review` command from the project directory.
-4. Report findings grouped by severity (critical / high / medium / low).
+4. Run the `codex review` command from the project directory.
+5. Report findings grouped by severity (critical / high / medium / low).
