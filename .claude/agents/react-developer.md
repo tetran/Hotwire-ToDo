@@ -3,7 +3,8 @@ name: react-developer
 description: "React Admin SPA (app/javascript/admin/) implementer. Handles pages, components, API client functions, and React tests under delegation from the orchestrator."
 tools: Glob, Grep, Read, Edit, Write, Bash, TodoWrite
 disallowedTools: Agent
-skills: hobo-codex-review-react
+skills:
+  - hobo-codex-review-react
 model: sonnet
 color: green
 maxTurns: 30
