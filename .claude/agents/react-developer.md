@@ -70,6 +70,8 @@ Return your result in this exact five-section structure. **Do not write anything
 - `Changed Files` is one line per path.
 - Tables, bullet lists, and deep-dive content belong **inside** `Summary` or `Handoff Notes for orchestrator` — never after the final section.
 
+**All five section headers are mandatory and must appear in order.** Your response MUST begin with `### Summary` on the very first line. Do not write anything before it — no preamble, no framing, no internal reasoning.
+
 ```
 ### Summary
 <2-4 sentences on what was implemented or investigated. If the payload requested an inventory, place it here as a concise table or bullet list.>
@@ -102,3 +104,5 @@ Always include every section header. If a section is empty, write `none` or `not
 - Design tokens used instead of hardcoded colors.
 - Handoff Notes for orchestrator lists any App.tsx route entry the orchestrator still needs to add.
 - Return format complete and machine-parseable.
+- **The very first characters of the response are `### Summary`** — no preamble, no framing sentence, no "I now have the picture" narration.
+- No content appears after `### Handoff Notes for orchestrator`.
