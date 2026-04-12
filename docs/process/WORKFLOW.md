@@ -1,16 +1,24 @@
 # Development Workflow
 
+## Prerequisites
+
+The following Claude Code resources live in the user-global config (`~/.claude/`) and are **not bundled with this repository**. Install them or fall back to equivalent manual effort.
+
+- **`user-story-creation` skill** — Standard Flow P2
+- **`plan-reviewer` agent** — Standard Flow P3
+
 ## Entry Protocol (MANDATORY)
 
 Before doing anything else when starting or resuming a task, you MUST:
 
 1. **Read this entire document.** Do not start work having only skimmed the section you think applies.
-2. **Announce the flow you will use** (Standard or Lightweight) with a one-line justification referencing [Choosing the Right Flow](#choosing-the-right-flow).
+2. **Announce the flow you will use** (Standard or Lightweight) with a one-line justification referencing [Choosing the Right Flow](#choosing-the-right-flow). For Standard flow, also announce the **current phase** (Planning or Implementation).
 3. **Announce the anchor info**:
    - Issue number (or "no issue" for Lightweight)
    - Progress file path (`.progress/issue-XXXXX.md`) — Standard flow only
-   - The step you are currently on
-4. **If resuming a task** (new session, context compaction, or returning after a break), read `.progress/issue-XXXXX.md` first to determine your current position before announcing step 3. Do NOT guess — the progress file is authoritative. (Lightweight flow has no progress file; rely on git status and recent conversation instead.)
+   - Current phase — Standard flow only (Planning / Implementation)
+   - The step you are currently on (e.g., `P3`, `I2`)
+4. **If resuming a task** (new session, context compaction, or returning after a break), read `.progress/issue-XXXXX.md` first to determine the **current phase** and **current step** before announcing step 3. Do NOT guess — the progress file is authoritative. (Lightweight flow has no progress file; rely on git status and recent conversation instead.)
 5. Only after announcing the above, begin the first step.
 
 ## Execution
@@ -22,7 +30,21 @@ Before doing anything else when starting or resuming a task, you MUST:
 
 ### Standard Flow
 
-ALWAYS update `.progress/issue-XXXXX.md` during work. Update the progress file **immediately after completing each step** before moving on to the next step.
+Standard Flow is structured in two phases:
+
+1. **Planning Phase** — From progress file creation to posting the plan as an issue comment.
+2. **Implementation Phase** — From branch creation to Review Response.
+
+**Context reset at the phase boundary is recommended.** At the end of the Planning Phase, all state (issue number, plan body, progress) is persisted externally, so you can `/clear` and resume Implementation in a fresh conversation. On resume, the Entry Protocol uses `.progress/issue-XXXXX.md` to locate the current phase and step.
+
+Persisted artifacts at the Planning → Implementation boundary:
+- Issue number (encoded in `.progress/issue-XXXXX.md` filename)
+- Plan body (issue comment + local `~/.claude/plans/*.md`)
+- Progress (`.progress/issue-XXXXX.md` checklist)
+
+ALWAYS update `.progress/issue-XXXXX.md` during work. Update the progress file **immediately after completing each step** before moving on to the next step. This applies to both phases.
+
+> Progress files created under the old flat `Step 1..11` template may continue to run to completion under the old numbering. The new `P*/I*` template applies to newly created progress files only.
 
 #### Progress File Template
 
@@ -30,38 +52,55 @@ ALWAYS update `.progress/issue-XXXXX.md` during work. Update the progress file *
 # Issue #XX: Title
 
 ## Status: In Progress / Done
+## Current Phase: Planning / Implementation
 
-## Steps
-- [x] Step 1 — completed
-  - What you've done in step 1.
+## Planning Phase
+- [x] P1 — Create a progress file (create the Issue first if not yet known)
+  - What you've done in this step.
   - ...
-- [ ] Step 2 — in progress
+- [ ] P2 — Create user stories
+- [ ] P3 — Create a plan
+- [ ] P4 — Confirm the plan
+- [ ] P5 — Document the plan on the issue
+
+## Implementation Phase
+- [ ] I1 — Create a Git Branch
+- [ ] I2 — Implement
+- [ ] I3 — Testing (full suite)
+- [ ] I4 — Local Review
+- [ ] I5 — Create a Pull Request
+- [ ] I6 — Review Response
 ```
 
-#### Steps
-1. **Create a GitHub Issue** - This can be skipped if the issue number is specified.
-   - → **Done when**: issue number is known.
-2. **Create a progress file** - Create an `issue-XXXXX.md` file in `.progress`. `XXXXX` is the issue number (5 digits with zero padding. e.g. `issue-00005.md` for issue #5).
-   - → **Done when**: the file exists with the template filled in and Step 1 marked as completed.
-3. **Create a plan** - Review the requirements and design the implementation approach. Use plan mode. Consult the client for any undecided specifications. Review with the `plan-reviewer` agent at least once.
+#### Planning Phase
+
+P1. **Create a progress file** — Create an `issue-XXXXX.md` file in `.progress`. `XXXXX` is the issue number (5 digits with zero padding, e.g. `issue-00005.md` for issue #5). If the issue does not yet exist, create the GitHub Issue (`gh issue create`) first within this step to obtain the issue number, then create the progress file.
+   - → **Done when**: the issue number is known, the progress file exists with the template filled in, and P1 is marked as completed.
+P2. **Create user stories** — Invoke the `user-story-creation` skill to clarify requirements and document them in the standard user story format (as the product owner). Reflect the resulting stories into the issue body.
+   - → **Done when**: user stories are recorded on the issue.
+P3. **Create a plan** — Review the requirements and design the implementation approach. Use plan mode. Consult the client for any undecided specifications. Review with the `plan-reviewer` agent at least once.
    - **Display element semantics**: Before designing badges, labels, icons, or status indicators, agree with the client on what they *semantically represent*. Implementation of display conditions follows from the semantic definition, not the other way around.
    - → **Done when**: the plan exists in plan mode and `plan-reviewer` has raised no blocker-level concerns.
-4. **Confirm the plan** - Confirm with the client if the plan can be proceeded. If the plan is accepted, exit plan mode.
+P4. **Confirm the plan** — Confirm with the client if the plan can be proceeded. If the plan is accepted, exit plan mode.
    - → **Done when**: the client has explicitly approved the plan and plan mode is exited.
-5. **Document the plan** - Document the plan in the issue as a comment. Include everything exactly as it is stated and approved in the plan file.
+P5. **Document the plan** — Document the plan in the issue as a comment. Include everything exactly as it is stated and approved in the plan file.
    - → **Done when**: the approved plan is posted as a comment on the issue, verbatim from the plan file.
-6. **Create a Git Branch** - Create a feature branch for the issue. ALL feature branches should be derived from the LATEST main branch.
+   - **Phase complete.** Recommended: reset the conversation context (`/clear`) here and resume Implementation Phase in a fresh conversation. On resume, follow the Entry Protocol and read `.progress/issue-XXXXX.md` to locate the current phase/step.
+
+#### Implementation Phase
+
+I1. **Create a Git Branch** — Create a feature branch for the issue. ALL feature branches should be derived from the LATEST main branch.
    - → **Done when**: a feature branch derived from the latest `main` is checked out.
-7. **Implement** - Write code and tests. During development, run the domain test suite for the area you are changing (see `docs/conventions/TESTING.md`). Do not run the full test suite at this stage.
+I2. **Implement** — Write code and tests. During development, run the domain test suite for the area you are changing (see `docs/conventions/TESTING.md`). Do not run the full test suite at this stage.
    - → **Done when**: the domain test suite for the changed area passes and the implementation matches the plan.
-8. **Testing** - Run the full test suite (`bin/rails test:all`) once to ensure all tests pass. In Rails 8 this is a single-process invocation that runs every file matching `test/**/*_test.rb` (unit and system tests share the same process and database connection). The full suite takes 5+ minutes — run it via `Bash` with `run_in_background: true` and wait for the completion notification. Never re-run the suite before the previous run's result is confirmed.
+I3. **Testing** — Run the full test suite (`bin/rails test:all`) once to ensure all tests pass. In Rails 8 this is a single-process invocation that runs every file matching `test/**/*_test.rb` (unit and system tests share the same process and database connection). The full suite takes 5+ minutes — run it via `Bash` with `run_in_background: true` and wait for the completion notification. Never re-run the suite before the previous run's result is confirmed.
    - → **Done when**: `bin/rails test:all` exits 0.
-9. **Local Review** - Ask codex (`/codex-review`) for review the changes.
+I4. **Local Review** — Ask codex (`/codex-review`) for review the changes.
    - → **Done when**: `/codex-review` has responded and no blocker-level issues remain open.
-10. **Create a Pull Request** - Create a PR and request review.
-    - → **Done when**: the PR exists with a proper title/description and CI has been triggered.
-11. **Review Response** - Execute **all sub-steps** of the [Review Response Protocol](#review-response-protocol) in order. Do NOT skip any.
-    - → **Done when**: no outstanding findings remain, OR the user has explicitly confirmed that the remaining findings can be skipped.
+I5. **Create a Pull Request** — Create a PR and request review.
+   - → **Done when**: the PR exists with a proper title/description and CI has been triggered.
+I6. **Review Response** — Execute **all sub-steps** of the [Review Response Protocol](#review-response-protocol) in order. Do NOT skip any.
+   - → **Done when**: no outstanding findings remain, OR the user has explicitly confirmed that the remaining findings can be skipped.
 
 ### Lightweight Flow
 
@@ -99,10 +138,10 @@ After creating the PR, an automated review runs within about 10 minutes. Execute
 
 If a step cannot complete, do NOT proceed. Return to the appropriate earlier step and re-run the flow from there.
 
-- **Standard Step 7 (Implement) tests fail** → stay on Step 7; fix the code or tests.
-- **Standard Step 8 (Testing) full suite fails** → return to Step 7.
-- **Standard Step 9 (Local Review) raises blocker-level issues** → return to Step 7.
-- **Standard Step 11 (Review Response) — user asks to act on findings** → return to Step 7.
+- **Standard I2 (Implement) tests fail** → stay on I2; fix the code or tests.
+- **Standard I3 (Testing) full suite fails** → return to I2.
+- **Standard I4 (Local Review) raises blocker-level issues** → return to I2.
+- **Standard I6 (Review Response) — user asks to act on findings** → return to I2.
 - **Lightweight Step 2 (Implement) tests fail** → stay on Step 2.
 - **Lightweight Step 3 (Testing) fails** → return to Step 2.
 - **Lightweight Step 5 (Review Response) — user asks to act on findings** → return to Step 2.
