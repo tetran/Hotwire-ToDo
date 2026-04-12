@@ -7,8 +7,12 @@ module Api
         before_action -> { require_capability!("LlmProvider", "write") }, only: %i[create update]
 
         def index
-          prompt_sets = PromptSet.includes(:prompts).order(:id)
-          render json: prompt_sets.as_json(include: { prompts: { except: %i[created_at updated_at] } })
+          scope = PromptSet.includes(:prompts).order(:id)
+          pagy, records = paginate(scope)
+          render json: {
+            prompt_sets: records.as_json(include: { prompts: { except: %i[created_at updated_at] } }),
+            meta: pagination_meta(pagy),
+          }
         end
 
         def show

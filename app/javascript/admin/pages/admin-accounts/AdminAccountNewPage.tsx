@@ -14,8 +14,8 @@ export const AdminAccountNewPage = () => {
   const [loadingRoles, setLoadingRoles] = useState(true)
 
   useEffect(() => {
-    rolesApi.list()
-      .then(data => setRoles(data))
+    rolesApi.list({ per_page: 100 })
+      .then(response => setRoles(response.roles))
       .catch(() => setError('Failed to load roles'))
       .finally(() => setLoadingRoles(false))
   }, [])

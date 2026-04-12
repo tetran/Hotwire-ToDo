@@ -13,11 +13,11 @@ export const AdminAccountRolesEditPage = () => {
   useEffect(() => {
     if (!id) return
     Promise.all([
-      rolesApi.list(),
+      rolesApi.list({ per_page: 100 }),
       adminAccountsApi.getRoles(Number(id)),
     ])
-      .then(([roles, accountRoles]) => {
-        setAllRoles(roles)
+      .then(([rolesResponse, accountRoles]) => {
+        setAllRoles(rolesResponse.roles)
         setSelectedRoleIds(accountRoles.map(r => r.id))
       })
       .catch(err => setError(err instanceof Error ? err.message : 'Failed to load roles'))

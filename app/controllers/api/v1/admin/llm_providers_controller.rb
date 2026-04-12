@@ -7,8 +7,12 @@ module Api
         before_action -> { require_capability!("LlmProvider", "write") }, only: %i[update]
 
         def index
-          providers = LlmProvider.order(:id)
-          render json: providers.as_json(except: :api_key_encrypted)
+          scope = LlmProvider.order(:id)
+          pagy, records = paginate(scope)
+          render json: {
+            llm_providers: records.as_json(except: :api_key_encrypted),
+            meta: pagination_meta(pagy),
+          }
         end
 
         def show

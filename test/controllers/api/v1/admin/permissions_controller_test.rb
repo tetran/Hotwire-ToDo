@@ -21,15 +21,16 @@ module Api
           get api_v1_admin_permissions_path
           assert_response :success
           json = response.parsed_body
-          assert_kind_of Array, json
-          assert json.length.positive?
+          assert json.key?("permissions")
+          assert json.key?("meta")
+          assert json["permissions"].length.positive?
         end
 
         test "GET index response includes expected fields" do
           login_as_admin_api
           get api_v1_admin_permissions_path
           assert_response :success
-          perm = response.parsed_body.first
+          perm = response.parsed_body["permissions"].first
           assert perm.key?("id")
           assert perm.key?("resource_type")
           assert perm.key?("action")

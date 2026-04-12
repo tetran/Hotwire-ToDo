@@ -1,27 +1,47 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { usersApi, User } from '../../lib/api'
+import { usersApi, User, type PaginationMeta } from '../../lib/api'
 import Avatar from '../../components/Avatar'
+import Pagination from '../../components/Pagination'
+import { usePagination, useClampPage } from '../../hooks/usePagination'
 
 export const UsersIndexPage = () => {
   const [users, setUsers] = useState<User[]>([])
+  const [meta, setMeta] = useState<PaginationMeta | null>(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
+
+  const { page, perPage, setPage, setPerPage, resetPage, clampPage } = usePagination()
+  useClampPage(meta, clampPage)
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedQuery(searchQuery), 300)
     return () => clearTimeout(timer)
   }, [searchQuery])
 
+  const prevDebouncedQueryRef = useRef(debouncedQuery)
+  useEffect(() => {
+    if (prevDebouncedQueryRef.current !== debouncedQuery) {
+      prevDebouncedQueryRef.current = debouncedQuery
+      resetPage()
+    }
+  }, [debouncedQuery, resetPage])
+
   useEffect(() => {
     const controller = new AbortController()
     setError('')
     setLoading(true)
-    usersApi.list(debouncedQuery ? { q: debouncedQuery } : undefined, { signal: controller.signal })
-      .then(data => {
-        if (!controller.signal.aborted) setUsers(data)
+    usersApi.list(
+      { q: debouncedQuery || undefined, page, per_page: perPage },
+      { signal: controller.signal }
+    )
+      .then(response => {
+        if (!controller.signal.aborted) {
+          setUsers(response.users)
+          setMeta(response.meta)
+        }
       })
       .catch(err => {
         if (!controller.signal.aborted) {
@@ -32,7 +52,7 @@ export const UsersIndexPage = () => {
         if (!controller.signal.aborted) setLoading(false)
       })
     return () => controller.abort()
-  }, [debouncedQuery])
+  }, [debouncedQuery, page, perPage])
 
   const handleDelete = async (id: number) => {
     if (!confirm('Are you sure you want to delete this user?')) return
@@ -130,6 +150,16 @@ export const UsersIndexPage = () => {
           </tbody>
         </table>
       </div>
+
+      {meta && (
+        <Pagination
+          meta={meta}
+          page={page}
+          perPage={perPage}
+          onPageChange={setPage}
+          onPerPageChange={setPerPage}
+        />
+      )}
     </div>
   )
 }

@@ -24,8 +24,9 @@ module Api
           get api_v1_admin_llm_provider_llm_models_path(provider)
           assert_response :success
           json = response.parsed_body
-          assert_kind_of Array, json
-          names = json.pluck("name")
+          assert json.key?("llm_models")
+          assert json.key?("meta")
+          names = json["llm_models"].pluck("name")
           assert_includes names, llm_models(:gpt_turbo).name
           assert_includes names, llm_models(:gpt4).name
         end
@@ -35,7 +36,7 @@ module Api
           provider = llm_providers(:openai)
           get api_v1_admin_llm_provider_llm_models_path(provider)
           assert_response :success
-          json = response.parsed_body
+          json = response.parsed_body["llm_models"]
           provider_ids = json.pluck("llm_provider_id").uniq
           assert_equal [provider.id], provider_ids
         end
@@ -50,7 +51,7 @@ module Api
           login_as_admin_api
           get api_v1_admin_llm_provider_llm_models_path(llm_providers(:openai))
           assert_response :success
-          model = response.parsed_body.first
+          model = response.parsed_body["llm_models"].first
           assert model.key?("id")
           assert model.key?("name")
           assert model.key?("display_name")

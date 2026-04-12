@@ -1,20 +1,29 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { llmModelsApi, LlmModel } from '../../lib/api'
+import { llmModelsApi, LlmModel, type PaginationMeta } from '../../lib/api'
 import Badge from '../../components/Badge'
+import Pagination from '../../components/Pagination'
+import { usePagination, useClampPage } from '../../hooks/usePagination'
 
 export const LlmModelsIndexPage = () => {
   const { id } = useParams<{ id: string }>()
   const providerId = Number(id)
 
   const [models, setModels] = useState<LlmModel[]>([])
+  const [meta, setMeta] = useState<PaginationMeta | null>(null)
   const [error, setError] = useState('')
 
+  const { page, perPage, setPage, setPerPage, clampPage } = usePagination()
+  useClampPage(meta, clampPage)
+
   const loadModels = useCallback(() => {
-    llmModelsApi.list(providerId)
-      .then(setModels)
+    llmModelsApi.list(providerId, { page, per_page: perPage })
+      .then(response => {
+        setModels(response.llm_models)
+        setMeta(response.meta)
+      })
       .catch(err => setError(err instanceof Error ? err.message : 'Failed to load models'))
-  }, [providerId])
+  }, [providerId, page, perPage])
 
   useEffect(() => {
     loadModels()
@@ -114,6 +123,16 @@ export const LlmModelsIndexPage = () => {
           </tbody>
         </table>
       </div>
+
+      {meta && (
+        <Pagination
+          meta={meta}
+          page={page}
+          perPage={perPage}
+          onPageChange={setPage}
+          onPerPageChange={setPerPage}
+        />
+      )}
     </div>
   )
 }

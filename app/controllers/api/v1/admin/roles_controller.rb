@@ -7,8 +7,12 @@ module Api
         before_action :protect_system_role, only: %i[update destroy]
 
         def index
-          roles = Role.order(:id)
-          render json: roles.as_json(only: %i[id name description system_role created_at updated_at])
+          scope = Role.order(:id)
+          pagy, records = paginate(scope)
+          render json: {
+            roles: records.as_json(only: %i[id name description system_role created_at updated_at]),
+            meta: pagination_meta(pagy),
+          }
         end
 
         def show

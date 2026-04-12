@@ -28,8 +28,9 @@ module Api
           get api_v1_admin_prompt_sets_path
           assert_response :success
           json = response.parsed_body
-          assert_kind_of Array, json
-          names = json.pluck("name")
+          assert json.key?("prompt_sets")
+          assert json.key?("meta")
+          names = json["prompt_sets"].pluck("name")
           assert_includes names, prompt_sets(:general).name
           assert_includes names, prompt_sets(:coding).name
         end
@@ -44,7 +45,7 @@ module Api
           login_as_admin_api
           get api_v1_admin_prompt_sets_path
           assert_response :success
-          json = response.parsed_body
+          json = response.parsed_body["prompt_sets"]
           ps = json.find { |p| p["name"] == prompt_sets(:general).name }
           assert ps.key?("prompts")
           assert_kind_of Array, ps["prompts"]

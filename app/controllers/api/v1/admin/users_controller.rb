@@ -7,8 +7,12 @@ module Api
         before_action -> { require_capability!("User", "write") }, only: %i[create update]
 
         def index
-          users = User.non_admin_accounts.search(params[:q]).order(:id)
-          render json: users.as_json(only: %i[id email name created_at updated_at])
+          scope = User.non_admin_accounts.search(params[:q]).order(:id)
+          pagy, records = paginate(scope)
+          render json: {
+            users: records.as_json(only: %i[id email name created_at updated_at]),
+            meta: pagination_meta(pagy),
+          }
         end
 
         def show

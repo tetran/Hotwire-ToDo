@@ -24,16 +24,16 @@ export const SuggestionConfigNewPage = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [providers, ps] = await Promise.all([
-          llmProvidersApi.list(),
-          promptSetsApi.list(),
+        const [providersResponse, psResponse] = await Promise.all([
+          llmProvidersApi.list({ per_page: 100 }),
+          promptSetsApi.list({ per_page: 100 }),
         ])
-        const activeProviders = providers.filter((p: LlmProvider) => p.active)
-        const allModels = await Promise.all(
-          activeProviders.map((p: LlmProvider) => llmModelsApi.list(p.id))
+        const activeProviders = providersResponse.llm_providers.filter((p: LlmProvider) => p.active)
+        const allModelResponses = await Promise.all(
+          activeProviders.map((p: LlmProvider) => llmModelsApi.list(p.id, { per_page: 100 }))
         )
-        setModels(allModels.flat().filter((m: LlmModel) => m.active))
-        setPromptSets(ps.filter((p: PromptSet) => p.active))
+        setModels(allModelResponses.flatMap(r => r.llm_models).filter((m: LlmModel) => m.active))
+        setPromptSets(psResponse.prompt_sets.filter((p: PromptSet) => p.active))
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load data')
       }

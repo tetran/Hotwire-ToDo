@@ -13,11 +13,11 @@ export const UserRolePage = () => {
   useEffect(() => {
     if (!id) return
     Promise.all([
-      rolesApi.list(),
+      rolesApi.list({ per_page: 100 }),
       usersApi.getRoles(Number(id)),
     ])
-      .then(([roles, userRoles]) => {
-        setAllRoles(roles)
+      .then(([rolesResponse, userRoles]) => {
+        setAllRoles(rolesResponse.roles)
         setSelectedRoleIds(userRoles.map(r => r.id))
       })
       .catch(err => setError(err instanceof Error ? err.message : 'Failed to load roles'))

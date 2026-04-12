@@ -1,19 +1,37 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { PromptSet, promptSetsApi } from '../../lib/api'
+import { PromptSet, promptSetsApi, type PaginationMeta } from '../../lib/api'
 import Badge from '../../components/Badge'
+import Pagination from '../../components/Pagination'
+import { usePagination, useClampPage } from '../../hooks/usePagination'
 
 export const PromptSetsIndexPage = () => {
   const [promptSets, setPromptSets] = useState<PromptSet[]>([])
+  const [meta, setMeta] = useState<PaginationMeta | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
+  const { page, perPage, setPage, setPerPage, clampPage } = usePagination()
+  useClampPage(meta, clampPage)
+
   useEffect(() => {
-    promptSetsApi.list()
-      .then(setPromptSets)
-      .catch(err => setError(err.message))
-      .finally(() => setLoading(false))
-  }, [])
+    const controller = new AbortController()
+    setLoading(true)
+    promptSetsApi.list({ page, per_page: perPage }, { signal: controller.signal })
+      .then(response => {
+        if (!controller.signal.aborted) {
+          setPromptSets(response.prompt_sets)
+          setMeta(response.meta)
+        }
+      })
+      .catch(err => {
+        if (!controller.signal.aborted) setError(err.message)
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoading(false)
+      })
+    return () => controller.abort()
+  }, [page, perPage])
 
   if (loading) return <p className="text-sm text-slate-400">Loading…</p>
   if (error) return <p className="text-sm text-rose-500">{error}</p>
@@ -81,6 +99,16 @@ export const PromptSetsIndexPage = () => {
           </tbody>
         </table>
       </div>
+
+      {meta && (
+        <Pagination
+          meta={meta}
+          page={page}
+          perPage={perPage}
+          onPageChange={setPage}
+          onPerPageChange={setPerPage}
+        />
+      )}
     </div>
   )
 }

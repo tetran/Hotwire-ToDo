@@ -21,8 +21,9 @@ module Api
           get api_v1_admin_roles_path
           assert_response :success
           json = response.parsed_body
-          assert_kind_of Array, json
-          names = json.pluck("name")
+          assert json.key?("roles")
+          assert json.key?("meta")
+          names = json["roles"].pluck("name")
           assert_includes names, "admin"
         end
 
@@ -30,7 +31,7 @@ module Api
           login_as_admin_api
           get api_v1_admin_roles_path
           assert_response :success
-          role = response.parsed_body.first
+          role = response.parsed_body["roles"].first
           assert role.key?("id")
           assert role.key?("name")
           assert role.key?("description")

@@ -12,11 +12,11 @@ export const DashboardPage = () => {
   useEffect(() => {
     Promise.all([
       dashboardApi.get(),
-      llmProvidersApi.list(),
+      llmProvidersApi.list({ per_page: 100 }),
     ])
       .then(([dashData, provData]) => {
         setData(dashData)
-        setProviders(provData)
+        setProviders(provData.llm_providers)
       })
       .catch(err => setError(err instanceof Error ? err.message : 'Failed to load dashboard'))
   }, [])

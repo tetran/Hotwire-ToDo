@@ -1,13 +1,16 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { adminAccountsApi, User } from '../../lib/api'
+import { adminAccountsApi, User, type PaginationMeta } from '../../lib/api'
 import { useAuth } from '../../contexts/AuthContext'
 import Avatar from '../../components/Avatar'
 import Badge from '../../components/Badge'
+import Pagination from '../../components/Pagination'
+import { usePagination, useClampPage } from '../../hooks/usePagination'
 
 export const AdminAccountsIndexPage = () => {
   const { can } = useAuth()
   const [accounts, setAccounts] = useState<User[]>([])
+  const [meta, setMeta] = useState<PaginationMeta | null>(null)
   const [error, setError] = useState('')
   const [deleteError, setDeleteError] = useState('')
   const [loading, setLoading] = useState(true)
@@ -16,18 +19,35 @@ export const AdminAccountsIndexPage = () => {
   const canWrite = can('User', 'write')
   const canDelete = can('User', 'delete')
 
+  const { page, perPage, setPage, setPerPage, resetPage, clampPage } = usePagination()
+  useClampPage(meta, clampPage)
+
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedQuery(searchQuery), 300)
     return () => clearTimeout(timer)
   }, [searchQuery])
 
+  const prevDebouncedQueryRef = useRef(debouncedQuery)
+  useEffect(() => {
+    if (prevDebouncedQueryRef.current !== debouncedQuery) {
+      prevDebouncedQueryRef.current = debouncedQuery
+      resetPage()
+    }
+  }, [debouncedQuery, resetPage])
+
   useEffect(() => {
     const controller = new AbortController()
     setError('')
     setLoading(true)
-    adminAccountsApi.list(debouncedQuery ? { q: debouncedQuery } : undefined, { signal: controller.signal })
-      .then(data => {
-        if (!controller.signal.aborted) setAccounts(data)
+    adminAccountsApi.list(
+      { q: debouncedQuery || undefined, page, per_page: perPage },
+      { signal: controller.signal }
+    )
+      .then(response => {
+        if (!controller.signal.aborted) {
+          setAccounts(response.admin_accounts)
+          setMeta(response.meta)
+        }
       })
       .catch(err => {
         if (!controller.signal.aborted) {
@@ -38,7 +58,7 @@ export const AdminAccountsIndexPage = () => {
         if (!controller.signal.aborted) setLoading(false)
       })
     return () => controller.abort()
-  }, [debouncedQuery])
+  }, [debouncedQuery, page, perPage])
 
   const handleRevoke = async (id: number) => {
     if (!confirm('Are you sure you want to revoke admin access? This user will become a regular user.')) return
@@ -193,6 +213,16 @@ export const AdminAccountsIndexPage = () => {
           </tbody>
         </table>
       </div>
+
+      {meta && (
+        <Pagination
+          meta={meta}
+          page={page}
+          perPage={perPage}
+          onPageChange={setPage}
+          onPerPageChange={setPerPage}
+        />
+      )}
     </div>
   )
 }
