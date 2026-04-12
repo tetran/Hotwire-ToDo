@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { llmModelsApi, LlmModel, type PaginationMeta } from '../../lib/api'
 import Badge from '../../components/Badge'
@@ -12,28 +12,33 @@ export const LlmModelsIndexPage = () => {
   const [models, setModels] = useState<LlmModel[]>([])
   const [meta, setMeta] = useState<PaginationMeta | null>(null)
   const [error, setError] = useState('')
+  const [refreshKey, setRefreshKey] = useState(0)
 
   const { page, perPage, setPage, setPerPage, clampPage } = usePagination()
   useClampPage(meta, clampPage)
 
-  const loadModels = useCallback(() => {
-    llmModelsApi.list(providerId, { page, per_page: perPage })
-      .then(response => {
-        setModels(response.llm_models)
-        setMeta(response.meta)
-      })
-      .catch(err => setError(err instanceof Error ? err.message : 'Failed to load models'))
-  }, [providerId, page, perPage])
-
   useEffect(() => {
-    loadModels()
-  }, [loadModels])
+    const controller = new AbortController()
+    llmModelsApi.list(providerId, { page, per_page: perPage }, { signal: controller.signal })
+      .then(response => {
+        if (!controller.signal.aborted) {
+          setModels(response.llm_models)
+          setMeta(response.meta)
+        }
+      })
+      .catch(err => {
+        if (!controller.signal.aborted) {
+          setError(err instanceof Error ? err.message : 'Failed to load models')
+        }
+      })
+    return () => controller.abort()
+  }, [providerId, page, perPage, refreshKey])
 
   const handleDelete = async (modelId: number) => {
     if (!window.confirm('Are you sure you want to delete this model?')) return
     try {
       await llmModelsApi.delete(providerId, modelId)
-      loadModels()
+      setRefreshKey(k => k + 1)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete model')
     }
