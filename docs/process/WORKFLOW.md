@@ -7,6 +7,11 @@ The following Claude Code resources live in the user-global config (`~/.claude/`
 - **`user-story-creation` skill** — Standard Flow P2
 - **`plan-reviewer` agent** — Standard Flow P3
 
+The following resources **are bundled** with this repository and available automatically:
+
+- **`rails-developer` / `react-developer` agents** (`.claude/agents/`) — optional I2 delegation targets; see [I2 Delegation](#i2-delegation-optional) and `docs/process/DELEGATION.md`.
+- **`start-implementation-phase` skill** (`.claude/skills/`) — manual entry point for Standard Flow Implementation Phase.
+
 ## Entry Protocol (MANDATORY)
 
 Before doing anything else when starting or resuming a task, you MUST:
@@ -92,6 +97,7 @@ P5. **Document the plan** — Document the plan in the issue as a comment. Inclu
 I1. **Create a Git Branch** — Create a feature branch for the issue. ALL feature branches should be derived from the LATEST main branch.
    - → **Done when**: a feature branch derived from the latest `main` is checked out.
 I2. **Implement** — Write code and tests. During development, run the domain test suite for the area you are changing (see `docs/conventions/TESTING.md`). Do not run the full test suite at this stage.
+   - **Delegation option (recommended when applicable)**: If the Plan Excerpt spans Rails backend and React Admin SPA, the orchestrator may delegate implementation to the `rails-developer` and `react-developer` subagents. See [I2 Delegation](#i2-delegation-optional) below and `docs/process/DELEGATION.md` for the full contract. Delegation is opt-in — direct implementation remains valid.
    - → **Done when**: the domain test suite for the changed area passes and the implementation matches the plan.
 I3. **Testing** — Run the full test suite (`bin/rails test:all`) once to ensure all tests pass. In Rails 8 this is a single-process invocation that runs every file matching `test/**/*_test.rb` (unit and system tests share the same process and database connection). The full suite takes 5+ minutes — run it via `Bash` with `run_in_background: true` and wait for the completion notification. Never re-run the suite before the previous run's result is confirmed.
    - → **Done when**: `bin/rails test:all` exits 0.
@@ -139,6 +145,7 @@ After creating the PR, an automated review runs within about 10 minutes. Execute
 If a step cannot complete, do NOT proceed. Return to the appropriate earlier step and re-run the flow from there.
 
 - **Standard I2 (Implement) tests fail** → stay on I2; fix the code or tests.
+- **Standard I2 delegation failure** → fall back to orchestrator direct implementation for the affected work. See `docs/process/DELEGATION.md` §Fallback Procedure.
 - **Standard I3 (Testing) full suite fails** → return to I2.
 - **Standard I4 (Local Review) raises blocker-level issues** → return to I2.
 - **Standard I6 (Review Response) — user asks to act on findings** → return to I2.
@@ -151,6 +158,18 @@ If a step cannot complete, do NOT proceed. Return to the appropriate earlier ste
 - Tests are written and all pass
 - A Pull Request is created
 - **Review Response** step has been performed (review fetched, findings summarized, user consulted)
+
+### I2 Delegation (optional)
+
+I2 (Implement) may be delegated to the bundled `rails-developer` / `react-developer` subagents when the Plan Excerpt spans both Rails backend and React Admin SPA. Delegation is **opt-in and recommended**, never mandatory.
+
+Quick rules (see `docs/process/DELEGATION.md` for the full contract):
+
+- **Scope**: subagents handle I2 code + tests + the domain test suite in their payload. They do **not** handle branches (I1), full-suite runs (I3), local review (I4), PRs (I5), Review Response (I6), or the progress file.
+- **Handoff contract**: every invocation passes a payload with Issue / Goal / Plan Excerpt / Allowlist / Denylist / Domain Tests / Done When / Required Return Format.
+- **Shared files are orchestrator-owned**: `config/routes.rb`, `app/javascript/admin/App.tsx`, `.progress/**`, `CLAUDE.md`, `docs/**`, `.claude/**` — orchestrator edits these directly and puts them in every subagent's Denylist.
+- **Dispatch patterns**: sequential (Rails → React) for typical Admin features; parallel for independent work; single-domain for one-sided tasks; direct implementation when delegation overhead outweighs the benefit.
+- **Fallback**: on domain-test failure, Denylist violation, plan deviation, or blocker stop, the orchestrator re-delegates once or falls back to direct implementation.
 
 ## Reference
 
