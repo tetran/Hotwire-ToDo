@@ -11,6 +11,28 @@
         ]
       }
     ],
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pre_tool_use_denylist.sh",
+            "statusMessage": "Checking denylist..."
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/pre_tool_use_bash_guard.sh",
+            "statusMessage": "Checking command safety..."
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Write|Edit",
@@ -34,6 +56,23 @@
             "type": "command",
             "command": "jq -r '.tool_input.file_path // .tool_response.filePath' | { read -r f; if echo \"$f\" | grep -q '.progress/issue-'; then jq -n '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"progress file updated. If the current step is complete per its Done criteria, proceed to the next step; otherwise continue the current step.\"}}'; fi; }",
             "statusMessage": "Checking progress file..."
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/subagent_stop_log.sh",
+            "statusMessage": "Logging subagent response..."
+          },
+          {
+            "type": "command",
+            "command": "$(git rev-parse --show-toplevel)/.claude/hooks/subagent_stop_format_check.sh",
+            "statusMessage": "Validating return format..."
           }
         ]
       }
