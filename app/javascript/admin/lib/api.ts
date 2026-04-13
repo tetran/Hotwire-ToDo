@@ -521,3 +521,28 @@ export const suggestionConfigsApi = {
   update: (id: number, data: UpdateSuggestionConfigInput) =>
     api.patch<SuggestionConfig>(`/suggestion_configs/${id}`, { suggestion_config: data }),
 }
+
+export interface SystemInfoData {
+  ruby_version: string
+  rails_version: string
+  environment: string
+  database: {
+    adapter: string
+    version: string | null
+  }
+  runtime: {
+    memory_mb: number | null
+    uptime_seconds: number
+    pool: {
+      size: number
+      connections: number
+      busy: number
+      idle: number
+      waiting: number
+    }
+  }
+}
+
+export const systemInfoApi = {
+  get: () => api.get<SystemInfoData>('/system_info'),
+}

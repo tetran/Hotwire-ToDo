@@ -66,6 +66,7 @@ Rails.application.routes.draw do
         end
         resources :prompt_sets, only: %i[index show create update]
         resources :suggestion_configs, only: %i[index show create update]
+        resource :system_info, only: [:show]
         resource :session, only: %i[show create destroy], controller: "sessions"
       end
     end
