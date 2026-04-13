@@ -176,8 +176,8 @@ I2 (Implement) may be delegated to the bundled `rails-developer` / `react-develo
 Quick rules (see `docs/process/DELEGATION.md` for the full contract):
 
 - **Scope**: subagents handle I2 code + tests + the domain test suite in their payload. They do **not** handle branches (I1), full-suite runs (I3), local review (I4), PRs (I5), Review Response (I6), or the progress file.
-- **Handoff contract**: every invocation passes a payload with Issue / Goal / Plan Excerpt / Allowlist / Denylist / Domain Tests / Done When / Required Return Format.
-- **Shared files are orchestrator-owned**: `config/routes.rb`, `app/javascript/admin/App.tsx`, `.progress/**`, `CLAUDE.md`, `docs/**`, `.claude/**` — orchestrator edits these directly and puts them in every subagent's Denylist.
+- **Handoff contract**: every invocation passes a payload with Issue / Goal / Plan Excerpt / Scope / Denylist / Domain Tests / Done When / Required Return Format. `Scope` is an expected-files hint (not a hard limit); `Denylist` is strict (edit forbidden, reading allowed).
+- **Shared files are orchestrator-owned**: `config/routes.rb` (stub + temporary controller at Pre-Fork), `.progress/**`, `CLAUDE.md`, `docs/**`, `.claude/**` — orchestrator edits these directly and puts them in every subagent's Denylist. `App.tsx` and `AdminLayout.tsx` are owned by `react-developer`, not the orchestrator.
 - **Dispatch patterns**: sequential (Rails → React) for typical Admin features; parallel for independent work; single-domain for one-sided tasks; direct implementation when delegation overhead outweighs the benefit.
 - **Fallback**: on domain-test failure, Denylist violation, plan deviation, or blocker stop, the orchestrator re-delegates once or falls back to direct implementation.
 
