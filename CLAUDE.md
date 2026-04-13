@@ -48,7 +48,7 @@ The admin panel (`/admin`) is a React SPA. When modifying the Admin area, do NOT
 
 **Tests** — place under `test/controllers/api/v1/admin/`, always cover:
 1. **Unauthenticated access** → 401
-2. **Regular user access** → 403
+2. **Regular user access** → 401 (`Api::V1::Admin::ApplicationController#require_admin_access` returns 401 when `admin_logged_in?` is false — admin and user sessions are separate)
 3. **Admin with insufficient capability** → 403
 4. **Admin with proper capability** → 200 + response body assertions
 
