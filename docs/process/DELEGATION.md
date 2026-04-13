@@ -170,11 +170,11 @@ This table defines each agent's **domain**. An agent may freely edit any file in
 
 | Path | Owner |
 |---|---|
-| `config/routes.rb` | orchestrator (stub route at Pre-Fork; rails-developer may refine within an already-registered namespace) |
+| `config/routes.rb` | orchestrator (see Fork-join Procedure Step 1 for the Pre-Fork stub) |
 | `.progress/issue-*.md` | orchestrator |
 | `CLAUDE.md`, `docs/**` | orchestrator |
 | `.claude/**` (agents / skills / settings) | orchestrator |
-| `app/controllers/**`, `app/models/**`, `app/services/**`, `app/jobs/**`, `db/migrate/**`, `test/controllers/**`, `test/models/**`, `test/services/**`, `test/jobs/**`, `test/system/**` (non-React) | rails-developer |
+| `app/controllers/**`, `app/models/**`, `app/services/**`, `app/jobs/**`, `db/migrate/**`, `test/controllers/**`, `test/models/**`, `test/services/**`, `test/jobs/**`, `test/system/**` (non-React) | rails-developer (orchestrator may stub a temporary controller under `app/controllers/api/v1/admin/**` at Pre-Fork for fork-join — rails-developer then overwrites it with the real implementation) |
 | `app/javascript/admin/**` — including `App.tsx` (route registration), `components/layouts/AdminLayout.tsx` (nav item), `pages/**`, `components/**`, `contexts/**`, `lib/api.ts`, `**/__tests__/**` | react-developer |
 
 When a task requires editing an orchestrator-owned file, the orchestrator performs the edit itself before or after the delegation, never inside the subagent payload. For fork-join, the orchestrator's Pre-Fork edit is limited to the `config/routes.rb` stub + a temporary controller (see Fork-join Procedure Step 1).
