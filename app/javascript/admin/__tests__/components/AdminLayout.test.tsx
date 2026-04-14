@@ -21,9 +21,9 @@ describe('navSections', () => {
     ])
   })
 
-  it('NAVIGATION contains Dashboard, Event Logs, and Users', () => {
+  it('NAVIGATION contains Dashboard, Event Logs, System Info, and Users', () => {
     const nav = navSections.find((s) => s.label === 'NAVIGATION')!
-    expect(nav.items.map((i) => i.label)).toEqual(['Dashboard', 'Event Logs', 'Users'])
+    expect(nav.items.map((i) => i.label)).toEqual(['Dashboard', 'Event Logs', 'System Info', 'Users'])
   })
 
   it('ADMIN contains Admin Accounts, Roles, and Permissions', () => {

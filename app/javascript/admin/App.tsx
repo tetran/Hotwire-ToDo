@@ -32,6 +32,7 @@ import { SuggestionConfigsIndexPage } from './pages/suggestion-configs/Suggestio
 import { SuggestionConfigNewPage } from './pages/suggestion-configs/SuggestionConfigNewPage'
 import { SuggestionConfigDetailPage } from './pages/suggestion-configs/SuggestionConfigDetailPage'
 import { EventsIndexPage } from './pages/events/EventsIndexPage'
+import { SystemInfoPage } from './pages/SystemInfoPage'
 
 const App = () => (
   <BrowserRouter>
@@ -178,6 +179,11 @@ const App = () => (
           <Route path="events" element={
             <ProtectedRoute requiredCapability={{ resource: 'EventLog', action: 'read' }}>
               <EventsIndexPage />
+            </ProtectedRoute>
+          } />
+          <Route path="system-info" element={
+            <ProtectedRoute requiredCapability={{ resource: 'Admin', action: 'read' }}>
+              <SystemInfoPage />
             </ProtectedRoute>
           } />
         </Route>
