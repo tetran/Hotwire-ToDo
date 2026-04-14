@@ -32,6 +32,14 @@ fi
 # `git branch -a`, `git branch -v`, etc.) is allowed.
 # Write usage is matched via: short flags -d/-D/-m/-M/-c/-C, long flags --delete/--move/--copy,
 # or a positional <new-name> (starts with a non-dash character).
+#
+# Known gaps (accepted out-of-scope per issue #303): branch creation/modification
+# forms whose first token is a non-matching flag slip through — e.g. `git branch
+# --track <name>`, `git branch --no-track <name>`, `git branch -t <name>`,
+# `git branch -u <upstream>`, `git branch -f <name> <start-point>`. These are
+# write ops but were not observed as pain points in the #295 pilot; a follow-up
+# issue should cover full `git branch` write coverage together with the
+# reset/checkout/switch read-vs-write distinction.
 if echo "$COMMAND" | grep -qE '(^|&&|\|\||;|\||\()\s*git\s+branch\s+(-[dDmMcC]\b|--delete\b|--move\b|--copy\b|[^-[:space:]])'; then
   echo "BLOCKED: git branch write operations (create/delete/rename/copy) are reserved for the orchestrator. Report this under Deviations if it blocks your task." >&2
   exit 2
