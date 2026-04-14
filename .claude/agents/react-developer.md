@@ -30,7 +30,7 @@ Before touching any file, read these in order:
 5. `docs/design/admin/README.md` — the design system index; follow the linked topic docs when building new components.
 6. `app/javascript/admin/lib/api.ts` — the existing API client surface. Follow its conventions (fetch wrapper, error handling, type definitions).
 7. `app/javascript/admin/App.tsx` — read first to understand existing routes and guards. You **own** route registration for your feature and will edit this file as part of your work.
-8. `app/javascript/admin/components/layouts/AdminLayout.tsx` — read first to understand the nav item pattern. You own nav additions for your feature.
+8. `app/javascript/admin/components/AdminLayout.tsx` — read first to understand the nav item pattern. You own nav additions for your feature.
 
 If a must-read file does not exist, record it under Deviations and continue with the rest.
 
@@ -41,14 +41,14 @@ If a must-read file does not exist, record it under Deviations and continue with
 3. **Add types and API function to `app/javascript/admin/lib/api.ts`.** Extend the existing patterns (fetch wrapper, error handling, type definitions).
 4. **Build page / component.** Place new pages under `app/javascript/admin/pages/` and shared components under `app/javascript/admin/components/` per the existing directory structure. Use design tokens (`bg-sidebar`, `bg-accent`, `text-slate-800`, `font-syne`, `font-dm-mono`).
 5. **Write / extend React tests** following the existing `__tests__` patterns in the SPA.
-6. **Register the route and nav item.** Add the route to `app/javascript/admin/App.tsx` (path, element, guards) and the nav entry to `app/javascript/admin/components/layouts/AdminLayout.tsx`, following the existing patterns. For fork-join, the orchestrator has already created a stub route + temporary controller in `config/routes.rb`; your job is the frontend wiring.
+6. **Register the route and nav item.** Add the route to `app/javascript/admin/App.tsx` (path, element, guards) and the nav entry to `app/javascript/admin/components/AdminLayout.tsx`, following the existing patterns. For fork-join, the orchestrator has already created a stub route + temporary controller in `config/routes.rb`; your job is the frontend wiring.
 7. **Run the domain tests** named in the payload (React unit tests via the project's test runner, or system tests via `bin/rails test test/system/...`).
 8. **Review & fix (single pass).** After domain tests pass, run `/hobo-codex-review-react` against the diff once. Fix actionable findings within your domain, then re-run the domain test suite to confirm nothing broke. Report what was fixed and what was deferred (with reason) in Handoff Notes for orchestrator.
 9. **Return in the required format** (see below).
 
 ## Scope discipline
 
-- **Domain boundaries, not file allowlists.** Your domain is the entire `app/javascript/admin/**` tree — pages, components (including `components/layouts/AdminLayout.tsx`), contexts, `lib/api.ts`, `App.tsx`, and `**/__tests__/**`. You may create, modify, or delete files anywhere inside your domain as the implementation requires.
+- **Domain boundaries, not file allowlists.** Your domain is the entire `app/javascript/admin/**` tree — pages, components (including `components/AdminLayout.tsx`), contexts, `lib/api.ts`, `App.tsx`, and `**/__tests__/**`. You may create, modify, or delete files anywhere inside your domain as the implementation requires.
 - **The `Scope` section in the payload is a hint, not a hard constraint.** It lists the files the orchestrator expects you to touch. If you need a new component, hook, or type file that wasn't listed, add it — that is not a Deviation. Record meaningful additions in `Changed Files` and, if they materially change the approach, note the reasoning in `Handoff Notes for orchestrator`.
 - **You MUST NOT edit anything in the `Denylist`.** Reading Denylist files (e.g., Rails controllers to understand the API contract) is expected and encouraged; only writes are forbidden. If you genuinely need to edit a Denylist file, stop and report it under Deviations.
 - Run only the domain test suite specified in the payload.

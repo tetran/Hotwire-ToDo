@@ -27,7 +27,7 @@ codex review "<request>"
 - ActiveRecord queries: correct use of `present?`/`exists?`/`count`/`size`/`length`, eager loading, N+1 avoidance (see `docs/conventions/ACTIVE_RECORD_QUERIES.md`)
 - Fat model decomposition: concerns, service objects, proper separation of domain logic from controllers (see `docs/conventions/FAT_MODEL_DECOMPOSITION.md`)
 - Authorization: `require_capability!` on all admin endpoints, `current_user`-scoped resource access, no direct ID access, no privilege escalation
-- Admin API test coverage: 4-pattern (401 unauthenticated / 403 regular user / 403 insufficient capability / 200 proper capability)
+- Admin API test coverage: 4-pattern (401 unauthenticated / 401 regular user (non-admin session) / 403 admin with insufficient capability / 200 admin with proper capability)
 - Model-level validations, not controller-level
 - Strong parameters, no mass assignment vulnerabilities
 
