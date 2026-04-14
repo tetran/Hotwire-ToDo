@@ -10,7 +10,7 @@ This is a sample todo list application to try Rails 8 & Hotwire.
 
 - Ruby version: 3.4.4
 - Rails version: 8.0
-- Database: PostgreSQL
+- Database: SQLite
 - Node.js (with npm)
 
 ## How to run
