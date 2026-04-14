@@ -8,7 +8,7 @@
 #   - Full test suite (bin/rails test with no args, bin/rails test:all)
 #
 # Allowed:
-#   - git read operations (status, log, diff, show, rev-parse, ls-files)
+#   - git read operations (status, log, diff, show, rev-parse, ls-files, branch read-only usage)
 #   - Domain test suite runs (bin/rails test <specific path>)
 
 INPUT=$(cat)
@@ -22,8 +22,18 @@ COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
 # Block git write operations.
 # Match git at line start or after command separators (&&, ||, ;, |, subshell)
 # to avoid false positives with commands like: echo "git commit example"
-if echo "$COMMAND" | grep -qE '(^|&&|\|\||;|\||\()\s*git\s+(branch|commit|push|checkout|switch|merge|rebase|tag|add|stash|reset|clean|cherry-pick|am|apply)\b'; then
+if echo "$COMMAND" | grep -qE '(^|&&|\|\||;|\||\()\s*git\s+(commit|push|checkout|switch|merge|rebase|tag|add|stash|reset|clean|cherry-pick|am|apply)\b'; then
   echo "BLOCKED: git write operations are reserved for the orchestrator. Report this under Deviations if it blocks your task." >&2
+  exit 2
+fi
+
+# Block git branch write operations (create/delete/rename/copy).
+# Read-only usage (`git branch`, `git branch --show-current`, `git branch --list ...`,
+# `git branch -a`, `git branch -v`, etc.) is allowed.
+# Write usage is matched via: short flags -d/-D/-m/-M/-c/-C, long flags --delete/--move/--copy,
+# or a positional <new-name> (starts with a non-dash character).
+if echo "$COMMAND" | grep -qE '(^|&&|\|\||;|\||\()\s*git\s+branch\s+(-[dDmMcC]\b|--delete\b|--move\b|--copy\b|[^-[:space:]])'; then
+  echo "BLOCKED: git branch write operations (create/delete/rename/copy) are reserved for the orchestrator. Report this under Deviations if it blocks your task." >&2
   exit 2
 fi
 
