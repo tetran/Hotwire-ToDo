@@ -1,6 +1,6 @@
 # I2 Delegation to Domain Subagents
 
-This document defines how the orchestrator (the main Claude conversation driving a task through `docs/process/WORKFLOW.md`) may delegate **Implementation Phase Step I2 (Implement)** to domain-specific subagents.
+This document defines how the orchestrator may delegate **Implementation Phase Step I2 (Implement)** to domain-specific subagents.
 
 Two subagents are bundled with this repository:
 
@@ -91,8 +91,6 @@ bin/rails test <path>            # for rails-developer
 - Tables, bullet lists, and deep-dive content live **inside** `Summary` or `Handoff Notes`.
 - `Handoff Notes` is dual-purpose: sequential API contract for the next agent **and/or** follow-up observations for the orchestrator (maintenance risks, suspected issues, flagged files). Use `not applicable` only when neither applies.
 
-The Required Return Format section is copied verbatim from the agent definition so subagents return machine-parseable results.
-
 ### Payload Quality Rules
 
 A payload is an **instruction** to the agent, not the orchestrator's thinking log. Clean, verified payloads are the single biggest lever on delegation quality.
@@ -101,6 +99,7 @@ A payload is an **instruction** to the agent, not the orchestrator's thinking lo
 - **No reasoning residue.** Phrases like "wait, actually..." or "let me reconsider..." belong to your working memory, never to the payload. If you catch yourself writing them, rewrite the payload to state the final conclusion only.
 - **Pre-existing errors go into `Done When`.** If there are known-broken type errors, flaky tests, or warnings in the area the agent will touch, list them under `Done When` as "the following pre-existing errors may be ignored" so the agent does not spend turns chasing them.
 - **Copy, don't paraphrase.** When quoting the Plan Excerpt or an API contract, copy verbatim from the approved plan. Paraphrasing introduces drift between what the user approved and what the agent implements.
+- **Intentional duplication across fork-join payloads is a feature, not a bug.** When duplicating API contract / authorization tables / field semantics to both rails-developer and react-developer payloads, annotate the duplicated block with `# Duplicated in both fork-join payloads for type-contract integrity (see DELEGATION.md Fork-join §5)`. This turns silent token cost into an audited decision and prevents future payload authors from "DRY-ing" the duplication away.
 
 ## Invocation Patterns
 
@@ -133,13 +132,12 @@ Use when the Plan Excerpt covers both Rails and React within the same feature, b
 
 1. **Pre-Fork — stub route + temporary controller.** The orchestrator adds a stub route to `config/routes.rb` and creates a temporary controller returning a fixed JSON response matching the planned contract. This is the only shared-file edit the orchestrator performs before dispatch; do **not** touch `App.tsx` or `AdminLayout.tsx` here — those belong to react-developer.
 2. **Verify routing.** Run `bin/rails routes | grep <resource>` to confirm the stub is wired up correctly. Fix typos now, not after dispatch.
-3. **Dispatch** two Agent calls in a **single message** so they run concurrently:
+3. **Hook compatibility check (pre-dispatch).** Before dispatching, grep `.claude/hooks/pre_tool_use_denylist.sh` (and related hooks) against the shared files the subagents are expected to touch (typically `App.tsx`, `AdminLayout.tsx`, `config/routes.rb`, `.progress/**`). If a hook denies a file that the plan assigns to a subagent, resolve the drift before dispatch — either by updating the hook, adjusting ownership, or handing the edit back to the orchestrator explicitly.
+4. **Dispatch** two Agent calls in a **single message** so they run concurrently:
    - `rails-developer` overwrites the temporary controller with the real implementation and adds tests.
-   - `react-developer` owns `app/javascript/admin/App.tsx` (route registration), `app/javascript/admin/components/layouts/AdminLayout.tsx` (nav item), the page, and the `api.ts` additions.
-4. **Wait for both agents to return (join).**
-5. **Post-Join Verification** — run the Completion Verification checklist explicitly for **each** agent (see `Completion Verification` section below). If type mismatches surface between the Rails response and the TypeScript types (e.g., field name divergence), treat as a sequential dependency and redispatch react-developer with the Rails agent's actual output as context.
-
-**Example**: Issue #204 was a candidate for this pattern — the API contract for all eight Admin endpoints was fully specified in the plan, so react-developer could have worked in parallel with rails-developer.
+   - `react-developer` owns `app/javascript/admin/App.tsx` (route registration), `app/javascript/admin/components/AdminLayout.tsx` (nav item), the page, and the `api.ts` additions.
+5. **Wait for both agents to return (join).**
+6. **Post-Join Verification** — run the Completion Verification checklist explicitly for **each** agent (see `Completion Verification` section below). If type mismatches surface between the Rails response and the TypeScript types (e.g., field name divergence), treat as a sequential dependency and redispatch react-developer with the Rails agent's actual output as context.
 
 ### Parallel (independent domains)
 
@@ -153,8 +151,6 @@ Use when a single domain agent's expected Scope exceeds ~10 files. Split the wor
 - Common infrastructure (concerns, migrations, shared modules) is created by the orchestrator before dispatching **if** both instances would otherwise need to create it concurrently. Otherwise each instance adds what it needs within its own domain.
 - Each instance's Scope does not overlap with the other (file-level mutual exclusion of expected work).
 - Each instance's Denylist includes the files the other instance is expected to own plus all shared files, so concurrent writes cannot collide.
-
-**Example**: Issue #204's Rails side could have been split into two rails-developer instances — one for Users/AdminAccounts/Roles/Permissions and another for LlmProviders/LlmModels/PromptSets/SuggestionConfigs.
 
 ### Single-domain
 
@@ -175,7 +171,7 @@ This table defines each agent's **domain**. An agent may freely edit any file in
 | `CLAUDE.md`, `docs/**` | orchestrator |
 | `.claude/**` (agents / skills / settings) | orchestrator |
 | `app/controllers/**`, `app/models/**`, `app/services/**`, `app/jobs/**`, `db/migrate/**`, `test/controllers/**`, `test/models/**`, `test/services/**`, `test/jobs/**`, `test/system/**` (non-React) | rails-developer (orchestrator may stub a temporary controller under `app/controllers/api/v1/admin/**` at Pre-Fork for fork-join — rails-developer then overwrites it with the real implementation) |
-| `app/javascript/admin/**` — including `App.tsx` (route registration), `components/layouts/AdminLayout.tsx` (nav item), `pages/**`, `components/**`, `contexts/**`, `lib/api.ts`, `**/__tests__/**` | react-developer |
+| `app/javascript/admin/**` — including `App.tsx` (route registration), `components/AdminLayout.tsx` (nav item), `pages/**`, `components/**`, `contexts/**`, `lib/api.ts`, `**/__tests__/**` | react-developer |
 
 When a task requires editing an orchestrator-owned file, the orchestrator performs the edit itself before or after the delegation, never inside the subagent payload. For fork-join, the orchestrator's Pre-Fork edit is limited to the `config/routes.rb` stub + a temporary controller (see Fork-join Procedure Step 1).
 
@@ -231,3 +227,12 @@ If any item is **fail**, apply the relevant Fallback Procedure case before proce
 - **Stay direct for complex refactors.** Cross-file refactors where the orchestrator needs to hold the whole mental model are poor fits for delegation.
 - **Update the agent definitions** (`.claude/agents/*.md`) when payload expectations evolve. Keep this document and the agents in sync.
 - **If you hit repeated fallbacks** in a given task class, that's a signal to either expand the agent prompt or mark that class as "direct-only".
+
+### Pilot Reporting Rules
+
+- **Pilot reporting must distinguish observed paths from untouched paths.** When retrospecting a fork-join pilot, separate "paths that ran and produced evidence" from "paths the happy path did not exercise (negative evidence)". Fallback branches (e.g., post-join type-mismatch redispatch) that were **not** triggered in the pilot must be labeled as **untested** — do not claim the contract is validated if only the happy path ran.
+- **Smoke test selection is an explicit choice, not a default.** When Plan Phase calls for a manual smoke test after fork-join merge, the orchestrator must consciously choose between: (a) **automated** via `webapp-testing` (playwright) skill, (b) **manual** by asking the user, or (c) **skip** when the change is low-risk and covered by tests. Record the choice + reasoning in `.progress/issue-*.md` I2. Default preference is (a) when the feature has a visible UI path; fall back to (b) only when scope mismatch or cost makes automation impractical.
+
+### I4 Parallel Review (Rails + React)
+
+When a PR's diff covers **both Rails backend and React Admin SPA** files, the orchestrator should run `/hobo-codex-review-rails`, `/hobo-codex-review-react`, and `/hobo-codex-review-architecture` **in parallel** (three Skill/Agent calls in a single message) instead of a single generic `/codex-review`. This extends the parallelism acquired at I2 fork-join into I4 and improves review coverage for cross-cutting changes. Single-domain PRs still use the matching single skill.
