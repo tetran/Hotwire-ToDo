@@ -65,9 +65,6 @@ if [ "$AGENT_TYPE" = "react-developer" ]; then
     test/controllers/*|test/models/*)
       echo "BLOCKED: '$REL_PATH' belongs to the Rails domain. react-developer cannot edit this test path. Report this under Deviations." >&2
       exit 2 ;;
-    app/javascript/admin/App.tsx)
-      echo "BLOCKED: 'App.tsx' is owned by the orchestrator. Report the required route entry under Handoff Notes for orchestrator." >&2
-      exit 2 ;;
   esac
 fi
 
