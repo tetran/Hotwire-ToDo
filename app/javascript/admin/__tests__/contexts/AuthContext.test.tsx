@@ -27,6 +27,7 @@ const makeCapabilities = (overrides: Partial<Record<string, Partial<Record<strin
     Comment: { ...defaults, ...overrides.Comment },
     Admin: { ...defaults, ...overrides.Admin },
     LlmProvider: { ...defaults, ...overrides.LlmProvider },
+    EventLog: { ...defaults, ...overrides.EventLog },
   }
 }
 

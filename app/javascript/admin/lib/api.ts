@@ -235,7 +235,7 @@ export const adminAccountsApi = {
   update: (id: number, data: UpdateAdminAccountInput) =>
     api.patch<User>(`/admin_accounts/${id}`, { admin_account: data }),
   delete: (id: number) => api.delete<void>(`/admin_accounts/${id}`),
-  revoke: (id: number) => api.post<void>(`/admin_accounts/${id}/revocation`),
+  revoke: (id: number) => api.post<void>(`/admin_accounts/${id}/revocation`, {}),
   getRoles: (id: number) => api.get<Role[]>(`/admin_accounts/${id}/roles`),
   updateRoles: (id: number, roleIds: number[]) =>
     api.patch<Role[]>(`/admin_accounts/${id}/roles`, { role_ids: roleIds }),
