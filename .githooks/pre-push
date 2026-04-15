@@ -1,16 +1,31 @@
 #!/bin/sh
-# Pre-push hook to run rubocop before pushing
+# Pre-push hook to run rubocop + tsc before pushing
 
 echo "Running rubocop before push..."
 echo ""
 
-if bin/rubocop; then
-  echo ""
-  echo "✅ Rubocop passed! Proceeding with push."
-  exit 0
-else
+if ! bin/rubocop; then
   echo ""
   echo "❌ Rubocop failed. Please fix the issues before pushing."
   echo "To push anyway, use: git push --no-verify"
   exit 1
 fi
+echo ""
+echo "✅ Rubocop passed."
+echo ""
+
+echo "Running TypeScript typecheck before push..."
+echo ""
+
+if ! npm run typecheck --silent; then
+  echo ""
+  echo "❌ TypeScript typecheck failed. Please fix the issues before pushing."
+  echo "To push anyway, use: git push --no-verify"
+  exit 1
+fi
+echo ""
+echo "✅ TypeScript typecheck passed."
+echo ""
+
+echo "✅ All checks passed! Proceeding with push."
+exit 0

@@ -20,5 +20,6 @@
       "@admin/*": ["app/javascript/admin/*"]
     }
   },
-  "include": ["app/javascript/admin/**/*", "vite.config.mts"]
+  "include": ["app/javascript/admin/**/*", "vite.config.mts"],
+  "exclude": ["app/javascript/admin/__tests__/**/*"]
 }
