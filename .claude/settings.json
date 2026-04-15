@@ -44,11 +44,6 @@
           },
           {
             "type": "command",
-            "command": "jq -r '.tool_input.file_path // .tool_response.filePath' | { read -r f; if echo \"$f\" | grep -qE '\\.(ts|tsx)$'; then repo=$(git rev-parse --show-toplevel 2>/dev/null); if [ -z \"$repo\" ]; then exit 0; fi; relf=\"${f#$repo/}\"; result=$(npx tsc --noEmit 2>&1); rc=$?; filtered=$(printf '%s' \"$result\" | grep -F \"$relf\" || true); if [ -n \"$filtered\" ]; then jq -n --arg ctx \"TypeScript errors in $relf (tsc exit $rc):\\n$filtered\" '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":$ctx}}'; fi; fi; }",
-            "statusMessage": "Running tsc type check..."
-          },
-          {
-            "type": "command",
             "command": "jq -r '.tool_input.file_path // .tool_response.filePath' | { read -r f; if echo \"$f\" | grep -qE '\\.(ts|tsx)$'; then result=$(npx eslint \"$f\" 2>&1); rc=$?; if [ $rc -ne 0 ]; then jq -n --arg ctx \"ESLint errors in $f. Fix them: $result\" '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":$ctx}}'; fi; fi; }",
             "statusMessage": "Running eslint..."
           },

@@ -149,7 +149,8 @@ export const EventsIndexPage = () => {
   // stuck on an empty table with broken pagination even though earlier pages
   // have data. Uses `replace: true` to scrub the bad URL from history.
   useEffect(() => {
-    if (meta.total_pages > 0 && filters.page > meta.total_pages) {
+    const currentPage = filters.page ?? 1
+    if (meta.total_pages > 0 && currentPage > meta.total_pages) {
       setSearchParams(prev => {
         const next = new URLSearchParams(prev)
         if (meta.total_pages <= 1) next.delete('page')
