@@ -104,4 +104,57 @@ class AdminPolicyTest < ActiveSupport::TestCase
 
     assert_not @policy.can_manage?("User")
   end
+
+  # owned_permission_ids / can_grant_permissions? pinned contract tests
+
+  test "owned_permission_ids returns distinct ids for a user with multiple roles sharing a permission" do
+    shared_perm = Permission.find_by(resource_type: "User", action: "read")
+    role_a = Role.create!(name: "test_role_a")
+    role_b = Role.create!(name: "test_role_b")
+    role_a.permissions << shared_perm
+    role_b.permissions << shared_perm
+    @user.roles << role_a
+    @user.roles << role_b
+
+    ids = @policy.owned_permission_ids
+    assert_equal ids.uniq, ids
+    assert_includes ids, shared_perm.id
+  end
+
+  test "can_grant_permissions? returns true when all ids are owned, Integer input" do
+    perm_read  = Permission.find_by(resource_type: "User", action: "read")
+    perm_write = Permission.find_by(resource_type: "User", action: "write")
+    role = Role.create!(name: "test_role_int")
+    role.permissions << perm_read
+    role.permissions << perm_write
+    @user.roles << role
+
+    assert @policy.can_grant_permissions?([perm_read.id, perm_write.id])
+  end
+
+  test "can_grant_permissions? returns true when all ids are owned, String input" do
+    perm_read  = Permission.find_by(resource_type: "User", action: "read")
+    perm_write = Permission.find_by(resource_type: "User", action: "write")
+    role = Role.create!(name: "test_role_str")
+    role.permissions << perm_read
+    role.permissions << perm_write
+    @user.roles << role
+
+    assert @policy.can_grant_permissions?([perm_read.id.to_s, perm_write.id.to_s])
+  end
+
+  test "can_grant_permissions? returns false when any id is not owned, String input" do
+    perm_read = Permission.find_by(resource_type: "User", action: "read")
+    role = Role.create!(name: "test_role_neg")
+    role.permissions << perm_read
+    @user.roles << role
+
+    assert_not @policy.can_grant_permissions?([perm_read.id.to_s, "99999"])
+  end
+
+  test "can_grant_permissions? returns true on empty input (nil, [], and [''])" do
+    assert @policy.can_grant_permissions?(nil)
+    assert @policy.can_grant_permissions?([])
+    assert @policy.can_grant_permissions?([""])
+  end
 end

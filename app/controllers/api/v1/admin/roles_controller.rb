@@ -54,10 +54,6 @@ module Api
           def role_params
             params.expect(role: %i[name description])
           end
-
-          def protect_system_role
-            render json: { error: "Forbidden" }, status: :forbidden if @role&.system_role?
-          end
       end
     end
   end

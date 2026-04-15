@@ -27,4 +27,13 @@ class AdminPolicy
   def can_manage?(resource_type)
     has_permission?(resource_type, "manage")
   end
+
+  def owned_permission_ids
+    @user.roles.joins(:permissions).distinct.pluck("permissions.id")
+  end
+
+  def can_grant_permissions?(permission_ids)
+    ids = Array(permission_ids).compact_blank.map(&:to_i)
+    (ids - owned_permission_ids).empty?
+  end
 end
