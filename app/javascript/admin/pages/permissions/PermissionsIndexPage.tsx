@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { permissionsApi, type Permission, type PaginationMeta } from '../../lib/api'
 import Pagination from '../../components/Pagination'
 import { usePagination, useClampPage } from '../../hooks/usePagination'
+import { AdminPageHeader } from '../../components/AdminPageHeader'
 
 export const PermissionsIndexPage = () => {
   const [permissions, setPermissions] = useState<Permission[]>([])
@@ -38,14 +39,7 @@ export const PermissionsIndexPage = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-end justify-between">
-        <div>
-          <p className="text-[10px] font-semibold tracking-[0.2em] text-slate-400"
-             style={{ fontFamily: 'DM Mono, monospace' }}>MANAGEMENT</p>
-          <h1 className="text-2xl font-bold text-slate-800"
-              style={{ fontFamily: 'Syne, sans-serif' }}>Permissions</h1>
-        </div>
-      </div>
+      <AdminPageHeader eyebrow="MANAGEMENT" title="Permissions" />
       {error && <p className="text-rose-500">{error}</p>}
       <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>

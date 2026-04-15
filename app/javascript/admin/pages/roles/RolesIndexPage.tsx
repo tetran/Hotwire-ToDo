@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { rolesApi, type Role, type PaginationMeta } from '../../lib/api'
 import Pagination from '../../components/Pagination'
 import { usePagination, useClampPage } from '../../hooks/usePagination'
+import { AdminPageHeader } from '../../components/AdminPageHeader'
+import { ErrorBanner } from '../../components/ErrorBanner'
 
 export const RolesIndexPage = () => {
   const navigate = useNavigate()
@@ -50,26 +52,20 @@ export const RolesIndexPage = () => {
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <div className="flex items-end justify-between">
-        <div>
-          <p className="text-[10px] font-semibold tracking-[0.2em] text-slate-400"
-             style={{ fontFamily: 'DM Mono, monospace' }}>MANAGEMENT</p>
-          <h1 className="text-2xl font-bold text-slate-800"
-              style={{ fontFamily: 'Syne, sans-serif' }}>Roles</h1>
-        </div>
-        <button
-          onClick={() => navigate('/admin/roles/new')}
-          className="rounded-lg bg-[#6366f1] px-4 py-2 text-sm font-medium text-white shadow-md shadow-indigo-500/20 transition hover:bg-[#5558e8]"
-        >
-          New Role
-        </button>
-      </div>
+      <AdminPageHeader
+        eyebrow="MANAGEMENT"
+        title="Roles"
+        action={
+          <button
+            onClick={() => navigate('/admin/roles/new')}
+            className="rounded-lg bg-[#6366f1] px-4 py-2 text-sm font-medium text-white shadow-md shadow-indigo-500/20 transition hover:bg-[#5558e8]"
+          >
+            New Role
+          </button>
+        }
+      />
 
-      {error && (
-        <div className="rounded-lg border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-400">
-          {error}
-        </div>
-      )}
+      <ErrorBanner message={error || null} />
 
       {/* Table */}
       <div className="rounded-xl border border-slate-200 bg-white shadow-sm">

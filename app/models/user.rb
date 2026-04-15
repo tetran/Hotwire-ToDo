@@ -77,7 +77,8 @@ class User < ApplicationRecord
   end
 
   delegate :admin?, :has_permission?, :can_read?, :can_write?,
-           :can_delete?, :can_manage?, to: :policy
+           :can_delete?, :can_manage?, :can_grant_permissions?,
+           :owned_permission_ids, to: :policy
 
   def force_destroy
     comments.destroy_all

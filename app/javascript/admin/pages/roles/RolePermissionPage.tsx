@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { rolesApi, permissionsApi, type Permission } from '../../lib/api'
+import { AdminPageHeader } from '../../components/AdminPageHeader'
+import { ErrorBanner } from '../../components/ErrorBanner'
 
 export const RolePermissionPage = () => {
   const { id } = useParams<{ id: string }>()
@@ -66,20 +68,9 @@ export const RolePermissionPage = () => {
   return (
     <div className="space-y-6">
       {/* Page header */}
-      <div className="flex items-end justify-between">
-        <div>
-          <p className="text-[10px] font-semibold tracking-[0.2em] text-slate-400"
-             style={{ fontFamily: 'DM Mono, monospace' }}>MANAGEMENT</p>
-          <h1 className="text-2xl font-bold text-slate-800"
-              style={{ fontFamily: 'Syne, sans-serif' }}>Role Permissions</h1>
-        </div>
-      </div>
+      <AdminPageHeader eyebrow="MANAGEMENT" title="Role Permissions" />
 
-      {error && (
-        <div className="rounded-lg border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-400">
-          {error}
-        </div>
-      )}
+      <ErrorBanner message={error || null} />
 
       <form onSubmit={handleSubmit}>
         {/* Permission groups */}

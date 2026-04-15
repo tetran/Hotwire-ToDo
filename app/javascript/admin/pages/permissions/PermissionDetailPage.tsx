@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { permissionsApi, type Permission } from '../../lib/api'
+import { AdminPageHeader } from '../../components/AdminPageHeader'
 
 export const PermissionDetailPage = () => {
   const { id } = useParams<{ id: string }>()
@@ -26,14 +27,7 @@ export const PermissionDetailPage = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-end justify-between">
-        <div>
-          <p className="text-[10px] font-semibold tracking-[0.2em] text-slate-400"
-             style={{ fontFamily: 'DM Mono, monospace' }}>MANAGEMENT</p>
-          <h1 className="text-2xl font-bold text-slate-800"
-              style={{ fontFamily: 'Syne, sans-serif' }}>Permission Detail</h1>
-        </div>
-      </div>
+      <AdminPageHeader eyebrow="MANAGEMENT" title="Permission Detail" />
       {error && <p className="text-rose-500">{error}</p>}
       {permission && (
         <>

@@ -27,16 +27,8 @@ module Api
             params.permit(permission_ids: [])[:permission_ids] || []
           end
 
-          def protect_system_role
-            render json: { error: "Forbidden" }, status: :forbidden if @role&.system_role?
-          end
-
           def protect_permission_escalation
-            new_ids = permission_ids_param.compact_blank.map(&:to_i)
-            return if new_ids.empty?
-
-            admin_ids = current_admin.roles.joins(:permissions).pluck("permissions.id").uniq
-            return if (new_ids - admin_ids).empty?
+            return if current_admin.can_grant_permissions?(permission_ids_param)
 
             render json: { error: "Forbidden" }, status: :forbidden
           end
