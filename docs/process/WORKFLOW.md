@@ -109,8 +109,8 @@ I2. **Implement** — Write code and tests. During development, run the domain t
 I3. **Testing** — Run the full test suite (`bin/rails test:all`) once to ensure all tests pass. In Rails 8 this is a single-process invocation that runs every file matching `test/**/*_test.rb` (unit and system tests share the same process and database connection). The full suite takes 5+ minutes — run it via `Bash` with `run_in_background: true` and wait for the completion notification. Never re-run the suite before the previous run's result is confirmed.
    - **Docs/config-only changes**: skip this step entirely. Proceed directly to I4.
    - → **Done when**: `bin/rails test:all` exits 0 (or skipped for docs/config-only changes).
-I4. **Local Review** — Ask codex (`/codex-review`) for review the changes.
-   - → **Done when**: `/codex-review` has responded and no blocker-level issues remain open.
+I4. **Local Review** — Dispatch reviewer subagents for code review. See `docs/process/DELEGATION.md` § I4 Parallel Review for the full procedure.
+   - → **Done when**: all dispatched reviewers have returned, findings are deduplicated, and no critical/high-severity issues remain unaddressed (or the user has confirmed they can be deferred).
 I5. **Create a Pull Request** — Create a PR and request review.
    - → **Done when**: the PR exists with a proper title/description and CI has been triggered.
 I6. **Review Response** — Execute **all sub-steps** of the [Review Response Protocol](#review-response-protocol) in order. Do NOT skip any.

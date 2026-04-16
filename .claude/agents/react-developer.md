@@ -3,8 +3,6 @@ name: react-developer
 description: "React Admin SPA (app/javascript/admin/) implementer. Handles pages, components, API client functions, and React tests under delegation from the orchestrator."
 tools: Glob, Grep, Read, Edit, Write, Bash, TodoWrite
 disallowedTools: Agent
-skills:
-  - hobo-codex-review-react
 model: sonnet
 color: green
 maxTurns: 50
@@ -43,7 +41,15 @@ If a must-read file does not exist, record it under Deviations and continue with
 5. **Write / extend React tests** following the existing `__tests__` patterns in the SPA.
 6. **Register the route and nav item.** Add the route to `app/javascript/admin/App.tsx` (path, element, guards) and the nav entry to `app/javascript/admin/components/AdminLayout.tsx`, following the existing patterns. For fork-join, the orchestrator has already created a stub route + temporary controller in `config/routes.rb`; your job is the frontend wiring.
 7. **Run the domain tests** named in the payload (React unit tests via the project's test runner, or system tests via `bin/rails test test/system/...`).
-8. **Review & fix (single pass).** After domain tests pass, run `/hobo-codex-review-react` against the diff once. Fix actionable findings within your domain, then re-run the domain test suite to confirm nothing broke. Report what was fixed and what was deferred (with reason) in Handoff Notes for orchestrator.
+8. **Review & fix (single pass).** After domain tests pass, perform a self-review using `codex review`:
+   a. Run `which codex` to verify the CLI is available. If not found, skip this step and note "codex CLI not installed — review skipped" in Handoff Notes for orchestrator.
+   b. Run `codex review "<request>" --base main` where `<request>` incorporates:
+      - ADMIN_UI conventions (see `docs/conventions/ADMIN_UI.md`)
+      - Design token usage (see `docs/design/admin/README.md`)
+      - api.ts patterns (see `app/javascript/admin/lib/api.ts`)
+      - Component structure and TypeScript correctness
+      - No Hotwire/Turbo in admin
+   c. Fix actionable findings within your domain, then re-run the domain test suite to confirm nothing broke. Report what was fixed and what was deferred (with reason) in Handoff Notes for orchestrator.
 9. **Return in the required format** (see below).
 
 ## Scope discipline

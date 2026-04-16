@@ -1,11 +1,15 @@
-# I2 Delegation to Domain Subagents
+# Delegation to Domain Subagents
 
-This document defines how the orchestrator may delegate **Implementation Phase Step I2 (Implement)** to domain-specific subagents.
+This document defines how the orchestrator may delegate **Implementation Phase Step I2 (Implement)** to domain-specific subagents, and how **I4 (Local Review)** dispatches parallel reviewer subagents.
 
-Two subagents are bundled with this repository:
+**Implementation (I2)**:
+- **`rails-developer`** (`.claude/agents/rails-developer.md`) — Rails backend work
+- **`react-developer`** (`.claude/agents/react-developer.md`) — React Admin SPA work
 
-- **`rails-developer`** (`.claude/agents/rails-developer.md`) — Rails backend work (controllers, models, services, migrations, Rails tests).
-- **`react-developer`** (`.claude/agents/react-developer.md`) — React Admin SPA work (`app/javascript/admin/`).
+**Review (I4)**:
+- **`rails-reviewer`** (`.claude/agents/rails-reviewer.md`) — Rails convention review
+- **`react-reviewer`** (`.claude/agents/react-reviewer.md`) — React convention review
+- **`architecture-reviewer`** (`.claude/agents/architecture-reviewer.md`) — Cross-cutting architecture review
 
 > **Delegation is opt-in and recommended**, not mandatory. The orchestrator chooses whether to delegate based on the Plan Excerpt. Small tasks, complex cross-cutting refactors, and anything the orchestrator can clearly express in one go may still be implemented directly.
 
@@ -16,7 +20,7 @@ Two subagents are bundled with this repository:
 | Writing the code and tests that fulfill the approved Plan Excerpt | Planning Phase (P1 - P5) |
 | Running the **domain test suite** for the changed area | Running the full test suite (I3) |
 | Reporting results in the required return format | Creating branches (I1) |
-| Respecting the Denylist (Scope is a guide, not a constraint) | Running `/codex-review` (I4) |
+| Respecting the Denylist (Scope is a guide, not a constraint) | Running I4 review (dispatched separately by orchestrator) |
 | | Creating PRs (I5) or Review Response (I6) |
 | | Updating `.progress/issue-*.md` |
 | | Editing `CLAUDE.md` or `docs/**` |
@@ -233,6 +237,64 @@ If any item is **fail**, apply the relevant Fallback Procedure case before proce
 - **Pilot reporting must distinguish observed paths from untouched paths.** When retrospecting a fork-join pilot, separate "paths that ran and produced evidence" from "paths the happy path did not exercise (negative evidence)". Fallback branches (e.g., post-join type-mismatch redispatch) that were **not** triggered in the pilot must be labeled as **untested** — do not claim the contract is validated if only the happy path ran.
 - **Smoke test selection is an explicit choice, not a default.** When Plan Phase calls for a manual smoke test after fork-join merge, the orchestrator must consciously choose between: (a) **automated** via `webapp-testing` (playwright) skill, (b) **manual** by asking the user, or (c) **skip** when the change is low-risk and covered by tests. Record the choice + reasoning in `.progress/issue-*.md` I2. Default preference is (a) when the feature has a visible UI path; fall back to (b) only when scope mismatch or cost makes automation impractical.
 
-### I4 Parallel Review (Rails + React)
+### I4 Parallel Review
 
-When a PR's diff covers **both Rails backend and React Admin SPA** files, the orchestrator should run `/hobo-codex-review-rails`, `/hobo-codex-review-react`, and `/hobo-codex-review-architecture` **in parallel** (three Skill/Agent calls in a single message) instead of a single generic `/codex-review`. This extends the parallelism acquired at I2 fork-join into I4 and improves review coverage for cross-cutting changes. Single-domain PRs still use the matching single skill.
+When I4 (Local Review) is reached, the orchestrator dispatches reviewer subagents in parallel:
+
+- **Cross-domain PRs** (Rails + React files changed): all three reviewers in parallel (3 Agent calls in a single message)
+- **Single-domain PRs**: matching domain reviewer + `architecture-reviewer` (2 Agent calls in a single message)
+- **Docs/config-only PRs**: `architecture-reviewer` only, or orchestrator judgment to skip I4
+
+#### Reviewer Agents
+
+| Agent | Focus |
+|---|---|
+| `rails-reviewer` | RESTful routing, ActiveRecord queries, authorization, test coverage |
+| `react-reviewer` | ADMIN_UI conventions, design tokens, api.ts, TypeScript |
+| `architecture-reviewer` | Domain model, security model, Rails/React boundary, route design |
+
+#### Reviewer Payload
+
+Each reviewer receives a minimal payload from the orchestrator. The payload provides **context** (PR title, changed files, scope option); the reviewer agent autonomously constructs the `codex review` request based on its embedded review focus and reference docs. The orchestrator does not specify the review request content.
+
+    Review the changes on the current branch against main.
+
+    ## Review Scope
+    --base main
+
+    ## PR Context
+    Title: <PR title or branch purpose>
+
+    ## Changed Files
+    <list of changed files for focus>
+
+#### Reviewer Return Format
+
+    ### Findings
+    #### [SEVERITY] CATEGORY — file:line — one-line summary
+    Detail (1-3 sentences).
+
+    ### Medium/Low Summary
+    - medium: N findings (categories: ...)
+    - low: N findings (categories: ...)
+
+    ### Reviewer Notes
+    <Scope gaps, caveats, observations.>
+
+#### Dedup Procedure
+
+After all reviewers return:
+1. Collect all `#### [SEVERITY]` findings into a single list.
+2. Group by dedup key: `file:line + category` (case-insensitive).
+3. When multiple reviewers flag the same location with the same category, keep the highest severity and discard duplicates.
+4. Present the deduplicated list to the user for triage.
+
+#### Fix Cycle
+
+- **Critical / High**: Must be addressed. Return to I2 if code changes needed. Fixes are serial (no parallel fix dispatch to avoid file conflicts).
+- **Medium / Low**: Logged in PR description. Do not block I5.
+- **Dismissed findings memo**: Record dismissed findings with reasoning in orchestrator context. On re-review, the memo prevents re-flagging.
+
+#### Re-review
+
+After fixes, a single re-review pass by `architecture-reviewer` only (not all three in parallel). This prevents dismissed findings from resurfacing 3x due to stateless re-review.
