@@ -43,13 +43,14 @@ If a must-read file does not exist, record it under Deviations and continue with
 7. **Run the domain tests** named in the payload (React unit tests via the project's test runner, or system tests via `bin/rails test test/system/...`).
 8. **Review & fix (single pass).** After domain tests pass, perform a self-review using `codex review`:
    a. Run `which codex` to verify the CLI is available. If not found, skip this step and note "codex CLI not installed — review skipped" in Handoff Notes for orchestrator.
-   b. Run `codex review "<request>" --base main` where `<request>` incorporates:
+   b. Run `codex review --base main` to review all branch changes. Note: `PROMPT` and `--base` are mutually exclusive in the codex CLI — do not pass a custom prompt when using `--base`.
+   c. Evaluate the codex output through the lens of this project's React Admin conventions:
       - ADMIN_UI conventions (see `docs/conventions/ADMIN_UI.md`)
       - Design token usage (see `docs/design/admin/README.md`)
       - api.ts patterns (see `app/javascript/admin/lib/api.ts`)
       - Component structure and TypeScript correctness
       - No Hotwire/Turbo in admin
-   c. Fix actionable findings within your domain, then re-run the domain test suite to confirm nothing broke. Report what was fixed and what was deferred (with reason) in Handoff Notes for orchestrator.
+   d. Fix actionable findings within your domain, then re-run the domain test suite to confirm nothing broke. Report what was fixed and what was deferred (with reason) in Handoff Notes for orchestrator.
 9. **Return in the required format** (see below).
 
 ## Scope discipline

@@ -45,9 +45,9 @@ Read these before constructing the review request:
    codex CLI was not found on this machine. Review could not be performed.
    ```
 2. Determine the review scope from the orchestrator payload. Default is `--base main`.
-3. Read the Reference Docs listed above to incorporate project-specific conventions into your review request.
-4. Build a `<request>` string incorporating the Review Focus checklist and referencing the convention docs.
-5. Run `codex review "<request>" <scope-option>` from the project root.
+3. Read the Reference Docs listed above to understand project-specific conventions.
+4. Run `codex review <scope-option>` from the project root (e.g., `codex review --base main`). Note: `PROMPT` and scope options (`--base`, `--uncommitted`, `--commit`) are mutually exclusive in the codex CLI — do not pass a custom prompt when using a scope option.
+5. Evaluate the codex output through the lens of the Review Focus checklist and Reference Docs above. Prioritize and categorize findings accordingly.
 6. Structure the output into the Required Return Format below.
 
 ## Required Return Format
