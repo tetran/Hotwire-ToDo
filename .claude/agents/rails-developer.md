@@ -45,13 +45,14 @@ If a must-read file does not exist, record it under Deviations and continue with
 6. **Run the domain test suite** named in the payload (e.g., `bin/rails test test/controllers/api/v1/admin/foos_controller_test.rb test/models/foo_test.rb`).
 7. **Review & fix (single pass).** After domain tests pass, perform a self-review using `codex review`:
    a. Run `which codex` to verify the CLI is available. If not found, skip this step and note "codex CLI not installed — review skipped" in Handoff Notes.
-   b. Run `codex review "<request>" --base main` where `<request>` incorporates:
+   b. Run `codex review --base main` to review all branch changes. Note: `PROMPT` and `--base` are mutually exclusive in the codex CLI — do not pass a custom prompt when using `--base`.
+   c. Evaluate the codex output through the lens of this project's Rails conventions:
       - RESTful routing (see `docs/conventions/ROUTING.md`)
       - ActiveRecord query patterns (see `docs/conventions/ACTIVE_RECORD_QUERIES.md`)
       - Fat model decomposition (see `docs/conventions/FAT_MODEL_DECOMPOSITION.md`)
       - Authorization (`require_capability!`, `current_user` scoping)
       - Test coverage (see `docs/conventions/TESTING.md`)
-   c. Fix actionable findings within your domain, then re-run the domain test suite to confirm nothing broke. Report what was fixed and what was deferred (with reason) in Handoff Notes.
+   d. Fix actionable findings within your domain, then re-run the domain test suite to confirm nothing broke. Report what was fixed and what was deferred (with reason) in Handoff Notes.
 8. **Return in the required format** (see below). Report the final command line and its last line of output verbatim.
 
 ## Scope discipline
