@@ -3,8 +3,6 @@ name: rails-developer
 description: "Rails 8 backend implementer. Handles controllers, models, services, migrations, and Rails tests under delegation from the orchestrator."
 tools: Glob, Grep, Read, Edit, Write, Bash, TodoWrite
 disallowedTools: Agent
-skills:
-  - hobo-codex-review-rails
 model: sonnet
 color: blue
 maxTurns: 50
@@ -45,7 +43,15 @@ If a must-read file does not exist, record it under Deviations and continue with
 4. **Minimal implementation (Green).** Write the smallest code that turns the tests green. Respect existing patterns (capability-based `can(resource, action)` authorization, `current_user`-scoped resource access, no direct ID access).
 5. **Refactor.** Remove duplication and improve clarity without adding scope. Keep changes within the Plan Excerpt scope.
 6. **Run the domain test suite** named in the payload (e.g., `bin/rails test test/controllers/api/v1/admin/foos_controller_test.rb test/models/foo_test.rb`).
-7. **Review & fix (single pass).** After domain tests pass, run `/hobo-codex-review-rails` against the diff once. Fix actionable findings within your domain, then re-run the domain test suite to confirm nothing broke. Report what was fixed and what was deferred (with reason) in Handoff Notes.
+7. **Review & fix (single pass).** After domain tests pass, perform a self-review using `codex review`:
+   a. Run `which codex` to verify the CLI is available. If not found, skip this step and note "codex CLI not installed — review skipped" in Handoff Notes.
+   b. Run `codex review "<request>" --base main` where `<request>` incorporates:
+      - RESTful routing (see `docs/conventions/ROUTING.md`)
+      - ActiveRecord query patterns (see `docs/conventions/ACTIVE_RECORD_QUERIES.md`)
+      - Fat model decomposition (see `docs/conventions/FAT_MODEL_DECOMPOSITION.md`)
+      - Authorization (`require_capability!`, `current_user` scoping)
+      - Test coverage (see `docs/conventions/TESTING.md`)
+   c. Fix actionable findings within your domain, then re-run the domain test suite to confirm nothing broke. Report what was fixed and what was deferred (with reason) in Handoff Notes.
 8. **Return in the required format** (see below). Report the final command line and its last line of output verbatim.
 
 ## Scope discipline
