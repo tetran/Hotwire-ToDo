@@ -62,3 +62,5 @@ Events::Recorder.call(action: :destroyed, metadata: task_snapshot)
 `<input type="date">` は `YYYY-MM-DD` を返すため、`Time.zone.parse` すると当日の `00:00:00` になる。`to` フィルタで `..time` とすると当日のイベントが除外される。
 
 範囲末端には `.end_of_day` を付ける。詳細は `docs/conventions/USER_UI.md` 「`<input type="date">` の日付フィルタは end_of_day を付ける」を参照。
+
+> ⚠ 管理画面のイベントログで date-range フィルタを実装する場合、`.end_of_day` だけでは足りない。Admin API は `Time.use_zone` ラッパーが無く `Time.zone == UTC` で動くため、`Time.zone.parse("2026-04-11").end_of_day` は **UTC** の 23:59:59 になり JST ユーザーの期待 (JST 23:59:59) とズレる。詳細は `docs/reference/TIMEZONE_POLICY.md` を参照。修正は Issue [#286](https://github.com/tetran/Hotwire-ToDo/issues/286)（管理画面のタイムゾーンポリシー策定）で追跡中。

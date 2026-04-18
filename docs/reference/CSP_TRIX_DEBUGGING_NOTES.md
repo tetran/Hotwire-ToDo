@@ -40,3 +40,31 @@ Vite HMR uses `document.createElement('style')` at runtime to inject updates, by
 ## Principle
 
 Prefer the nonce fix over `'unsafe-inline'` in production — it's the whole reason Rails' nonce machinery exists. Dev-only CSP relaxations (`:unsafe_inline if Rails.env.development?`) are a double-edged sword: they make Vite/HMR work, but they normalize prod-only CSP blocks that never surface in local testing.
+
+## Rules for dev-only CSP relaxation
+
+- Any `if Rails.env.development?` branch in `config/initializers/content_security_policy.rb` is a candidate hiding spot for a prod-only bug. When investigating a prod-only UI bug, **diff that file first** and note every dev-only branch.
+- Add a comment next to each relaxation linking it to the dev tool that requires it (e.g. Vite client HMR) so future readers can tell legitimate relaxations from accidental cover-ups.
+- Quick prod-parity check: comment out the dev branches and launch locally, or run `RAILS_ENV=production` with assets precompiled. Consider a CI-level or staging environment with the real prod CSP so the gap closes before deploy.
+
+## Diagnosing "CSS change isn't reflecting"
+
+> **Note**: this project uses BOTH Sprockets 4 (for `app/assets/stylesheets/*` — SHA-256 / 64 hex fingerprints) AND Vite 3 (for entry points under `app/javascript/` — shorter content hashes). Identify which pipeline serves the file you're debugging before applying the steps below; the diagnostic approach is the same but the tooling (`bin/rails tmp:clear` / `bin/rails assets:clobber` vs. Vite dev server restart / `bin/vite clobber`) differs.
+
+Before blaming Sprockets cache or asset pipeline, resolve the two candidate causes:
+
+1. **Wrong environment** (far more common) — the browser is loading from a different server than the one you edited (staging/prod while you're editing dev, or vice versa).
+2. **Stale local server cache** (rare in dev; Sprockets recomputes fingerprints on file change).
+
+### The fingerprint is a content hash — use it as ground truth
+
+`application-<64 hex chars>.css` — same fingerprint = byte-identical content, guaranteed. Different fingerprint = content changed. One query resolves the ambiguity:
+
+1. Grab the exact fingerprinted filename from DevTools Network tab.
+2. `curl -s <exact-fingerprinted-url> | grep <your-new-rule>` — does the file the browser fetches actually contain your change?
+
+Ask the user **which URL they're viewing and which server they're connected to** before suspecting cache. "It's not reflecting" has two meanings and they look identical from the user side.
+
+- If fingerprint didn't change after a file edit → the server serving that response did not see the edit. Either the server is stale, or you're hitting a different server.
+- Only after confirming the right server is serving stale content should you reach for `bin/rails tmp:clear` or server restart.
+
