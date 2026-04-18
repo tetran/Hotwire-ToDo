@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { rolesApi, permissionsApi, type Permission } from '../../lib/api'
+import { rolesApi, permissionsApi, type Permission, DROPDOWN_PER_PAGE } from '../../lib/api'
+import { reportTruncation } from '../../lib/sentry'
 import { AdminPageHeader } from '../../components/AdminPageHeader'
 import { ErrorBanner } from '../../components/ErrorBanner'
 
@@ -17,11 +18,17 @@ export const RolePermissionPage = () => {
     const fetchData = async () => {
       try {
         const [allResponse, assigned] = await Promise.all([
-          permissionsApi.list({ per_page: 100 }),
+          permissionsApi.list({ per_page: DROPDOWN_PER_PAGE }),
           rolesApi.getPermissions(Number(id)),
         ])
         setAllPermissions(allResponse.permissions)
         setAssignedIds(new Set(assigned.map(p => p.id)))
+        reportTruncation({
+          resource: 'permissions',
+          fetched: allResponse.permissions.length,
+          total_count: allResponse.meta?.total_count,
+          per_page: DROPDOWN_PER_PAGE,
+        })
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load permissions')
       } finally {

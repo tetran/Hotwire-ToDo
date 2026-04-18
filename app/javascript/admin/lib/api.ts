@@ -8,9 +8,8 @@ export interface PaginationMeta {
   total_pages: number
 }
 
-// TODO: Non-index pages fetch dropdown data with per_page: 100 hard cap.
-//       Add a Sentry warning when meta.total_count > fetched length so we
-//       notice before items are silently omitted from selection UIs.
+export const DROPDOWN_PER_PAGE = 100 as const
+
 export interface PaginationParams {
   page?: number
   per_page?: number

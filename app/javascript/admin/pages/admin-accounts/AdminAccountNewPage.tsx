@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { adminAccountsApi, rolesApi, Role } from '../../lib/api'
+import { adminAccountsApi, rolesApi, Role, DROPDOWN_PER_PAGE } from '../../lib/api'
+import { reportTruncation } from '../../lib/sentry'
 
 export const AdminAccountNewPage = () => {
   const navigate = useNavigate()
@@ -14,8 +15,16 @@ export const AdminAccountNewPage = () => {
   const [loadingRoles, setLoadingRoles] = useState(true)
 
   useEffect(() => {
-    rolesApi.list({ per_page: 100 })
-      .then(response => setRoles(response.roles))
+    rolesApi.list({ per_page: DROPDOWN_PER_PAGE })
+      .then(response => {
+        setRoles(response.roles)
+        reportTruncation({
+          resource: 'roles',
+          fetched: response.roles.length,
+          total_count: response.meta?.total_count,
+          per_page: DROPDOWN_PER_PAGE,
+        })
+      })
       .catch(() => setError('Failed to load roles'))
       .finally(() => setLoadingRoles(false))
   }, [])

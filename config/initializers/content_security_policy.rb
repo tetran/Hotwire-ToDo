@@ -23,6 +23,12 @@ Rails.application.configure do # rubocop:disable Metrics/BlockLength
     policy.font_src    :self, "https://fonts.gstatic.com"
     policy.img_src     :self, :data
     policy.connect_src :self
+    # Sentry browser SDK ingest endpoints (region-specific subdomains).
+    # CSP wildcards match only one label, so list each region we support.
+    policy.connect_src(*policy.connect_src,
+                       "https://*.ingest.sentry.io",
+                       "https://*.ingest.us.sentry.io",
+                       "https://*.ingest.de.sentry.io")
     if Rails.env.development?
       policy.connect_src(*policy.connect_src,
                          "ws://#{ViteRuby.config.host_with_port}",

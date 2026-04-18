@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { LlmModel, LlmProvider, PromptSet, llmModelsApi, llmProvidersApi, promptSetsApi, suggestionConfigsApi } from '../../lib/api'
+import { LlmModel, LlmProvider, PromptSet, llmModelsApi, llmProvidersApi, promptSetsApi, suggestionConfigsApi, DROPDOWN_PER_PAGE } from '../../lib/api'
+import { reportTruncation } from '../../lib/sentry'
 
 interface EntryRow {
   key: number
@@ -25,13 +26,33 @@ export const SuggestionConfigNewPage = () => {
     const loadData = async () => {
       try {
         const [providersResponse, psResponse] = await Promise.all([
-          llmProvidersApi.list({ per_page: 100 }),
-          promptSetsApi.list({ per_page: 100 }),
+          llmProvidersApi.list({ per_page: DROPDOWN_PER_PAGE }),
+          promptSetsApi.list({ per_page: DROPDOWN_PER_PAGE }),
         ])
+        reportTruncation({
+          resource: 'llm_providers',
+          fetched: providersResponse.llm_providers.length,
+          total_count: providersResponse.meta?.total_count,
+          per_page: DROPDOWN_PER_PAGE,
+        })
+        reportTruncation({
+          resource: 'prompt_sets',
+          fetched: psResponse.prompt_sets.length,
+          total_count: psResponse.meta?.total_count,
+          per_page: DROPDOWN_PER_PAGE,
+        })
         const activeProviders = providersResponse.llm_providers.filter((p: LlmProvider) => p.active)
         const allModelResponses = await Promise.all(
-          activeProviders.map((p: LlmProvider) => llmModelsApi.list(p.id, { per_page: 100 }))
+          activeProviders.map((p: LlmProvider) => llmModelsApi.list(p.id, { per_page: DROPDOWN_PER_PAGE }))
         )
+        allModelResponses.forEach(modelsResponse => {
+          reportTruncation({
+            resource: 'llm_models',
+            fetched: modelsResponse.llm_models.length,
+            total_count: modelsResponse.meta?.total_count,
+            per_page: DROPDOWN_PER_PAGE,
+          })
+        })
         setModels(allModelResponses.flatMap(r => r.llm_models).filter((m: LlmModel) => m.active))
         setPromptSets(psResponse.prompt_sets.filter((p: PromptSet) => p.active))
       } catch (err) {
