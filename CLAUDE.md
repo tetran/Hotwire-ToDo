@@ -26,7 +26,7 @@ projects and can be assigned to project members.
 - Follow RESTful principles strictly (see `docs/conventions/ROUTING.md`)
 - Create new controllers instead of custom actions
 - Maintain single responsibility per controller
-- **Rails命名quirk に注意**: singular resource → pluralized controller name など、`routes.rb` 編集時のgotcha があるので `docs/conventions/ROUTING.md` "Rails命名quirk" 節を参照。編集後は `bin/rails routes | grep <resource>` で controller 列を必ず確認。
+- **Rails naming quirks**: a singular `resource` infers a pluralized controller name (e.g. `resource :system_info` → `SystemInfosController`), plus other `routes.rb` gotchas — see `docs/conventions/ROUTING.md` "Rails命名quirk" section. After any `routes.rb` edit, run `bin/rails routes | grep <resource>` and confirm the controller column matches.
 
 ### Admin Panel (React SPA)
 
@@ -59,7 +59,7 @@ The admin panel (`/admin`) is a React SPA. When modifying the Admin area, do NOT
 
 - **Run domain test suites**: During development, run the domain test suite that covers your changes (e.g., `bin/rails test:task`). See `docs/conventions/TESTING.md` for available suites and guidelines. Run the full suite (`bin/rails test`) only once before requesting review.
 - **Wait for test results**: Once you start a test run, wait for it to complete before doing anything else. Never re-run tests without confirming the previous run's results. The full suite takes 5+ minutes — use `run_in_background` and wait for the completion notification.
-- **Rails 8 `bin/rails test:*` には地雷が多い**: `test:*` は Rake をバイパスして Thor に直送される（同名 rake task は dead code）、`test:all` は single-process 実行、`bin/rails test test:system` は **exit 0 のまま system tests が走らないサイレント失敗**。test 関連の rake task・runner 設定・CI ワークフローに触る前に `docs/conventions/TESTING.md` "Rails 8 `bin/rails test:*` の dispatch 罠" 節を必読。
+- **Rails 8 `bin/rails test:*` has multiple traps**: `test:*` bypasses Rake and dispatches through Thor (same-named rake tasks are dead code), `test:all` runs in a single process, and `bin/rails test test:system` is a **silent fail — exit 0 but system tests don't run**. Before touching test-related rake tasks, runner config, or CI workflows, read `docs/conventions/TESTING.md` "Rails 8 `bin/rails test:*` の dispatch 罠" section.
 
 ### Linting discipline
 
