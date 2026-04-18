@@ -28,8 +28,12 @@ class BasicAuthWithHealthcheckExemption
 end
 
 if ENV["BASIC_AUTH_USERNAME"].present? && ENV["BASIC_AUTH_PASSWORD"].present?
-  Rails.application.config.middleware.insert_after(
-    ActionDispatch::HostAuthorization,
+  # NOTE: anchor on Rack::Sendfile (unconditionally inserted by Rails 8's
+  # default_middleware_stack) rather than ActionDispatch::HostAuthorization,
+  # which is only inserted when config.hosts is non-empty. Production leaves
+  # config.hosts unset, so insert_after HostAuthorization would raise at boot.
+  Rails.application.config.middleware.insert_before(
+    Rack::Sendfile,
     BasicAuthWithHealthcheckExemption,
     ENV.fetch("BASIC_AUTH_USERNAME"),
     ENV.fetch("BASIC_AUTH_PASSWORD"),

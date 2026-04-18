@@ -29,7 +29,7 @@ namespace :test do
     ])
   end
 
-  desc "Run auth domain tests (User, sessions, passwords, email, TOTP)"
+  desc "Run auth domain tests (User, sessions, passwords, email, TOTP, Basic Auth middleware)"
   task auth: :environment do
     Rails::TestUnit::Runner.run_from_rake("test", [
       "test/models/user_test.rb",
@@ -40,6 +40,7 @@ namespace :test do
       "test/controllers/emails_controller_test.rb",
       "test/controllers/users_controller_test.rb",
       "test/controllers/totp",
+      "test/middleware",
     ])
   end
 
