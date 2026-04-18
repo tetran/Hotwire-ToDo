@@ -73,6 +73,10 @@ group :development, :test do
   gem "rubocop", require: false
   gem "rubocop-performance", require: false
   gem "rubocop-rails", require: false
+
+  # Security scanners — run in CI via .github/workflows/security.yml
+  gem "brakeman", require: false
+  gem "bundler-audit", require: false
 end
 
 group :development do
