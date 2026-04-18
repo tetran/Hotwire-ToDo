@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { adminAccountsApi, rolesApi, type Role } from '../../lib/api'
+import { adminAccountsApi, rolesApi, type Role, DROPDOWN_PER_PAGE } from '../../lib/api'
+import { reportTruncation } from '../../lib/sentry'
 
 export const AdminAccountRolesEditPage = () => {
   const { id } = useParams<{ id: string }>()
@@ -13,12 +14,18 @@ export const AdminAccountRolesEditPage = () => {
   useEffect(() => {
     if (!id) return
     Promise.all([
-      rolesApi.list({ per_page: 100 }),
+      rolesApi.list({ per_page: DROPDOWN_PER_PAGE }),
       adminAccountsApi.getRoles(Number(id)),
     ])
       .then(([rolesResponse, accountRoles]) => {
         setAllRoles(rolesResponse.roles)
         setSelectedRoleIds(accountRoles.map(r => r.id))
+        reportTruncation({
+          resource: 'roles',
+          fetched: rolesResponse.roles.length,
+          total_count: rolesResponse.meta?.total_count,
+          per_page: DROPDOWN_PER_PAGE,
+        })
       })
       .catch(err => setError(err instanceof Error ? err.message : 'Failed to load roles'))
       .finally(() => setLoading(false))

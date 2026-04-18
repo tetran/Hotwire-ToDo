@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
-import { dashboardApi, llmProvidersApi, DashboardData, LlmProvider } from '../lib/api'
+import { dashboardApi, llmProvidersApi, DashboardData, LlmProvider, DROPDOWN_PER_PAGE } from '../lib/api'
+import { reportTruncation } from '../lib/sentry'
 import StatCard from '../components/StatCard'
 import Avatar from '../components/Avatar'
 import Badge from '../components/Badge'
@@ -12,11 +13,17 @@ export const DashboardPage = () => {
   useEffect(() => {
     Promise.all([
       dashboardApi.get(),
-      llmProvidersApi.list({ per_page: 100 }),
+      llmProvidersApi.list({ per_page: DROPDOWN_PER_PAGE }),
     ])
       .then(([dashData, provData]) => {
         setData(dashData)
         setProviders(provData.llm_providers)
+        reportTruncation({
+          resource: 'llm_providers',
+          fetched: provData.llm_providers.length,
+          total_count: provData.meta?.total_count,
+          per_page: DROPDOWN_PER_PAGE,
+        })
       })
       .catch(err => setError(err instanceof Error ? err.message : 'Failed to load dashboard'))
   }, [])
