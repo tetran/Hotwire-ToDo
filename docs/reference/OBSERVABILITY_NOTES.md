@@ -60,7 +60,7 @@ Several non-obvious behaviors when using the Render MCP tools to investigate pro
 
 ### 1. Not every service emits `request` logs
 
-The Hobo Todo service (`srv-cmohgnocmk4c738sa610`) only emits `app` and `build` log types — **no `request` stream**. Filters like `type=["request"]` or `statusCode=["404"]` silently return `null`/empty even when the requests did happen, because no request-type log was emitted.
+The Hobo Todo service only emits `app` and `build` log types — **no `request` stream**. Filters like `type=["request"]` or `statusCode=["404"]` silently return `null`/empty even when the requests did happen, because no request-type log was emitted.
 
 ### 2. `statusCode` wildcards do not work
 
