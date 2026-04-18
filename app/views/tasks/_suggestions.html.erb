@@ -12,7 +12,7 @@
       <% if @suggestion_session.context.present? %>
         <div class="task-suggestion-summary__item">
           <dt><%= SuggestionSession.human_attribute_name(:context) %></dt>
-          <dd><%= simple_format(@suggestion_session.context) %></dd>
+          <dd><%= @suggestion_session.context %></dd>
         </div>
       <% end %>
       <% if @suggestion_session.start_date.present? %>
