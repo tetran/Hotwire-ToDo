@@ -79,7 +79,7 @@ class BasicAuthWithHealthcheckExemptionTest < ActiveSupport::TestCase
   end
 
   test "GET /up?foo=bar without Authorization header passes through" do
-    env = rack_env("/up", query_string: "foo=bar")
+    env = rack_env("/up?foo=bar")
     status, _headers, body = @middleware.call(env)
 
     assert_equal 200, status
@@ -100,10 +100,8 @@ class BasicAuthWithHealthcheckExemptionTest < ActiveSupport::TestCase
 
   private
 
-    def rack_env(path, method: "GET", basic_auth: nil, query_string: "")
+    def rack_env(path, method: "GET", basic_auth: nil)
       env = Rack::MockRequest.env_for(path, method: method)
-      env["PATH_INFO"] = path
-      env["QUERY_STRING"] = query_string
       if basic_auth
         encoded = Base64.strict_encode64(basic_auth.join(":"))
         env["HTTP_AUTHORIZATION"] = "Basic #{encoded}"
