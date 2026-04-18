@@ -78,9 +78,9 @@ config.middleware.insert_before Rack::Sendfile, BasicAuthWrapper
 class BasicAuthWrapper
   def initialize(app)
     @app = app
+    # Pass `app` (the downstream) to Rack::Auth::Basic, NOT self — otherwise recursion
+    # (Rack::Auth::Basic calls its wrapped app on successful auth).
     @auth = Rack::Auth::Basic.new(app, "Restricted") do |u, p|
-      # Pass the downstream @app to Rack::Auth::Basic, NOT self — otherwise recursion.
-      #
       # Single `&` (bitwise AND), NOT `&&`. `&&` short-circuits when the username check
       # fails, skipping the password compare and leaking a timing side channel that lets
       # an attacker distinguish "valid username + wrong password" from "wrong username".
