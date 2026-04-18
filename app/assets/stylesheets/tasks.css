@@ -362,7 +362,6 @@ a.show-task__due-date.show-task__editable {
   border-top: solid 1px var(--border);
 }
 .task-suggestion-summary__item dt {
-  font-weight: 600;
   color: var(--color-muted);
 }
 .task-suggestion-summary__item dd {
