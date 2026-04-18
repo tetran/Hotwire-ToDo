@@ -4,6 +4,31 @@
        data-controller="suggestion-abandonment"
        data-suggestion-abandonment-url-value="<%= tasks_suggestion_abandonment_path(last_request.suggestion_session) %>"
        data-suggestion-abandonment-response-id-value="<%= last_request.response.id %>">
+    <dl class="task-suggestion-summary">
+      <div class="task-suggestion-summary__item">
+        <dt><%= SuggestionSession.human_attribute_name(:goal) %></dt>
+        <dd><%= @suggestion_session.goal %></dd>
+      </div>
+      <% if @suggestion_session.context.present? %>
+        <div class="task-suggestion-summary__item">
+          <dt><%= SuggestionSession.human_attribute_name(:context) %></dt>
+          <dd><%= simple_format(@suggestion_session.context) %></dd>
+        </div>
+      <% end %>
+      <% if @suggestion_session.start_date.present? %>
+        <div class="task-suggestion-summary__item">
+          <dt><%= SuggestionSession.human_attribute_name(:start_date) %></dt>
+          <dd><%= l(@suggestion_session.start_date) %></dd>
+        </div>
+      <% end %>
+      <% if @suggestion_session.due_date.present? %>
+        <div class="task-suggestion-summary__item">
+          <dt><%= SuggestionSession.human_attribute_name(:due_date) %></dt>
+          <dd><%= l(@suggestion_session.due_date) %></dd>
+        </div>
+      <% end %>
+    </dl>
+
     <h2 class="task-suggestions-title"><%= t("tasks.suggestions.title") %></h2>
     <%= form_with url: tasks_batches_path,
                   data: { turbo_frame: "_top",
@@ -38,4 +63,6 @@
       </div>
     <% end %>
   </div>
+
+  <h2 class="task-suggestion-retry-title"><%= t("tasks.suggestions.retry_title") %></h2>
 <% end %>

@@ -337,11 +337,38 @@ a.show-task__due-date.show-task__editable {
 }
 
 .task-suggestions {
-  margin-top: var(--space-4);
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: solid 1px var(--border);
+}
+.task-suggestions-title,
+.task-suggestion-retry-title {
+  margin-top: var(--space-2);
+}
+.task-suggestion-summary {
+  margin: 0 0 var(--space-4);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--background-alt);
+  border: solid 1px var(--border);
+}
+.task-suggestion-summary__item {
+  display: grid;
+  grid-template-columns: minmax(5rem, 8rem) 1fr;
+  gap: var(--space-2);
+  padding: var(--space-1) 0;
+}
+.task-suggestion-summary__item + .task-suggestion-summary__item {
   border-top: solid 1px var(--border);
 }
-.task-suggestions-title {
-  margin-top: var(--space-2);
+.task-suggestion-summary__item dt {
+  font-weight: 600;
+  color: var(--color-muted);
+}
+.task-suggestion-summary__item dd {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 .task-suggestion {
   display: flex;

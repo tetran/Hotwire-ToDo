@@ -1,5 +1,11 @@
 <div id="form2" class="tab-panel <%= @show_suggestion ? "" : "hidden" %>" role="tabpanel" data-tabs-target="tabPanel">
   <div class="task-suggestion-form">
+    <%= turbo_frame_tag "task_suggestion" do %>
+      <% if @error_message %>
+        <%= render "shared/simple_error_message", message: @error_message %>
+      <% end %>
+    <% end %>
+
     <%= form_with model: @suggestion_session || SuggestionSession.new,
                   url: tasks_suggestions_path,
                   method: :post, # Always POST. Not PATCH.
@@ -39,12 +45,6 @@
                           "submit-target": "submit"
                         } %>
       </div>
-    <% end %>
-
-    <%= turbo_frame_tag "task_suggestion" do %>
-      <% if @error_message %>
-        <%= render "shared/simple_error_message", message: @error_message %>
-      <% end %>
     <% end %>
   </div>
 </div>
