@@ -139,6 +139,33 @@ namespace :tasks do
 end
 ```
 
+## Rails命名quirk — routing で踏みやすい地雷
+
+RESTful原則とは別に、Rails固有の命名規則で踏みやすい地雷がある。新規routes追加時は必ずチェック。
+
+### Singular resource はコントローラー名が複数化される
+
+`resource :system_info` (singular) の場合、Railsは `SystemInfosController` を推論する（`SystemInfoController` **ではない**）。
+
+```ruby
+# config/routes.rb
+resource :system_info
+# → SystemInfosController を期待される（複数形）
+
+# 単数形のコントローラー名を使いたい場合は明示的に指定
+resource :system_info, controller: "system_info"
+```
+
+### 検証手順
+
+`config/routes.rb` を編集したら必ず:
+
+```sh
+bin/rails routes | grep <resource>
+```
+
+を走らせて、**controller 列が実在するコントローラークラスと一致している** ことを確認する。この確認を怠ると `NameError: uninitialized constant` がランタイムまで出てこない。
+
 ## まとめ
 
 - RESTful設計を最優先とする

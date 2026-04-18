@@ -2,6 +2,7 @@
 
 ## Task Workflow
   - ALWAYS follow the workflow documented in `docs/process/WORKFLOW.md`. When you enter a new phase, make sure you are following the workflow.
+  - **Investigation → fix branch-fit check**: when an "investigate X" session starts producing Edits, check `git branch --show-current` before the **first** Edit. If the branch name contains `issue-\d+` or any scope marker, verify the change falls within that scope before writing. When a one-file fix grows into a two-file change, treat it as the scope-creep alarm bell — re-check fit before the second Edit lands. If the fix doesn't belong on the current branch, stop and offer: "this doesn't fit the current `issue-XXX` branch. Create a new branch from main, or bundle here?" — ask before proceeding.
 
 ## Architecture Overview
 
@@ -18,12 +19,14 @@ projects and can be assigned to project members.
 
 - All resource access scoped through `current_user` — no direct ID access
 - Proper validation at model level
+- **Pilot-stage app gating uses Rack-level Basic Auth, not controller-level**. The Rails pipeline is `Rack middleware → Routing → Controller`, so `http_basic_authenticate_with` on `ApplicationController` never fires against scanner traffic hitting non-existent paths (`/wp-admin`, `/.env`, `/*.php`) — those end in `RoutingError` and flood logs. Basic Auth must live at the Rack layer, anchored on `Rack::Sendfile` (unconditional in all envs; `ActionDispatch::HostAuthorization` is conditional on `config.hosts` being non-empty and is ABSENT in production by default). See `docs/reference/RACK_MIDDLEWARE_NOTES.md` for the full pattern and the Pilot-vs-Public (Basic Auth vs Rack::Attack) gating decision.
 
 ### Routing Guidelines
 
 - Follow RESTful principles strictly (see `docs/conventions/ROUTING.md`)
 - Create new controllers instead of custom actions
 - Maintain single responsibility per controller
+- **Rails命名quirk に注意**: singular resource → pluralized controller name など、`routes.rb` 編集時のgotcha があるので `docs/conventions/ROUTING.md` "Rails命名quirk" 節を参照。編集後は `bin/rails routes | grep <resource>` で controller 列を必ず確認。
 
 ### Admin Panel (React SPA)
 
@@ -56,6 +59,12 @@ The admin panel (`/admin`) is a React SPA. When modifying the Admin area, do NOT
 
 - **Run domain test suites**: During development, run the domain test suite that covers your changes (e.g., `bin/rails test:task`). See `docs/conventions/TESTING.md` for available suites and guidelines. Run the full suite (`bin/rails test`) only once before requesting review.
 - **Wait for test results**: Once you start a test run, wait for it to complete before doing anything else. Never re-run tests without confirming the previous run's results. The full suite takes 5+ minutes — use `run_in_background` and wait for the completion notification.
+- **Rails 8 `bin/rails test:*` には地雷が多い**: `test:*` は Rake をバイパスして Thor に直送される（同名 rake task は dead code）、`test:all` は single-process 実行、`bin/rails test test:system` は **exit 0 のまま system tests が走らないサイレント失敗**。test 関連の rake task・runner 設定・CI ワークフローに触る前に `docs/conventions/TESTING.md` "Rails 8 `bin/rails test:*` の dispatch 罠" 節を必読。
+
+### Linting discipline
+
+- **Pre-existing rubocop offences on touched files**: when a PostToolUse rubocop hook fails on lines you did not touch, do NOT silently auto-fix. (1) `git stash`, (2) `bundle exec rubocop <file>` to confirm pre-existing, (3) `git stash pop`, (4) present the user with options (fix in same commit / split / skip) before editing. `-A` autocorrect is OK for `Style/*` cops; NOT for `Lint/*`, `Metrics/*`, `Security/*` — those may indicate real bugs and need deliberate fixes.
+- **`eslint-disable-next-line <rule>` requires the rule to be configured**. If `eslint-plugin-react-hooks` is not installed, `// eslint-disable-next-line react-hooks/exhaustive-deps` itself becomes a new ESLint error, not a no-op. Before reaching for a disable comment, grep `.eslintrc*` / `eslint.config.*` / `package.json` to confirm the rule exists. Default to restructuring the code (derive a primitive dep key, `useCallback`, etc.) over suppressing.
 
 ## Documentation
 
