@@ -57,6 +57,17 @@ Then open http://localhost:3000
 
 The admin panel is available at http://localhost:3000/admin
 
+### Security scanning (local)
+
+Before pushing, you can run the same security scanners the CI enforces:
+
+```bash
+bundle exec brakeman --no-pager -q -w2
+bundle exec bundle-audit check --update
+```
+
+Both commands exit non-zero if they find issues.
+
 ## Environment variables
 
 This application uses OpenAI API to generate todo list items. You need to set
