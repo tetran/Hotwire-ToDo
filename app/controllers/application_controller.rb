@@ -10,11 +10,6 @@ class ApplicationController < ActionController::Base
 
   helper_method :current_user
 
-  if ENV["BASIC_AUTH_USERNAME"].present? && ENV["BASIC_AUTH_PASSWORD"].present?
-    http_basic_authenticate_with name: ENV.fetch("BASIC_AUTH_USERNAME", nil),
-                                 password: ENV.fetch("BASIC_AUTH_PASSWORD", nil)
-  end
-
   private
 
     def in_time_zone_and_locale(&)
