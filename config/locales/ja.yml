@@ -292,6 +292,7 @@ ja:
       task_name: "タスク名"
       description: "説明"
       create_tasks: "タスクを作成"
+      retry_title: "もう一度提案してもらう"
     assignees:
       unassign: "割り当て解除"
       you: "自分"

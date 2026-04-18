@@ -248,6 +248,7 @@ en:
       task_name: "Task name"
       description: "Description"
       create_tasks: "Create tasks"
+      retry_title: "Suggest again"
     assignees:
       unassign: "Unassign"
       you: "You"
