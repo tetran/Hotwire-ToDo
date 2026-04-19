@@ -35,7 +35,7 @@ export const LlmProviderWorkspacePage = () => {
     const controller = new AbortController()
 
     Promise.all([
-      llmProvidersApi.get(providerId),
+      llmProvidersApi.get(providerId, { signal: controller.signal }),
       llmModelsApi.list(providerId, { per_page: DROPDOWN_PER_PAGE }, { signal: controller.signal }),
     ])
       .then(([providerData, modelsResponse]) => {

@@ -79,7 +79,7 @@ export const LlmProvidersIndexPage = () => {
 
             {/* Model count */}
             <div className="mt-3 text-xs text-slate-400">
-              {provider.llm_models_count} model(s)
+              {provider.llm_models_count ?? 0} model(s)
             </div>
           </Link>
         ))}

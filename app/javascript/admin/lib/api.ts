@@ -342,7 +342,7 @@ export const llmProvidersApi = {
     const qs = query.toString()
     return api.get<LlmProviderListResponse>(qs ? `/llm_providers?${qs}` : '/llm_providers', options)
   },
-  get: (id: number) => api.get<LlmProvider>(`/llm_providers/${id}`),
+  get: (id: number, options?: { signal?: AbortSignal }) => api.get<LlmProvider>(`/llm_providers/${id}`, options),
   update: (id: number, data: UpdateLlmProviderInput) => api.patch<LlmProvider>(`/llm_providers/${id}`, { llm_provider: data }),
   getAvailableModels: (id: number) => api.get<AvailableModel[]>(`/llm_providers/${id}/available_models`),
 }
