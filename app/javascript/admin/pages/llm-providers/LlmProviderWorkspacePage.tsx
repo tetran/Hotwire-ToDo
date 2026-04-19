@@ -41,6 +41,7 @@ export const LlmProviderWorkspacePage = () => {
         if (!controller.signal.aborted) {
           setProvider(providerData)
           setModels(modelsResponse.llm_models)
+          setError('')
         }
       })
       .catch(err => {

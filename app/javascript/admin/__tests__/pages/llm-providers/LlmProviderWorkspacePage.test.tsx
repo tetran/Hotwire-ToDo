@@ -140,4 +140,32 @@ describe('LlmProviderWorkspacePage', () => {
       expect(screen.getByText('Network error')).toBeInTheDocument()
     })
   })
+
+  it('clears stale error message when a successful re-fetch follows a delete failure', async () => {
+    mockDelete.mockRejectedValueOnce(new Error('Delete failed'))
+    mockDelete.mockResolvedValueOnce(undefined)
+    vi.spyOn(window, 'confirm').mockReturnValue(true)
+    renderPage()
+
+    await waitFor(() => {
+      expect(screen.getByText('gpt-4o')).toBeInTheDocument()
+    })
+
+    // First click: delete fails → stale error is shown
+    fireEvent.click(screen.getByRole('button', { name: 'Delete' }))
+    await waitFor(() => {
+      expect(screen.getByText('Delete failed')).toBeInTheDocument()
+    })
+
+    // Second click: delete succeeds → refreshKey++ triggers re-fetch
+    fireEvent.click(screen.getByRole('button', { name: 'Delete' }))
+    await waitFor(() => {
+      expect(mockDelete).toHaveBeenCalledTimes(2)
+    })
+
+    // Stale error must be cleared after the successful re-fetch
+    await waitFor(() => {
+      expect(screen.queryByText('Delete failed')).not.toBeInTheDocument()
+    })
+  })
 })
