@@ -1,10 +1,11 @@
 import { test, expect } from '../fixtures/coverage'
+import { TEST_PASSWORD } from '../fixtures/auth'
 
 test.describe('Admin アカウント管理', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/admin/login')
     await page.locator('input[type="email"]').fill('admin@example.com')
-    await page.locator('input[type="password"]').fill('password')
+    await page.locator('input[type="password"]').fill(TEST_PASSWORD)
     await page.getByRole('button', { name: 'Login' }).click()
     await expect(page).toHaveURL('/admin', { timeout: 10000 })
   })
@@ -31,8 +32,8 @@ test.describe('Admin アカウント管理', () => {
     await page.locator('input[type="text"]').fill(newName)
 
     const passwordInputs = page.locator('input[type="password"]')
-    await passwordInputs.nth(0).fill('password123')
-    await passwordInputs.nth(1).fill('password123')
+    await passwordInputs.nth(0).fill(TEST_PASSWORD)
+    await passwordInputs.nth(1).fill(TEST_PASSWORD)
 
     // Select a role with admin access (user_viewer has Admin:read)
     await page.getByText('user_viewer').click()
@@ -56,8 +57,8 @@ test.describe('Admin アカウント管理', () => {
     await page.locator('input[type="text"]').fill(revokeName)
 
     const passwordInputs = page.locator('input[type="password"]')
-    await passwordInputs.nth(0).fill('password123')
-    await passwordInputs.nth(1).fill('password123')
+    await passwordInputs.nth(0).fill(TEST_PASSWORD)
+    await passwordInputs.nth(1).fill(TEST_PASSWORD)
 
     await page.getByText('user_viewer').click()
     await page.getByRole('button', { name: 'Create' }).click()

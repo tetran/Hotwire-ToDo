@@ -106,31 +106,38 @@ Rails.logger.debug "Assigned permissions to roles"
 
 # Create admin users based on environment
 if Rails.env.local?
-  # Development environment - create default admin
+  # Development environment - create default admin.
+  # Chrome の weak password 警告を踏まないよう、test/test_helper.rb の
+  # TEST_PASSWORD と同じ値を使う。再実行時も既知の値へ戻すため明示 update する。
+  seed_password = "HoboTest!Str0ng#2024"
+
   admin_user = User.find_or_create_by!(email: "admin@example.com") do |user|
-    user.password = "password"
+    user.password = seed_password
     user.name = "Admin User"
   end
+  admin_user.update!(password: seed_password)
 
   # Assign admin role to the admin user
   admin_user.roles << admin_role unless admin_user.roles.include?(admin_role)
 
   # E2E テスト用のユーザーを作成
   viewer_user = User.find_or_create_by!(email: "viewer@example.com") do |user|
-    user.password = "password"
+    user.password = seed_password
     user.name = "Viewer User"
   end
+  viewer_user.update!(password: seed_password)
   viewer_user.roles << user_viewer_role unless viewer_user.roles.include?(user_viewer_role)
 
   llm_admin_user = User.find_or_create_by!(email: "llmadmin@example.com") do |user|
-    user.password = "password"
+    user.password = seed_password
     user.name = "LLM Admin User"
   end
+  llm_admin_user.update!(password: seed_password)
   llm_admin_user.roles << llm_admin_role unless llm_admin_user.roles.include?(llm_admin_role)
 
-  Rails.logger.debug "Created admin user: admin@example.com (password: password)"
-  Rails.logger.debug "Created viewer user: viewer@example.com (password: password)"
-  Rails.logger.debug "Created llm_admin user: llmadmin@example.com (password: password)"
+  Rails.logger.debug { "Created admin user: admin@example.com (password: #{seed_password})" }
+  Rails.logger.debug { "Created viewer user: viewer@example.com (password: #{seed_password})" }
+  Rails.logger.debug { "Created llm_admin user: llmadmin@example.com (password: #{seed_password})" }
 elsif Rails.env.production?
   # Production/Staging environment - create master user with environment variables
   master_email = ENV.fetch("MASTER_USER_EMAIL", nil)
