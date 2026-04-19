@@ -1,10 +1,11 @@
 import { test, expect } from '../fixtures/coverage'
+import { TEST_PASSWORD } from '../fixtures/auth'
 
 test.describe('Admin LLM プロバイダー管理', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/admin/login')
     await page.locator('input[type="email"]').fill('admin@example.com')
-    await page.locator('input[type="password"]').fill('password')
+    await page.locator('input[type="password"]').fill(TEST_PASSWORD)
     await page.getByRole('button', { name: 'Login' }).click()
     await expect(page).toHaveURL('/admin', { timeout: 10000 })
   })
