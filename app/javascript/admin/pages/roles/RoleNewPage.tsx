@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { rolesApi } from '../../lib/api'
 import { AdminPageHeader } from '../../components/AdminPageHeader'
 import { ErrorBanner } from '../../components/ErrorBanner'
+import { AdminCancelButton } from '../../components/AdminCancelButton'
 
 export const RoleNewPage = () => {
   const navigate = useNavigate()
@@ -56,13 +57,7 @@ export const RoleNewPage = () => {
             </div>
           </div>
           <div className="mt-6 flex items-center justify-end gap-3">
-            <button
-              type="button"
-              onClick={() => navigate('/admin/roles')}
-              className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
-            >
-              Cancel
-            </button>
+            <AdminCancelButton to="/admin/roles" />
             <button
               type="submit"
               disabled={submitting}

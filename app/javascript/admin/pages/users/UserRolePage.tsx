@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { usersApi, rolesApi, Role, DROPDOWN_PER_PAGE } from '../../lib/api'
 import { reportTruncation } from '../../lib/sentry'
+import { AdminCancelButton } from '../../components/AdminCancelButton'
 
 export const UserRolePage = () => {
   const { id } = useParams<{ id: string }>()
@@ -91,10 +92,7 @@ export const UserRolePage = () => {
             ))}
           </ul>
           <div className="mt-6 flex items-center justify-end gap-2">
-            <button type="button" onClick={() => navigate('/admin/users')}
-              className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50">
-              Back
-            </button>
+            <AdminCancelButton to="/admin/users" />
             <button type="submit"
               className="rounded-lg bg-[#6366f1] px-4 py-2 text-sm font-medium text-white shadow-md shadow-indigo-500/20 transition hover:bg-[#5558e8]">
               Save

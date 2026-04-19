@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { permissionsApi, type Permission } from '../../lib/api'
 import { AdminPageHeader } from '../../components/AdminPageHeader'
+import { AdminBackLink } from '../../components/AdminBackLink'
 
 export const PermissionDetailPage = () => {
   const { id } = useParams<{ id: string }>()
@@ -27,6 +28,7 @@ export const PermissionDetailPage = () => {
 
   return (
     <div className="space-y-6">
+      <AdminBackLink to="/admin/permissions" label="Permissions" />
       <AdminPageHeader eyebrow="MANAGEMENT" title="Permission Detail" />
       {error && <p className="text-rose-500">{error}</p>}
       {permission && (
@@ -82,12 +84,6 @@ export const PermissionDetailPage = () => {
           </div>
         </>
       )}
-      <div>
-        <Link
-          to="/admin/permissions"
-          className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
-        >Back to list</Link>
-      </div>
     </div>
   )
 }

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { adminAccountsApi, rolesApi, Role, DROPDOWN_PER_PAGE } from '../../lib/api'
 import { reportTruncation } from '../../lib/sentry'
+import { AdminCancelButton } from '../../components/AdminCancelButton'
 
 export const AdminAccountNewPage = () => {
   const navigate = useNavigate()
@@ -125,10 +126,7 @@ export const AdminAccountNewPage = () => {
             </div>
           </div>
           <div className="mt-6 flex items-center justify-end gap-2">
-            <Link to="/admin/admin-accounts"
-              className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50">
-              Cancel
-            </Link>
+            <AdminCancelButton to="/admin/admin-accounts" />
             <button type="submit"
               className="rounded-lg bg-[#6366f1] px-4 py-2 text-sm font-medium text-white shadow-md shadow-indigo-500/20 transition hover:bg-[#5558e8]">
               Create

@@ -165,6 +165,40 @@ className="bg-[#0f1117]"      // ハードコード
   bg-{color}-500/15 text-{color}-400 ring-1 ring-{color}-500/30">
 ```
 
+### 4.5 戻るナビゲーション
+
+admin画面の「前画面に戻る」UIは意味論で2種に分離。
+
+| ページ種別 | 使うコンポーネント | 配置 | 例 |
+|---|---|---|---|
+| Detail / 閲覧 | `<AdminBackLink>` | ページヘッダー左上（`space-y-6` の先頭子要素） | AdminAccountDetail |
+| ネスト Index（親が Detail） | `<AdminBackLink>` | ページヘッダー左上（同上）、label は親リソース単数形 | LlmModels（親: LlmProvider Detail） |
+| Edit / New / 設定フォーム | `<AdminCancelButton>` | フォームフッター、Saveボタンの左隣 | UserEdit, RolePermission |
+| Top-level Index / Dashboard 等 | （無し） | — | 親が存在しないページ |
+
+**AdminBackLink**：`<Link>` ベース。props: `to`（親ルート）, `label`（親リソース名）。例：`<AdminBackLink to="/admin/users" label="Users" />`。ネスト Index の場合は親 Detail を指し、label は親リソース単数形（例：`<AdminBackLink to="/admin/llm-providers/:id" label="Provider" />`）。アクセシビリティのため `aria-label="Back to {label}"` を内部で自動付与。
+
+**AdminCancelButton**：`<button type="button">` + `useNavigate` ベース。props: `to`。固定ラベル "Cancel"。`<Link>` を使わないのは、Cmd/Ctrl-click で別タブに「親リストを開く」挙動が Cancel の意味論（編集破棄して同コンテキスト離脱）と矛盾するため。
+
+#### Semantic Invariants
+
+| 項目 | AdminBackLink | AdminCancelButton |
+|---|---|---|
+| HTML | `<a>` (react-router `<Link>`) | `<button type="button">` |
+| role | `link` | `button` |
+| Cmd/Ctrl-click | 新タブで開く（意図通り） | 無効（意図通り） |
+| keyboard | Tab + Enter | Tab + Enter/Space |
+| form submit risk | N/A | `type="button"` で防止 |
+
+**Do**：
+- Detail ページはヘッダー領域の上に `AdminBackLink` を1つだけ配置
+- Edit/New フォームは `AdminCancelButton` をフォームフッターでプライマリアクションの左隣に配置
+
+**Don't**：
+- Cancel を `<Link>` に置き換えない
+- Back と Cancel を同じページで併用しない
+- Index / Dashboard / Login 等に戻るUIを追加しない
+
 ---
 
 ## 5. レイアウト

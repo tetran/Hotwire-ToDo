@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { llmModelsApi, LlmModel, type PaginationMeta } from '../../lib/api'
+import { AdminBackLink } from '../../components/AdminBackLink'
 import Badge from '../../components/Badge'
 import Pagination from '../../components/Pagination'
 import { usePagination, useClampPage } from '../../hooks/usePagination'
@@ -54,6 +55,7 @@ export const LlmModelsIndexPage = () => {
 
   return (
     <div className="space-y-6">
+      <AdminBackLink to={`/admin/llm-providers/${providerId}`} label="Provider" />
       {/* Page header */}
       <div className="flex items-end justify-between">
         <div>
@@ -66,12 +68,6 @@ export const LlmModelsIndexPage = () => {
             className="rounded-lg bg-[#6366f1] px-4 py-2 text-sm font-medium text-white shadow-md shadow-indigo-500/20 transition hover:bg-[#5558e8]"
           >
             New Model
-          </Link>
-          <Link
-            to={`/admin/llm-providers/${providerId}`}
-            className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
-          >
-            Back
           </Link>
         </div>
       </div>

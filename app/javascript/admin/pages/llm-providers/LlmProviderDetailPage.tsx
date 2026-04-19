@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { llmProvidersApi, LlmProvider } from '../../lib/api'
 import Badge from '../../components/Badge'
+import { AdminBackLink } from '../../components/AdminBackLink'
 
 export const LlmProviderDetailPage = () => {
   const { id } = useParams<{ id: string }>()
@@ -27,6 +28,7 @@ export const LlmProviderDetailPage = () => {
 
   return (
     <div className="space-y-6">
+      <AdminBackLink to="/admin/llm-providers" label="LLM Providers" />
       {/* Page header */}
       <div className="flex items-end justify-between">
         <div>
@@ -45,12 +47,6 @@ export const LlmProviderDetailPage = () => {
             className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
           >
             Manage Models
-          </Link>
-          <Link
-            to="/admin/llm-providers"
-            className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
-          >
-            Back to list
           </Link>
         </div>
       </div>

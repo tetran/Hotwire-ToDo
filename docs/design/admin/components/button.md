@@ -32,3 +32,5 @@ text-slate-500 transition-colors hover:bg-white/5 hover:text-slate-300
 text-xs text-[#6366f1] hover:underline
 ```
 
+※ 戻る系UI（`AdminBackLink` / `AdminCancelButton`）は [`docs/conventions/ADMIN_UI.md` §4.5](../../../conventions/ADMIN_UI.md#45-戻るナビゲーション) を参照。
+
