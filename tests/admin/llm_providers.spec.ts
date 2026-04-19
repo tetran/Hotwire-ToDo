@@ -35,7 +35,7 @@ test.describe('Admin LLM プロバイダー管理', () => {
     // 詳細情報が表示されること
     await expect(page.getByText('API Key')).toBeVisible()
     await expect(page.getByRole('rowheader', { name: 'Active' })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Back to list' })).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Back to LLM Providers' })).toBeVisible()
     await expect(page.getByRole('link', { name: 'Edit' })).toBeVisible()
   })
 })
