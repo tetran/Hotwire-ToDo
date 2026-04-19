@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test';
+import { defineConfig, devices } from '@playwright/test'
 
 /**
  * Read environment variables from file.
@@ -53,7 +53,8 @@ export default defineConfig({
   webServer: {
     command: 'bin/rails server',
     url: 'http://localhost:3000',
-    reuseExistingServer: !process.env.CI,
+    env: { RAILS_ENV: 'test' },
+    reuseExistingServer: false,
     timeout: 120000,
   },
-});
+})
