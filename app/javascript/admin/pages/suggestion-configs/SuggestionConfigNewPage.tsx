@@ -1,7 +1,8 @@
 import { FormEvent, useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { LlmModel, LlmProvider, PromptSet, llmModelsApi, llmProvidersApi, promptSetsApi, suggestionConfigsApi, DROPDOWN_PER_PAGE } from '../../lib/api'
 import { reportTruncation } from '../../lib/sentry'
+import { AdminCancelButton } from '../../components/AdminCancelButton'
 
 interface EntryRow {
   key: number
@@ -198,12 +199,7 @@ export const SuggestionConfigNewPage = () => {
         </div>
 
         <div className="flex justify-end gap-3">
-          <Link
-            to="/admin/suggestion-configs"
-            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
-          >
-            Cancel
-          </Link>
+          <AdminCancelButton to="/admin/suggestion-configs" />
           <button
             type="submit"
             disabled={submitting || weightsTotal !== 100}

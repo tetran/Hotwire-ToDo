@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { usersApi } from '../../lib/api'
+import { AdminCancelButton } from '../../components/AdminCancelButton'
 
 export const UserNewPage = () => {
   const navigate = useNavigate()
@@ -68,10 +69,7 @@ export const UserNewPage = () => {
             </div>
           </div>
           <div className="mt-6 flex items-center justify-end gap-2">
-            <Link to="/admin/users"
-              className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50">
-              Cancel
-            </Link>
+            <AdminCancelButton to="/admin/users" />
             <button type="submit"
               className="rounded-lg bg-[#6366f1] px-4 py-2 text-sm font-medium text-white shadow-md shadow-indigo-500/20 transition hover:bg-[#5558e8]">
               Create

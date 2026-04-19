@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { SuggestionConfig, suggestionConfigsApi } from '../../lib/api'
 import Badge from '../../components/Badge'
+import { AdminBackLink } from '../../components/AdminBackLink'
 
 export const SuggestionConfigDetailPage = () => {
   const { id } = useParams<{ id: string }>()
@@ -21,6 +22,7 @@ export const SuggestionConfigDetailPage = () => {
 
   return (
     <div className="space-y-6">
+      <AdminBackLink to="/admin/suggestion-configs" label="Suggestion Configs" />
       {/* Header */}
       <div className="flex items-end justify-between">
         <div>
@@ -31,12 +33,6 @@ export const SuggestionConfigDetailPage = () => {
             Config #{config.id}
           </h1>
         </div>
-        <Link
-          to="/admin/suggestion-configs"
-          className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-50"
-        >
-          Back to list
-        </Link>
       </div>
 
       {/* Info */}

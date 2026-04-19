@@ -4,6 +4,7 @@ import { adminAccountsApi, type AdminAccountDetail, type ResourceType, type Acti
 import { useAuth } from '../../contexts/AuthContext'
 import Avatar from '../../components/Avatar'
 import Badge from '../../components/Badge'
+import { AdminBackLink } from '../../components/AdminBackLink'
 
 const RESOURCE_TYPES: ResourceType[] = ['User', 'Project', 'Task', 'Comment', 'Admin', 'LlmProvider']
 const ACTIONS: Action[] = ['read', 'write', 'delete', 'manage']
@@ -40,6 +41,7 @@ export const AdminAccountDetailPage = () => {
 
   return (
     <div className="space-y-6">
+      <AdminBackLink to="/admin/admin-accounts" label="Admin Accounts" />
       {/* Page header */}
       <div className="flex items-end justify-between">
         <div>
@@ -139,14 +141,6 @@ export const AdminAccountDetailPage = () => {
         </>
       )}
 
-      <div>
-        <Link
-          to="/admin/admin-accounts"
-          className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
-        >
-          Back to list
-        </Link>
-      </div>
     </div>
   )
 }

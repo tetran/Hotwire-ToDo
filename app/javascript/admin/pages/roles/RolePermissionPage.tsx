@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { rolesApi, permissionsApi, type Permission, DROPDOWN_PER_PAGE } from '../../lib/api'
 import { reportTruncation } from '../../lib/sentry'
 import { AdminPageHeader } from '../../components/AdminPageHeader'
+import { AdminCancelButton } from '../../components/AdminCancelButton'
 import { ErrorBanner } from '../../components/ErrorBanner'
 
 export const RolePermissionPage = () => {
@@ -110,7 +111,8 @@ export const RolePermissionPage = () => {
           ))}
         </div>
 
-        <div className="mt-6 flex items-center justify-end">
+        <div className="mt-6 flex items-center justify-end gap-3">
+          <AdminCancelButton to="/admin/roles" />
           <button
             type="submit"
             disabled={submitting}

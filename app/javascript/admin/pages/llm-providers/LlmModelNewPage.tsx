@@ -1,6 +1,7 @@
 import { FormEvent, useCallback, useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { llmModelsApi, llmProvidersApi, CreateLlmModelInput, AvailableModel } from '../../lib/api'
+import { AdminCancelButton } from '../../components/AdminCancelButton'
 
 export const LlmModelNewPage = () => {
   const { id } = useParams<{ id: string }>()
@@ -142,12 +143,7 @@ export const LlmModelNewPage = () => {
           </div>
 
           <div className="mt-6 flex items-center justify-end gap-2">
-            <Link
-              to={`/admin/llm-providers/${providerId}/models`}
-              className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
-            >
-              Cancel
-            </Link>
+            <AdminCancelButton to={`/admin/llm-providers/${providerId}/models`} />
             <button
               type="submit"
               disabled={submitting || loadingModels || !!modelsError}

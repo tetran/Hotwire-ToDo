@@ -1,6 +1,7 @@
 import { FormEvent, useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { PromptInput, PromptSet, promptSetsApi } from '../../lib/api'
+import { AdminCancelButton } from '../../components/AdminCancelButton'
 
 const VARIABLES = ['goal', 'context', 'due_date', 'start_date']
 
@@ -224,12 +225,7 @@ export const PromptSetEditPage = () => {
 
         {/* Actions */}
         <div className="flex justify-end gap-3">
-          <Link
-            to="/admin/prompt-sets"
-            className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
-          >
-            Cancel
-          </Link>
+          <AdminCancelButton to="/admin/prompt-sets" />
           <button
             type="submit"
             disabled={submitting}
