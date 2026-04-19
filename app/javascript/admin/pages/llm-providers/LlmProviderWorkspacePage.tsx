@@ -92,7 +92,7 @@ export const LlmProviderWorkspacePage = () => {
 
       {/* Success flash banner */}
       {flash && (
-        <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-600">
+        <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/15 px-4 py-3 text-sm text-emerald-400">
           {flash}
         </div>
       )}
@@ -179,6 +179,13 @@ export const LlmProviderWorkspacePage = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
+              {models.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="px-5 py-10 text-center text-sm text-slate-400">
+                    No models configured for this provider yet.
+                  </td>
+                </tr>
+              )}
               {models.map(model => (
                 <tr key={model.id} className="transition-colors hover:bg-slate-50/50">
                   <td className="px-5 py-3.5 text-sm text-slate-700" style={{ fontFamily: 'DM Mono, monospace' }}>{model.id}</td>

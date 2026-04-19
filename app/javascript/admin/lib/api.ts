@@ -289,7 +289,7 @@ export interface LlmProvider {
   active: boolean
   created_at: string
   updated_at: string
-  llm_models_count: number
+  llm_models_count?: number
 }
 
 export interface LlmModel {
