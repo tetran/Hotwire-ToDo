@@ -21,9 +21,9 @@ describe('AdminBackLink', () => {
     expect(link).toHaveAttribute('href', '/admin/users')
   })
 
-  it('has accessible role of link', () => {
+  it('exposes the accessible name "Back to {label}" via aria-label', () => {
     renderComponent('/admin/admin-accounts', 'Admin Accounts')
-    expect(screen.getByRole('link', { name: /Admin Accounts/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Back to Admin Accounts' })).toBeInTheDocument()
   })
 
   it('renders the back arrow with aria-hidden', () => {
@@ -37,10 +37,5 @@ describe('AdminBackLink', () => {
     renderComponent('/admin/users', 'Users')
     const link = screen.getByRole('link')
     expect(link.className).toContain('hover:text-[#6366f1]')
-  })
-
-  it('exposes "Back to {label}" as the accessible name via aria-label', () => {
-    renderComponent('/admin/users', 'Users')
-    expect(screen.getByRole('link', { name: 'Back to Users' })).toBeInTheDocument()
   })
 })
