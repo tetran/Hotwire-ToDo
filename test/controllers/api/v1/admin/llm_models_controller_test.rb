@@ -25,10 +25,19 @@ module Api
           assert_response :success
           json = response.parsed_body
           assert json.key?("llm_models")
-          assert json.key?("meta")
           names = json["llm_models"].pluck("name")
           assert_includes names, llm_models(:gpt_turbo).name
           assert_includes names, llm_models(:gpt4).name
+        end
+
+        test "GET index returns all models without pagination" do
+          login_as_admin_api
+          provider = llm_providers(:openai)
+          get api_v1_admin_llm_provider_llm_models_path(provider)
+          assert_response :success
+          json = response.parsed_body
+          assert_not json.key?("meta"), "Models index should not include pagination meta"
+          assert_equal provider.llm_models.count, json["llm_models"].size
         end
 
         test "GET index only returns models for the specified provider" do
@@ -153,9 +162,30 @@ module Api
           login_as_admin_api
           model = llm_models(:gpt_turbo)
           patch api_v1_admin_llm_provider_llm_model_path(llm_providers(:openai), model),
-                params: { llm_model: { name: "" } }
+                params: { llm_model: { display_name: "" } }
           assert_response :unprocessable_entity
           assert response.parsed_body.key?("errors")
+        end
+
+        test "PATCH update ignores name parameter" do
+          login_as_admin_api
+          model = llm_models(:gpt_turbo)
+          original_name = model.name
+          patch api_v1_admin_llm_provider_llm_model_path(llm_providers(:openai), model),
+                params: { llm_model: { name: "hacked-identifier", display_name: "Updated" } }
+          assert_response :success
+          model.reload
+          assert_equal original_name, model.name
+          assert_equal "Updated", model.display_name
+        end
+
+        test "PATCH update returns 200 when name is blank (name ignored)" do
+          login_as_admin_api
+          model = llm_models(:gpt_turbo)
+          patch api_v1_admin_llm_provider_llm_model_path(llm_providers(:openai), model),
+                params: { llm_model: { name: "", display_name: "Valid" } }
+          assert_response :success
+          assert_equal "Valid", model.reload.display_name
         end
 
         # destroy

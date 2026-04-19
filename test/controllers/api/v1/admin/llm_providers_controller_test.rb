@@ -52,6 +52,21 @@ module Api
           assert provider.key?("updated_at")
         end
 
+        test "GET index response includes llm_models_count for each provider" do
+          login_as_admin_api
+          get api_v1_admin_llm_providers_path
+          assert_response :success
+          providers = response.parsed_body["llm_providers"]
+          providers.each do |provider|
+            assert provider.key?("llm_models_count"), "expected llm_models_count key in provider #{provider['name']}"
+            assert_kind_of Integer, provider["llm_models_count"]
+          end
+          openai = providers.find { |p| p["id"] == llm_providers(:openai).id }
+          anthropic = providers.find { |p| p["id"] == llm_providers(:anthropic).id }
+          assert_equal 2, openai["llm_models_count"]
+          assert_equal 1, anthropic["llm_models_count"]
+        end
+
         # show
         test "GET show returns 401 when not logged in" do
           get api_v1_admin_llm_provider_path(llm_providers(:openai))

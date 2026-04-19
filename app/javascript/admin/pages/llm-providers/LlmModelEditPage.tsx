@@ -34,8 +34,8 @@ export const LlmModelEditPage = () => {
     setSubmitting(true)
     setError('')
 
+    // name is intentionally excluded — it is read-only and must not be sent on update
     const data: UpdateLlmModelInput = {
-      name,
       display_name: displayName,
       active,
       default_model: defaultModel,
@@ -43,7 +43,7 @@ export const LlmModelEditPage = () => {
 
     try {
       await llmModelsApi.update(providerId, llmModelId, data)
-      navigate(`/admin/llm-providers/${providerId}/models`)
+      navigate(`/admin/llm-providers/${providerId}`, { state: { flash: 'Model updated' } })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update model')
       setSubmitting(false)
@@ -80,14 +80,17 @@ export const LlmModelEditPage = () => {
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div className="space-y-1">
-              <label htmlFor="name" className="text-xs font-medium text-slate-600">Name</label>
+              <label htmlFor="name" className="flex items-center gap-1.5 text-xs font-medium text-slate-600">
+                Name
+                <span className="text-xs text-slate-400">(read-only)</span>
+              </label>
               <input
                 id="name"
                 type="text"
                 value={name}
-                onChange={e => setName(e.target.value)}
-                required
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#6366f1] focus:ring-1 focus:ring-[#6366f1]/30"
+                readOnly
+                aria-readonly="true"
+                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500 outline-none cursor-not-allowed"
               />
             </div>
             <div className="space-y-1">
@@ -126,7 +129,7 @@ export const LlmModelEditPage = () => {
           </div>
 
           <div className="mt-6 flex items-center justify-end gap-2">
-            <AdminCancelButton to={`/admin/llm-providers/${providerId}/models`} />
+            <AdminCancelButton to={`/admin/llm-providers/${providerId}`} />
             <button
               type="submit"
               disabled={submitting}

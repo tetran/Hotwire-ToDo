@@ -81,13 +81,13 @@
 
 ---
 
-## 8. LLM モデル管理 (`/admin/llm-providers/:id/models`)
+## 8. LLM モデル管理 (`/admin/llm-providers/:id` — Workspace に統合)
 
 | 操作 | 備考 |
 |------|------|
-| 一覧 | 名称・表示名・デフォルト・有効状態・使用数 |
+| 一覧 | Provider Workspace 内に統合表示（名称・表示名・デフォルト・有効状態・使用数） |
 | 作成 (`/admin/llm-providers/:id/models/new`) | name・display_name・active・default_model |
-| 編集 (`/admin/llm-providers/:id/models/:modelId/edit`) | 全フィールド |
+| 編集 (`/admin/llm-providers/:id/models/:modelId/edit`) | display_name・active・default_model（name は変更不可） |
 | 削除 | suggestion_requests で使用中のモデルは削除不可 |
 
 ---
