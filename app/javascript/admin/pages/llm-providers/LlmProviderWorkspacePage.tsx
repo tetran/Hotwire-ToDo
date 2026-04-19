@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { llmProvidersApi, llmModelsApi, LlmProvider, LlmModel, DROPDOWN_PER_PAGE } from '../../lib/api'
-import { reportTruncation } from '../../lib/sentry'
+import { llmProvidersApi, llmModelsApi, LlmProvider, LlmModel } from '../../lib/api'
 import Badge from '../../components/Badge'
 import { AdminBackLink } from '../../components/AdminBackLink'
 
@@ -36,18 +35,12 @@ export const LlmProviderWorkspacePage = () => {
 
     Promise.all([
       llmProvidersApi.get(providerId, { signal: controller.signal }),
-      llmModelsApi.list(providerId, { per_page: DROPDOWN_PER_PAGE }, { signal: controller.signal }),
+      llmModelsApi.list(providerId, { signal: controller.signal }),
     ])
       .then(([providerData, modelsResponse]) => {
         if (!controller.signal.aborted) {
           setProvider(providerData)
           setModels(modelsResponse.llm_models)
-          reportTruncation({
-            resource: 'llm_models',
-            fetched: modelsResponse.llm_models.length,
-            total_count: modelsResponse.meta.total_count,
-            per_page: modelsResponse.meta.per_page,
-          })
         }
       })
       .catch(err => {

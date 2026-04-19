@@ -57,7 +57,6 @@ const mockModel: api.LlmModel = {
 
 const mockModelsResponse: api.LlmModelListResponse = {
   llm_models: [mockModel],
-  meta: { page: 1, per_page: 100, total_count: 1, total_pages: 1 },
 }
 
 const renderPage = (initialPath = '/admin/llm-providers/1') =>

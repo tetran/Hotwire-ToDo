@@ -44,16 +44,8 @@ export const SuggestionConfigNewPage = () => {
         })
         const activeProviders = providersResponse.llm_providers.filter((p: LlmProvider) => p.active)
         const allModelResponses = await Promise.all(
-          activeProviders.map((p: LlmProvider) => llmModelsApi.list(p.id, { per_page: DROPDOWN_PER_PAGE }))
+          activeProviders.map((p: LlmProvider) => llmModelsApi.list(p.id))
         )
-        allModelResponses.forEach(modelsResponse => {
-          reportTruncation({
-            resource: 'llm_models',
-            fetched: modelsResponse.llm_models.length,
-            total_count: modelsResponse.meta?.total_count,
-            per_page: DROPDOWN_PER_PAGE,
-          })
-        })
         setModels(allModelResponses.flatMap(r => r.llm_models).filter((m: LlmModel) => m.active))
         setPromptSets(psResponse.prompt_sets.filter((p: PromptSet) => p.active))
       } catch (err) {

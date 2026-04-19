@@ -10,11 +10,7 @@ module Api
 
         def index
           scope = @llm_provider.llm_models.order(:id)
-          pagy, records = paginate(scope)
-          render json: {
-            llm_models: records.as_json,
-            meta: pagination_meta(pagy),
-          }
+          render json: { llm_models: scope.as_json }
         end
 
         def show

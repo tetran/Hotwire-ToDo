@@ -25,10 +25,19 @@ module Api
           assert_response :success
           json = response.parsed_body
           assert json.key?("llm_models")
-          assert json.key?("meta")
           names = json["llm_models"].pluck("name")
           assert_includes names, llm_models(:gpt_turbo).name
           assert_includes names, llm_models(:gpt4).name
+        end
+
+        test "GET index returns all models without pagination" do
+          login_as_admin_api
+          provider = llm_providers(:openai)
+          get api_v1_admin_llm_provider_llm_models_path(provider)
+          assert_response :success
+          json = response.parsed_body
+          assert_not json.key?("meta"), "Models index should not include pagination meta"
+          assert_equal provider.llm_models.count, json["llm_models"].size
         end
 
         test "GET index only returns models for the specified provider" do

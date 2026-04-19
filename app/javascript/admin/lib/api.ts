@@ -419,17 +419,11 @@ export interface UpdateSuggestionConfigInput {
 
 export interface LlmModelListResponse {
   llm_models: LlmModel[]
-  meta: PaginationMeta
 }
 
 export const llmModelsApi = {
-  list: (providerId: number, params?: PaginationParams, options?: { signal?: AbortSignal }) => {
-    const query = new URLSearchParams()
-    if (params?.page) query.set('page', String(params.page))
-    if (params?.per_page) query.set('per_page', String(params.per_page))
-    const qs = query.toString()
-    return api.get<LlmModelListResponse>(qs ? `/llm_providers/${providerId}/llm_models?${qs}` : `/llm_providers/${providerId}/llm_models`, options)
-  },
+  list: (providerId: number, options?: { signal?: AbortSignal }) =>
+    api.get<LlmModelListResponse>(`/llm_providers/${providerId}/llm_models`, options),
   get: (providerId: number, id: number) => api.get<LlmModel>(`/llm_providers/${providerId}/llm_models/${id}`),
   create: (providerId: number, data: CreateLlmModelInput) =>
     api.post<LlmModel>(`/llm_providers/${providerId}/llm_models`, { llm_model: data }),
