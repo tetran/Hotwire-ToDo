@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useParams } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { AdminLayout } from './components/AdminLayout'
@@ -20,9 +20,8 @@ import { AdminAccountDetailPage } from './pages/admin-accounts/AdminAccountDetai
 import { AdminAccountEditPage } from './pages/admin-accounts/AdminAccountEditPage'
 import { AdminAccountRolesEditPage } from './pages/admin-accounts/AdminAccountRolesEditPage'
 import { LlmProvidersIndexPage } from './pages/llm-providers/LlmProvidersIndexPage'
-import { LlmProviderDetailPage } from './pages/llm-providers/LlmProviderDetailPage'
+import { LlmProviderWorkspacePage } from './pages/llm-providers/LlmProviderWorkspacePage'
 import { LlmProviderEditPage } from './pages/llm-providers/LlmProviderEditPage'
-import { LlmModelsIndexPage } from './pages/llm-providers/LlmModelsIndexPage'
 import { LlmModelNewPage } from './pages/llm-providers/LlmModelNewPage'
 import { LlmModelEditPage } from './pages/llm-providers/LlmModelEditPage'
 import { PromptSetsIndexPage } from './pages/prompt-sets/PromptSetsIndexPage'
@@ -33,6 +32,11 @@ import { SuggestionConfigNewPage } from './pages/suggestion-configs/SuggestionCo
 import { SuggestionConfigDetailPage } from './pages/suggestion-configs/SuggestionConfigDetailPage'
 import { EventsIndexPage } from './pages/events/EventsIndexPage'
 import { SystemInfoPage } from './pages/SystemInfoPage'
+
+const LlmProviderModelsRedirect = () => {
+  const { id } = useParams<{ id: string }>()
+  return <Navigate to={`/admin/llm-providers/${id}`} replace />
+}
 
 const App = () => (
   <BrowserRouter>
@@ -123,7 +127,7 @@ const App = () => (
           } />
           <Route path="llm-providers/:id" element={
             <ProtectedRoute requiredCapability={{ resource: 'LlmProvider', action: 'read' }}>
-              <LlmProviderDetailPage />
+              <LlmProviderWorkspacePage />
             </ProtectedRoute>
           } />
           <Route path="llm-providers/:id/edit" element={
@@ -133,7 +137,7 @@ const App = () => (
           } />
           <Route path="llm-providers/:id/models" element={
             <ProtectedRoute requiredCapability={{ resource: 'LlmProvider', action: 'read' }}>
-              <LlmModelsIndexPage />
+              <LlmProviderModelsRedirect />
             </ProtectedRoute>
           } />
           <Route path="llm-providers/:id/models/new" element={

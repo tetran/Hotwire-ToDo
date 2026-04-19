@@ -43,7 +43,7 @@ export const LlmProviderEditPage = () => {
 
     try {
       await llmProvidersApi.update(providerId, data)
-      navigate('/admin/llm-providers')
+      navigate(`/admin/llm-providers/${providerId}`, { state: { flash: 'Provider updated' } })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to update provider')
       setSubmitting(false)
@@ -125,7 +125,7 @@ export const LlmProviderEditPage = () => {
           </div>
 
           <div className="mt-6 flex items-center justify-end gap-2">
-            <AdminCancelButton to="/admin/llm-providers" />
+            <AdminCancelButton to={`/admin/llm-providers/${providerId}`} />
             <button
               type="submit"
               disabled={submitting}

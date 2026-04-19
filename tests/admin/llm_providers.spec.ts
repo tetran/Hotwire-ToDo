@@ -21,13 +21,13 @@ test.describe('Admin LLM プロバイダー管理', () => {
     await expect(page.locator('[data-testid="provider-card"]').first()).toBeVisible()
   })
 
-  test('プロバイダー詳細が表示されること', async ({ page }) => {
+  test('プロバイダー Workspace が表示されること', async ({ page }) => {
     await page.goto('/admin/llm-providers')
     await expect(page.getByRole('heading', { name: 'LLM Providers' })).toBeVisible({ timeout: 10000 })
 
-    // OpenAI の Detail リンクをクリック
+    // OpenAI カード全体をクリック
     const openaiCard = page.locator('[data-testid="provider-card"]', { has: page.getByText('OpenAI') })
-    await openaiCard.getByRole('link', { name: 'Detail' }).click()
+    await openaiCard.click()
 
     await expect(page).toHaveURL(/\/admin\/llm-providers\/\d+$/, { timeout: 10000 })
     await expect(page.getByRole('heading', { name: /LLM Provider: OpenAI/ })).toBeVisible({ timeout: 10000 })
@@ -36,6 +36,7 @@ test.describe('Admin LLM プロバイダー管理', () => {
     await expect(page.getByText('API Key')).toBeVisible()
     await expect(page.getByRole('rowheader', { name: 'Active' })).toBeVisible()
     await expect(page.getByRole('link', { name: 'Back to LLM Providers' })).toBeVisible()
-    await expect(page.getByRole('link', { name: 'Edit' })).toBeVisible()
+    // Provider Info card の Edit ボタン (models テーブル行の Edit と区別するため testid を使用)
+    await expect(page.getByTestId('workspace-provider-edit')).toBeVisible()
   })
 })

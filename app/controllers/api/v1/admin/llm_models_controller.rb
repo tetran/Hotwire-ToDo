@@ -31,7 +31,7 @@ module Api
         end
 
         def update
-          if @llm_model.update(llm_model_params)
+          if @llm_model.update(llm_model_update_params)
             render json: @llm_model.as_json
           else
             render json: { errors: @llm_model.errors }, status: :unprocessable_entity
@@ -59,6 +59,10 @@ module Api
 
           def llm_model_params
             params.expect(llm_model: %i[name display_name active default_model])
+          end
+
+          def llm_model_update_params
+            params.expect(llm_model: %i[display_name active default_model])
           end
       end
     end

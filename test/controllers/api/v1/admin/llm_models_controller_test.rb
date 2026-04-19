@@ -153,9 +153,30 @@ module Api
           login_as_admin_api
           model = llm_models(:gpt_turbo)
           patch api_v1_admin_llm_provider_llm_model_path(llm_providers(:openai), model),
-                params: { llm_model: { name: "" } }
+                params: { llm_model: { display_name: "" } }
           assert_response :unprocessable_entity
           assert response.parsed_body.key?("errors")
+        end
+
+        test "PATCH update ignores name parameter" do
+          login_as_admin_api
+          model = llm_models(:gpt_turbo)
+          original_name = model.name
+          patch api_v1_admin_llm_provider_llm_model_path(llm_providers(:openai), model),
+                params: { llm_model: { name: "hacked-identifier", display_name: "Updated" } }
+          assert_response :success
+          model.reload
+          assert_equal original_name, model.name
+          assert_equal "Updated", model.display_name
+        end
+
+        test "PATCH update returns 200 when name is blank (name ignored)" do
+          login_as_admin_api
+          model = llm_models(:gpt_turbo)
+          patch api_v1_admin_llm_provider_llm_model_path(llm_providers(:openai), model),
+                params: { llm_model: { name: "", display_name: "Valid" } }
+          assert_response :success
+          assert_equal "Valid", model.reload.display_name
         end
 
         # destroy

@@ -167,9 +167,8 @@ graph TD
 | `/admin/permissions` | `PermissionsIndexPage` | `requireAdmin` |
 | `/admin/permissions/:id` | `PermissionDetailPage` | `requireAdmin` |
 | `/admin/llm-providers` | `LlmProvidersIndexPage` | `LlmProvider:read` |
-| `/admin/llm-providers/:id` | `LlmProviderDetailPage` | `LlmProvider:read` |
+| `/admin/llm-providers/:id` | `LlmProviderWorkspacePage` | `LlmProvider:read` |
 | `/admin/llm-providers/:id/edit` | `LlmProviderEditPage` | `LlmProvider:write` |
-| `/admin/llm-providers/:id/models` | `LlmModelsIndexPage` | `LlmProvider:read` |
 | `/admin/llm-providers/:id/models/new` | `LlmModelNewPage` | `LlmProvider:write` |
 | `/admin/llm-providers/:id/models/:modelId/edit` | `LlmModelEditPage` | `LlmProvider:write` |
 

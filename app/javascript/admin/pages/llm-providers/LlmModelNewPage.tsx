@@ -50,7 +50,7 @@ export const LlmModelNewPage = () => {
 
     try {
       await llmModelsApi.create(providerId, data)
-      navigate(`/admin/llm-providers/${providerId}/models`)
+      navigate(`/admin/llm-providers/${providerId}`, { state: { flash: 'Model created' } })
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create model')
       setSubmitting(false)
@@ -143,7 +143,7 @@ export const LlmModelNewPage = () => {
           </div>
 
           <div className="mt-6 flex items-center justify-end gap-2">
-            <AdminCancelButton to={`/admin/llm-providers/${providerId}/models`} />
+            <AdminCancelButton to={`/admin/llm-providers/${providerId}`} />
             <button
               type="submit"
               disabled={submitting || loadingModels || !!modelsError}
