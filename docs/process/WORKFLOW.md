@@ -6,6 +6,7 @@ The following Claude Code resources live in the user-global config (`~/.claude/`
 
 - **`user-story-creation` skill** — Standard Flow P2
 - **`plan-reviewer` agent** — Standard Flow P3
+- **`ui-designer` agent** — Standard Flow P3 (UI Design Loop、UI 変更を伴う Issue のみ)
 
 The following resources **are bundled** with this repository and available automatically:
 
@@ -64,7 +65,10 @@ ALWAYS update `.progress/issue-XXXXX.md` during work. Update the progress file *
   - What you've done in this step.
   - ...
 - [ ] P2 — Create user stories
+  - [ ] UI changes: yes / no (decided with client) — recorded: ___
 - [ ] P3 — Create a plan
+  - [ ] UI Design Loop (if UI changes: yes) — Mockup gist URL: ___
+  - [ ] Plan Review Loop
 - [ ] P4 — Confirm the plan
 - [ ] P5 — Document the plan on the issue
 
@@ -77,16 +81,28 @@ ALWAYS update `.progress/issue-XXXXX.md` during work. Update the progress file *
 - [ ] I6 — Review Response
 ```
 
+If `UI changes: no`, mark the `UI Design Loop` sub-item as `- [x] UI Design Loop — N/A (UI changes: no)` so the progress file reads unambiguously on resume.
+
 #### Planning Phase
 
 P1. **Create a progress file** — Create an `issue-XXXXX.md` file in `.progress`. `XXXXX` is the issue number (5 digits with zero padding, e.g. `issue-00005.md` for issue #5). If the issue does not yet exist, create the GitHub Issue (`gh issue create`) first within this step to obtain the issue number, then create the progress file.
    - → **Done when**: the issue number is known, the progress file exists with the template filled in, and P1 is marked as completed.
-P2. **Create user stories** — Invoke the `user-story-creation` skill to clarify requirements and document them in the standard user story format (as the product owner). Reflect the resulting stories into the issue body.
-   - → **Done when**: user stories are recorded on the issue.
+P2. **Create user stories** — Invoke the `user-story-creation` skill to clarify requirements and document them in the standard user story format (as the product owner). Reflect the resulting stories into the issue body. As part of the same client-alignment round, agree on whether this Issue involves UI changes, and record the decision (`yes` / `no`) in the progress file's P2 sub-item.
+   - → **Done when**: user stories are recorded on the issue AND the progress file's `UI changes:` entry is filled with `yes` or `no` (empty is not allowed).
 P3. **Create a plan** — Review the requirements and design the implementation approach. Use plan mode. Consult the client for any undecided specifications.
+   - **UI Design Loop (mandatory if UI changes: yes)** — runs **before** the Plan Review Loop:
+     - **Invoke `ui-designer`**: start the agent with an instruction to read `docs/design/admin/README.md` and/or `docs/design/user/README.md` that matches the feature's surface. If the feature touches both surfaces, read both and state in the invocation which surface is primary.
+     - **Iterate until approval**: the agent produces an HTML mockup; present it to the client, re-invoke with any feedback, and repeat until the client approves.
+     - **Save & post**: save the approved HTML to a **secret** GitHub Gist (`gh gist create <file>.html --desc "issue-<N> mockup"` — secret by default; do NOT pass `--public`), post the gist URL as a comment on the issue, and record the URL in the progress file.
+     - **If the UI-change decision reverses**:
+       - **no → yes** (UI change surfaces after P2 closed or after initial mockup approval): re-enter the UI Design Loop before finalizing the plan.
+       - **yes → no** (it becomes clear during the loop that no UI change is actually needed): update the progress file P2 entry to `UI changes: no`, mark the P3 UI Design Loop sub-item as `- [x] UI Design Loop — N/A (UI changes: no)`, and proceed to the Plan Review Loop.
    - **Plan Review Loop (mandatory)**: Submit the plan to `plan-reviewer`. Address all actionable findings, then re-submit. Repeat until no actionable findings remain — every revision must be re-reviewed.
    - **Display element semantics**: Before designing badges, labels, icons, or status indicators, agree with the client on what they *semantically represent*. Implementation of display conditions follows from the semantic definition, not the other way around.
-   - → **Done when**: the plan exists in plan mode AND the most recent `plan-reviewer` run produced no actionable findings.
+   - → **Done when** (all apply):
+     - the plan exists in plan mode
+     - if `UI changes: yes` → UI Design Loop complete, mockup approved by the client, gist URL recorded in the progress file and posted on the issue
+     - the most recent `plan-reviewer` run produced no actionable findings
 P4. **Confirm the plan** — Confirm with the client if the plan can be proceeded. If the plan is accepted, exit plan mode.
    - → **Done when**: the client has explicitly approved the plan and plan mode is exited.
 P5. **Document the plan** — Document the plan in the issue as a comment. Include everything exactly as it is stated and approved in the plan file.
