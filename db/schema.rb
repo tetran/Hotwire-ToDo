@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_09_001506) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_24_123214) do
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.text "body"
     t.datetime "created_at", null: false
@@ -89,12 +89,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_09_001506) do
   create_table "llm_models", force: :cascade do |t|
     t.boolean "active", default: true
     t.datetime "created_at", null: false
-    t.boolean "default_model", default: false
     t.string "display_name"
     t.integer "llm_provider_id", null: false
     t.string "name", null: false
     t.datetime "updated_at", null: false
-    t.index ["default_model"], name: "index_llm_models_on_default_model"
     t.index ["llm_provider_id", "name"], name: "index_llm_models_on_llm_provider_id_and_name", unique: true
     t.index ["llm_provider_id"], name: "index_llm_models_on_llm_provider_id"
   end

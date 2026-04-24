@@ -257,14 +257,14 @@ unless SuggestionConfig.exists?
   openai_provider = LlmProvider.find_by(name: "OpenAI")
   if openai_provider
     # Find or create gpt-4.1-mini model
-    default_model = openai_provider.llm_models.find_or_create_by!(name: "gpt-4.1-mini") do |model|
+    mini_model = openai_provider.llm_models.find_or_create_by!(name: "gpt-4.1-mini") do |model|
       model.display_name = "GPT-4.1 Mini"
       model.active = true
     end
 
     SuggestionConfig.create_with_entries!(
       entries_attributes: [
-        { llm_model_id: default_model.id, prompt_set_id: default_prompt_set.id, weight: 100 },
+        { llm_model_id: mini_model.id, prompt_set_id: default_prompt_set.id, weight: 100 },
       ],
     )
     Rails.logger.debug { "Created default suggestion config (OpenAI gpt-4.1-mini + #{default_prompt_set.name})" }
