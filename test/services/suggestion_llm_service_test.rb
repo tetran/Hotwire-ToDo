@@ -295,7 +295,6 @@ class SuggestionLlmServiceTest < ActiveSupport::TestCase
       name: "gemini-2.5-flash",
       display_name: "Gemini 2.5 Flash",
       active: true,
-      default_model: true,
     )
     gemini_config = SuggestionConfig.create_with_entries!(
       entries_attributes: [{ llm_model_id: gemini_model.id, prompt_set_id: @prompt_set.id, weight: 100 }],

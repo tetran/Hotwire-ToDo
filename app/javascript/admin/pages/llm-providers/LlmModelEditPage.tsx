@@ -13,7 +13,6 @@ export const LlmModelEditPage = () => {
   const [name, setName] = useState('')
   const [displayName, setDisplayName] = useState('')
   const [active, setActive] = useState(true)
-  const [defaultModel, setDefaultModel] = useState(false)
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
@@ -24,7 +23,6 @@ export const LlmModelEditPage = () => {
         setName(data.name)
         setDisplayName(data.display_name)
         setActive(data.active)
-        setDefaultModel(data.default_model)
       })
       .catch(err => setError(err instanceof Error ? err.message : 'Failed to load model'))
   }, [providerId, llmModelId])
@@ -38,7 +36,6 @@ export const LlmModelEditPage = () => {
     const data: UpdateLlmModelInput = {
       display_name: displayName,
       active,
-      default_model: defaultModel,
     }
 
     try {
@@ -113,17 +110,6 @@ export const LlmModelEditPage = () => {
                   className="rounded border-slate-300 text-[#6366f1]"
                 />
                 Active
-              </label>
-            </div>
-            <div>
-              <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={defaultModel}
-                  onChange={e => setDefaultModel(e.target.checked)}
-                  className="rounded border-slate-300 text-[#6366f1]"
-                />
-                Default Model
               </label>
             </div>
           </div>

@@ -298,7 +298,6 @@ export interface LlmModel {
   name: string
   display_name: string
   active: boolean
-  default_model: boolean
   created_at: string
   updated_at: string
 }
@@ -314,13 +313,11 @@ export interface CreateLlmModelInput {
   name: string
   display_name: string
   active?: boolean
-  default_model?: boolean
 }
 
 export interface UpdateLlmModelInput {
   display_name?: string
   active?: boolean
-  default_model?: boolean
 }
 
 export interface AvailableModel {

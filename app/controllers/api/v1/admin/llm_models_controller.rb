@@ -54,11 +54,11 @@ module Api
           end
 
           def llm_model_params
-            params.expect(llm_model: %i[name display_name active default_model])
+            params.expect(llm_model: %i[name display_name active])
           end
 
           def llm_model_update_params
-            params.expect(llm_model: %i[display_name active default_model])
+            params.expect(llm_model: %i[display_name active])
           end
       end
     end

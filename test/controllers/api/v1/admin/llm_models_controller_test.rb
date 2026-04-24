@@ -65,7 +65,7 @@ module Api
           assert model.key?("name")
           assert model.key?("display_name")
           assert model.key?("active")
-          assert model.key?("default_model")
+          assert_not model.key?("default_model")
           assert model.key?("llm_provider_id")
         end
 

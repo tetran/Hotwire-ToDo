@@ -168,14 +168,13 @@ export const LlmProviderWorkspacePage = () => {
                 <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">Name</th>
                 <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">Display Name</th>
                 <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">Active</th>
-                <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">Default</th>
                 <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
               {models.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-5 py-10 text-center text-sm text-slate-400">
+                  <td colSpan={5} className="px-5 py-10 text-center text-sm text-slate-400">
                     No models configured for this provider yet.
                   </td>
                 </tr>
@@ -189,12 +188,6 @@ export const LlmProviderWorkspacePage = () => {
                     {model.active
                       ? <Badge variant="success">Active</Badge>
                       : <Badge variant="neutral">Inactive</Badge>
-                    }
-                  </td>
-                  <td className="px-5 py-3.5 text-sm text-slate-700">
-                    {model.default_model
-                      ? <Badge variant="info">Default</Badge>
-                      : <Badge variant="neutral">-</Badge>
                     }
                   </td>
                   <td className="px-5 py-3.5 text-sm text-slate-700">
