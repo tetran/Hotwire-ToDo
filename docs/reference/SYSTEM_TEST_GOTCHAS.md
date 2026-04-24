@@ -60,4 +60,23 @@ Two close events with different semantics:
   ```
 - When adding a new `<dialog>` with cleanup logic, **prefer the `close` event** unless you actually need cancelable behavior. Close fires on both Escape and `.close()`.
 
-_Source findings: `capybara-execute-script-iife-arguments-quirk`, `testing-stimulus-keyboard-shortcuts-via-dispatchevent`, `html-dialog-cancel-vs-close-event-semantics` (all Apr 11, 2026, Issue #14)._
+## 4. SQLite `remove_column` + `maintain_test_schema!` can leave the dev test DB in a transient FK-corrupt state
+
+SQLite implements `remove_column` as a table-copy. `bin/rails test` runs `ActiveRecord::Base.maintain_test_schema!` on boot and mirrors schema changes from development into the test DB. When the mirror happens against a pre-existing test DB that has rows, the cascade can leave an unrelated FK relationship in a transient-broken state — a later `DELETE` hits `SQLite3::ConstraintException: FOREIGN KEY constraint failed` on a test whose code path never touches the removed column.
+
+Reproduction matrix for Issue #338 (`remove_column :llm_models, :default_model`):
+
+| Scenario | Result |
+|---|---|
+| `bin/rails test test/controllers/api/v1/admin/tasks_controller_test.rb` on the feature branch | FAIL with `InvalidForeignKey` on an unrelated `#destroy` test |
+| Same test on `main` | PASS |
+| Same test on feature branch after `bin/rails db:drop db:create db:migrate` | PASS |
+| The full suite on feature branch after the reset | PASS (908 runs, 0 failures) |
+
+CI is unaffected — CI provisions a fresh test DB per run, so the corrupt transient state never persists. Only developer-local environments that carry test-DB state across migration events see this.
+
+### Rules
+
+- When a migration that includes `remove_column` lands on a branch, after `db:migrate` **drop and recreate the local test DB** before running the suite: `bin/rails db:drop RAILS_ENV=test && bin/rails db:create db:migrate RAILS_ENV=test` (or the equivalent `db:test:prepare`). Do not rely on `maintain_test_schema!` alone on SQLite.
+- If a test suddenly fails with `InvalidForeignKey` on a `DELETE` whose code path does not touch the recently-removed column, the first hypothesis is the maintain-schema transient corruption — **not** a real FK bug. Reset the test DB first and re-run before debugging the test code.
+- If you can reproduce the failure on a single-test invocation but not after `db:drop`, document the matrix (branch vs main, before vs after reset) in the progress file. That matrix is the fastest way to convince a future reader the "failure" was a schema-sync artifact, not a regression.
