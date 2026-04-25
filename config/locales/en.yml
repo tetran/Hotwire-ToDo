@@ -344,6 +344,8 @@ en:
     account/deactivations:
       create:
         success: "Your account has been deactivated. Thank you for using our service."
+        failure: "Could not complete deactivation. Please try again later."
+        confirmation_required: "Please tick the confirmation checkbox before deactivating."
       admin_blocked: "Admin-capable accounts cannot self-deactivate. Please ask another administrator."
     emails:
       update:

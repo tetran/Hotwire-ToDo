@@ -388,6 +388,8 @@ ja:
     account/deactivations:
       create:
         success: "退会処理が完了しました。ご利用いただきありがとうございました。"
+        failure: "退会処理に失敗しました。時間をおいて再度お試しください。"
+        confirmation_required: "退会内容を理解した旨のチェックを入れてください。"
       admin_blocked: "管理者権限を持つアカウントは退会できません。別の管理者へ依頼してください。"
     emails:
       update:

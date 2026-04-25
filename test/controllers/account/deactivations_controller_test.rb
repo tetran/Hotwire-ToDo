@@ -21,6 +21,7 @@ module Account
       assert_difference("DeactivatedUser.count", 1) do
         post account_deactivation_path, params: {
           user: { password_challenge: TEST_PASSWORD, reason: "Self-deactivated for test" },
+          confirm_deactivation: "1",
         }
       end
 
@@ -41,6 +42,7 @@ module Account
       assert_no_difference("DeactivatedUser.count") do
         post account_deactivation_path, params: {
           user: { password_challenge: "wrong-password", reason: "" },
+          confirm_deactivation: "1",
         }
       end
 
@@ -90,6 +92,55 @@ module Account
         }
       end
       assert_redirected_to user_path
+    end
+
+    # Race / double-submit: service raises RecordNotUnique → recoverable form error (not 500)
+    test "POST create renders form with 422 when DeactivationService raises RecordNotUnique" do
+      user = users(:regular_user)
+      login_as(user)
+
+      Account::DeactivationService.expects(:call).raises(ActiveRecord::RecordNotUnique.new("uniq"))
+
+      assert_no_difference("DeactivatedUser.count") do
+        post account_deactivation_path, params: {
+          user: { password_challenge: TEST_PASSWORD, reason: "" },
+          confirm_deactivation: "1",
+        }
+      end
+      assert_response :unprocessable_content
+      assert_not_nil session[:user_id], "session must remain live for recovery"
+    end
+
+    test "POST create renders form with 422 when DeactivationService raises RecordInvalid" do
+      user = users(:regular_user)
+      login_as(user)
+
+      record = User.new
+      record.errors.add(:base, "Some validation failure")
+      Account::DeactivationService.expects(:call).raises(ActiveRecord::RecordInvalid.new(record))
+
+      assert_no_difference("DeactivatedUser.count") do
+        post account_deactivation_path, params: {
+          user: { password_challenge: TEST_PASSWORD, reason: "" },
+          confirm_deactivation: "1",
+        }
+      end
+      assert_response :unprocessable_content
+    end
+
+    # Server-side confirm_deactivation guard: prevents bypass via direct POST
+    test "POST create without confirm_deactivation is rejected with 422 (defense-in-depth)" do
+      user = users(:regular_user)
+      login_as(user)
+
+      Account::DeactivationService.expects(:call).never
+      assert_no_difference("DeactivatedUser.count") do
+        post account_deactivation_path, params: {
+          user: { password_challenge: TEST_PASSWORD, reason: "" },
+        }
+      end
+      assert_response :unprocessable_content
+      assert_not_nil session[:user_id]
     end
   end
 end
