@@ -20,14 +20,14 @@
       <%= form.text_area :reason, rows: 4, maxlength: 500, class: "full-width-input" %>
     </div>
 
-    <div class="auth-form__field">
+    <div class="auth-form__field auth-form__field--inline">
       <%= check_box_tag :confirm_deactivation, "1", false, required: true, id: "confirm_deactivation" %>
       <%= label_tag :confirm_deactivation, t(".confirm_label") %>
     </div>
 
     <div class="auth-form__actions">
       <%= form.submit t(".submit"), class: "danger" %>
-      <%= link_to t(".cancel"), user_path, class: "btn" %>
+      <%= link_to t(".cancel"), root_path, class: "btn" %>
     </div>
   <% end %>
 </main>

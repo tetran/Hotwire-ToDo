@@ -4,8 +4,15 @@
   padding: 15px;
   border-radius: var(--radius-md);
 }
-.auth-form input {
+.auth-form input:not([type="checkbox"]):not([type="radio"]) {
   box-sizing: border-box;
   margin-bottom: 15px;
   width: 100%;
 }
+
+.auth-form__field--inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+

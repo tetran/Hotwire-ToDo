@@ -5,6 +5,7 @@ module Api
         before_action :set_user, only: %i[show update]
         before_action -> { require_capability!("User", "read") }, only: %i[index show]
         before_action -> { require_capability!("User", "write") }, only: %i[create update]
+        before_action :reject_deactivated_user, only: %i[update]
 
         def index
           scope = build_users_scope.includes(deactivation: :deactivated_by).order(:id)
@@ -78,6 +79,12 @@ module Api
           def set_user
             @user = User.non_admin_accounts.includes(deactivation: :deactivated_by).find_by(id: params[:id])
             render json: { error: "Not found" }, status: :not_found unless @user
+          end
+
+          def reject_deactivated_user
+            return unless @user&.deactivated?
+
+            render json: { error: "Cannot modify a deactivated user" }, status: :unprocessable_entity
           end
 
           def user_params

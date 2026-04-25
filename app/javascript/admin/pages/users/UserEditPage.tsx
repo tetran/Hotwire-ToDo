@@ -120,29 +120,31 @@ export const UserEditPage = () => {
         </div>
       )}
 
-      <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-        <form onSubmit={handleSubmit}>
-          <div className="space-y-4">
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-600">Email</label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} required
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#6366f1] focus:ring-1 focus:ring-[#6366f1]/30" />
+      {!isDeactivated && (
+        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+          <form onSubmit={handleSubmit}>
+            <div className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-slate-600">Email</label>
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)} required
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#6366f1] focus:ring-1 focus:ring-[#6366f1]/30" />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-medium text-slate-600">Name</label>
+                <input type="text" value={name} onChange={e => setName(e.target.value)} required
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#6366f1] focus:ring-1 focus:ring-[#6366f1]/30" />
+              </div>
             </div>
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-600">Name</label>
-              <input type="text" value={name} onChange={e => setName(e.target.value)} required
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#6366f1] focus:ring-1 focus:ring-[#6366f1]/30" />
+            <div className="mt-6 flex items-center justify-end gap-2">
+              <AdminCancelButton to="/admin/users" />
+              <button type="submit"
+                className="rounded-lg bg-[#6366f1] px-4 py-2 text-sm font-medium text-white shadow-md shadow-indigo-500/20 transition hover:bg-[#5558e8]">
+                Update
+              </button>
             </div>
-          </div>
-          <div className="mt-6 flex items-center justify-end gap-2">
-            <AdminCancelButton to="/admin/users" />
-            <button type="submit"
-              className="rounded-lg bg-[#6366f1] px-4 py-2 text-sm font-medium text-white shadow-md shadow-indigo-500/20 transition hover:bg-[#5558e8]">
-              Update
-            </button>
-          </div>
-        </form>
-      </div>
+          </form>
+        </div>
+      )}
 
       {/* Danger Zone — shown at bottom when user is active */}
       {!isDeactivated && (

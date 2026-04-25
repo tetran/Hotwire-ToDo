@@ -195,6 +195,27 @@ module Api
           assert response.parsed_body.key?("errors")
         end
 
+        # Deactivated users must NOT be modifiable via update —
+        # otherwise the sentinel email gets overwritten with the original,
+        # breaking the re-registration guarantee.
+        test "PATCH update returns 422 for deactivated user without modifying record" do
+          login_as_admin_api
+          target = users(:deactivated_user)
+          original_sentinel_email = target.email
+          original_name = target.name
+
+          patch api_v1_admin_user_path(target),
+                params: { user: { email: "hijack@example.com", name: "Hijacked" } }
+
+          assert_response :unprocessable_entity
+          assert_equal "Cannot modify a deactivated user", response.parsed_body["error"]
+
+          target.reload
+          assert_equal original_sentinel_email, target.email,
+                       "Sentinel email must not be overwritten by update on deactivated user"
+          assert_equal original_name, target.name
+        end
+
         # 操作別認可テスト
         test "POST create returns 403 when logged in as read-only admin" do
           login_as_admin_api_read_only
