@@ -32,6 +32,10 @@ export interface User {
   updated_at: string
   last_sign_in_at?: string | null
   roles?: { id: number; name: string }[]
+  deactivated_at?: string | null
+  deactivation_reason?: string | null
+  deactivated_by?: { id: number; name: string | null } | null
+  original_email?: string | null
 }
 
 export interface Permission {
@@ -93,6 +97,20 @@ export interface UpdateUserInput {
   name: string
 }
 
+// ApiError carries the parsed response body for non-ok responses.
+// Use `error.body` to access structured server error data (e.g. original_email_conflict).
+export class ApiError extends Error {
+  status: number
+  body: Record<string, unknown>
+
+  constructor(message: string, status: number, body: Record<string, unknown>) {
+    super(message)
+    this.name = 'ApiError'
+    this.status = status
+    this.body = body
+  }
+}
+
 const getCsrfToken = (): string => {
   const meta = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')
   return meta?.content ?? ''
@@ -147,8 +165,12 @@ const apiRequest = async <T>(
         window.dispatchEvent(new Event(CAPABILITIES_STALE_EVENT))
       }
     }
-    const error = await response.json().catch(() => ({ error: 'Unknown error' }))
-    throw new Error(error.error ?? `HTTP ${response.status}`)
+    const errorBody = await response.json().catch(() => ({ error: 'Unknown error' })) as Record<string, unknown>
+    throw new ApiError(
+      (errorBody.error as string | undefined) ?? `HTTP ${response.status}`,
+      response.status,
+      errorBody
+    )
   }
 
   if (response.status === 204) return undefined as T
@@ -179,9 +201,10 @@ export interface UserListResponse {
 }
 
 export const usersApi = {
-  list: (params?: { q?: string } & PaginationParams, options?: { signal?: AbortSignal }) => {
+  list: (params?: { q?: string; status?: 'active' | 'deactivated' | 'all' } & PaginationParams, options?: { signal?: AbortSignal }) => {
     const query = new URLSearchParams()
     if (params?.q) query.set('q', params.q)
+    if (params?.status) query.set('status', params.status)
     if (params?.page) query.set('page', String(params.page))
     if (params?.per_page) query.set('per_page', String(params.per_page))
     const qs = query.toString()
@@ -190,7 +213,10 @@ export const usersApi = {
   get: (id: number) => api.get<User>(`/users/${id}`),
   create: (data: CreateUserInput) => api.post<User>('/users', { user: data }),
   update: (id: number, data: UpdateUserInput) => api.patch<User>(`/users/${id}`, { user: data }),
-  delete: (id: number) => api.delete<void>(`/users/${id}`),
+  deactivate: (id: number, reason?: string) =>
+    api.post<void>(`/users/${id}/deactivation`, { reason }),
+  reactivate: (id: number, newEmail?: string) =>
+    api.post<void>(`/users/${id}/reactivation`, newEmail !== undefined ? { new_email: newEmail } : {}),
   getRoles: (id: number) => api.get<Role[]>(`/users/${id}/roles`),
   updateRoles: (id: number, roleIds: number[]) => api.patch<Role[]>(`/users/${id}/roles`, { role_ids: roleIds }),
 }

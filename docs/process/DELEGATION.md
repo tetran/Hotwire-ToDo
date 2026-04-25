@@ -17,7 +17,7 @@ This document defines how the orchestrator may delegate **Implementation Phase S
 
 | In scope | Out of scope |
 |---|---|
-| Writing the code and tests that fulfill the approved Plan Excerpt | Planning Phase (P1 - P5) |
+| Writing the code and tests that fulfill the approved Plan Excerpt | Planning Phase (P1 - P4) |
 | Running the **domain test suite** for the changed area | Running the full test suite (I3) |
 | Reporting results in the required return format | Creating branches (I1) |
 | Respecting the Denylist (Scope is a guide, not a constraint) | Running I4 review (dispatched separately by orchestrator) |
@@ -43,6 +43,35 @@ Plan touches...
 ```
 
 **Announce the classification and chosen pattern** before dispatching, so the user can intervene.
+
+## Dispatch Sizing
+
+Each subagent dispatch has a **hard turn budget** set by `maxTurns` in the agent's frontmatter (currently 100 for `rails-developer` / `react-developer` / `rails-reviewer` / `react-reviewer` / `architecture-reviewer`). A "turn" here is one `AssistantMessage` cycle — multiple tool calls dispatched in parallel within a single message count as **1 turn**, while tool calls separated by intermediate model output count as separate turns ([Claude Agent SDK — Agent loop](https://code.claude.com/docs/en/agent-sdk/agent-loop)).
+
+Exceeding the budget force-stops the agent mid-work. The guidance below relies on **response-content signals** (which the orchestrator can always observe) rather than `SubagentStop` hook firing — past `maxTurns` force-stops have been observed where the hook did not fire and no `is_error` signal surfaced at the orchestrator-visible level. See `docs/reference/DELEGATION_DESIGN_NOTES.md` §1 for the incident details and the inferred-not-confirmed disclaimer.
+
+**Per-dispatch limits**:
+
+- **Soft cap**: ~30 useful turns per dispatch. Reserve ≥ 10 turns for domain tests, codex self-review, and Required Return Format output.
+- **File cap**: ≤ 15 files per dispatch when changes are uniform (same edit pattern repeated); ≤ 10 files when changes are non-uniform.
+- **Above the cap**: split into multiple dispatches (Same-type parallel for independent batches, sequential for dependent ones), or implement directly.
+
+**Turn cost — rough orientation, not per-file accounting**:
+
+The exact turn cost of a dispatch depends on how the agent batches tool calls within each response. Since multiple Edits in one response only consume **one** turn, a tightly batching agent can fit far more file-touches under the cap than a sequential one. The numbers below are orientation only:
+
+- Independent read-only tool calls (Read / Grep / Glob) can be parallelized within a single turn — many of them count as 1 turn.
+- Edits are interdependent with Read in the typical Read-then-Edit pattern the agent uses, which tends to serialize work into separate turns.
+- Codex self-review typically consumes 5-10 turns by itself.
+- The final response (Required Return Format) does **not** consume a turn — `maxTurns` only counts tool-use turns, and the final text-only message ends the loop ([Agent loop docs](https://code.claude.com/docs/en/agent-sdk/agent-loop)). The agent only needs enough remaining tool-use turns to *reach* a state where it can emit that final message.
+
+**Empirical bound**: file caps above are calibrated against an observed bound (a 19-file wholesale dispatch hit the 50-turn cap) rather than from a closed-form turn model. If a class of dispatch consistently fits more files under the cap, record the data in the PR description so the caps can be widened with evidence. See `docs/reference/DELEGATION_DESIGN_NOTES.md` §2 for the calibration rationale and incident details.
+
+**Splitting heuristics**:
+
+- Cross-page wholesale UI updates (e.g., replacing one component import with another across many files): split into batches of ≤ 10 page files each, dispatched as Same-type parallel.
+- Mixed Rails + React feature additions: typically fit in a single dispatch per domain when the feature touches ≤ 15 files total per domain.
+- Cross-cutting refactors with non-uniform per-file work: prefer orchestrator direct implementation — delegation overhead exceeds the parallelism gain.
 
 ## Handoff Contract
 
@@ -142,6 +171,7 @@ Use when the Plan Excerpt covers both Rails and React within the same feature, b
    - `react-developer` owns `app/javascript/admin/App.tsx` (route registration), `app/javascript/admin/components/AdminLayout.tsx` (nav item), the page, and the `api.ts` additions.
 5. **Wait for both agents to return (join).**
 6. **Post-Join Verification** — run the Completion Verification checklist explicitly for **each** agent (see `Completion Verification` section below). If type mismatches surface between the Rails response and the TypeScript types (e.g., field name divergence), treat as a sequential dependency and redispatch react-developer with the Rails agent's actual output as context.
+7. **Smoke test selection (explicit choice, not default).** Choose one of: (a) **automated** via the `webapp-testing` (playwright) skill, (b) **manual** by asking the user, or (c) **skip** when the change is low-risk and covered by tests. Record the choice + reasoning in `.progress/issue-*.md` I2. Default preference is (a) when the feature has a visible UI path; fall back to (b) only when scope mismatch or cost makes automation impractical.
 
 ### Parallel (independent domains)
 
@@ -185,59 +215,50 @@ When a task requires editing an orchestrator-owned file, the orchestrator perfor
 
 ## Fallback Procedure
 
-If a subagent returns with any of the following, the orchestrator falls back to direct implementation for that delegation:
+This Fallback Procedure and the Completion Verification block below apply to **implementation subagents** (`rails-developer` / `react-developer`) returning under I2. The reviewer subagents dispatched in I4 (`rails-reviewer` / `react-reviewer` / `architecture-reviewer`) have their own 3-section return contract and a separate schema check — see [I4 Parallel Review → Reviewer Schema Check](#reviewer-schema-check).
+
+If an implementation subagent returns with any of the following, the orchestrator falls back to direct implementation for that delegation:
 
 - **Domain tests failing**. Try one re-delegation with corrective guidance (failing test output + hypothesis). If still failing, the orchestrator takes over I2 directly.
 - **Denylist violation**. Revert the offending edits, record the violation, and switch to direct implementation.
 - **Plan Excerpt deviation flagged in Deviations**. Decide with the user whether the deviation is acceptable; otherwise, reset and redispatch with a clarified payload, or implement directly.
 - **Subagent stops with a blocker report**. Address the blocker in the orchestrator context.
 
-- **maxTurns exhaustion** (agent returned partial result or terminated without Required Return Format). Re-delegate once with a refined payload. The retry payload uses the same Handoff Contract template but updates:
+- **Schema-check failure** (`.claude/scripts/check-subagent-response.sh` exits non-zero — likely cause: maxTurns force-stop or runtime error). Re-delegate once with a refined payload that updates the Handoff Contract template:
   - **Goal**: narrowed to remaining scope only
   - **Scope**: narrowed to files not yet completed
-  - **Denylist**: unchanged (same exclusions apply)
-  - **Plan Excerpt**: unchanged (full context preserved)
-  - Append the partial agent's Test Result and Handoff Notes as a **Prior Run Context** section at the end of the payload
+  - **Denylist** / **Plan Excerpt**: unchanged
+  - Append the partial agent's prior output as a **Prior Run Context** section at the end of the payload
 
   Maximum 1 retry; on retry failure, the orchestrator takes over I2 directly.
-- **Return Format violation** (agent returned results but not in the 5-section structure, or with truncated / preamble-leaking output). The implementation may still be correct — do **not** assume failure.
-  1. Orchestrator verifies the remaining three Completion Verification items (Denylist / Plan items / Domain tests) directly by reading changed files and re-running the domain test suite locally.
-  2. If all three pass, continue without re-dispatch. If any fails, apply the relevant Fallback case (domain tests failing / Denylist violation / Plan Excerpt deviation).
-  3. Record the Return Format violation in the PR description's Delegation Notes so the pattern surfaces over time.
 - **Fork-join partial failure** (one agent succeeds, the other fails). Keep the successful agent's result. Apply the relevant Fallback Procedure case (retry or direct implementation) only for the failed agent.
 
 Record fallback events in the PR description so patterns become visible over time.
 
+If you hit repeated fallbacks in a given task class, that's a signal to either expand the agent prompt or mark that class as "direct-only".
+
+When retrospecting a subagent return, paths the dispatch did not exercise are **untested** — do not claim a contract is validated when only the happy path ran. Fallback branches that were not triggered must be labeled as such.
+
 ## Completion Verification
 
-After each subagent returns, the orchestrator **MUST explicitly enumerate** every item below as pass/fail and record the result in the working log (not just "I checked"). Implicit verification is not acceptable — write down pass/fail per item so the Fallback Procedure can trigger on any miss.
+After each **implementation subagent** (`rails-developer` / `react-developer`) returns, the orchestrator **MUST** enumerate every item below as pass/fail in the working log:
 
 ```
 Post-Join Verification (<agent name>):
+- [ ] Schema check: pipe the verbatim response into
+        .claude/scripts/check-subagent-response.sh <agent_type>
+      Exit 0 = pass. Non-zero exit → apply Schema-check failure
+      Fallback BEFORE the items below.
 - [ ] No Denylist violations in Changed Files
-      (additions inside the agent's own domain but outside the payload Scope
-       are allowed — record the reasoning)
-- [ ] All Plan Excerpt checklist items are satisfied (or listed under Deviations)
-- [ ] Domain tests were executed and green (check Test Result section)
-- [ ] Required Return Format has all 5 sections present in order
+- [ ] All Plan Excerpt checklist items satisfied (or listed under Deviations)
+- [ ] Domain tests executed and green
 ```
+
+The script reuses the `SubagentStop` hook logic (`.claude/hooks/subagent_stop_format_check.sh`), so manual and hook checks stay in lock-step. Run it on every return — past `maxTurns` force-stops have been observed where the hook did not fire, so the manual invocation is the only detector that does not depend on the hook running (詳細: `docs/reference/DELEGATION_DESIGN_NOTES.md` §1).
 
 If any item is **fail**, apply the relevant Fallback Procedure case before proceeding. For fork-join, run this block separately for each returned agent — a pass on one side does not excuse a miss on the other.
 
-## Rollout Notes
-
-- **Start narrow.** Use delegation for Admin feature additions (Rails API + React page) first, where the contract is clean and the payoff is largest.
-- **Grow cautiously.** Once the sequential pattern is stable, expand to parallel dispatch for independent work.
-- **Stay direct for complex refactors.** Cross-file refactors where the orchestrator needs to hold the whole mental model are poor fits for delegation.
-- **Update the agent definitions** (`.claude/agents/*.md`) when payload expectations evolve. Keep this document and the agents in sync.
-- **If you hit repeated fallbacks** in a given task class, that's a signal to either expand the agent prompt or mark that class as "direct-only".
-
-### Pilot Reporting Rules
-
-- **Pilot reporting must distinguish observed paths from untouched paths.** When retrospecting a fork-join pilot, separate "paths that ran and produced evidence" from "paths the happy path did not exercise (negative evidence)". Fallback branches (e.g., post-join type-mismatch redispatch) that were **not** triggered in the pilot must be labeled as **untested** — do not claim the contract is validated if only the happy path ran.
-- **Smoke test selection is an explicit choice, not a default.** When Plan Phase calls for a manual smoke test after fork-join merge, the orchestrator must consciously choose between: (a) **automated** via `webapp-testing` (playwright) skill, (b) **manual** by asking the user, or (c) **skip** when the change is low-risk and covered by tests. Record the choice + reasoning in `.progress/issue-*.md` I2. Default preference is (a) when the feature has a visible UI path; fall back to (b) only when scope mismatch or cost makes automation impractical.
-
-### I4 Parallel Review
+## I4 Parallel Review
 
 When I4 (Local Review) is reached, the orchestrator dispatches reviewer subagents in parallel:
 
@@ -245,7 +266,7 @@ When I4 (Local Review) is reached, the orchestrator dispatches reviewer subagent
 - **Single-domain PRs**: matching domain reviewer + `architecture-reviewer` (2 Agent calls in a single message)
 - **Docs/config-only PRs**: `architecture-reviewer` only, or orchestrator judgment to skip I4
 
-#### Reviewer Agents
+### Reviewer Agents
 
 | Agent | Focus |
 |---|---|
@@ -253,7 +274,7 @@ When I4 (Local Review) is reached, the orchestrator dispatches reviewer subagent
 | `react-reviewer` | ADMIN_UI conventions, design tokens, api.ts, TypeScript |
 | `architecture-reviewer` | Domain model, security model, Rails/React boundary, route design |
 
-#### Reviewer Payload
+### Reviewer Payload
 
 Each reviewer receives a minimal payload from the orchestrator. The payload provides **context** (PR title, changed files, scope option); the reviewer agent autonomously constructs the `codex review` request based on its embedded review focus and reference docs. The orchestrator does not specify the review request content.
 
@@ -268,7 +289,7 @@ Each reviewer receives a minimal payload from the orchestrator. The payload prov
     ## Changed Files
     <list of changed files for focus>
 
-#### Reviewer Return Format
+### Reviewer Return Format
 
     ### Findings
     #### [SEVERITY] CATEGORY — file:line — one-line summary
@@ -281,7 +302,11 @@ Each reviewer receives a minimal payload from the orchestrator. The payload prov
     ### Reviewer Notes
     <Scope gaps, caveats, observations.>
 
-#### Dedup Procedure
+### Reviewer Schema Check
+
+Before the Dedup Procedure, run the same wrapper script with the reviewer agent type for each reviewer's response. On non-zero exit, re-dispatch that reviewer once with the same payload; on retry failure, drop its findings from the dedup pool and note in the PR description.
+
+### Dedup Procedure
 
 After all reviewers return:
 1. Collect all `#### [SEVERITY]` findings into a single list.
@@ -289,12 +314,16 @@ After all reviewers return:
 3. When multiple reviewers flag the same location with the same category, keep the highest severity and discard duplicates.
 4. Present the deduplicated list to the user for triage.
 
-#### Fix Cycle
+### Fix Cycle
 
 - **Critical / High**: Must be addressed. Return to I2 if code changes needed. Fixes are serial (no parallel fix dispatch to avoid file conflicts).
 - **Medium / Low**: Logged in PR description. Do not block I5.
 - **Dismissed findings memo**: Record dismissed findings with reasoning in orchestrator context. On re-review, the memo prevents re-flagging.
 
-#### Re-review
+### Re-review
 
 After fixes, a single re-review pass by `architecture-reviewer` only (not all three in parallel). This prevents dismissed findings from resurfacing 3x due to stateless re-review.
+
+## Maintaining the agent definitions
+
+Update `.claude/agents/*.md` whenever payload expectations evolve. This document and the agent definitions must stay in sync — drift between them produces silent payload bugs that surface only after dispatch.

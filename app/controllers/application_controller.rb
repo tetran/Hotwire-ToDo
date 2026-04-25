@@ -2,6 +2,7 @@ class ApplicationController < ActionController::Base
   include ApplicationHelper
 
   before_action :require_login
+  before_action :enforce_active_account, if: :logged_in?
   around_action :in_time_zone_and_locale, if: :logged_in?
 
   protect_from_forgery with: :exception
@@ -60,5 +61,12 @@ class ApplicationController < ActionController::Base
 
     def require_logout
       redirect_to project_url(current_user.inbox_project.id) if logged_in?
+    end
+
+    def enforce_active_account
+      return unless current_user&.deactivated?
+
+      reset_session
+      redirect_to login_url, alert: I18n.t("controllers.sessions.account_unavailable")
     end
 end

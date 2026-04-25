@@ -12,13 +12,14 @@
 
   <nav class="menu-navigation hidden" data-assignees-target="menu">
     <ul class="menu-list" data-assignees-target="assigneeList">
-      <% task.project.members.each do |member| %>
+      <% task.project.members.includes(:deactivation).each do |member| %>
         <li class="assignee-list__member" data-assignees-target="assignee" data-assignee-id="<%= member.id %>">
           <% if task.assignee == member %>
             <div class="assignee-list__member-info">
               <%= button_to task_assign_path(task), params: { assignee_id: member.id }, disabled: true do %>
                 <%= user_icon(member) %>
-                <span class="assignee-list__member-name uname"><%= member.user_name %></span>
+                <span class="assignee-list__member-name uname"><%= display_user_name(member, viewer: current_user) %></span>
+                <%= deactivation_status_badge(member) %>
               <% end %>
             </div>
             <div class="assignee-list__member-sign">
@@ -28,7 +29,8 @@
             <div class="assignee-list__member-info">
               <%= button_to task_assign_path(task), params: { assignee_id: member.id } do %>
                 <%= user_icon(member) %>
-                <span class="assignee-list__member-name uname"><%= member.user_name %></span>
+                <span class="assignee-list__member-name uname"><%= display_user_name(member, viewer: current_user) %></span>
+                <%= deactivation_status_badge(member) %>
               <% end %>
             </div>
           <% end %>

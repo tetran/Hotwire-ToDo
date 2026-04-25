@@ -45,7 +45,7 @@ Standard Flow is structured in two phases:
 
 Persisted artifacts at the Planning → Implementation boundary:
 - Issue number (encoded in `.progress/issue-XXXXX.md` filename)
-- Plan body (issue comment + local `~/.claude/plans/*.md`)
+- Plan body (issue comment + local `~/.claude/plans/issue-XXXXX.md`)
 - Progress (`.progress/issue-XXXXX.md` checklist)
 
 ALWAYS update `.progress/issue-XXXXX.md` during work. Update the progress file **immediately after completing each step** before moving on to the next step. This applies to both phases.
@@ -69,8 +69,7 @@ ALWAYS update `.progress/issue-XXXXX.md` during work. Update the progress file *
 - [ ] P3 — Create a plan
   - [ ] UI Design Loop (if UI changes: yes) — Mockup gist URL: ___
   - [ ] Plan Review Loop
-- [ ] P4 — Confirm the plan
-- [ ] P5 — Document the plan on the issue
+- [ ] P4 — Document the plan on the issue
 
 ## Implementation Phase
 - [ ] I1 — Create a Git Branch
@@ -89,7 +88,7 @@ P1. **Create a progress file** — Create an `issue-XXXXX.md` file in `.progress
    - → **Done when**: the issue number is known, the progress file exists with the template filled in, and P1 is marked as completed.
 P2. **Create user stories** — Invoke the `user-story-creation` skill to clarify requirements and document them in the standard user story format (as the product owner). Reflect the resulting stories into the issue body. As part of the same client-alignment round, agree on whether this Issue involves UI changes, and record the decision (`yes` / `no`) in the progress file's P2 sub-item.
    - → **Done when**: user stories are recorded on the issue AND the progress file's `UI changes:` entry is filled with `yes` or `no` (empty is not allowed).
-P3. **Create a plan** — Review the requirements and design the implementation approach. Use plan mode. Consult the client for any undecided specifications.
+P3. **Create a plan** — Review the requirements and design the implementation approach. Invoke the built-in `Plan` agent (`subagent_type: Plan`) to draft the implementation plan, then save the returned plan body to `~/.claude/plans/issue-XXXXX.md` (5-digit zero-padded issue number) so `plan-reviewer` can read it and the file persists across sessions. Consult the client for any undecided specifications.
    - **UI Design Loop (mandatory if UI changes: yes)** — runs **before** the Plan Review Loop:
      - **Invoke `ui-designer`**: start the agent with an instruction to read `docs/design/admin/README.md` and/or `docs/design/user/README.md` that matches the feature's surface. If the feature touches both surfaces, read both and state in the invocation which surface is primary.
      - **Iterate until approval**: the agent produces an HTML mockup; present it to the client, re-invoke with any feedback, and repeat until the client approves.
@@ -100,13 +99,11 @@ P3. **Create a plan** — Review the requirements and design the implementation 
    - **Plan Review Loop (mandatory)**: Submit the plan to `plan-reviewer`. Address all actionable findings, then re-submit. Repeat until no actionable findings remain — every revision must be re-reviewed.
    - **Display element semantics**: Before designing badges, labels, icons, or status indicators, agree with the client on what they *semantically represent*. Implementation of display conditions follows from the semantic definition, not the other way around.
    - → **Done when** (all apply):
-     - the plan exists in plan mode
+     - the plan file exists at `~/.claude/plans/issue-XXXXX.md` with the body returned by the `Plan` agent
      - if `UI changes: yes` → UI Design Loop complete, mockup approved by the client, gist URL recorded in the progress file and posted on the issue
      - the most recent `plan-reviewer` run produced no actionable findings
-P4. **Confirm the plan** — Confirm with the client if the plan can be proceeded. If the plan is accepted, exit plan mode.
-   - → **Done when**: the client has explicitly approved the plan and plan mode is exited.
-P5. **Document the plan** — Document the plan in the issue as a comment. Include everything exactly as it is stated and approved in the plan file.
-   - → **Done when**: the approved plan is posted as a comment on the issue, verbatim from the plan file.
+P4. **Document the plan** — Document the plan in the issue as a comment. Include everything exactly as it is stated in `~/.claude/plans/issue-XXXXX.md`. Do NOT ask the client for approval before posting; the plan-reviewer sign-off in P3 is the gate, and the issue comment itself is the artifact the client reviews.
+   - → **Done when**: the plan is posted as a comment on the issue, verbatim from `~/.claude/plans/issue-XXXXX.md`.
    - **Phase complete — STOP here.** Propose `/clear` to the client and wait for instruction. Do NOT proceed to I1 on your own.
    - **Quick start**: Use the `/start-implementation-phase` skill to handle the Entry Protocol, progress file update, branch creation (I1), and I2 delegation classification automatically. In a new session, paste:
      ```
@@ -150,7 +147,7 @@ For typo fixes, simple bug fixes, and small single-file changes.
 5. **Review Response** - Execute **all sub-steps** of the [Review Response Protocol](#review-response-protocol) in order. Do NOT skip any.
    - → **Done when**: no outstanding findings remain, OR the user has explicitly confirmed that the remaining findings can be skipped.
 
-Lightweight flow may skip: Issue creation, progress file, plan creation/confirmation/documentation.
+Lightweight flow may skip: Issue creation, progress file, plan creation/documentation.
 
 ### Review Response Protocol
 
@@ -195,7 +192,9 @@ Quick rules (see `docs/process/DELEGATION.md` for the full contract):
 - **Handoff contract**: every invocation passes a payload with Issue / Goal / Plan Excerpt / Scope / Denylist / Domain Tests / Done When / Required Return Format. `Scope` is an expected-files hint (not a hard limit); `Denylist` is strict (edit forbidden, reading allowed).
 - **Shared files are orchestrator-owned**: `config/routes.rb` (stub + temporary controller at Pre-Fork), `.progress/**`, `CLAUDE.md`, `docs/**`, `.claude/**` — orchestrator edits these directly and puts them in every subagent's Denylist. `App.tsx` and `AdminLayout.tsx` are owned by `react-developer`, not the orchestrator.
 - **Dispatch patterns**: sequential (Rails → React) for typical Admin features; parallel for independent work; single-domain for one-sided tasks; direct implementation when delegation overhead outweighs the benefit.
-- **Fallback**: on domain-test failure, Denylist violation, plan deviation, or blocker stop, the orchestrator re-delegates once or falls back to direct implementation.
+- **Dispatch sizing**: each agent has a hard `maxTurns` cap (currently 100). Soft cap of ~30 useful turns / ≤ 15 files per dispatch (≤ 10 when changes are non-uniform). Wholesale edits across many page files must be split into Same-type parallel batches — see DELEGATION.md → Dispatch Sizing for the rule, and `docs/reference/DELEGATION_DESIGN_NOTES.md` §1–§2 for the calibration rationale and incident details.
+- **Post-receipt validation (mandatory)**: after each subagent returns, run `.claude/scripts/check-subagent-response.sh <agent_type>` (piping the verbatim response on stdin) plus the Completion Verification checklist. The script reuses the SubagentStop hook logic and is the only schema detector that runs even when the hook does not fire on `maxTurns` force-stop (詳細: `docs/reference/DELEGATION_DESIGN_NOTES.md` §1).
+- **Fallback**: on schema-check failure, domain-test failure, Denylist violation, plan deviation, or blocker stop, the orchestrator re-delegates once or falls back to direct implementation (see DELEGATION.md → Fallback Procedure).
 
 ## Reference
 

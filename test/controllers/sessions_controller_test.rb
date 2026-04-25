@@ -33,4 +33,24 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to project_path(user.inbox_project)
     assert_equal user.id, session[:user_id]
   end
+
+  test "退会済みユーザーは元のメールアドレスでログインできない (汎用エラー)" do
+    user = users(:regular_user)
+    original_email = user.email
+    Account::DeactivationService.call(user: user, performer: user)
+
+    post login_path, params: { email: original_email, password: TEST_PASSWORD }
+    assert_response :unprocessable_content
+    assert_nil session[:user_id]
+  end
+
+  test "退会済みユーザーは sentinel email でもログインできない" do
+    user = users(:regular_user)
+    Account::DeactivationService.call(user: user, performer: user)
+    sentinel_email = user.reload.email
+
+    post login_path, params: { email: sentinel_email, password: TEST_PASSWORD }
+    assert_response :unprocessable_content
+    assert_nil session[:user_id]
+  end
 end

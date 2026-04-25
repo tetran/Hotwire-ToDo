@@ -100,3 +100,13 @@ llm_admin_user:
   totp_secret: SBSWY3DPEHPK3PXW
   totp_enabled: false
   verified: true
+
+# Deactivated user fixture — email is sentinel, original_email lives in deactivated_users fixture
+deactivated_user:
+  name: Deactivated User
+  email: deactivated+999+aabbccdd11223344@deactivated.invalid
+  password_digest: <%= BCrypt::Password.create('HoboTest!Str0ng#2024') %>
+  locale: ja
+  totp_secret: TBSWY3DPEHPK3PXY
+  totp_enabled: false
+  verified: true

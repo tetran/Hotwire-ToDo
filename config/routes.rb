@@ -39,6 +39,9 @@ Rails.application.routes.draw do
     resource :setting, only: %i[show create update]
     resource :challenge, only: %i[new create]
   end
+  namespace :account do
+    resource :deactivation, only: %i[new create]
+  end
 
   # Admin SPA shell
   get "/admin", to: "admin#index", as: :admin_root
@@ -54,6 +57,8 @@ Rails.application.routes.draw do
         end
         resources :users, only: %i[index show create update] do
           resource :roles, only: %i[show update], controller: "user_roles"
+          resource :deactivation, only: [:create], module: :users
+          resource :reactivation, only: [:create], module: :users
         end
         resources :roles, only: %i[index show create update destroy] do
           resource :permissions, only: %i[show update], controller: "role_permissions"
