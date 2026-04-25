@@ -17,7 +17,7 @@ This document defines how the orchestrator may delegate **Implementation Phase S
 
 | In scope | Out of scope |
 |---|---|
-| Writing the code and tests that fulfill the approved Plan Excerpt | Planning Phase (P1 - P5) |
+| Writing the code and tests that fulfill the approved Plan Excerpt | Planning Phase (P1 - P4) |
 | Running the **domain test suite** for the changed area | Running the full test suite (I3) |
 | Reporting results in the required return format | Creating branches (I1) |
 | Respecting the Denylist (Scope is a guide, not a constraint) | Running I4 review (dispatched separately by orchestrator) |

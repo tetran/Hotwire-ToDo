@@ -69,8 +69,7 @@ ALWAYS update `.progress/issue-XXXXX.md` during work. Update the progress file *
 - [ ] P3 — Create a plan
   - [ ] UI Design Loop (if UI changes: yes) — Mockup gist URL: ___
   - [ ] Plan Review Loop
-- [ ] P4 — Confirm the plan
-- [ ] P5 — Document the plan on the issue
+- [ ] P4 — Document the plan on the issue
 
 ## Implementation Phase
 - [ ] I1 — Create a Git Branch
@@ -103,10 +102,8 @@ P3. **Create a plan** — Review the requirements and design the implementation 
      - the plan exists in plan mode
      - if `UI changes: yes` → UI Design Loop complete, mockup approved by the client, gist URL recorded in the progress file and posted on the issue
      - the most recent `plan-reviewer` run produced no actionable findings
-P4. **Confirm the plan** — Confirm with the client if the plan can be proceeded. If the plan is accepted, exit plan mode.
-   - → **Done when**: the client has explicitly approved the plan and plan mode is exited.
-P5. **Document the plan** — Document the plan in the issue as a comment. Include everything exactly as it is stated and approved in the plan file.
-   - → **Done when**: the approved plan is posted as a comment on the issue, verbatim from the plan file.
+P4. **Document the plan** — Exit plan mode, then document the plan in the issue as a comment. Include everything exactly as it is stated in the plan file. Do NOT ask the client for approval before posting; the plan-reviewer sign-off in P3 is the gate, and the issue comment itself is the artifact the client reviews.
+   - → **Done when**: plan mode is exited and the plan is posted as a comment on the issue, verbatim from the plan file.
    - **Phase complete — STOP here.** Propose `/clear` to the client and wait for instruction. Do NOT proceed to I1 on your own.
    - **Quick start**: Use the `/start-implementation-phase` skill to handle the Entry Protocol, progress file update, branch creation (I1), and I2 delegation classification automatically. In a new session, paste:
      ```
@@ -150,7 +147,7 @@ For typo fixes, simple bug fixes, and small single-file changes.
 5. **Review Response** - Execute **all sub-steps** of the [Review Response Protocol](#review-response-protocol) in order. Do NOT skip any.
    - → **Done when**: no outstanding findings remain, OR the user has explicitly confirmed that the remaining findings can be skipped.
 
-Lightweight flow may skip: Issue creation, progress file, plan creation/confirmation/documentation.
+Lightweight flow may skip: Issue creation, progress file, plan creation/documentation.
 
 ### Review Response Protocol
 
