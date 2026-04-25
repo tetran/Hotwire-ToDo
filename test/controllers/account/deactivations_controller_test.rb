@@ -142,5 +142,42 @@ module Account
       assert_response :unprocessable_content
       assert_not_nil session[:user_id]
     end
+
+    # Server-side password_challenge guard: prevents bypass when the inner
+    # `password_challenge` key is omitted from the user params. `params.expect`
+    # only requires the `:user` wrapper, not each permitted inner key, and
+    # `has_secure_password` skips validation when the attribute was never
+    # assigned a non-nil value — so without this guard, `@user.save` would
+    # succeed silently and deactivate the account without password verification.
+    test "POST create without password_challenge inner key is rejected with 422" do
+      user = users(:regular_user)
+      login_as(user)
+
+      Account::DeactivationService.expects(:call).never
+      assert_no_difference("DeactivatedUser.count") do
+        post account_deactivation_path, params: {
+          user: { reason: "no password challenge submitted" },
+          confirm_deactivation: "1",
+        }
+      end
+      assert_response :unprocessable_content
+      assert_not_nil session[:user_id], "session must remain live"
+      assert_not user.reload.deactivated?
+    end
+
+    test "POST create with blank password_challenge is rejected with 422" do
+      user = users(:regular_user)
+      login_as(user)
+
+      Account::DeactivationService.expects(:call).never
+      assert_no_difference("DeactivatedUser.count") do
+        post account_deactivation_path, params: {
+          user: { password_challenge: "", reason: "blank challenge" },
+          confirm_deactivation: "1",
+        }
+      end
+      assert_response :unprocessable_content
+      assert_not user.reload.deactivated?
+    end
   end
 end

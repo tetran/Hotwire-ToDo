@@ -9,6 +9,7 @@ module Account
     def create
       @user = current_user
       @user.assign_attributes(deactivation_params)
+      return render :new, status: :unprocessable_content unless password_challenge_present?
       return render :new, status: :unprocessable_content unless confirmation_valid?
       return render :new, status: :unprocessable_content unless @user.save
       return render :new, status: :unprocessable_content unless run_deactivation
@@ -27,6 +28,18 @@ module Account
         return true if params[:confirm_deactivation].present?
 
         @user.errors.add(:base, I18n.t("controllers.account/deactivations.create.confirmation_required"))
+        false
+      end
+
+      # `params.expect(user: %i[... password_challenge])` only permits the inner
+      # key, it does not require it. When `password_challenge` is absent from the
+      # POST body, `assign_attributes` never sets the virtual attribute, and
+      # `has_secure_password` skips the validation entirely — so `@user.save`
+      # would succeed silently and deactivate the account without auth.
+      def password_challenge_present?
+        return true if params.dig(:user, :password_challenge).present?
+
+        @user.errors.add(:password_challenge, :blank)
         false
       end
 
