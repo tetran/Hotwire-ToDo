@@ -23,7 +23,8 @@ module Api
 
             def reactivation_error_body(error)
               body = { errors: error.record.errors.full_messages }
-              body[:original_email_conflict] = true if params[:new_email].blank?
+              email_conflict = params[:new_email].blank? && error.record.errors[:email].any?
+              body[:original_email_conflict] = true if email_conflict
               body
             end
         end

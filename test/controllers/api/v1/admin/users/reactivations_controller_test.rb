@@ -97,6 +97,23 @@ module Api
             assert_equal true, body["original_email_conflict"]
           end
 
+          # 422 shapes: new_email omitted but error is unrelated to email → no conflict flag
+          test "POST create omits original_email_conflict when RecordInvalid error has no email errors" do
+            login_as_admin_api
+            target = users(:deactivated_user)
+            error_record = User.new
+            error_record.errors.add(:base, "Some unrelated validation failure")
+            Account::DeactivationService.expects(:reactivate).raises(
+              ActiveRecord::RecordInvalid.new(error_record),
+            )
+            post api_v1_admin_user_reactivation_path(target), as: :json
+            assert_response :unprocessable_entity
+            body = response.parsed_body
+            assert body.key?("errors")
+            assert_not body.key?("original_email_conflict"),
+                       "flag must be tied to email errors, not any RecordInvalid"
+          end
+
           # 422 shapes: new_email provided → NO original_email_conflict key
           test "POST create returns 422 without original_email_conflict when new_email provided and conflicts" do
             login_as_admin_api

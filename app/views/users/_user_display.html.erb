@@ -60,7 +60,9 @@
   <% end %>
 
   <div class="show-user__danger-zone">
-    <h3 class="show-user__danger-zone-title"><%= t("users.user_display.danger_zone") %></h3>
-    <%= link_to t("users.user_display.deactivate"), new_account_deactivation_path, class: "btn danger" %>
+    <%= link_to new_account_deactivation_path, class: "show-user__deactivate-link" do %>
+      <span class="material-symbols-outlined" aria-hidden="true">person_off</span>
+      <%= t("users.user_display.deactivate") %>
+    <% end %>
   </div>
 <% end %>
