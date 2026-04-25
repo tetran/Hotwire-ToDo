@@ -6,6 +6,34 @@ SimpleCov.start "rails" do
   command_name "minitest-worker-#{ENV.fetch('TEST_ENV_NUMBER', 0)}"
 end
 
+require "fileutils"
+
+# Per-process test DB so parallel `bin/rails test:*` launches in different
+# terminals don't fight over the shared `storage/test.sqlite3` lock.
+# See docs/conventions/TESTING.md "並列起動と DB ファイル分離".
+ENV["TEST_DATABASE_PATH"] ||= "storage/test_#{Process.pid}.sqlite3"
+
+# Capture the parent PID so forked parallel workers (which inherit this
+# at_exit via fork) skip cleanup — otherwise a worker exiting early would
+# unlink sibling workers' still-active DB files (`storage/test_<pid>.sqlite3_0`,
+# `_1`, ... + `-shm`/`-wal`).
+parent_pid_for_cleanup = Process.pid
+
+# Registered before Rails environment load so Rails' own AR-disconnect
+# at_exit hooks are pushed onto the LIFO stack later and run FIRST. We
+# unlink the files only after AR has cleanly closed connections.
+at_exit do
+  next unless Process.pid == parent_pid_for_cleanup
+
+  base = ENV.fetch("TEST_DATABASE_PATH", nil)
+  # Strict allowlist: must live directly under `storage/`, start with
+  # `test_`, and end in `.sqlite3`. Rejects the legacy default
+  # (`storage/test.sqlite3`) and path-traversal attempts (`storage/test_../...`).
+  next unless base&.match?(%r{\Astorage/test_[\w.-]+\.sqlite3\z})
+
+  FileUtils.rm_f(Dir.glob("#{base}*"))
+end
+
 ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
