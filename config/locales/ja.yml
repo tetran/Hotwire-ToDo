@@ -388,6 +388,7 @@ ja:
     account/deactivations:
       create:
         success: "退会処理が完了しました。ご利用いただきありがとうございました。"
+      admin_blocked: "管理者権限を持つアカウントは退会できません。別の管理者へ依頼してください。"
     emails:
       update:
         success: "メールアドレスを更新しました。"

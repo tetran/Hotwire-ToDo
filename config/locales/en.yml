@@ -344,6 +344,7 @@ en:
     account/deactivations:
       create:
         success: "Your account has been deactivated. Thank you for using our service."
+      admin_blocked: "Admin-capable accounts cannot self-deactivate. Please ask another administrator."
     emails:
       update:
         success: "Email updated successfully."

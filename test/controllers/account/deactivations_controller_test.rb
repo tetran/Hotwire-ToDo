@@ -62,5 +62,34 @@ module Account
       end
       assert_response :bad_request
     end
+
+    # Admin self-deactivation lockout guard (Plan §13: Admin 自己 Deactivate ブロック)
+    test "GET new is blocked for admin-capable users (prevents admin panel lockout)" do
+      login_as(users(:admin_user))
+      get new_account_deactivation_path
+      assert_redirected_to user_path
+      follow_redirect!
+      assert_match I18n.t("controllers.account/deactivations.admin_blocked"), flash[:alert].to_s
+    end
+
+    test "POST create is blocked for admin-capable users" do
+      login_as(users(:admin_user))
+      assert_no_difference("DeactivatedUser.count") do
+        post account_deactivation_path, params: {
+          user: { password_challenge: TEST_PASSWORD, reason: "" },
+        }
+      end
+      assert_redirected_to user_path
+    end
+
+    test "POST create is blocked for user_manager (User:write capable, also locks panel)" do
+      login_as(users(:user_manager))
+      assert_no_difference("DeactivatedUser.count") do
+        post account_deactivation_path, params: {
+          user: { password_challenge: TEST_PASSWORD, reason: "" },
+        }
+      end
+      assert_redirected_to user_path
+    end
   end
 end
