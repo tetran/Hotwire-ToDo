@@ -17,6 +17,9 @@ module Api
             head :no_content
           rescue ActiveRecord::RecordInvalid => e
             render json: reactivation_error_body(e), status: :unprocessable_entity
+          rescue ActiveRecord::RecordNotFound
+            render json: { errors: ["Already reactivated"], already_reactivated: true },
+                   status: :unprocessable_entity
           end
 
           private

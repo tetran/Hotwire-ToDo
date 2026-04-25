@@ -26,10 +26,13 @@ module Account
     end
 
     def self.reactivate(user:, performer:, new_email: nil)
-      target_email = new_email.presence || user.deactivation.original_email
+      deactivation = user.deactivation
+      raise ActiveRecord::RecordNotFound unless deactivation
+
+      target_email = new_email.presence || deactivation.original_email
       ActiveRecord::Base.transaction do
         user.update!(email: target_email)
-        user.deactivation.destroy!
+        deactivation.destroy!
         Events::Recorder.record(
           event_name: "user_reactivated",
           user: performer,

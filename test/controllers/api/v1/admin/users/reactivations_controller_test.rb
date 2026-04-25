@@ -134,6 +134,25 @@ module Api
                        "original_email_conflict must NOT be present when new_email was provided"
           end
 
+          # Regression: concurrent reactivation. Service raises RecordNotFound
+          # when the DeactivatedUser row is gone (already destroyed by a
+          # competing request). Controller must translate that to 422 with a
+          # structured body, not bubble a 404/500.
+          test "POST create returns 422 with already_reactivated flag on RecordNotFound from service" do
+            login_as_admin_api
+            target = users(:deactivated_user)
+            Account::DeactivationService.expects(:reactivate).with(
+              user: target,
+              performer: users(:admin_user),
+              new_email: nil,
+            ).raises(ActiveRecord::RecordNotFound)
+            post api_v1_admin_user_reactivation_path(target), as: :json
+            assert_response :unprocessable_entity
+            body = response.parsed_body
+            assert body.key?("errors")
+            assert_equal true, body["already_reactivated"]
+          end
+
           test "POST create succeeds when user_manager calls it" do
             login_as_admin_api(users(:user_manager))
             target = users(:deactivated_user)

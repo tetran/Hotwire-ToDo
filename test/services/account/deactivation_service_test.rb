@@ -159,5 +159,32 @@ module Account
       assert_equal @user.id, event.metadata["target_user_id"]
       assert_equal original_email, event.metadata["restored_email"]
     end
+
+    # Regression: concurrent reactivation. If a second request enters reactivate
+    # after the first has already destroyed the DeactivatedUser row, the user
+    # has no associated deactivation. The service must surface this as
+    # ActiveRecord::RecordNotFound (so the controller can map it to 422),
+    # not crash with NoMethodError on nil.
+    test "reactivate: raises RecordNotFound when user has no deactivation (concurrent path)" do
+      Account::DeactivationService.call(user: @user, performer: @performer)
+      @user.deactivation.destroy!
+      @user.reload
+
+      assert_raises(ActiveRecord::RecordNotFound) do
+        Account::DeactivationService.reactivate(user: @user, performer: @performer)
+      end
+    end
+
+    test "reactivate: does not record event when no deactivation exists" do
+      Account::DeactivationService.call(user: @user, performer: @performer)
+      @user.deactivation.destroy!
+      @user.reload
+
+      assert_no_difference("Event.count") do
+        assert_raises(ActiveRecord::RecordNotFound) do
+          Account::DeactivationService.reactivate(user: @user, performer: @performer)
+        end
+      end
+    end
   end
 end
