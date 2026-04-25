@@ -3,10 +3,11 @@ module Account
   # Sentinel email format: deactivated+{user_id}+{16 hex}@deactivated.invalid (RFC 2606 invalid TLD).
   class DeactivationService
     def self.call(user:, performer:, reason: nil, self_deactivated: false)
+      original_email = user.email
       ActiveRecord::Base.transaction do
         DeactivatedUser.create!(
           user: user,
-          original_email: user.email,
+          original_email: original_email,
           reason: reason,
           deactivated_by: performer,
           deactivated_at: Time.current,
@@ -18,7 +19,7 @@ module Account
           metadata: {
             target_user_id: user.id,
             self_deactivated: self_deactivated,
-            original_email: user.deactivation&.original_email,
+            original_email: original_email,
           },
         )
       end

@@ -6,10 +6,7 @@ module Account
 
     def create
       @user = current_user
-      @user.assign_attributes(
-        reason: params[:user][:reason],
-        password_challenge: params[:user][:password_challenge],
-      )
+      @user.assign_attributes(deactivation_params)
 
       if @user.save
         Account::DeactivationService.call(
@@ -24,5 +21,11 @@ module Account
         render :new, status: :unprocessable_content
       end
     end
+
+    private
+
+      def deactivation_params
+        params.expect(user: %i[reason password_challenge])
+      end
   end
 end

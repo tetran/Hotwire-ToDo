@@ -54,5 +54,13 @@ module Account
       end
       assert_redirected_to login_path
     end
+
+    test "POST create with malformed params (missing user key) returns 400 not 500" do
+      login_as(users(:regular_user))
+      assert_no_difference("DeactivatedUser.count") do
+        post account_deactivation_path, params: {}
+      end
+      assert_response :bad_request
+    end
   end
 end

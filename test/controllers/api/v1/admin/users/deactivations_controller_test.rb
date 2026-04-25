@@ -81,6 +81,20 @@ module Api
             assert_response :not_found
           end
 
+          test "POST create returns 404 (not 500) when target is already deactivated" do
+            login_as_admin_api
+            target = users(:regular_user)
+            DeactivatedUser.create!(
+              user: target,
+              original_email: target.email,
+              deactivated_at: Time.current,
+            )
+
+            Account::DeactivationService.expects(:call).never
+            post api_v1_admin_user_deactivation_path(target)
+            assert_response :not_found
+          end
+
           test "POST create returns 422 with errors when service raises RecordInvalid" do
             login_as_admin_api
             target = users(:regular_user)

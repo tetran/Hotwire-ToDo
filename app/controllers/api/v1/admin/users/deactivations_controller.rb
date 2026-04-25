@@ -6,7 +6,7 @@ module Api
           before_action -> { require_capability!("User", "write") }
 
           def create
-            target = ::User.non_admin_accounts.find_by(id: params[:user_id])
+            target = ::User.non_admin_accounts.active.find_by(id: params[:user_id])
             return render json: { error: "Not Found" }, status: :not_found unless target
 
             Account::DeactivationService.call(
