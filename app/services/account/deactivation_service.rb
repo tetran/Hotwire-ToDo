@@ -25,11 +25,18 @@ module Account
       end
     end
 
+    # Concurrent reactivation by two admins is protected with FOR UPDATE on the
+    # `deactivated_users` row. The second tx waits for the first to commit, then
+    # `lock.find_by` returns nil (row destroyed) → RecordNotFound surfaces as 404.
+    # Without this, `user.deactivation.original_email` reload could raise NoMethodError.
     def self.reactivate(user:, performer:, new_email: nil)
-      target_email = new_email.presence || user.deactivation.original_email
       ActiveRecord::Base.transaction do
+        deactivation = DeactivatedUser.lock.find_by(user_id: user.id)
+        raise ActiveRecord::RecordNotFound, "User is not deactivated" unless deactivation
+
+        target_email = new_email.presence || deactivation.original_email
         user.update!(email: target_email)
-        user.deactivation.destroy!
+        deactivation.destroy!
         Events::Recorder.record(
           event_name: "user_reactivated",
           user: performer,

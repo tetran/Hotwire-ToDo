@@ -17,6 +17,11 @@ module Api
             head :no_content
           rescue ActiveRecord::RecordInvalid => e
             render json: reactivation_error_body(e), status: :unprocessable_entity
+          rescue ActiveRecord::RecordNotFound
+            # Race: another admin reactivated this user concurrently between
+            # the `find_by` above and the service's `lock.find_by`. The state
+            # the request was acting on no longer exists.
+            render json: { error: "Not Found" }, status: :not_found
           end
 
           private

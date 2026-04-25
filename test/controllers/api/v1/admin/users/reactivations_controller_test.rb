@@ -134,6 +134,22 @@ module Api
                        "original_email_conflict must NOT be present when new_email was provided"
           end
 
+          # Race: service raises RecordNotFound when the deactivation row vanished
+          # between the controller's find_by and the service's lock.find_by
+          # (concurrent reactivation by another admin). Must surface as 404, not 500.
+          test "POST create returns 404 when service raises RecordNotFound (concurrent reactivation)" do
+            login_as_admin_api
+            target = users(:deactivated_user)
+            Account::DeactivationService.expects(:reactivate).with(
+              user: target,
+              performer: users(:admin_user),
+              new_email: nil,
+            ).raises(ActiveRecord::RecordNotFound)
+            post api_v1_admin_user_reactivation_path(target), as: :json
+            assert_response :not_found
+            assert_equal "Not Found", response.parsed_body["error"]
+          end
+
           test "POST create succeeds when user_manager calls it" do
             login_as_admin_api(users(:user_manager))
             target = users(:deactivated_user)

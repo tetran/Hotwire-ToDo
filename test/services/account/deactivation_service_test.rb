@@ -159,5 +159,33 @@ module Account
       assert_equal @user.id, event.metadata["target_user_id"]
       assert_equal original_email, event.metadata["restored_email"]
     end
+
+    # Race condition: concurrent reactivation by two admins. Simulated by
+    # destroying the `deactivated_users` row out-of-band between the controller's
+    # find_by and the service's lock.find_by. Old code raised NoMethodError on
+    # `user.deactivation.original_email`; new code surfaces RecordNotFound,
+    # which the controller renders as 404.
+    test "reactivate: raises RecordNotFound when deactivation row vanished mid-flight" do
+      Account::DeactivationService.call(user: @user, performer: @performer)
+      # Simulate a concurrent admin's tx having committed the destroy first.
+      DeactivatedUser.where(user_id: @user.id).delete_all
+
+      assert_raises(ActiveRecord::RecordNotFound) do
+        Account::DeactivationService.reactivate(user: @user, performer: @performer)
+      end
+    end
+
+    test "reactivate: does not write user email when deactivation row vanished" do
+      Account::DeactivationService.call(user: @user, performer: @performer)
+      sentinel = @user.reload.email
+      DeactivatedUser.where(user_id: @user.id).delete_all
+
+      assert_raises(ActiveRecord::RecordNotFound) do
+        Account::DeactivationService.reactivate(user: @user, performer: @performer)
+      end
+
+      assert_equal sentinel, @user.reload.email,
+                   "user email must remain unchanged when deactivation row is gone"
+    end
   end
 end
