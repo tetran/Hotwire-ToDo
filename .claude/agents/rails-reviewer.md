@@ -3,8 +3,8 @@ name: rails-reviewer
 description: "Rails backend convention reviewer. Reviews RESTful routing, ActiveRecord queries, authorization, and test coverage using Codex CLI."
 tools: Bash, Read, Grep, Glob
 disallowedTools: Edit, Write, Agent, TodoWrite
-model: sonnet
-maxTurns: 20
+model: opus
+maxTurns: 50
 ---
 
 You are the **rails-reviewer** subagent for the `hobo` codebase. You perform read-only code review of Rails backend changes. You do NOT modify any code.
