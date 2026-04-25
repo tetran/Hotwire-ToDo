@@ -130,14 +130,47 @@ describe('LlmProviderWorkspacePage', () => {
     })
   })
 
-  it('shows error when fetch fails', async () => {
+  it('shows full-page error when provider fetch fails (structural fetch exception)', async () => {
     mockGet.mockRejectedValue(new Error('Network error'))
-    mockList.mockRejectedValue(new Error('Network error'))
+    mockList.mockResolvedValue(mockModelsResponse)
     renderPage()
 
     await waitFor(() => {
       expect(screen.getByText('Network error')).toBeInTheDocument()
     })
+    // Provider heading must not appear
+    expect(screen.queryByRole('heading', { name: /LLM Provider/ })).not.toBeInTheDocument()
+    // SectionError alert must not appear (full-page fallback, not section error)
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+  })
+
+  it('shows provider info and SectionError in Models section when provider succeeds but models fail', async () => {
+    mockGet.mockResolvedValue(mockProvider)
+    mockList.mockRejectedValue(new Error('503 Service Unavailable'))
+    renderPage()
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /LLM Provider: OpenAI/ })).toBeInTheDocument()
+    })
+    // Provider Info card is rendered normally
+    expect(screen.getByText('API Key')).toBeInTheDocument()
+    // Models section shows SectionError
+    const alert = screen.getByRole('alert')
+    expect(alert).toHaveTextContent(/モデル一覧/)
+    // Model data must not appear
+    expect(screen.queryByText('gpt-4o')).not.toBeInTheDocument()
+  })
+
+  it('shows full-page error when both provider and models fail', async () => {
+    mockGet.mockRejectedValue(new Error('Both failed'))
+    mockList.mockRejectedValue(new Error('Both failed'))
+    renderPage()
+
+    await waitFor(() => {
+      expect(screen.getByText('Both failed')).toBeInTheDocument()
+    })
+    expect(screen.queryByRole('heading', { name: /LLM Provider/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
   })
 
   it('clears stale error message when a successful re-fetch follows a delete failure', async () => {
