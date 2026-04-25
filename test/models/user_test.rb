@@ -23,6 +23,7 @@ class UserTest < ActiveSupport::TestCase
     TaskSeriesSubtask.delete_all
     TaskSeries.delete_all
     Project.delete_all
+    DeactivatedUser.delete_all
     User.delete_all
   end
 

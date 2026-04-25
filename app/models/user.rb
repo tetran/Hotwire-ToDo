@@ -31,6 +31,27 @@ class User < ApplicationRecord
     where("LOWER(users.name) LIKE LOWER(:q) OR LOWER(users.email) LIKE LOWER(:q)", q: "%#{sanitized}%")
   }
 
+  scope :active, -> { where.missing(:deactivation) }
+  scope :deactivated, -> { joins(:deactivation) }
+
+  scope :search_deactivated, lambda { |query|
+    base = joins(:deactivation)
+    return base if query.blank?
+
+    sanitized = sanitize_sql_like(query.strip)
+    base.where(
+      "LOWER(users.name) LIKE LOWER(:q) OR LOWER(deactivated_users.original_email) LIKE LOWER(:q)",
+      q: "%#{sanitized}%",
+    )
+  }
+
+  has_one :deactivation, class_name: "DeactivatedUser", dependent: :destroy
+  has_many :performed_deactivations,
+           class_name: "DeactivatedUser",
+           foreign_key: :deactivated_by_id,
+           dependent: :nullify,
+           inverse_of: :deactivated_by
+
   has_many :comments, dependent: :restrict_with_error
   has_many :project_members, dependent: :restrict_with_error
   has_many :projects, through: :project_members
@@ -63,6 +84,14 @@ class User < ApplicationRecord
 
   def user_name
     name.presence || email.split("@").first
+  end
+
+  def deactivated?
+    deactivation.present?
+  end
+
+  def active?
+    !deactivated?
   end
 
   def regenerate_totp_secret!
