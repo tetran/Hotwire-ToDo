@@ -199,6 +199,85 @@ admin画面の「前画面に戻る」UIは意味論で2種に分離。
 - Back と Cancel を同じページで併用しない
 - Index / Dashboard / Login 等に戻るUIを追加しない
 
+### 4.6 Section error UI / Partial-failure handling
+
+複数 API を並列 fetch するページで片側が失敗してもページ全体を error にせず、**section 単位で個別 partial render** する規約。詳細仕様は `docs/design/admin/components/section-error.md` を参照。
+
+**Do**：
+- 並列 fetch は `Promise.allSettled` を使う。`Promise.all` は使わない (片側失敗で全体 reject、partial render が効かなくなる)
+- section ごとに独立した error state (例: `permissionsError` / `assignedError`) を持ち、SectionError はその section の本来位置に inline 表示する
+- 両側失敗時もページ全体を error にせず、各 section が個別に SectionError を出す
+- `SectionError` の `layout` prop は narrow column (System Status 等) でのみ `"stacked"` を渡し、それ以外は default `"inline"` を使う
+
+**Don't**：
+- 並列 fetch に `Promise.all` + 単一 catch を使わない (partial render が成立しない)
+- ページ最上部に集約 error UI として SectionError を置かない (本来位置に inline 表示が原則)
+- fetch error と form submit error を同じ単一 error state で兼用しない (fetch は SectionError、submit は `ErrorBanner` で分離)
+
+```tsx
+// ✅ Good: 並列 fetch を allSettled で section 単位 error 化
+const [resA, resB] = await Promise.allSettled([apiA(), apiB()])
+if (resA.status === 'fulfilled') setA(resA.value)
+else setAError(buildSectionErrorMessage(resA.reason))
+if (resB.status === 'fulfilled') setB(resB.value)
+else setBError(buildSectionErrorMessage(resB.reason))
+
+// JSX
+{aError ? <SectionError title="A 一覧" onRetry={refresh} /> : <AView data={a} />}
+{bError ? <SectionError title="B 一覧" onRetry={refresh} /> : <BView data={b} />}
+```
+
+```tsx
+// ❌ Bad: 片側失敗でページ全体が error になる
+Promise.all([apiA(), apiB()])
+  .then(([a, b]) => { setA(a); setB(b) })
+  .catch(err => setError(err.message))   // ← 片方失敗で全体 error
+```
+
+#### form を持つページの方針
+
+form の入力選択肢を構成する fetch (例: `permissionsApi.list` の全 permissions) が失敗した場合、submit は引き続き可能にしたうえで依存 fetch 失敗を SectionError で明示する。submit 結果の整合性は server 側 validation に委ねる方針 (UI 側で form を hard-disable はしない)。理由: partial UI で操作継続性を保つのが本規約の主旨であり、楽観的 UI を維持。
+
+submit 由来 error は引き続き `ErrorBanner` を form 直前 (page header 直下) に配置して表示する。`submitError` は fetch 由来の section error state とは別 state として保持する。
+
+##### 例外: 現在状態 fetch (assignedRoles 等) 失敗時は Save を disable
+
+form の入力選択肢 (例: 全 roles 一覧) と **現在の割り当て状態** (例: 該当 user の assignedRoles) を別々に並列 fetch する画面では、**現在状態側の fetch が失敗した場合は Save button を disable する** こと。これは本規約の主原則「submit 引き続き可能」の例外で、理由は以下:
+
+- 現在状態 fetch 失敗時、form state (`selectedRoleIds` 等) は初期値の空配列のまま
+- そのまま Save を許すと空配列で submit され、backend が「全削除」と解釈し silent data-loss を引き起こす
+- 楽観的 UI の利点 (操作継続性) より、user の意図しない data 破壊を防ぐ side が優先
+
+実装パターン:
+```tsx
+<button type="submit" disabled={!!assignedError}
+  className="... disabled:opacity-50 disabled:cursor-not-allowed">
+  Save
+</button>
+
+<SectionError
+  title="割り当て済みロール"
+  message="現在の割り当てを取得できなかったため Save できません。再試行してください。"
+  onRetry={() => setRefreshKey(k => k + 1)}
+/>
+```
+
+options list 側 (`rolesApi.list` 等) の fetch 失敗は引き続き Save **enabled** のまま (主原則どおり)。disable 判定は **現在状態 fetch error のみ** を OR 条件に入れる。
+
+**両方失敗時の SectionError 表示優先順位**: options list と現在状態の **両方** が失敗した場合、JSX の ternary 順序で **現在状態 (`assignedError` 等) 側 SectionError を先に評価** すること。理由は、Save が disable される根本理由 (現在状態が不明) を user に伝える explanatory message を確実に表示するため。options list 側 SectionError は片方のみ失敗時のみ render されればよい。
+
+#### Structural fetch の例外
+
+ページ chrome (`<h1>` のページタイトルを構成する provider 名 等) を成立させる fetch は **structural fetch** と呼ぶ。structural fetch の失敗時は section 単位 partial render の対象外で、**従来の full-page error fallback** を採用する。理由は、render する page identity 自体が失われるため。
+
+例: `LlmProviderWorkspacePage` の provider fetch は structural fetch (`<h1>LLM Provider: {provider.name}</h1>` を構成)。provider fetch 失敗時は full-page error、provider 成功 + models 失敗時のみ Models 位置に SectionError を出す。
+
+#### Out of Scope
+
+- mutation API (POST / PATCH / DELETE) の error handling は本規約の対象外
+- 多段階 (chained) fetch (例: `providers.list()` → 各 provider について `models.list()` を回す) の partial-failure 戦略は本規約の対象外、別 issue で扱う
+- 自動 retry 機構は本規約に含まない (`onRetry` は user 起動の手動 retry のみ)
+
 ---
 
 ## 5. レイアウト
