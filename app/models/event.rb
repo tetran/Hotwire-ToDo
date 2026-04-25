@@ -8,6 +8,8 @@ class Event < ApplicationRecord
     project_created
     assignee_changed
     due_date_changed
+    user_deactivated
+    user_reactivated
   ].freeze
 
   FEATURE_CATEGORIES = {
@@ -19,6 +21,8 @@ class Event < ApplicationRecord
     "project_created" => "basic_operation",
     "assignee_changed" => "collaboration",
     "due_date_changed" => "planning",
+    "user_deactivated" => "account_lifecycle",
+    "user_reactivated" => "account_lifecycle",
   }.freeze
 
   belongs_to :user

@@ -23,7 +23,7 @@ module Totp
     private
 
       def set_user_from_token
-        @user = User.find_by_token_for!(:totp_verification, params[:token])
+        @user = User.active.find_by_token_for!(:totp_verification, params[:token])
       rescue StandardError
         redirect_to root_path, error: t("controllers.totp/challenges.create.invalid_token")
       end

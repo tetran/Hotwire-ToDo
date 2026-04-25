@@ -58,4 +58,13 @@
       <%= form.submit class: "primary", disabled: true, data: { "user-target": "submit" } %>
     </div>
   <% end %>
+
+  <% unless current_user.can_read?("Admin") %>
+    <div class="show-user__danger-zone">
+      <%= link_to new_account_deactivation_path, class: "show-user__deactivate-link", data: { turbo_frame: "_top" } do %>
+        <span class="material-symbols-outlined" aria-hidden="true">person_off</span>
+        <%= t("users.user_display.deactivate") %>
+      <% end %>
+    </div>
+  <% end %>
 <% end %>

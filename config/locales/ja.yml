@@ -151,6 +151,8 @@ ja:
       change_password: "パスワードを変更"
       two_fa_setting: "二要素認証設定"
       cancel: "キャンセル"
+      danger_zone: "退会"
+      deactivate: "退会する"
   password_resets:
     new:
       title: "パスワードリセット"
@@ -309,6 +311,17 @@ ja:
         confirm_delete: "本当に削除しますか？"
       add_comment:
         comment: "コメント"
+  account:
+    deactivations:
+      new:
+        title: "退会する"
+        warning_reversible: "退会はいつでも管理者に連絡することで取り消すことができます。"
+        warning_history: "タスクやコメントなどのデータは削除されずに保持されます。"
+        warning_session: "退会後、現在のセッションおよびすべてのセッションが無効になります。"
+        reason_label: "退会理由（任意）"
+        confirm_label: "上記の内容を理解し、退会することに同意します"
+        submit: "退会する"
+        cancel: "キャンセル"
   emails:
     edit:
       title: "メールアドレスの変更"
@@ -338,6 +351,7 @@ ja:
       action: "パスワードをリセットする"
   controllers:
     sessions:
+      account_unavailable: "このアカウントは利用できません"
       create:
         success: "ログインしました！"
         failure: "メールアドレスまたはパスワードが正しくありません"
@@ -371,6 +385,12 @@ ja:
         added: "「%{name}」をプロジェクトに追加しました！"
       destroy:
         removed: "「%{name}」をプロジェクトから削除しました！"
+    account/deactivations:
+      create:
+        success: "退会処理が完了しました。ご利用いただきありがとうございました。"
+        failure: "退会処理に失敗しました。時間をおいて再度お試しください。"
+        confirmation_required: "退会内容を理解した旨のチェックを入れてください。"
+      admin_blocked: "管理者権限を持つアカウントは退会できません。別の管理者へ依頼してください。"
     emails:
       update:
         success: "メールアドレスを更新しました。"

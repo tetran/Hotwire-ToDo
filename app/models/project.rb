@@ -12,7 +12,7 @@ class Project < ApplicationRecord
   scope :archived, -> { where(archived: true) }
 
   def members_with_priority(user)
-    members.sort { |lhs, _| lhs == user ? -1 : 1 }
+    members.includes(:deactivation).sort { |lhs, _| lhs == user ? -1 : 1 }
   end
 
   def archive!

@@ -65,28 +65,33 @@ test.describe('Admin ユーザー管理', () => {
     await expect(page.getByText(updatedName)).toBeVisible({ timeout: 10000 })
   })
 
-  test('ユーザーを削除できること', async ({ page }) => {
-    // 削除用ユーザーを作成する
+  test('ユーザーを退会させられること', async ({ page }) => {
+    // 退会対象ユーザーを作成する
     const timestamp = Date.now()
-    const deleteEmail = `e2e_delete_${timestamp}@example.com`
-    const deleteName = `E2E Delete User ${timestamp}`
+    const deactivateEmail = `e2e_deactivate_${timestamp}@example.com`
+    const deactivateName = `E2E Deactivate User ${timestamp}`
 
     await page.goto('/admin/users/new')
-    await page.locator('input[type="email"]').fill(deleteEmail)
-    await page.locator('input[type="text"]').fill(deleteName)
+    await page.locator('input[type="email"]').fill(deactivateEmail)
+    await page.locator('input[type="text"]').fill(deactivateName)
 
     const passwordInputs = page.locator('input[type="password"]')
     await passwordInputs.nth(0).fill(TEST_PASSWORD)
     await passwordInputs.nth(1).fill(TEST_PASSWORD)
     await page.getByRole('button', { name: 'Create' }).click()
     await expect(page).toHaveURL('/admin/users', { timeout: 10000 })
-    await expect(page.getByText(deleteEmail)).toBeVisible({ timeout: 10000 })
+    await expect(page.getByText(deactivateEmail)).toBeVisible({ timeout: 10000 })
 
-    // 作成したユーザーの行にある Delete ボタンをクリック
-    const row = page.locator('tr', { has: page.getByText(deleteEmail) })
-    page.on('dialog', dialog => dialog.accept())
-    await row.getByRole('button', { name: 'Delete' }).click()
+    // 作成したユーザーの行にある Deactivate ボタンをクリック
+    const row = page.locator('tr', { has: page.getByText(deactivateEmail) })
+    await row.getByRole('button', { name: 'Deactivate' }).click()
 
-    await expect(page.getByText(deleteEmail)).not.toBeVisible({ timeout: 10000 })
+    // 確認モーダルで Deactivate を確定
+    const dialog = page.getByRole('dialog', { name: 'Deactivate User' })
+    await expect(dialog).toBeVisible({ timeout: 5000 })
+    await dialog.getByRole('button', { name: 'Deactivate' }).click()
+
+    // active フィルタ (デフォルト) では退会済みユーザーは一覧から外れる
+    await expect(page.getByText(deactivateEmail)).not.toBeVisible({ timeout: 10000 })
   })
 })

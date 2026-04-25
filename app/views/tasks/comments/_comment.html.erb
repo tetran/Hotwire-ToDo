@@ -3,7 +3,8 @@
     <div class="comment-card__content">
       <div class="comment-card__header">
         <div class="comment-card__header__user">
-          <%=  comment.user.user_name %>
+          <%= display_user_name(comment.user, viewer: current_user) %>
+          <%= deactivation_status_badge(comment.user) %>
         </div>
         <div class="comment-card__header__date">
           <%= l(comment.created_at, format: :long) %>

@@ -23,6 +23,7 @@ class UserTest < ActiveSupport::TestCase
     TaskSeriesSubtask.delete_all
     TaskSeries.delete_all
     Project.delete_all
+    DeactivatedUser.delete_all
     User.delete_all
   end
 
@@ -306,5 +307,54 @@ class UserTest < ActiveSupport::TestCase
     assert @user.can_write?("Project")
     assert_not @user.can_write?("User")
     assert_not @user.can_read?("Project")
+  end
+
+  # Deactivation associations / predicates / scopes (Issue #272)
+
+  test "active scope excludes users with a DeactivatedUser association" do
+    target = User.create!(email: "active_scope@example.com", password: "password123")
+    DeactivatedUser.create!(
+      user: target,
+      original_email: target.email,
+      deactivated_at: Time.current,
+    )
+    target.update_column(:email, Account::DeactivationService.sentinel_email_for(target))
+
+    assert_not_includes User.active.pluck(:id), target.id
+    assert_includes User.deactivated.pluck(:id), target.id
+  end
+
+  test "deactivated? returns true when DeactivatedUser exists" do
+    target = User.create!(email: "deact_pred@example.com", password: "password123")
+    assert_not target.deactivated?
+    assert target.active?
+
+    DeactivatedUser.create!(user: target, original_email: target.email, deactivated_at: Time.current)
+    target.reload
+    assert target.deactivated?
+    assert_not target.active?
+  end
+
+  test "search_deactivated finds users by their original_email (sentinel email never matches)" do
+    target = User.create!(email: "before_deact@example.com", password: "password123", name: "Pre Deact")
+    original_email = target.email
+    Account::DeactivationService.call(user: target, performer: target)
+
+    results = User.search_deactivated(original_email)
+    assert_equal [target.id], results.pluck(:id)
+
+    sentinel_results = User.search_deactivated("@deactivated.invalid")
+    assert_not_includes sentinel_results.pluck(:id), target.id
+  end
+
+  test "search_deactivated finds users by name" do
+    target = User.create!(email: "named_deact@example.com", password: "password123", name: "Distinct Name 0xC0DE")
+    Account::DeactivationService.call(user: target, performer: target)
+
+    assert_equal [target.id], User.search_deactivated("Distinct Name 0xC0DE").pluck(:id)
+  end
+
+  test "force_destroy method has been removed (dead code cleanup)" do
+    assert_not @user.respond_to?(:force_destroy), "User#force_destroy should be removed (Issue #272)"
   end
 end

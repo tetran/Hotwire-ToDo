@@ -60,7 +60,7 @@ module Api
           end
 
           def authenticate_admin_user
-            user = User.authenticate_by(email: params[:email], password: params[:password])
+            user = User.active.authenticate_by(email: params[:email], password: params[:password])
             return user if user&.can_read?("Admin")
 
             render json: { error: "Invalid email or password" }, status: :unauthorized

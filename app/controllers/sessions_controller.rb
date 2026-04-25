@@ -23,7 +23,7 @@ class SessionsController < ApplicationController
   private
 
     def authenticate
-      @user = User.authenticate_by(email: params[:email], password: params[:password])
+      @user = User.active.authenticate_by(email: params[:email], password: params[:password])
     end
 
     def handle_auth_failure

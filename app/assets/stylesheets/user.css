@@ -45,3 +45,35 @@
 .avatar-upload input[type="file"] {
   display: none;
 }
+
+.show-user__danger-zone {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-8);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-surface-active);
+}
+
+.show-user__deactivate-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+}
+.show-user__deactivate-link:hover,
+.show-user__deactivate-link:focus-visible {
+  color: var(--color-error);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  background: transparent;
+}
+.show-user__deactivate-link .material-symbols-outlined {
+  font-size: var(--text-base);
+}

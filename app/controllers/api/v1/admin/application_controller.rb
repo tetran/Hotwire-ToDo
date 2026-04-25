@@ -8,11 +8,19 @@ module Api
 
         skip_before_action :require_login
         before_action :require_admin_access
+        before_action :enforce_active_admin, if: :admin_logged_in?
 
         private
 
           def handle_unverified_request
             render json: { error: "CSRF token invalid" }, status: :unprocessable_entity
+          end
+
+          def enforce_active_admin
+            return unless current_admin&.deactivated?
+
+            reset_session
+            render json: { error: "Unauthorized" }, status: :unauthorized
           end
 
           def require_admin_access

@@ -77,8 +77,8 @@ class EventTest < ActiveSupport::TestCase
 
   # === Constants ===
 
-  test "EVENT_NAMES contains exactly 8 event types" do
-    assert_equal 8, Event::EVENT_NAMES.size
+  test "EVENT_NAMES contains exactly 10 event types" do
+    assert_equal 10, Event::EVENT_NAMES.size
     assert_includes Event::EVENT_NAMES, "task_created"
     assert_includes Event::EVENT_NAMES, "task_completed"
     assert_includes Event::EVENT_NAMES, "task_updated"
@@ -87,6 +87,8 @@ class EventTest < ActiveSupport::TestCase
     assert_includes Event::EVENT_NAMES, "project_created"
     assert_includes Event::EVENT_NAMES, "assignee_changed"
     assert_includes Event::EVENT_NAMES, "due_date_changed"
+    assert_includes Event::EVENT_NAMES, "user_deactivated"
+    assert_includes Event::EVENT_NAMES, "user_reactivated"
   end
 
   test "FEATURE_CATEGORIES maps every event name to a category" do
