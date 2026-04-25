@@ -56,23 +56,23 @@ describe('SectionError', () => {
     expect(container.firstChild).toHaveAttribute('data-layout', 'inline')
   })
 
-  it('has role="alert" on root element', () => {
+  it('has role="status" on root element (implicit polite aria-live, non-interrupting)', () => {
     render(<SectionError title="モデル一覧" />)
-    expect(screen.getByRole('alert')).toBeInTheDocument()
+    expect(screen.getByRole('status')).toBeInTheDocument()
   })
 
-  it('has aria-live="polite" on root element', () => {
+  it('does not set explicit aria-live (role="status" provides implicit polite)', () => {
     render(<SectionError title="モデル一覧" />)
-    const alert = screen.getByRole('alert')
-    expect(alert).toHaveAttribute('aria-live', 'polite')
+    const status = screen.getByRole('status')
+    expect(status).not.toHaveAttribute('aria-live')
   })
 
   it('applies danger container classes', () => {
     render(<SectionError title="モデル一覧" />)
-    const alert = screen.getByRole('alert')
-    expect(alert).toHaveClass('rounded-xl')
-    expect(alert).toHaveClass('border-rose-500/30')
-    expect(alert).toHaveClass('bg-rose-500/10')
+    const status = screen.getByRole('status')
+    expect(status).toHaveClass('rounded-xl')
+    expect(status).toHaveClass('border-rose-500/30')
+    expect(status).toHaveClass('bg-rose-500/10')
   })
 
   it('applies semibold rose-400 class to title', () => {

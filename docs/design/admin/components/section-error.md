@@ -53,7 +53,7 @@ label: "再試行"
 
 ## A11y
 
-- root 要素に `role="alert"` + `aria-live="polite"`
+- root 要素に `role="status"` (implicit `aria-live="polite"`、非中断アナウンス)。`role="alert"` は implicit `aria-live="assertive"` を持つため、polite 意図と組み合わせるとスクリーンリーダー実装で挙動が分かれる ([WAI-ARIA spec](https://www.w3.org/TR/wai-aria-1.2/#alert) 参照)。SectionError は section レベルの fetch 失敗通知で「即座に user 操作を中断する」必要は無いため `role="status"` を採用
 - root 要素に test 用 `data-layout={layout}` を露出 (各ページ test で class string 非依存に variant をアサート可能)
 
 ## Props

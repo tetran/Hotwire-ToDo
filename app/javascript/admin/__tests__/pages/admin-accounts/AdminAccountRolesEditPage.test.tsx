@@ -64,7 +64,7 @@ describe('AdminAccountRolesEditPage — partial failure', () => {
     renderPage()
 
     await waitFor(() => {
-      const alert = screen.getByRole('alert')
+      const alert = screen.getByRole('status')
       expect(alert).toHaveTextContent(/ロール一覧/)
     })
     // allRolesError: Save stays enabled per spec (options-list failure does not block submit)
@@ -77,7 +77,7 @@ describe('AdminAccountRolesEditPage — partial failure', () => {
     renderPage()
 
     await waitFor(() => {
-      const alert = screen.getByRole('alert')
+      const alert = screen.getByRole('status')
       expect(alert).toHaveTextContent(/割り当て済みロール/)
     })
     // assignedError: Save must be disabled to prevent silent data-loss
@@ -90,7 +90,7 @@ describe('AdminAccountRolesEditPage — partial failure', () => {
     renderPage()
 
     await waitFor(() => {
-      const alert = screen.getByRole('alert')
+      const alert = screen.getByRole('status')
       // assignedError SectionError takes priority — user sees the explanatory message
       expect(alert).toHaveTextContent(/割り当て済みロール/)
       expect(alert).toHaveTextContent(/Save できません/)
@@ -109,7 +109,7 @@ describe('AdminAccountRolesEditPage — partial failure', () => {
 
     // Wait for SectionError
     await waitFor(() => {
-      expect(screen.getByRole('alert')).toHaveTextContent(/ロール一覧/)
+      expect(screen.getByRole('status')).toHaveTextContent(/ロール一覧/)
     })
 
     // Save button is enabled (allRolesError does not disable Save)
@@ -124,7 +124,7 @@ describe('AdminAccountRolesEditPage — partial failure', () => {
     })
 
     // SectionError (fetch) and ErrorBanner (submit) coexist
-    expect(screen.getByRole('alert')).toHaveTextContent(/ロール一覧/)
+    expect(screen.getByRole('status')).toHaveTextContent(/ロール一覧/)
     expect(screen.getByText('Failed to update roles')).toBeInTheDocument()
   })
 })

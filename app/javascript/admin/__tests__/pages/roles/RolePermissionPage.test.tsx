@@ -68,7 +68,7 @@ describe('RolePermissionPage — partial failure', () => {
     renderPage()
 
     await waitFor(() => {
-      const alert = screen.getByRole('alert')
+      const alert = screen.getByRole('status')
       expect(alert).toHaveTextContent(/パーミッション一覧/)
     })
     // permissionsError: Save stays enabled per spec (options-list failure does not block submit)
@@ -81,7 +81,7 @@ describe('RolePermissionPage — partial failure', () => {
     renderPage()
 
     await waitFor(() => {
-      const alert = screen.getByRole('alert')
+      const alert = screen.getByRole('status')
       expect(alert).toHaveTextContent(/割り当て済みパーミッション/)
     })
     // assignedError: Save must be disabled to prevent silent data-loss
@@ -94,7 +94,7 @@ describe('RolePermissionPage — partial failure', () => {
     renderPage()
 
     await waitFor(() => {
-      const alert = screen.getByRole('alert')
+      const alert = screen.getByRole('status')
       // assignedError SectionError takes priority — user sees the explanatory message
       expect(alert).toHaveTextContent(/割り当て済みパーミッション/)
       expect(alert).toHaveTextContent(/Save できません/)
@@ -113,7 +113,7 @@ describe('RolePermissionPage — partial failure', () => {
 
     // Wait for SectionError
     await waitFor(() => {
-      expect(screen.getByRole('alert')).toHaveTextContent(/パーミッション一覧/)
+      expect(screen.getByRole('status')).toHaveTextContent(/パーミッション一覧/)
     })
 
     // Save button is enabled (permissionsError does not disable Save)
@@ -128,7 +128,7 @@ describe('RolePermissionPage — partial failure', () => {
     })
 
     // SectionError (fetch) and ErrorBanner (submit) coexist
-    expect(screen.getByRole('alert')).toHaveTextContent(/パーミッション一覧/)
+    expect(screen.getByRole('status')).toHaveTextContent(/パーミッション一覧/)
     expect(screen.getByText('Failed to update permissions')).toBeInTheDocument()
   })
 })

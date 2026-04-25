@@ -16,8 +16,7 @@ export function SectionError({
 
   return (
     <div
-      role="alert"
-      aria-live="polite"
+      role="status"
       data-layout={layout}
       className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-5 py-4"
     >

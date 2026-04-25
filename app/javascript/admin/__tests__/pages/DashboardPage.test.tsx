@@ -80,7 +80,7 @@ describe('DashboardPage — partial failure', () => {
     renderPage()
 
     await waitFor(() => {
-      const alert = screen.getByRole('alert')
+      const alert = screen.getByRole('status')
       expect(alert).toHaveTextContent(/System Status/)
       expect(alert).toHaveAttribute('data-layout', 'stacked')
     })
@@ -97,7 +97,7 @@ describe('DashboardPage — partial failure', () => {
 
     await waitFor(() => {
       // At least one alert should be present for the dashboard sections
-      const alerts = screen.getAllByRole('alert')
+      const alerts = screen.getAllByRole('status')
       expect(alerts.length).toBeGreaterThanOrEqual(1)
     })
     // Stat cards must not appear
@@ -112,7 +112,7 @@ describe('DashboardPage — partial failure', () => {
     renderPage()
 
     await waitFor(() => {
-      const alerts = screen.getAllByRole('alert')
+      const alerts = screen.getAllByRole('status')
       expect(alerts.length).toBeGreaterThanOrEqual(2)
     })
     expect(screen.queryByTestId('stat-card')).not.toBeInTheDocument()

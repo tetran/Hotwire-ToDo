@@ -141,7 +141,7 @@ describe('LlmProviderWorkspacePage', () => {
     // Provider heading must not appear
     expect(screen.queryByRole('heading', { name: /LLM Provider/ })).not.toBeInTheDocument()
     // SectionError alert must not appear (full-page fallback, not section error)
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
   })
 
   it('shows provider info and SectionError in Models section when provider succeeds but models fail', async () => {
@@ -155,7 +155,7 @@ describe('LlmProviderWorkspacePage', () => {
     // Provider Info card is rendered normally
     expect(screen.getByText('API Key')).toBeInTheDocument()
     // Models section shows SectionError
-    const alert = screen.getByRole('alert')
+    const alert = screen.getByRole('status')
     expect(alert).toHaveTextContent(/モデル一覧/)
     // Model data must not appear
     expect(screen.queryByText('gpt-4o')).not.toBeInTheDocument()
@@ -170,7 +170,7 @@ describe('LlmProviderWorkspacePage', () => {
       expect(screen.getByText('Both failed')).toBeInTheDocument()
     })
     expect(screen.queryByRole('heading', { name: /LLM Provider/ })).not.toBeInTheDocument()
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(screen.queryByRole('status')).not.toBeInTheDocument()
   })
 
   it('clears stale error message when a successful re-fetch follows a delete failure', async () => {
