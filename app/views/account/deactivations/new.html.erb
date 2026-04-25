@@ -7,7 +7,7 @@
     <p><%= t(".warning_session") %></p>
   </div>
 
-  <%= form_with model: @user, url: account_deactivation_path do |form| %>
+  <%= form_with model: @user, url: account_deactivation_path, method: :post do |form| %>
     <%= render_errors_for @user %>
 
     <div class="auth-form__field">

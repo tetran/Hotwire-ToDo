@@ -353,8 +353,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_25_081617) do
   add_foreign_key "comments", "users"
   add_foreign_key "deactivated_users", "users", column: "deactivated_by_id", on_delete: :nullify
   add_foreign_key "deactivated_users", "users", on_delete: :cascade
-  add_foreign_key "events", "projects"
-  add_foreign_key "events", "tasks"
+  add_foreign_key "events", "projects", on_delete: :nullify
+  add_foreign_key "events", "tasks", on_delete: :nullify
   add_foreign_key "events", "users"
   add_foreign_key "llm_models", "llm_providers"
   add_foreign_key "project_members", "projects"
