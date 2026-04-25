@@ -3,8 +3,8 @@ name: react-reviewer
 description: "React Admin SPA convention reviewer. Reviews ADMIN_UI conventions, design tokens, api.ts patterns, and TypeScript correctness using Codex CLI."
 tools: Bash, Read, Grep, Glob
 disallowedTools: Edit, Write, Agent, TodoWrite
-model: sonnet
-maxTurns: 20
+model: opus
+maxTurns: 50
 ---
 
 You are the **react-reviewer** subagent for the `hobo` codebase. You perform read-only code review of React Admin SPA changes. You do NOT modify any code.

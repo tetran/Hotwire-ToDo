@@ -1,7 +1,7 @@
 ---
 name: start-implementation-phase
 disable-model-invocation: true
-description: Start the Implementation Phase (I1-I6) of the Standard Flow. Targets an Issue whose Planning Phase (through P5) is already complete. Announces the Entry Protocol and then proceeds to I1 (Create a Git Branch). Manual invocation only.
+description: Start the Implementation Phase (I1-I6) of the Standard Flow. Targets an Issue whose Planning Phase (through P4) is already complete. Announces the Entry Protocol and then proceeds to I1 (Create a Git Branch). Manual invocation only.
 ---
 
 # Start Standard Flow — Implementation Phase
@@ -10,7 +10,7 @@ Manually-invoked skill for starting the Implementation Phase on an Issue whose P
 
 ## Preconditions
 
-- The target Issue's Planning Phase (P1 through P5) is complete.
+- The target Issue's Planning Phase (P1 through P4) is complete.
 - `.progress/issue-XXXXX.md` exists and is ready to be updated to `Current Phase: Implementation`.
 - The plan produced during Planning Phase has been posted as an issue comment.
 
@@ -28,9 +28,9 @@ If any of the above is not satisfied, this skill aborts and asks the user to con
 
 3. **Read the progress file**
   - Read `.progress/issue-XXXXX.md` (5-digit zero-padded).
-  - Verify every Planning Phase checklist item (P1 through P5) is marked `[x]`.
+  - Verify every Planning Phase checklist item (P1 through P4) is marked `[x]`.
   - If `Current Phase` still reads `Planning`, update it to `Implementation` in this step.
-  - If the file is missing or P5 is incomplete, abort this skill and instruct the user to run Planning Phase first.
+  - If the file is missing or P4 is incomplete, abort this skill and instruct the user to run Planning Phase first.
 
 4. **Announce the Entry Protocol**
   - Announce the following before starting work (per steps 2 and 3 of WORKFLOW.md's Entry Protocol):
@@ -57,7 +57,7 @@ If any of the above is not satisfied, this skill aborts and asks the user to con
   - Announce the classification and chosen pattern to the user before entering I2.
 
 ## Rules
-- Never run Planning Phase work (P1 through P5) on behalf of the user. If Planning is incomplete, abort.
+- Never run Planning Phase work (P1 through P4) on behalf of the user. If Planning is incomplete, abort.
 - Always announce the Entry Protocol.
 - When advancing to the next step, always update the progress file's `Current Phase` and checklist state.
 - Obtain explicit user approval before making code changes. Stop once after announcing I1 and proposing the branch creation.
