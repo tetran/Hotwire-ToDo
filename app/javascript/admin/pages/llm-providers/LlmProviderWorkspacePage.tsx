@@ -3,6 +3,11 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { llmProvidersApi, llmModelsApi, LlmProvider, LlmModel } from '../../lib/api'
 import Badge from '../../components/Badge'
 import { AdminBackLink } from '../../components/AdminBackLink'
+import { SectionError } from '../../components/SectionError'
+
+function buildSectionErrorMessage(reason: unknown): string {
+  return reason instanceof Error ? reason.message : 'Unknown error'
+}
 
 export const LlmProviderWorkspacePage = () => {
   const { id } = useParams<{ id: string }>()
@@ -12,7 +17,10 @@ export const LlmProviderWorkspacePage = () => {
 
   const [provider, setProvider] = useState<LlmProvider | null>(null)
   const [models, setModels] = useState<LlmModel[]>([])
-  const [error, setError] = useState('')
+  const [providerError, setProviderError] = useState('')
+  const [modelsError, setModelsError] = useState('')
+  const [deleteError, setDeleteError] = useState('')
+  const [loading, setLoading] = useState(true)
   const [refreshKey, setRefreshKey] = useState(0)
 
   // Flash message from location.state (e.g. after save/create)
@@ -32,23 +40,37 @@ export const LlmProviderWorkspacePage = () => {
 
   useEffect(() => {
     const controller = new AbortController()
+    setLoading(true)
+    setDeleteError('')
 
-    Promise.all([
-      llmProvidersApi.get(providerId, { signal: controller.signal }),
-      llmModelsApi.list(providerId, { signal: controller.signal }),
-    ])
-      .then(([providerData, modelsResponse]) => {
-        if (!controller.signal.aborted) {
-          setProvider(providerData)
-          setModels(modelsResponse.llm_models)
-          setError('')
+    ;(async () => {
+      const [resProvider, resModels] = await Promise.allSettled([
+        llmProvidersApi.get(providerId, { signal: controller.signal }),
+        llmModelsApi.list(providerId, { signal: controller.signal }),
+      ])
+
+      if (!controller.signal.aborted) {
+        if (resProvider.status === 'fulfilled') {
+          setProvider(resProvider.value)
+          setProviderError('')
+        } else {
+          setProviderError(buildSectionErrorMessage(resProvider.reason))
         }
-      })
-      .catch(err => {
-        if (!controller.signal.aborted) {
-          setError(err instanceof Error ? err.message : 'Failed to load workspace')
+      }
+
+      if (!controller.signal.aborted) {
+        if (resModels.status === 'fulfilled') {
+          setModels(resModels.value.llm_models)
+          setModelsError('')
+        } else {
+          setModelsError(buildSectionErrorMessage(resModels.reason))
         }
-      })
+      }
+
+      if (!controller.signal.aborted) {
+        setLoading(false)
+      }
+    })()
 
     return () => controller.abort()
   }, [providerId, refreshKey])
@@ -59,18 +81,20 @@ export const LlmProviderWorkspacePage = () => {
       await llmModelsApi.delete(providerId, modelId)
       setRefreshKey(k => k + 1)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to delete model')
+      setDeleteError(err instanceof Error ? err.message : 'Failed to delete model')
     }
   }
 
-  if (error && !provider) {
+  // Structural fetch exception: provider fetch failure → full-page error
+  if (!loading && providerError) {
     return (
       <div className="rounded-lg border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-400">
-        {error}
+        {providerError}
       </div>
     )
   }
-  if (!provider) return <p>Loading...</p>
+
+  if (loading || !provider) return <p>Loading...</p>
 
   return (
     <div className="space-y-6">
@@ -91,9 +115,9 @@ export const LlmProviderWorkspacePage = () => {
         </div>
       )}
 
-      {error && (
+      {deleteError && (
         <div className="rounded-lg border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-400">
-          {error}
+          {deleteError}
         </div>
       )}
 
@@ -160,57 +184,64 @@ export const LlmProviderWorkspacePage = () => {
           </Link>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr className="border-b border-slate-100">
-                <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">ID</th>
-                <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">Name</th>
-                <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">Display Name</th>
-                <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">Active</th>
-                <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-50">
-              {models.length === 0 && (
-                <tr>
-                  <td colSpan={5} className="px-5 py-10 text-center text-sm text-slate-400">
-                    No models configured for this provider yet.
-                  </td>
+        {modelsError ? (
+          <SectionError
+            title="モデル一覧"
+            onRetry={() => setRefreshKey(k => k + 1)}
+          />
+        ) : (
+          <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr className="border-b border-slate-100">
+                  <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">ID</th>
+                  <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">Name</th>
+                  <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">Display Name</th>
+                  <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">Active</th>
+                  <th scope="col" className="px-5 py-3.5 text-left text-xs font-semibold uppercase tracking-wider text-slate-400">Actions</th>
                 </tr>
-              )}
-              {models.map(model => (
-                <tr key={model.id} className="transition-colors hover:bg-slate-50/50">
-                  <td className="px-5 py-3.5 text-sm text-slate-700" style={{ fontFamily: 'DM Mono, monospace' }}>{model.id}</td>
-                  <td className="px-5 py-3.5 text-sm text-slate-700">{model.name}</td>
-                  <td className="px-5 py-3.5 text-sm text-slate-700">{model.display_name}</td>
-                  <td className="px-5 py-3.5 text-sm text-slate-700">
-                    {model.active
-                      ? <Badge variant="success">Active</Badge>
-                      : <Badge variant="neutral">Inactive</Badge>
-                    }
-                  </td>
-                  <td className="px-5 py-3.5 text-sm text-slate-700">
-                    <div className="flex items-center gap-2">
-                      <Link
-                        to={`/admin/llm-providers/${providerId}/models/${model.id}/edit`}
-                        className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
-                      >
-                        Edit
-                      </Link>
-                      <button
-                        onClick={() => handleDeleteModel(model.id)}
-                        className="rounded-md border border-rose-200 px-2.5 py-1 text-xs font-medium text-rose-500 transition hover:bg-rose-50"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-slate-50">
+                {models.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="px-5 py-10 text-center text-sm text-slate-400">
+                      No models configured for this provider yet.
+                    </td>
+                  </tr>
+                )}
+                {models.map(model => (
+                  <tr key={model.id} className="transition-colors hover:bg-slate-50/50">
+                    <td className="px-5 py-3.5 text-sm text-slate-700" style={{ fontFamily: 'DM Mono, monospace' }}>{model.id}</td>
+                    <td className="px-5 py-3.5 text-sm text-slate-700">{model.name}</td>
+                    <td className="px-5 py-3.5 text-sm text-slate-700">{model.display_name}</td>
+                    <td className="px-5 py-3.5 text-sm text-slate-700">
+                      {model.active
+                        ? <Badge variant="success">Active</Badge>
+                        : <Badge variant="neutral">Inactive</Badge>
+                      }
+                    </td>
+                    <td className="px-5 py-3.5 text-sm text-slate-700">
+                      <div className="flex items-center gap-2">
+                        <Link
+                          to={`/admin/llm-providers/${providerId}/models/${model.id}/edit`}
+                          className="rounded-md border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600 transition hover:bg-slate-50"
+                        >
+                          Edit
+                        </Link>
+                        <button
+                          onClick={() => handleDeleteModel(model.id)}
+                          className="rounded-md border border-rose-200 px-2.5 py-1 text-xs font-medium text-rose-500 transition hover:bg-rose-50"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   )
