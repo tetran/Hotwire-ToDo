@@ -75,7 +75,7 @@ export const ReactivateConfirmModal = ({ userName, onConfirm, onClose }: Props) 
                 onChange={e => setNewEmail(e.target.value)}
                 required
                 placeholder="Enter a new email address..."
-                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-[#6366f1] focus:ring-1 focus:ring-[#6366f1]/30"
+                className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none transition focus:border-accent focus:ring-1 focus:ring-accent/30"
               />
             </div>
           )}

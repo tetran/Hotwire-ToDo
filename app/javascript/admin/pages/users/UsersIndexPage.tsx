@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { usersApi, User, type PaginationMeta } from '../../lib/api'
 import Avatar from '../../components/Avatar'
 import Pagination from '../../components/Pagination'
+import { SectionError } from '../../components/SectionError'
 import { usePagination, useClampPage } from '../../hooks/usePagination'
 import { DeactivatedUserBadge } from '../../components/DeactivatedUserBadge'
 import { UserStatusFilter } from '../../components/UserStatusFilter'
@@ -10,12 +11,27 @@ import { DeactivateConfirmModal } from '../../components/DeactivateConfirmModal'
 import { ReactivateConfirmModal } from '../../components/ReactivateConfirmModal'
 
 type Status = 'active' | 'deactivated' | 'all'
+const STATUS_VALUES: readonly Status[] = ['active', 'deactivated', 'all']
+const isStatus = (v: string | null): v is Status => v !== null && (STATUS_VALUES as readonly string[]).includes(v)
 
 export const UsersIndexPage = () => {
   const [searchParams, setSearchParams] = useSearchParams()
 
-  const statusFromUrl = (searchParams.get('status') ?? 'active') as Status
-  const [status, setStatus] = useState<Status>(statusFromUrl)
+  const initialRawStatus = searchParams.get('status')
+  const initialStatus: Status = isStatus(initialRawStatus) ? initialRawStatus : 'active'
+  const [status, setStatus] = useState<Status>(initialStatus)
+
+  // Browser Back/Forward sync: when the URL's status changes externally, mirror it into state.
+  // We intentionally read `status` here without listing it in deps — including it would
+  // cause this effect to re-run after every state change and overwrite a user-initiated
+  // click between handler firing and re-render.
+  const statusRef = useRef(status)
+  statusRef.current = status
+  useEffect(() => {
+    const raw = searchParams.get('status')
+    const next: Status = isStatus(raw) ? raw : 'active'
+    if (next !== statusRef.current) setStatus(next)
+  }, [searchParams])
 
   const [users, setUsers] = useState<User[]>([])
   const [meta, setMeta] = useState<PaginationMeta | null>(null)
@@ -23,6 +39,7 @@ export const UsersIndexPage = () => {
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
+  const [retryNonce, setRetryNonce] = useState(0)
 
   const [deactivatingUser, setDeactivatingUser] = useState<User | null>(null)
   const [reactivatingUser, setReactivatingUser] = useState<User | null>(null)
@@ -42,16 +59,6 @@ export const UsersIndexPage = () => {
       resetPage()
     }
   }, [debouncedQuery, resetPage])
-
-  // Sync status → URL
-  useEffect(() => {
-    setSearchParams(prev => {
-      const next = new URLSearchParams(prev)
-      next.set('status', status)
-      return next
-    }, { replace: true })
-    resetPage()
-  }, [status, setSearchParams, resetPage])
 
   useEffect(() => {
     const controller = new AbortController()
@@ -76,11 +83,21 @@ export const UsersIndexPage = () => {
         if (!controller.signal.aborted) setLoading(false)
       })
     return () => controller.abort()
-  }, [debouncedQuery, status, page, perPage])
+  }, [debouncedQuery, status, page, perPage, retryNonce])
 
   const handleStatusChange = (next: Status) => {
     setStatus(next)
   }
+
+  // Sync state → URL on every status change
+  useEffect(() => {
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev)
+      next.set('status', status)
+      return next
+    }, { replace: true })
+    resetPage()
+  }, [status, setSearchParams, resetPage])
 
   const handleDeactivate = async (reason: string) => {
     if (!deactivatingUser) return
@@ -99,8 +116,6 @@ export const UsersIndexPage = () => {
   }
 
   const isDeactivated = (user: User) => Boolean(user.deactivated_at)
-
-  if (error) return <p className="text-rose-500">{error}</p>
 
   return (
     <div className="space-y-5">
@@ -129,7 +144,14 @@ export const UsersIndexPage = () => {
       {/* Status filter */}
       <UserStatusFilter value={status} onChange={handleStatusChange} />
 
-      {/* Table */}
+      {/* Table or inline fetch error (per ADMIN_UI §4.6 — keep header / filter mounted on failure) */}
+      {error ? (
+        <SectionError
+          title="ユーザー一覧"
+          message={error}
+          onRetry={() => setRetryNonce(n => n + 1)}
+        />
+      ) : (
       <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
@@ -211,8 +233,9 @@ export const UsersIndexPage = () => {
           </tbody>
         </table>
       </div>
+      )}
 
-      {meta && (
+      {!error && meta && (
         <Pagination
           meta={meta}
           page={page}

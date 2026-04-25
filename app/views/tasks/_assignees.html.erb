@@ -12,7 +12,7 @@
 
   <nav class="menu-navigation hidden" data-assignees-target="menu">
     <ul class="menu-list" data-assignees-target="assigneeList">
-      <% task.project.members.each do |member| %>
+      <% task.project.members.includes(:deactivation).each do |member| %>
         <li class="assignee-list__member" data-assignees-target="assignee" data-assignee-id="<%= member.id %>">
           <% if task.assignee == member %>
             <div class="assignee-list__member-info">

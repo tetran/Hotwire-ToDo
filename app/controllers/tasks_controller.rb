@@ -4,8 +4,11 @@ class TasksController < ApplicationController
 
   # GET /tasks/1
   def show
-    @comments = @task.comments.includes(:user).order(:created_at)
-    @subtasks = @task.subtasks.includes(:assignee).with_rich_text_description_and_embeds.order(:created_at)
+    @comments = @task.comments.includes(user: :deactivation).order(:created_at)
+    @subtasks = @task.subtasks
+                     .includes(assignee: :deactivation)
+                     .with_rich_text_description_and_embeds
+                     .order(:created_at)
   end
 
   # GET /tasks/new

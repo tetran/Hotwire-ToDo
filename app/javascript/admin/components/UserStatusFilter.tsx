@@ -20,7 +20,7 @@ export const UserStatusFilter = ({ value, onChange }: Props) => (
         onClick={() => onChange(option.value)}
         className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
           value === option.value
-            ? 'bg-[#6366f1] text-white shadow-sm'
+            ? 'bg-accent text-white shadow-sm'
             : 'text-slate-600 hover:bg-slate-50'
         }`}
         aria-pressed={value === option.value}
