@@ -1,14 +1,28 @@
 module Account
-  # Pre-Fork stub. Phase 1B replaces with the real self-deactivation flow
-  # (password_challenge form + reason textarea, transactional deactivation,
-  # reset_session, redirect to login).
   class DeactivationsController < ApplicationController
     def new
-      head :not_implemented
+      @user = current_user
     end
 
     def create
-      head :not_implemented
+      @user = current_user
+      @user.assign_attributes(
+        reason: params[:user][:reason],
+        password_challenge: params[:user][:password_challenge],
+      )
+
+      if @user.save
+        Account::DeactivationService.call(
+          user: @user,
+          performer: @user,
+          reason: @user.reason,
+          self_deactivated: true,
+        )
+        reset_session
+        redirect_to login_path, notice: I18n.t("controllers.account/deactivations.create.success")
+      else
+        render :new, status: :unprocessable_content
+      end
     end
   end
 end

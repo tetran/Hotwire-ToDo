@@ -2,23 +2,30 @@ module Api
   module V1
     module Admin
       module Users
-        # Pre-Fork stub. Phase 1A overwrites with the real implementation.
-        # API contract:
-        #   POST /api/v1/admin/users/:user_id/reactivation
-        #   Request body: { new_email?: string }
-        #   Responses:
-        #     - 204 No Content on success
-        #     - 401 / 403 on auth failure (Admin "User" write capability required)
-        #     - 404 when target user is not found within User.non_admin_accounts
-        #     - 422 on email conflict, body shapes:
-        #         { errors: [...], original_email_conflict: true }   # new_email omitted, original email is taken
-        #         { errors: [...] }                                  # new_email provided but conflicts
         class ReactivationsController < Admin::ApplicationController
           before_action -> { require_capability!("User", "write") }
 
           def create
-            render json: { error: "Not Implemented" }, status: :not_implemented
+            target = ::User.non_admin_accounts.deactivated.find_by(id: params[:user_id])
+            return render json: { error: "Not Found" }, status: :not_found unless target
+
+            Account::DeactivationService.reactivate(
+              user: target,
+              performer: current_admin,
+              new_email: params[:new_email],
+            )
+            head :no_content
+          rescue ActiveRecord::RecordInvalid => e
+            render json: reactivation_error_body(e), status: :unprocessable_entity
           end
+
+          private
+
+            def reactivation_error_body(error)
+              body = { errors: error.record.errors.full_messages }
+              body[:original_email_conflict] = true if params[:new_email].blank?
+              body
+            end
         end
       end
     end

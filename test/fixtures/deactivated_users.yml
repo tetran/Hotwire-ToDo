@@ -1,0 +1,7 @@
+deactivated_regular_user:
+  user: deactivated_user
+  original_email: deactivatedoriginal@example.com
+  reason: Account deactivated by admin
+  deactivated_by: admin_user
+  deactivated_at: <%= 1.day.ago %>
+

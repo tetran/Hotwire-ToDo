@@ -40,7 +40,8 @@ class User < ApplicationRecord
 
     sanitized = sanitize_sql_like(query.strip)
     base.where(
-      "LOWER(users.name) LIKE LOWER(:q) OR LOWER(deactivated_users.original_email) LIKE LOWER(:q)",
+      "LOWER(users.name) LIKE LOWER(:q) ESCAPE '\\' " \
+      "OR LOWER(deactivated_users.original_email) LIKE LOWER(:q) ESCAPE '\\'",
       q: "%#{sanitized}%",
     )
   }
@@ -68,6 +69,8 @@ class User < ApplicationRecord
   has_many :roles, through: :user_roles
 
   has_many :admin_login_histories, dependent: :destroy
+
+  attr_accessor :reason
 
   before_validation :generate_totp_secret, on: :create
   after_create :create_inbox_project
@@ -108,12 +111,6 @@ class User < ApplicationRecord
   delegate :admin?, :has_permission?, :can_read?, :can_write?,
            :can_delete?, :can_manage?, :can_grant_permissions?,
            :owned_permission_ids, to: :policy
-
-  def force_destroy
-    comments.destroy_all
-    project_members.destroy_all
-    destroy
-  end
 
   private
 

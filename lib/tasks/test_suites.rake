@@ -33,13 +33,18 @@ namespace :test do
   task auth: :environment do
     Rails::TestUnit::Runner.run_from_rake("test", [
       "test/models/user_test.rb",
+      "test/models/deactivated_user_test.rb",
+      "test/services/account/deactivation_service_test.rb",
       "test/controllers/sessions_controller_test.rb",
       "test/controllers/passwords_controller_test.rb",
       "test/controllers/password_resets_controller_test.rb",
       "test/controllers/email_verifications_controller_test.rb",
       "test/controllers/emails_controller_test.rb",
       "test/controllers/users_controller_test.rb",
+      "test/controllers/application_controller_test.rb",
+      "test/controllers/account/deactivations_controller_test.rb",
       "test/controllers/totp",
+      "test/helpers/users_helper_test.rb",
       "test/middleware",
     ])
   end

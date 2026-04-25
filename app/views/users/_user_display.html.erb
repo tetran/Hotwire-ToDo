@@ -58,4 +58,9 @@
       <%= form.submit class: "primary", disabled: true, data: { "user-target": "submit" } %>
     </div>
   <% end %>
+
+  <div class="show-user__danger-zone">
+    <h3 class="show-user__danger-zone-title"><%= t("users.user_display.danger_zone") %></h3>
+    <%= link_to t("users.user_display.deactivate"), new_account_deactivation_path, class: "btn danger" %>
+  </div>
 <% end %>

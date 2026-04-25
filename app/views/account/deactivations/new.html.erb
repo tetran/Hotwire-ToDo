@@ -1,0 +1,33 @@
+<main class="auth-form">
+  <h1 class="auth-form__title"><%= t(".title") %></h1>
+
+  <div class="auth-form__warning">
+    <p><%= t(".warning_reversible") %></p>
+    <p><%= t(".warning_history") %></p>
+    <p><%= t(".warning_session") %></p>
+  </div>
+
+  <%= form_with model: @user, url: account_deactivation_path do |form| %>
+    <%= render_errors_for @user %>
+
+    <div class="auth-form__field">
+      <%= form.label :password_challenge %>
+      <%= form.password_field :password_challenge, class: "full-width-input", required: true %>
+    </div>
+
+    <div class="auth-form__field">
+      <%= form.label :reason, t(".reason_label") %>
+      <%= form.text_area :reason, rows: 4, maxlength: 500, class: "full-width-input" %>
+    </div>
+
+    <div class="auth-form__field">
+      <%= check_box_tag :confirm_deactivation, "1", false, required: true, id: "confirm_deactivation" %>
+      <%= label_tag :confirm_deactivation, t(".confirm_label") %>
+    </div>
+
+    <div class="auth-form__actions">
+      <%= form.submit t(".submit"), class: "danger" %>
+      <%= link_to t(".cancel"), user_path, class: "btn" %>
+    </div>
+  <% end %>
+</main>
