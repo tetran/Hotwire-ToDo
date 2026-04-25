@@ -108,6 +108,20 @@ module Api
             assert response.parsed_body.key?("errors")
           end
 
+          # Race / double-submit: 2nd request hits UNIQUE constraint on
+          # deactivated_users.user_id → 422, not unrescued 500
+          test "POST create returns 422 (not 500) when service raises RecordNotUnique" do
+            login_as_admin_api
+            target = users(:regular_user)
+            Account::DeactivationService.expects(:call).raises(
+              ActiveRecord::RecordNotUnique.new("UNIQUE constraint failed"),
+            )
+            post api_v1_admin_user_deactivation_path(target), as: :json
+            assert_response :unprocessable_entity
+            assert response.parsed_body.key?("errors"),
+                   "response must carry an errors body, not a 500 page"
+          end
+
           test "POST create succeeds when user_manager calls it" do
             login_as_admin_api(users(:user_manager))
             target = users(:regular_user)

@@ -18,6 +18,12 @@ module Api
             head :no_content
           rescue ActiveRecord::RecordInvalid => e
             render json: { errors: e.record.errors.full_messages }, status: :unprocessable_entity
+          rescue ActiveRecord::RecordNotUnique
+            # Race / double-submit: the user was already deactivated between
+            # `User.non_admin_accounts.active.find_by` and the service call
+            # (e.g., another admin session, or an immediate retry). Respond
+            # with a structured 422 instead of letting it surface as 500.
+            render json: { errors: ["User is already deactivated"] }, status: :unprocessable_entity
           end
         end
       end
