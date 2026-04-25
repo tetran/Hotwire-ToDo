@@ -192,7 +192,9 @@ Quick rules (see `docs/process/DELEGATION.md` for the full contract):
 - **Handoff contract**: every invocation passes a payload with Issue / Goal / Plan Excerpt / Scope / Denylist / Domain Tests / Done When / Required Return Format. `Scope` is an expected-files hint (not a hard limit); `Denylist` is strict (edit forbidden, reading allowed).
 - **Shared files are orchestrator-owned**: `config/routes.rb` (stub + temporary controller at Pre-Fork), `.progress/**`, `CLAUDE.md`, `docs/**`, `.claude/**` — orchestrator edits these directly and puts them in every subagent's Denylist. `App.tsx` and `AdminLayout.tsx` are owned by `react-developer`, not the orchestrator.
 - **Dispatch patterns**: sequential (Rails → React) for typical Admin features; parallel for independent work; single-domain for one-sided tasks; direct implementation when delegation overhead outweighs the benefit.
-- **Fallback**: on domain-test failure, Denylist violation, plan deviation, or blocker stop, the orchestrator re-delegates once or falls back to direct implementation.
+- **Dispatch sizing**: each agent has a hard `maxTurns` cap (currently 50). Soft cap of ~30 useful turns / ≤ 15 files per dispatch (≤ 10 when changes are non-uniform). Wholesale edits across many page files must be split into Same-type parallel batches — see DELEGATION.md → Dispatch Sizing for the rationale and the Issue #332 incident that motivated this rule.
+- **Post-receipt validation (mandatory)**: after each subagent returns, run `.claude/scripts/check-subagent-response.sh <agent_type>` (piping the verbatim response on stdin) plus the Completion Verification checklist. The script reuses the SubagentStop hook logic and is the only schema detector that runs even when the hook does not fire (e.g., maxTurns force-stop in Issue #332).
+- **Fallback**: on schema-check failure, domain-test failure, Denylist violation, plan deviation, or blocker stop, the orchestrator re-delegates once or falls back to direct implementation (see DELEGATION.md → Fallback Procedure).
 
 ## Reference
 

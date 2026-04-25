@@ -44,6 +44,35 @@ Plan touches...
 
 **Announce the classification and chosen pattern** before dispatching, so the user can intervene.
 
+## Dispatch Sizing
+
+Each subagent dispatch has a **hard turn budget** set by `maxTurns` in the agent's frontmatter (currently 50 for `rails-developer` / `react-developer`). A "turn" here is one `AssistantMessage` cycle — multiple tool calls dispatched in parallel within a single message count as **1 turn**, while tool calls separated by intermediate model output count as separate turns ([Claude Agent SDK — Agent loop](https://code.claude.com/docs/en/agent-sdk/agent-loop)).
+
+Exceeding the budget force-stops the agent mid-work. Empirically observed in Issue #332 (the only on-record incident in this repo): the `SubagentStop` hook did **not** fire, no entry was written to `.claude/logs/subagent_responses.jsonl`, and the orchestrator received only the in-flight `AssistantMessage` text (a mid-sentence cutoff) with **no `is_error` signal** surfaced at the orchestrator-visible level. Whether this generalizes to all maxTurns force-stops is **inferred, not officially confirmed**: the SDK wire format permits an `is_error` flag on `ToolResultBlock` and the closed-source CLI binary may set it under conditions we have not exhaustively probed. The guidance below is conservative against this uncertainty — it relies on response-content signals (which the orchestrator can always observe) rather than hook firing.
+
+**Per-dispatch limits**:
+
+- **Soft cap**: ~30 useful turns per dispatch. Reserve ≥ 10 turns for domain tests, codex self-review, and Required Return Format output.
+- **File cap**: ≤ 15 files per dispatch when changes are uniform (same edit pattern repeated); ≤ 10 files when changes are non-uniform.
+- **Above the cap**: split into multiple dispatches (Same-type parallel for independent batches, sequential for dependent ones), or implement directly.
+
+**Turn cost — rough orientation, not per-file accounting**:
+
+The exact turn cost of a dispatch depends on how the agent batches tool calls within each response. Since multiple Edits in one response only consume **one** turn, a tightly batching agent can fit far more file-touches under the cap than a sequential one. The numbers below are orientation only:
+
+- Independent read-only tool calls (Read / Grep / Glob) can be parallelized within a single turn — many of them count as 1 turn.
+- Edits are interdependent with Read in the typical Read-then-Edit pattern the agent uses, which tends to serialize work into separate turns.
+- Codex self-review typically consumes 5-10 turns by itself.
+- The final response (Required Return Format) does **not** consume a turn — `maxTurns` only counts tool-use turns, and the final text-only message ends the loop ([Agent loop docs](https://code.claude.com/docs/en/agent-sdk/agent-loop)). The agent only needs enough remaining tool-use turns to *reach* a state where it can emit that final message.
+
+**Empirical bound (Issue #332)**: a single dispatch covering 19 page files of wholesale token-replacement plus tests plus self-review **did** force-stop the agent at the 50-turn cap. We do not have a closed-form turn model that explains exactly why, so the file caps above are calibrated against this observed bound rather than derived from per-tool accounting. If you find a class of dispatch that consistently fits more files under the cap, that is evidence to widen the caps for that class — record the data in the PR description.
+
+**Splitting heuristics**:
+
+- Cross-page wholesale UI updates (e.g., replacing one component import with another across many files): split into batches of ≤ 10 page files each, dispatched as Same-type parallel.
+- Mixed Rails + React feature additions: typically fit in a single dispatch per domain when the feature touches ≤ 15 files total per domain.
+- Cross-cutting refactors with non-uniform per-file work: prefer orchestrator direct implementation — delegation overhead exceeds the parallelism gain.
+
 ## Handoff Contract
 
 Every subagent invocation **MUST** pass a payload containing all of the following sections, verbatim:
@@ -185,42 +214,42 @@ When a task requires editing an orchestrator-owned file, the orchestrator perfor
 
 ## Fallback Procedure
 
-If a subagent returns with any of the following, the orchestrator falls back to direct implementation for that delegation:
+This Fallback Procedure and the Completion Verification block below apply to **implementation subagents** (`rails-developer` / `react-developer`) returning under I2. The reviewer subagents dispatched in I4 (`rails-reviewer` / `react-reviewer` / `architecture-reviewer`) have their own 3-section return contract and a separate schema check — see [I4 Parallel Review → Reviewer Schema Check](#reviewer-schema-check).
+
+If an implementation subagent returns with any of the following, the orchestrator falls back to direct implementation for that delegation:
 
 - **Domain tests failing**. Try one re-delegation with corrective guidance (failing test output + hypothesis). If still failing, the orchestrator takes over I2 directly.
 - **Denylist violation**. Revert the offending edits, record the violation, and switch to direct implementation.
 - **Plan Excerpt deviation flagged in Deviations**. Decide with the user whether the deviation is acceptable; otherwise, reset and redispatch with a clarified payload, or implement directly.
 - **Subagent stops with a blocker report**. Address the blocker in the orchestrator context.
 
-- **maxTurns exhaustion** (agent returned partial result or terminated without Required Return Format). Re-delegate once with a refined payload. The retry payload uses the same Handoff Contract template but updates:
+- **Schema-check failure** (`.claude/scripts/check-subagent-response.sh` exits non-zero — likely cause: maxTurns force-stop or runtime error). Re-delegate once with a refined payload that updates the Handoff Contract template:
   - **Goal**: narrowed to remaining scope only
   - **Scope**: narrowed to files not yet completed
-  - **Denylist**: unchanged (same exclusions apply)
-  - **Plan Excerpt**: unchanged (full context preserved)
-  - Append the partial agent's Test Result and Handoff Notes as a **Prior Run Context** section at the end of the payload
+  - **Denylist** / **Plan Excerpt**: unchanged
+  - Append the partial agent's prior output as a **Prior Run Context** section at the end of the payload
 
   Maximum 1 retry; on retry failure, the orchestrator takes over I2 directly.
-- **Return Format violation** (agent returned results but not in the 5-section structure, or with truncated / preamble-leaking output). The implementation may still be correct — do **not** assume failure.
-  1. Orchestrator verifies the remaining three Completion Verification items (Denylist / Plan items / Domain tests) directly by reading changed files and re-running the domain test suite locally.
-  2. If all three pass, continue without re-dispatch. If any fails, apply the relevant Fallback case (domain tests failing / Denylist violation / Plan Excerpt deviation).
-  3. Record the Return Format violation in the PR description's Delegation Notes so the pattern surfaces over time.
 - **Fork-join partial failure** (one agent succeeds, the other fails). Keep the successful agent's result. Apply the relevant Fallback Procedure case (retry or direct implementation) only for the failed agent.
 
 Record fallback events in the PR description so patterns become visible over time.
 
 ## Completion Verification
 
-After each subagent returns, the orchestrator **MUST explicitly enumerate** every item below as pass/fail and record the result in the working log (not just "I checked"). Implicit verification is not acceptable — write down pass/fail per item so the Fallback Procedure can trigger on any miss.
+After each **implementation subagent** (`rails-developer` / `react-developer`) returns, the orchestrator **MUST** enumerate every item below as pass/fail in the working log:
 
 ```
 Post-Join Verification (<agent name>):
+- [ ] Schema check: pipe the verbatim response into
+        .claude/scripts/check-subagent-response.sh <agent_type>
+      Exit 0 = pass. Non-zero exit → apply Schema-check failure
+      Fallback BEFORE the items below.
 - [ ] No Denylist violations in Changed Files
-      (additions inside the agent's own domain but outside the payload Scope
-       are allowed — record the reasoning)
-- [ ] All Plan Excerpt checklist items are satisfied (or listed under Deviations)
-- [ ] Domain tests were executed and green (check Test Result section)
-- [ ] Required Return Format has all 5 sections present in order
+- [ ] All Plan Excerpt checklist items satisfied (or listed under Deviations)
+- [ ] Domain tests executed and green
 ```
+
+The script reuses the `SubagentStop` hook logic (`.claude/hooks/subagent_stop_format_check.sh`), so manual and hook checks stay in lock-step. Run it on every return — in Issue #332 the hook did not fire on maxTurns force-stop, so the manual invocation is the only detector that does not depend on the hook running.
 
 If any item is **fail**, apply the relevant Fallback Procedure case before proceeding. For fork-join, run this block separately for each returned agent — a pass on one side does not excuse a miss on the other.
 
@@ -280,6 +309,10 @@ Each reviewer receives a minimal payload from the orchestrator. The payload prov
 
     ### Reviewer Notes
     <Scope gaps, caveats, observations.>
+
+#### Reviewer Schema Check
+
+Before the Dedup Procedure, run the same wrapper script with the reviewer agent type for each reviewer's response. On non-zero exit, re-dispatch that reviewer once with the same payload; on retry failure, drop its findings from the dedup pool and note in the PR description.
 
 #### Dedup Procedure
 
