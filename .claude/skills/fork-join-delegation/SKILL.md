@@ -5,7 +5,7 @@ description: Hobo-specific playbook for orchestrating fork-join (parallel) and o
 
 # Fork-Join Delegation Playbook (hobo)
 
-This skill turns the lessons from twelve hobo fork-join pilots into a checklist the orchestrator can run *before* dispatching, *while* sizing payloads, and *after* receiving subagent returns. It complements `docs/process/DELEGATION.md` (the contract) by capturing the empirical calibration that does not belong in the contract document.
+This skill is the **operational playbook** for I2 subagent delegation. It pairs with `docs/process/DELEGATION.md` (the **contract** — agent inventory, payload schema, ownership, fallback triggers): the doc defines WHO/WHAT/WHEN, this skill owns HOW/WHY/HOW-MUCH (sizing calibration, Pre-Fork freeze list, recovery decision tree, I4 pitfalls and ROI). Lessons distilled from twelve hobo fork-join pilots — run these checklists *before* dispatching, *while* sizing payloads, and *after* receiving subagent returns.
 
 ## When to load this skill
 
@@ -77,7 +77,7 @@ Full Pre-Fork checklist + Issue #272 incident: `references/payload-design.md`.
 
 ## maxTurns dispatch sizing
 
-`rails-developer` / `react-developer` / `rails-reviewer` / `react-reviewer` / `architecture-reviewer` are **currently capped at 100 turns** (frontmatter `maxTurns`). Force-stop is silent — past incidents show production code complete but tests missing, OR tests complete but production stub-only. Do **not** trust the "completed" notification.
+`rails-developer` / `react-developer` / `rails-reviewer` / `react-reviewer` / `architecture-reviewer` each have a hard `maxTurns` cap set in their `.claude/agents/*.md` frontmatter — **read the agent file** for the current value (do not memorize a number; it drifts). Force-stop is silent — past incidents show production code complete but tests missing, OR tests complete but production stub-only. Do **not** trust the "completed" notification.
 
 ### Reviewer subagents: draft format first, verify last
 

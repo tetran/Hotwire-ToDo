@@ -1,6 +1,21 @@
 # Delegation to Domain Subagents
 
+This document is the **delegation orientation** — agent inventory, ownership boundaries, payload schema, and the trigger states that fall back to the orchestrator. Read it for the **WHAT / WHO / WHEN** of delegation.
+
+For the **HOW / WHY / HOW-MUCH** (sizing calibration, Pre-Fork freeze list, recovery decision tree, I4 pitfalls and ROI), the source of truth is the **`fork-join-delegation` skill** at `.claude/skills/fork-join-delegation/`. The skill auto-loads in delegation contexts; read its `SKILL.md` directly when browsing the docs.
+
+**Document split**:
+
+| File | Role |
+|---|---|
+| `docs/process/DELEGATION.md` (this file) | Contract: WHO / WHAT / WHEN |
+| `.claude/skills/fork-join-delegation/` | Playbook: HOW / WHY / HOW-MUCH |
+| `.claude/agents/*.md` | Per-agent definition + behavior. **Source of truth** for the `maxTurns` cap. |
+| `docs/reference/DELEGATION_DESIGN_NOTES.md` | Calibration rationale + incident history |
+
 This document defines how the orchestrator may delegate **Implementation Phase Step I2 (Implement)** to domain-specific subagents, and how **I4 (Local Review)** dispatches parallel reviewer subagents.
+
+## Agents
 
 **Implementation (I2)**:
 - **`rails-developer`** (`.claude/agents/rails-developer.md`) — Rails backend work
@@ -44,34 +59,19 @@ Plan touches...
 
 **Announce the classification and chosen pattern** before dispatching, so the user can intervene.
 
+For the direct-vs-delegate tiebreaker (orchestrator context economy), hybrid patterns (orchestrator pre-work + single-domain delegation), and the single-domain-vs-orchestrator-owned-docs split, see `fork-join-delegation` skill `## Direct vs Delegate — decision criteria`.
+
 ## Dispatch Sizing
 
-Each subagent dispatch has a **hard turn budget** set by `maxTurns` in the agent's frontmatter (currently 100 for `rails-developer` / `react-developer` / `rails-reviewer` / `react-reviewer` / `architecture-reviewer`). A "turn" here is one `AssistantMessage` cycle — multiple tool calls dispatched in parallel within a single message count as **1 turn**, while tool calls separated by intermediate model output count as separate turns ([Claude Agent SDK — Agent loop](https://code.claude.com/docs/en/agent-sdk/agent-loop)).
+**Formal contract**:
 
-Exceeding the budget force-stops the agent mid-work. The guidance below relies on **response-content signals** (which the orchestrator can always observe) rather than `SubagentStop` hook firing — past `maxTurns` force-stops have been observed where the hook did not fire and no `is_error` signal surfaced at the orchestrator-visible level. See `docs/reference/DELEGATION_DESIGN_NOTES.md` §1 for the incident details and the inferred-not-confirmed disclaimer.
-
-**Per-dispatch limits**:
-
-- **Soft cap**: ~30 useful turns per dispatch. Reserve ≥ 10 turns for domain tests, codex self-review, and Required Return Format output.
 - **File cap**: ≤ 15 files per dispatch when changes are uniform (same edit pattern repeated); ≤ 10 files when changes are non-uniform.
+- **`maxTurns` cap**: see `.claude/agents/*.md` frontmatter — that file is the source of truth. When raising the cap, also update the `## Turn Budget Management` section per the skill's three-phase pattern.
 - **Above the cap**: split into multiple dispatches (Same-type parallel for independent batches, sequential for dependent ones), or implement directly.
 
-**Turn cost — rough orientation, not per-file accounting**:
+For the **empirical refinement** (`≤ 8 files` when tests are included), the **three-phase turn budget pattern** (Normal / Warning / Convergence), the **budget-math template**, and the **force-stop incident history** (Issue #272 / #332), see `fork-join-delegation` skill `## maxTurns dispatch sizing` and `references/dispatch-sizing.md`.
 
-The exact turn cost of a dispatch depends on how the agent batches tool calls within each response. Since multiple Edits in one response only consume **one** turn, a tightly batching agent can fit far more file-touches under the cap than a sequential one. The numbers below are orientation only:
-
-- Independent read-only tool calls (Read / Grep / Glob) can be parallelized within a single turn — many of them count as 1 turn.
-- Edits are interdependent with Read in the typical Read-then-Edit pattern the agent uses, which tends to serialize work into separate turns.
-- Codex self-review typically consumes 5-10 turns by itself.
-- The final response (Required Return Format) does **not** consume a turn — `maxTurns` only counts tool-use turns, and the final text-only message ends the loop ([Agent loop docs](https://code.claude.com/docs/en/agent-sdk/agent-loop)). The agent only needs enough remaining tool-use turns to *reach* a state where it can emit that final message.
-
-**Empirical bound**: file caps above are calibrated against an observed bound (a 19-file wholesale dispatch hit the 50-turn cap) rather than from a closed-form turn model. If a class of dispatch consistently fits more files under the cap, record the data in the PR description so the caps can be widened with evidence. See `docs/reference/DELEGATION_DESIGN_NOTES.md` §2 for the calibration rationale and incident details.
-
-**Splitting heuristics**:
-
-- Cross-page wholesale UI updates (e.g., replacing one component import with another across many files): split into batches of ≤ 10 page files each, dispatched as Same-type parallel.
-- Mixed Rails + React feature additions: typically fit in a single dispatch per domain when the feature touches ≤ 15 files total per domain.
-- Cross-cutting refactors with non-uniform per-file work: prefer orchestrator direct implementation — delegation overhead exceeds the parallelism gain.
+The pre-skill calibration rationale lives in `docs/reference/DELEGATION_DESIGN_NOTES.md` §1–§2.
 
 ## Handoff Contract
 
@@ -132,7 +132,7 @@ A payload is an **instruction** to the agent, not the orchestrator's thinking lo
 - **No reasoning residue.** Phrases like "wait, actually..." or "let me reconsider..." belong to your working memory, never to the payload. If you catch yourself writing them, rewrite the payload to state the final conclusion only.
 - **Pre-existing errors go into `Done When`.** If there are known-broken type errors, flaky tests, or warnings in the area the agent will touch, list them under `Done When` as "the following pre-existing errors may be ignored" so the agent does not spend turns chasing them.
 - **Copy, don't paraphrase.** When quoting the Plan Excerpt or an API contract, copy verbatim from the approved plan. Paraphrasing introduces drift between what the user approved and what the agent implements.
-- **Intentional duplication across fork-join payloads is a feature, not a bug.** When duplicating API contract / authorization tables / field semantics to both rails-developer and react-developer payloads, annotate the duplicated block with `# Duplicated in both fork-join payloads for type-contract integrity (see DELEGATION.md Fork-join §5)`. This turns silent token cost into an audited decision and prevents future payload authors from "DRY-ing" the duplication away.
+- **Intentional duplication across fork-join payloads is a feature, not a bug.** When duplicating API contract / authorization tables / field semantics to both rails-developer and react-developer payloads, annotate the duplicated block with `# Duplicated in both fork-join payloads for type-contract integrity`. Full rationale + Issue #297 evidence: `fork-join-delegation` skill `references/payload-design.md` (`## Verbatim duplication of pinned contracts is a feature, not a DRY violation`).
 
 ## Invocation Patterns
 
@@ -161,17 +161,9 @@ Use when the Plan Excerpt covers both Rails and React within the same feature, b
 - The API contract (URL, method, request/response shapes) is explicitly stated in both agents' Plan Excerpts.
 - Each agent's Denylist includes the paths owned by the other domain (file-level mutual exclusion — see Shared File Ownership).
 
-**Procedure** (Pre-Fork is intentionally lean — keep orchestrator work to stub + verify):
+**High-level procedure**: **Pre-Fork** (orchestrator stubs route + temporary controller, freezes shared signatures) → **Dispatch** (parallel Agent calls in a single message) → **Join** (wait for both returns) → **Post-Join Verification** (Completion Verification per agent + smoke test selection a/b/c).
 
-1. **Pre-Fork — stub route + temporary controller.** The orchestrator adds a stub route to `config/routes.rb` and creates a temporary controller returning a fixed JSON response matching the planned contract. This is the only shared-file edit the orchestrator performs before dispatch; do **not** touch `App.tsx` or `AdminLayout.tsx` here — those belong to react-developer.
-2. **Verify routing.** Run `bin/rails routes | grep <resource>` to confirm the stub is wired up correctly. Fix typos now, not after dispatch.
-3. **Hook compatibility check (pre-dispatch).** Before dispatching, grep `.claude/hooks/pre_tool_use_denylist.sh` (and related hooks) against the shared files the subagents are expected to touch (typically `App.tsx`, `AdminLayout.tsx`, `config/routes.rb`, `.progress/**`). If a hook denies a file that the plan assigns to a subagent, resolve the drift before dispatch — either by updating the hook, adjusting ownership, or handing the edit back to the orchestrator explicitly.
-4. **Dispatch** two Agent calls in a **single message** so they run concurrently:
-   - `rails-developer` overwrites the temporary controller with the real implementation and adds tests.
-   - `react-developer` owns `app/javascript/admin/App.tsx` (route registration), `app/javascript/admin/components/AdminLayout.tsx` (nav item), the page, and the `api.ts` additions.
-5. **Wait for both agents to return (join).**
-6. **Post-Join Verification** — run the Completion Verification checklist explicitly for **each** agent (see `Completion Verification` section below). If type mismatches surface between the Rails response and the TypeScript types (e.g., field name divergence), treat as a sequential dependency and redispatch react-developer with the Rails agent's actual output as context.
-7. **Smoke test selection (explicit choice, not default).** Choose one of: (a) **automated** via the `webapp-testing` (playwright) skill, (b) **manual** by asking the user, or (c) **skip** when the change is low-risk and covered by tests. Record the choice + reasoning in `.progress/issue-*.md` I2. Default preference is (a) when the feature has a visible UI path; fall back to (b) only when scope mismatch or cost makes automation impractical.
+For the full Pre-Fork freeze checklist (service signatures, event whitelist, helper signatures, API response shape, routes), Pre-Fork sanity checks (`db:migrate:redo`, `routes` grep, hook compatibility check), the smoke test selection rule (a/b/c), and Issue #272 incident lessons, see `fork-join-delegation` skill `## Pre-Fork freeze list` and `references/payload-design.md`.
 
 ### Parallel (independent domains)
 
@@ -200,14 +192,14 @@ This table defines each agent's **domain**. An agent may freely edit any file in
 
 | Path | Owner |
 |---|---|
-| `config/routes.rb` | orchestrator (see Fork-join Procedure Step 1 for the Pre-Fork stub) |
+| `config/routes.rb` | orchestrator (Pre-Fork stubs the route; rails-developer overwrites the temporary controller) |
 | `.progress/issue-*.md` | orchestrator |
 | `CLAUDE.md`, `docs/**` | orchestrator |
 | `.claude/**` (agents / skills / settings) | orchestrator |
 | `app/controllers/**`, `app/models/**`, `app/services/**`, `app/jobs/**`, `db/migrate/**`, `test/controllers/**`, `test/models/**`, `test/services/**`, `test/jobs/**`, `test/system/**` (non-React) | rails-developer (orchestrator may stub a temporary controller under `app/controllers/api/v1/admin/**` at Pre-Fork for fork-join — rails-developer then overwrites it with the real implementation) |
 | `app/javascript/admin/**` — including `App.tsx` (route registration), `components/AdminLayout.tsx` (nav item), `pages/**`, `components/**`, `contexts/**`, `lib/api.ts`, `**/__tests__/**` | react-developer |
 
-When a task requires editing an orchestrator-owned file, the orchestrator performs the edit itself before or after the delegation, never inside the subagent payload. For fork-join, the orchestrator's Pre-Fork edit is limited to the `config/routes.rb` stub + a temporary controller (see Fork-join Procedure Step 1).
+When a task requires editing an orchestrator-owned file, the orchestrator performs the edit itself before or after the delegation, never inside the subagent payload. For fork-join, the orchestrator's Pre-Fork edit is limited to the `config/routes.rb` stub + a temporary controller (see `fork-join-delegation` skill for the full freeze list).
 
 ## Progress File Responsibility
 
@@ -217,25 +209,18 @@ When a task requires editing an orchestrator-owned file, the orchestrator perfor
 
 This Fallback Procedure and the Completion Verification block below apply to **implementation subagents** (`rails-developer` / `react-developer`) returning under I2. The reviewer subagents dispatched in I4 (`rails-reviewer` / `react-reviewer` / `architecture-reviewer`) have their own 3-section return contract and a separate schema check — see [I4 Parallel Review → Reviewer Schema Check](#reviewer-schema-check).
 
-If an implementation subagent returns with any of the following, the orchestrator falls back to direct implementation for that delegation:
+The orchestrator falls back to direct implementation when an implementation subagent returns with any of the following triggers:
 
-- **Domain tests failing**. Try one re-delegation with corrective guidance (failing test output + hypothesis). If still failing, the orchestrator takes over I2 directly.
-- **Denylist violation**. Revert the offending edits, record the violation, and switch to direct implementation.
-- **Plan Excerpt deviation flagged in Deviations**. Decide with the user whether the deviation is acceptable; otherwise, reset and redispatch with a clarified payload, or implement directly.
-- **Subagent stops with a blocker report**. Address the blocker in the orchestrator context.
+- **Domain tests failing** — try one re-delegation with corrective guidance (failing test output + hypothesis); on retry failure, take over directly.
+- **Denylist violation** — revert offending edits, record the violation, switch to direct implementation.
+- **Plan Excerpt deviation flagged in Deviations** — decide with the user whether the deviation is acceptable; otherwise reset and redispatch with a clarified payload, or implement directly.
+- **Subagent stops with a blocker report** — address the blocker in the orchestrator context.
+- **Schema-check failure** (`.claude/scripts/check-subagent-response.sh` exits non-zero — likely cause: maxTurns force-stop or runtime error) — re-delegate ONCE with refined Goal/Scope (narrowed to remaining files), Denylist/Plan Excerpt unchanged, prior agent output appended as a `## Prior Run Context` section. Maximum 1 retry; on retry failure, take over directly.
+- **Fork-join partial failure** (one agent succeeds, the other fails) — keep the successful agent's result; apply the relevant Fallback case only to the failed agent.
 
-- **Schema-check failure** (`.claude/scripts/check-subagent-response.sh` exits non-zero — likely cause: maxTurns force-stop or runtime error). Re-delegate once with a refined payload that updates the Handoff Contract template:
-  - **Goal**: narrowed to remaining scope only
-  - **Scope**: narrowed to files not yet completed
-  - **Denylist** / **Plan Excerpt**: unchanged
-  - Append the partial agent's prior output as a **Prior Run Context** section at the end of the payload
+For the **recovery decision tree** (Case A/B/C/D triage that determines whether to re-delegate or fix directly), **mid-reasoning extraction tips** (substantive findings often survive a force-stop in the agent's prose), and the **section-by-section survival pattern**, see `fork-join-delegation` skill `## Recovery when a subagent returns malformed` and `references/recovery.md`.
 
-  Maximum 1 retry; on retry failure, the orchestrator takes over I2 directly.
-- **Fork-join partial failure** (one agent succeeds, the other fails). Keep the successful agent's result. Apply the relevant Fallback Procedure case (retry or direct implementation) only for the failed agent.
-
-Record fallback events in the PR description so patterns become visible over time.
-
-If you hit repeated fallbacks in a given task class, that's a signal to either expand the agent prompt or mark that class as "direct-only".
+Record fallback events in the PR description so patterns become visible over time. If you hit repeated fallbacks in a given task class, that's a signal to either expand the agent prompt or mark that class as "direct-only".
 
 When retrospecting a subagent return, paths the dispatch did not exercise are **untested** — do not claim a contract is validated when only the happy path ran. Fallback branches that were not triggered must be labeled as such.
 
@@ -265,6 +250,8 @@ When I4 (Local Review) is reached, the orchestrator dispatches reviewer subagent
 - **Cross-domain PRs** (Rails + React files changed): all three reviewers in parallel (3 Agent calls in a single message)
 - **Single-domain PRs**: matching domain reviewer + `architecture-reviewer` (2 Agent calls in a single message)
 - **Docs/config-only PRs**: `architecture-reviewer` only, or orchestrator judgment to skip I4
+
+For the **parallelism ROI rationale**, the **six concrete pitfalls** (verification stays serial, context bloat, re-raise amplification, cross-layer findings, etc.) and their **mitigation patterns**, see `fork-join-delegation` skill `## I4 parallel review — six pitfalls` and `references/roi-calibration.md`.
 
 ### Reviewer Agents
 
@@ -322,7 +309,7 @@ After all reviewers return:
 
 ### Re-review
 
-After fixes, a single re-review pass by `architecture-reviewer` only (not all three in parallel). This prevents dismissed findings from resurfacing 3x due to stateless re-review.
+After fixes, a single re-review pass by `architecture-reviewer` only (not all three in parallel). For the rationale (re-raise amplification under stateless re-review), see `fork-join-delegation` skill `## I4 parallel review — six pitfalls` (Pitfall 5 + Mitigation 6).
 
 ## Maintaining the agent definitions
 

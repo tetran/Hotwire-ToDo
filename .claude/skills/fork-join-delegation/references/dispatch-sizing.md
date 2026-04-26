@@ -28,7 +28,7 @@ For `react-developer` in hobo, observed costs were roughly **2-4 tool_uses per s
 
 ### Rule of thumb (with cap = 100)
 
-`rails-developer` and `react-developer` both currently `maxTurns: 100`. Calibration:
+`rails-developer` and `react-developer` share the `maxTurns` value defined in `.claude/agents/*.md` frontmatter (read the agent file for the current cap; the table below assumes ~100). Calibration:
 
 | Total files (production + tests) | Pattern |
 |---|---|
