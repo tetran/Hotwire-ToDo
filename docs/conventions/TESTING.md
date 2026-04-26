@@ -42,6 +42,20 @@
 
 症状の見分け方: テスト実行時間が異常に短い（例: 159テストが3.7秒 vs 正常時24秒）、かつ全コントローラテストが一律同一ステータス。
 
+## 並列起動と DB ファイル分離
+
+別ターミナルで `bin/rails test:auth` と `bin/rails test:task` のように複数の `bin/rails test:*` を同時起動しても **`database is locked` で落ちない**。`test/test_helper.rb` が起動ごとに `storage/test_<pid>.sqlite3` を使うので、プロセス間で DB ファイルが衝突しない（Rails の `parallelize(workers:)` は同一プロセス内のワーカー DB しか分離しないため、本仕組みでプロセス間衝突を別途解消している）。
+
+通常終了時は `at_exit` で `storage/test_<pid>.sqlite3*`（worker 用 `-1`/`-2`、SQLite の `-shm`/`-wal` 含む）が自動掃除される。**強制終了**（`kill -9`、OS crash 等）時は `at_exit` が走らず orphan が残るので、必要に応じて `rm -f storage/test_*.sqlite3*` で手動掃除する。
+
+固定 DB パスを使いたい場合は `TEST_DATABASE_PATH` を export する:
+
+```sh
+TEST_DATABASE_PATH=storage/test.sqlite3 bin/rails test:auth   # 従来挙動（並列起動時は衝突する点に注意）
+```
+
+**注意**: `db:test:prepare` / `db:seed:replant` 等 `test_helper.rb` を読まない rake タスクは `TEST_DATABASE_PATH` を尊重しない。常にデフォルトの `storage/test.sqlite3` に作用する。
+
 ## Rails 8 `bin/rails test:*` の dispatch 罠
 
 Rails 7+/8 では `bin/rails test:*` コマンドは **Rake をバイパスして `Rails::Command::TestCommand` (Thor) に直送される**。以下の地雷に注意。
