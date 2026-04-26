@@ -66,9 +66,9 @@ The session-final round returned no actionable findings.
 Run `codex review --base main` 3-4 times for any PR that changes:
 
 - `docs/process/WORKFLOW.md` (orchestrator phase definitions, fallback procedures)
-- `docs/process/DELEGATION.md` (subagent dispatch rules, Schema-check rules, Required Return Format)
+- `.claude/skills/subagent-delegation/**` (subagent dispatch rules, Schema-check rules, Required Return Format — `references/contract.md` is the canonical schema)
 - `.claude/agents/*.md` (agent definitions — system prompt, tool allowlist, dispatch description)
-- `.claude/skills/*/SKILL.md` (recipe content, trigger description)
+- `.claude/skills/*/SKILL.md` and `references/*.md` (recipe content, trigger description)
 - `.claude/hooks/*.sh` (hook scripts that the orchestrator depends on)
 - Any other doc that the orchestrator or a subagent reads to govern its runtime behavior
 

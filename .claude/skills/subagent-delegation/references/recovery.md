@@ -31,13 +31,13 @@ In the Issue #292 incident, this resolved with 3 orchestrator edits (no re-deleg
 
 **Signal**: failing tests in the actual delegated scope, not test infra.
 
-**Action**: treat as **domain-test-failure** per DELEGATION.md Fallback Procedure — one re-delegation allowed with corrective guidance (failing test output + hypothesis). NOT a Return Format cascade; the format is a separate concern.
+**Action**: treat as **domain-test-failure** per `contract.md` Fallback Triggers — one re-delegation allowed with corrective guidance (failing test output + hypothesis). NOT a Return Format cascade; the format is a separate concern.
 
 ### Case C: schema check fails (likely maxTurns force-stop)
 
 **Signal**: `.claude/scripts/check-subagent-response.sh` exits non-zero. Likely cause: maxTurns force-stop or runtime error.
 
-**Action**: re-delegate ONCE per DELEGATION.md Schema-check failure fallback. Refine the payload:
+**Action**: re-delegate ONCE per `contract.md` Schema-check failure fallback. Refine the payload:
 
 - **Goal**: narrowed to remaining scope only
 - **Scope**: narrowed to files not yet completed

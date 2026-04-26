@@ -4,7 +4,8 @@
 # in `.claude/hooks/subagent_stop_format_check.sh`. Use this from the orchestrator
 # at I2 / I4 post-receipt validation, since the hook does not fire on maxTurns
 # force-stop (see docs/reference/DELEGATION_DESIGN_NOTES.md §1 for the incident
-# and docs/process/DELEGATION.md → Dispatch Sizing for the rule).
+# and .claude/skills/subagent-delegation/references/contract.md → Dispatch Sizing
+# for the rule).
 #
 # Usage:
 #   .claude/scripts/check-subagent-response.sh <agent_type> < response.txt

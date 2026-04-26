@@ -5,7 +5,7 @@ description: Hobo-specific operational playbook for the P3 Plan Review Loop — 
 
 # Plan Review Loop Playbook (hobo)
 
-This skill operationalizes hobo `docs/process/WORKFLOW.md`'s P3 "Plan Review Loop" — which declares the loop must run "until no actionable findings remain" but does not document **how convergence behaves**, **what 'actionable' means in practice**, **how to scaffold revisions so round 2 is fast**, or **what the reviewer cannot catch and where I4 must pick up the slack**. Use this skill alongside `fork-join-delegation` (which covers I4 reviewer dispatch and post-join recovery).
+This skill operationalizes hobo `docs/process/WORKFLOW.md`'s P3 "Plan Review Loop" — which declares the loop must run "until no actionable findings remain" but does not document **how convergence behaves**, **what 'actionable' means in practice**, **how to scaffold revisions so round 2 is fast**, or **what the reviewer cannot catch and where I4 must pick up the slack**. Use this skill alongside `subagent-delegation` (which covers I4 reviewer dispatch and post-join recovery).
 
 ## When to load this skill
 
@@ -145,7 +145,7 @@ Action: pause iteration, surface to the user with a concrete recommendation. "I 
 
 ## Codex review on prescriptive process docs — same loop, different reviewer
 
-Process docs that prescribe orchestrator behavior (`docs/process/DELEGATION.md`, `WORKFLOW.md`, `.claude/agents/*.md`, `.claude/skills/*/SKILL.md`) read coherent to the human eye but harbor subtle inconsistencies — section name mismatches, contradictions between rules and definitions, fallback cases that misroute symptoms. **Codex catches these reliably; humans do not.**
+Process docs that prescribe orchestrator behavior (`WORKFLOW.md`, `.claude/agents/*.md`, `.claude/skills/*/SKILL.md` and their `references/`) read coherent to the human eye but harbor subtle inconsistencies — section name mismatches, contradictions between rules and definitions, fallback cases that misroute symptoms. **Codex catches these reliably; humans do not.**
 
 Pattern (validated PR #347, 5 rounds against `docs/process/DELEGATION.md`):
 

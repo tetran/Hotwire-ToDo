@@ -52,7 +52,7 @@ If any of the above is not satisfied, this skill aborts and asks the user to con
     - **Rails + React (typical Admin feature)** → sequential delegation (rails → react)
     - **Independent Rails + React blocks** → parallel delegation (two Agent calls in one message)
     - **Neither / too entangled / small** → orchestrator implements directly
-  - When delegating, build the payload per the handoff contract in `docs/process/DELEGATION.md`.
+  - When delegating, build the payload per the handoff contract in the `subagent-delegation` skill (`references/contract.md`).
   - Delegation is opt-in. Direct implementation is valid for small tasks, or tasks too entangled to split efficiently.
   - Announce the classification and chosen pattern to the user before entering I2.
 
@@ -61,5 +61,5 @@ If any of the above is not satisfied, this skill aborts and asks the user to con
 - Always announce the Entry Protocol.
 - When advancing to the next step, always update the progress file's `Current Phase` and checklist state.
 - Obtain explicit user approval before making code changes. Stop once after announcing I1 and proposing the branch creation.
-- At the start of I2, always perform the delegation classification (Procedure 6). When delegating, follow the handoff contract in `docs/process/DELEGATION.md`.
+- At the start of I2, always perform the delegation classification (Procedure 6). When delegating, follow the handoff contract in the `subagent-delegation` skill (`references/contract.md`).
 - Subagents must not touch `.progress/**` (the progress file is the orchestrator's sole responsibility). Shared files (`config/routes.rb`, `app/javascript/admin/App.tsx`) are also edited directly by the orchestrator.

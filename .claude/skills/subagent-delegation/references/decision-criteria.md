@@ -29,7 +29,7 @@ Every token saved at Pre-Fork is a token available at I3 / I4 / I6. A red I3 tes
 
 ### The "safer = direct edit" argument and why it usually evaporates
 
-Direct edit "feels safer" for small mechanical changes (1-3 line inserts) because paraphrase risk is zero. But paraphrase risk can also be eliminated in a delegated payload by **verbatim-copying the code block from the plan into the payload's Plan Excerpt**. Tag the duplicated block with `# Duplicated in <agents> for type-contract integrity` per DELEGATION.md Payload Quality Rules. Once you do that, the safety argument evaporates.
+Direct edit "feels safer" for small mechanical changes (1-3 line inserts) because paraphrase risk is zero. But paraphrase risk can also be eliminated in a delegated payload by **verbatim-copying the code block from the plan into the payload's Plan Excerpt**. Tag the duplicated block with `# Duplicated in <agents> for type-contract integrity` per `contract.md` Handoff Contract. Once you do that, the safety argument evaporates.
 
 Don't use "safer = direct edit" as a justification without examining whether the safety concern (paraphrase drift, insertion-point misread) actually applies to the specific task. Most small-file changes are immune to both.
 
@@ -43,7 +43,7 @@ Don't use "safer = direct edit" as a justification without examining whether the
 
 For features that touch both Rails and React with **highly asymmetric scope** (e.g., 1-line Rails ERB meta tag + 13-file React SPA change + npm install), formal cross-domain sequential delegation (rails-developer → react-developer) adds more overhead than it saves. The orchestrator handles the trivial Rails edit + dependency install directly as "pre-work" (completing in seconds), then delegates only the dominant-domain (React) work to a single specialized agent.
 
-DELEGATION.md's classification ladder (Rails-only / React-only / sequential / fork-join / direct) has an implicit 6th pattern: **"orchestrator pre-work + single-domain delegation"** — valid when one domain is trivially small.
+The classification ladder in `contract.md` (Rails-only / React-only / sequential / fork-join / direct) has an implicit 6th pattern: **"orchestrator pre-work + single-domain delegation"** — valid when one domain is trivially small.
 
 ### Pre-work items that qualify
 
@@ -62,11 +62,11 @@ DELEGATION.md's classification ladder (Rails-only / React-only / sequential / fo
 
 ### Why Rails view files can be orchestrator-owned in the hybrid pattern
 
-Rails view files (`app/views/**`) are normally rails-developer's domain per DELEGATION.md Shared File Ownership, but a 1-line meta tag doesn't justify a dedicated subagent. Orchestrator-owned pre-work is the pragmatic exception. Document the exception in the announcement and the subagent's Denylist comment.
+Rails view files (`app/views/**`) are normally rails-developer's domain per `contract.md` Shared File Ownership, but a 1-line meta tag doesn't justify a dedicated subagent. Orchestrator-owned pre-work is the pragmatic exception. Document the exception in the announcement and the subagent's Denylist comment.
 
 ## Single-domain ≠ everything-in-one-payload — Issue #335 case study
 
-Issue #335 was classified as React-only single-domain (`react-developer`), but the Plan touched both `app/javascript/admin/` (component + 5 pages) AND `docs/conventions/ADMIN_UI.md` + `docs/design/admin/components/section-error.md` + `docs/design/admin/README.md`. Per Hobo `DELEGATION.md` Shared File Ownership table, `docs/**` is **orchestrator-owned**, NOT in `react-developer`'s domain.
+Issue #335 was classified as React-only single-domain (`react-developer`), but the Plan touched both `app/javascript/admin/` (component + 5 pages) AND `docs/conventions/ADMIN_UI.md` + `docs/design/admin/components/section-error.md` + `docs/design/admin/README.md`. Per `contract.md` Shared File Ownership table, `docs/**` is **orchestrator-owned**, NOT in `react-developer`'s domain.
 
 The initial wave plan accidentally put docs in the react-developer payload. It was caught at last-second pre-dispatch and re-split into:
 

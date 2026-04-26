@@ -1,11 +1,16 @@
 ---
-name: fork-join-delegation
-description: Hobo-specific playbook for orchestrating fork-join (parallel) and other I2 subagent delegations — direct-vs-delegate decisions, Pre-Fork signature freeze, payload design, maxTurns dispatch sizing, return-format handling, post-join E2E ownership, and the three-phase turn budget pattern. Load BEFORE entering I2 whenever the Plan Excerpt may touch both Rails and React, BEFORE sizing any rails-developer / react-developer dispatch (any file count), BEFORE writing fork-join payloads, BEFORE invoking ui-designer for an Admin/User mockup, BEFORE I4 reviewer dispatch, and whenever the user says "fork-join", "並列ディスパッチ", "Pre-Fork", "delegation 設計", "subagent 分割", "maxTurns 大丈夫？", "並列レビュー", or asks about classifying I2 work between sequential / fork-join / single-domain / direct. Also load when a subagent returns mid-sentence, returns a non-conforming format, or appears to have force-stopped — the recovery rules live here.
+name: subagent-delegation
+description: Hobo-specific playbook for orchestrating I2 subagent delegations (fork-join / sequential / parallel / same-type / single-domain / direct) and I4 parallel review — direct-vs-delegate decisions, Pre-Fork signature freeze, payload design, maxTurns dispatch sizing, return-format handling, post-join E2E ownership, and the three-phase turn budget pattern. Load BEFORE entering I2 whenever the Plan Excerpt may touch both Rails and React, BEFORE sizing any rails-developer / react-developer dispatch (any file count), BEFORE writing fork-join payloads, BEFORE invoking ui-designer for an Admin/User mockup, BEFORE I4 reviewer dispatch, and whenever the user says "fork-join", "並列ディスパッチ", "Pre-Fork", "delegation 設計", "subagent 分割", "maxTurns 大丈夫？", "並列レビュー", or asks about classifying I2 work between sequential / fork-join / single-domain / direct. Also load when a subagent returns mid-sentence, returns a non-conforming format, or appears to have force-stopped — the recovery rules live here.
 ---
 
-# Fork-Join Delegation Playbook (hobo)
+# Subagent Delegation Playbook (hobo)
 
-This skill is the **operational playbook** for I2 subagent delegation. It pairs with `docs/process/DELEGATION.md` (the **contract** — agent inventory, payload schema, ownership, fallback triggers): the doc defines WHO/WHAT/WHEN, this skill owns HOW/WHY/HOW-MUCH (sizing calibration, Pre-Fork freeze list, recovery decision tree, I4 pitfalls and ROI). Lessons distilled from twelve hobo fork-join pilots — run these checklists *before* dispatching, *while* sizing payloads, and *after* receiving subagent returns.
+This skill is the **complete delegation reference** for I2 (Implement) and I4 (Local Review) subagent dispatch. It bundles two layers:
+
+- **Canonical contract** — agent inventory, scope, payload schemas, Shared File Ownership, fallback triggers, completion verification — lives in **`references/contract.md`**. Read it like a lookup table; no narrative.
+- **Operational playbook** (this file) — direct-vs-delegate tiebreakers, Pre-Fork freeze list, sizing calibration, recovery decision tree, I4 pitfalls and ROI. Lessons distilled from twelve hobo fork-join pilots.
+
+Run the checklists below *before* dispatching, *while* sizing payloads, and *after* receiving subagent returns. The `references/contract.md` schemas are the verbatim shapes you copy into payloads.
 
 ## When to load this skill
 
@@ -24,7 +29,7 @@ Load AFTER:
 
 ## Direct vs Delegate — decision criteria
 
-The DELEGATION.md classification ladder lists Rails-only / React-only / sequential / fork-join / parallel / direct. This skill adds two refinements.
+The classification ladder in `references/contract.md` lists Rails-only / React-only / sequential / fork-join / parallel / direct. This skill adds two refinements.
 
 ### 1. Orchestrator context economy is the tiebreaker
 
@@ -38,7 +43,7 @@ Full mechanism walkthrough: `references/decision-criteria.md`.
 
 ### 2. Hybrid orchestrator pre-work + single-domain delegation
 
-DELEGATION.md's ladder has an implicit 6th pattern: **"orchestrator pre-work + single-domain delegation"** — valid when one domain's scope is < 5 lines (1-line ERB meta tag, single-line config edit, `npm install`, env var injection). Starting a `rails-developer` for one line of ERB costs more than the orchestrator doing it directly.
+The contract's ladder has an implicit 6th pattern: **"orchestrator pre-work + single-domain delegation"** — valid when one domain's scope is < 5 lines (1-line ERB meta tag, single-line config edit, `npm install`, env var injection). Starting a `rails-developer` for one line of ERB costs more than the orchestrator doing it directly.
 
 **How to apply**:
 
@@ -50,7 +55,7 @@ DELEGATION.md's ladder has an implicit 6th pattern: **"orchestrator pre-work + s
 
 ### 3. Single-domain ≠ everything-in-one-payload
 
-Single-domain classification refers to **code language/framework**, not the entire change scope. A React-only feature still typically touches `docs/conventions/ADMIN_UI.md` or `docs/design/admin/components/*.md` — and `docs/**` is **orchestrator-owned** per DELEGATION.md Shared File Ownership. **Run every Plan Scope path through the Shared File Ownership table BEFORE writing the payload**, not while writing it. If any path is orchestrator-owned, plan a separate orchestrator wave (Wave 1a = subagent code, Wave 1b = orchestrator docs).
+Single-domain classification refers to **code language/framework**, not the entire change scope. A React-only feature still typically touches `docs/conventions/ADMIN_UI.md` or `docs/design/admin/components/*.md` — and `docs/**` is **orchestrator-owned** per `references/contract.md` Shared File Ownership. **Run every Plan Scope path through the Shared File Ownership table BEFORE writing the payload**, not while writing it. If any path is orchestrator-owned, plan a separate orchestrator wave (Wave 1a = subagent code, Wave 1b = orchestrator docs).
 
 Full case study: `references/decision-criteria.md` "Single-domain docs split" section.
 
@@ -94,7 +99,7 @@ PR #352 raised the local reviewer agents from `maxTurns: 50` to `maxTurns: 100`;
 
 ### The trap: tests count toward the file cap
 
-DELEGATION.md says ≤ 10 files for non-uniform changes / ≤ 15 for uniform. Empirically, **tests consume comparable Read+Write+test-run turns to production** and must be counted in the cap. Calibration from Issue #272 (3 of 4 dispatches force-stopped):
+The contract caps at ≤ 10 files for non-uniform changes / ≤ 15 for uniform (`references/contract.md` Dispatch Sizing). Empirically, **tests consume comparable Read+Write+test-run turns to production** and must be counted in the cap. Calibration from Issue #272 (3 of 4 dispatches force-stopped):
 
 - 9 files (5 controllers + 4 tests) → tests written, controllers never started
 - 14 files (7 production + 7 tests + i18n) → production done, 6 tests never started, hook didn't fire (silent force-stop)
@@ -141,7 +146,7 @@ Tag duplicated blocks with:
 
 ```
 # Duplicated in <Agent-A> + <Agent-B> payloads for type-contract integrity
-# (see DELEGATION.md Fork-join §5)
+# (see references/contract.md Handoff Contract)
 ```
 
 This converts silent token cost into an audited engineering decision and prevents a future payload author from "DRY-ing" the duplication away.
@@ -203,7 +208,7 @@ A fragmented subagent return (mid-sentence cutoff, missing 5-section format, for
 ### Decision tree
 
 - **Implementation looks correct, only format is broken** → fix orthogonal issues (test setup boilerplate, missing type references) directly. Do NOT re-delegate.
-- **Domain tests fail** → treat as domain-test-failure (one re-delegation allowed per DELEGATION.md Fallback). NOT as Return Format cascade.
+- **Domain tests fail** → treat as domain-test-failure (one re-delegation allowed per `references/contract.md` Fallback Triggers). NOT as Return Format cascade.
 - **Schema check fails (likely maxTurns force-stop)** → re-delegate ONCE with Goal/Scope narrowed to remaining files, Denylist/Plan Excerpt unchanged, prior agent output appended as `## Prior Run Context`.
 - **Fork-join partial failure** (one agent succeeds, the other fails) → keep the successful agent's result, apply Fallback only to the failed agent.
 
@@ -276,7 +281,7 @@ Post-join verification sequence:
 
 If E2E smoke fails post-join, treat as potential cross-boundary type/contract mismatch and fall back to sequential delegation (redispatch react-developer with actual Rails output).
 
-**Smoke test selection (a/b/c per DELEGATION.md Fork-join Step 7) MUST be recorded in the progress file at dispatch time, not after.**
+**Smoke test selection (a/b/c per `references/contract.md` Fallback Triggers / Post-join verification) MUST be recorded in the progress file at dispatch time, not after.**
 
 ## ui-designer-specific dispatch pattern
 
@@ -325,6 +330,7 @@ Full data: `references/roi-calibration.md`.
 
 | File | When to consult |
 |---|---|
+| **`references/contract.md`** | **Canonical schemas / lookup tables**: agent inventory, scope, payload schema, Shared File Ownership, Fallback triggers, Completion Verification, Reviewer formats |
 | `references/decision-criteria.md` | Tiebreaker decisions, hybrid pre-work full case, single-domain docs split walkthrough |
 | `references/dispatch-sizing.md` | Budget math worked examples, three-phase turn budget detail, Issue #272 / #332 force-stop incidents |
 | `references/payload-design.md` | Verbatim duplication rationale, Pre-Fork signature freeze full checklist, Issue #297 plan-reviewer round-2 evidence |

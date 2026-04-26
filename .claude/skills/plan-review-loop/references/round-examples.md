@@ -60,7 +60,7 @@ Plan scope: 6 actionable findings on v1, then 3 new low findings on v2 introduce
 
 **Key takeaway**: trust the reviewer's self-label. v3 nit was "stylistic only — does not affect correctness". Re-looping for round 4 would have wasted time.
 
-I4 false-positive on this issue: `architecture-reviewer` raised CRITICAL "untracked new files would break CI" pointing at `??` files in `git status`. False positive — WORKFLOW.md explicitly separates I4 (Local Review) from I5 (Push). Pre-I5 untracked is expected. Reviewer extrapolated from static repo state to runtime/CI scenario without workflow-phase context. **Fix**: include workflow phase in I4 reviewer payload (covered in `fork-join-delegation` skill).
+I4 false-positive on this issue: `architecture-reviewer` raised CRITICAL "untracked new files would break CI" pointing at `??` files in `git status`. False positive — WORKFLOW.md explicitly separates I4 (Local Review) from I5 (Push). Pre-I5 untracked is expected. Reviewer extrapolated from static repo state to runtime/CI scenario without workflow-phase context. **Fix**: include workflow phase in I4 reviewer payload (covered in `subagent-delegation` skill).
 
 ## Issue #330 — UI design workflow doc changes (informational-rich)
 

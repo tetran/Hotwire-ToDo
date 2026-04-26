@@ -97,7 +97,7 @@ When a force-stop is detected post-receipt:
 
 Worked in 38 turns for Phase 1A retry of Issue #272 (controllers only, tests already existed).
 
-Maximum 1 retry; on retry failure, the orchestrator takes over I2 directly per DELEGATION.md Fallback Procedure.
+Maximum 1 retry; on retry failure, the orchestrator takes over I2 directly per `contract.md` Fallback Triggers.
 
 ## Three-phase turn budget pattern (long-running subagents)
 
@@ -133,7 +133,7 @@ Reviewer agents (`rails-reviewer` / `react-reviewer` / `architecture-reviewer`) 
 
 ### After bumping the cap — drift cleanup
 
-Documentation that references the cap (`docs/process/DELEGATION.md`, `WORKFLOW.md`, design notes) drifts silently when only the frontmatter is bumped. Always grep for `currently N` (English) and `現在 N` (Japanese) when changing the cap:
+Documentation that references the cap (`WORKFLOW.md`, design notes, this skill's `contract.md`) drifts silently when only the frontmatter is bumped. Always grep for `currently N` (English) and `現在 N` (Japanese) when changing the cap:
 
 ```
 grep -nE 'currently [0-9]+|現在 [0-9]+' docs/
