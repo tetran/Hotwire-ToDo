@@ -21,8 +21,10 @@ vi.mock('@admin/lib/sentry', () => ({
 }))
 
 vi.mock('@admin/components/StatCard', () => ({
-  default: ({ label, value }: { label: string; value: number }) => (
-    <div data-testid="stat-card">{label}: {value}</div>
+  default: ({ label, value, to }: { label: string; value: number; to?: string }) => (
+    <div data-testid="stat-card" data-label={label} {...(to ? { 'data-to': to } : {})}>
+      {label}: {value}
+    </div>
   ),
 }))
 
@@ -117,5 +119,29 @@ describe('DashboardPage — partial failure', () => {
     })
     expect(screen.queryByTestId('stat-card')).not.toBeInTheDocument()
     expect(screen.queryByText('OpenAI')).not.toBeInTheDocument()
+  })
+})
+
+describe('DashboardPage — stat card link wiring', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  it('passes `to` only to Total Users and LLM Models cards', async () => {
+    mockDashboardGet.mockResolvedValue(mockDashboardData)
+    mockProvidersList.mockResolvedValue(mockProvidersResponse)
+    renderPage()
+
+    await waitFor(() => {
+      expect(screen.getAllByTestId('stat-card')).toHaveLength(4)
+    })
+
+    const cardByLabel = (label: string) =>
+      screen.getAllByTestId('stat-card').find((el) => el.getAttribute('data-label') === label)!
+
+    expect(cardByLabel('Total Users')).toHaveAttribute('data-to', '/admin/users')
+    expect(cardByLabel('LLM Models')).toHaveAttribute('data-to', '/admin/llm-providers')
+    expect(cardByLabel('Active Roles')).not.toHaveAttribute('data-to')
+    expect(cardByLabel('LLM Providers')).not.toHaveAttribute('data-to')
   })
 })
