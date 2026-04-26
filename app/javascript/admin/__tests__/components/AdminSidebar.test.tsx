@@ -1,20 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { AdminSidebar } from '../../components/AdminSidebar'
-
-// matchMedia mock helper
-function makeMatchMedia(isDesktop: boolean) {
-  return vi.fn().mockImplementation((query: string) => ({
-    matches: query === '(min-width: 768px)' ? isDesktop : false,
-    media: query,
-    onchange: null,
-    addListener: vi.fn(),
-    removeListener: vi.fn(),
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  }))
-}
+import { makeMatchMedia } from '../helpers/matchMedia'
 
 const defaultProps = {
   isDesktop: true,
@@ -71,23 +58,22 @@ describe('AdminSidebar', () => {
     expect(dashboardLink).toHaveAttribute('aria-label', 'Dashboard')
   })
 
-  // Case 3: Tooltip element is present on hover (DOM rendered; CSS handles opacity)
-  it('renders tooltip elements when collapsed', () => {
+  // Case 3: Visual tooltip span is rendered when collapsed (CSS handles opacity).
+  // The span is aria-hidden — AT users get the link label via aria-label on the <Link>.
+  it('renders visual tooltip spans when collapsed', () => {
     renderSidebar({ isDesktop: true, isDesktopExpanded: false })
 
-    // Tooltip DOM elements are rendered for collapsed nav items
-    const tooltips = screen.getAllByRole('tooltip')
-    expect(tooltips.length).toBeGreaterThan(0)
-    expect(tooltips[0]).toHaveTextContent('Dashboard')
+    const visualTooltips = document.querySelectorAll('span[aria-hidden="true"].pointer-events-none')
+    expect(visualTooltips.length).toBeGreaterThan(0)
+    expect(visualTooltips[0]).toHaveTextContent('Dashboard')
   })
 
-  // Case 4: Tooltip elements present for keyboard navigation when collapsed
-  it('tooltip elements are present for keyboard navigation when collapsed', () => {
+  // Case 4: Visual tooltip spans are in DOM regardless of focus (CSS group-focus-within shows them on Tab)
+  it('visual tooltip spans are in DOM for keyboard navigation when collapsed', () => {
     renderSidebar({ isDesktop: true, isDesktopExpanded: false })
 
-    // All nav link tooltips are in the DOM (CSS group-focus-within shows them)
-    const tooltips = screen.getAllByRole('tooltip')
-    expect(tooltips.length).toBeGreaterThan(0)
+    const visualTooltips = document.querySelectorAll('span[aria-hidden="true"].pointer-events-none')
+    expect(visualTooltips.length).toBeGreaterThan(0)
   })
 
   // Case 5: Clicking the desktop toggle button calls onToggleDesktop

@@ -69,7 +69,10 @@ test.describe('Admin Sidebar — Desktop rail collapse/expand', () => {
     const dashboardLink = page.getByRole('link', { name: 'Dashboard' })
     await expect(dashboardLink).toHaveAttribute('aria-label', 'Dashboard')
     await dashboardLink.focus()
-    await expect(page.locator('[role="tooltip"]', { hasText: 'Dashboard' }).first()).toBeVisible()
+    // Visual-only tooltip span (aria-hidden); rendered always, opacity controlled by CSS group-focus-within.
+    await expect(
+      page.locator('span[aria-hidden="true"].pointer-events-none', { hasText: 'Dashboard' }).first()
+    ).toBeVisible()
   })
 })
 

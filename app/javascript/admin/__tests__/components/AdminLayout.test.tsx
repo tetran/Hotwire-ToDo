@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { AdminLayout } from '../../components/AdminLayout'
 import { navSections } from '../../lib/navConfig'
+import { makeMatchMedia } from '../helpers/matchMedia'
 
 // Mock useAuth
 const mockCan = vi.fn()
@@ -12,20 +13,6 @@ vi.mock('../../contexts/AuthContext', () => ({
     can: mockCan,
   }),
 }))
-
-// matchMedia helper
-function makeMatchMedia(isDesktop: boolean) {
-  return vi.fn().mockImplementation((query: string) => ({
-    matches: query === '(min-width: 768px)' ? isDesktop : false,
-    media: query,
-    onchange: null,
-    addListener: vi.fn(),
-    removeListener: vi.fn(),
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  }))
-}
 
 describe('navSections', () => {
   it('has three sections: NAVIGATION, ADMIN, AI INFRASTRUCTURE', () => {

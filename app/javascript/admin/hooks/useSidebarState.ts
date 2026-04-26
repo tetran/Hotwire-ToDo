@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useState } from 'react'
 
+function detectIsDesktop(): boolean {
+  return typeof window !== 'undefined'
+    ? window.matchMedia('(min-width: 768px)').matches
+    : false
+}
+
 const KEY_DESKTOP = 'admin.sidebar.desktop' // 'expanded' | 'collapsed'
 const KEY_MOBILE = 'admin.sidebar.mobile' // 'open' | 'closed'
 
@@ -38,15 +44,7 @@ export interface UseSidebarStateResult {
 }
 
 export function useSidebarState(): UseSidebarStateResult {
-  const getIsDesktop = useCallback(
-    () =>
-      typeof window !== 'undefined'
-        ? window.matchMedia('(min-width: 768px)').matches
-        : false,
-    []
-  )
-
-  const [isDesktop, setIsDesktop] = useState<boolean>(getIsDesktop)
+  const [isDesktop, setIsDesktop] = useState<boolean>(detectIsDesktop)
   const [isDesktopExpanded, setIsDesktopExpanded] = useState<boolean>(() =>
     readStorage(KEY_DESKTOP, true)
   )

@@ -1,20 +1,7 @@
 import { act, renderHook } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useSidebarState } from '../../hooks/useSidebarState'
-
-// Helper to build a matchMedia mock that responds to the desktop query
-function makeMatchMedia(isDesktop: boolean) {
-  return vi.fn().mockImplementation((query: string) => ({
-    matches: query === '(min-width: 768px)' ? isDesktop : false,
-    media: query,
-    onchange: null,
-    addListener: vi.fn(),
-    removeListener: vi.fn(),
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  }))
-}
+import { makeMatchMedia } from '../helpers/matchMedia'
 
 describe('useSidebarState', () => {
   beforeEach(() => {

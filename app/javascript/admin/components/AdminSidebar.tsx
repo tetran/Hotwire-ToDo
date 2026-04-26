@@ -27,7 +27,7 @@ function NavItem({ item, collapsed, active }: NavItemProps) {
         <span className={collapsed ? 'sr-only' : ''}>{item.label}</span>
         {collapsed && (
           <span
-            role="tooltip"
+            aria-hidden="true"
             className="pointer-events-none absolute left-full ml-2 z-50 whitespace-nowrap rounded-md bg-slate-900 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity"
           >
             {item.label}

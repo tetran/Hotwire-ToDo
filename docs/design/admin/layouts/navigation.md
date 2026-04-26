@@ -83,10 +83,11 @@ admin.sidebar.mobile   → 'open' | 'closed'
 
 ## Tooltip Behavior (Collapsed Rail Only)
 
-In the desktop collapsed state, nav item labels are `sr-only`, so a tooltip appears on hover or focus:
+In the desktop collapsed state, nav item labels are `sr-only`, so a visual-only tooltip appears on hover or focus:
 
 - Display is controlled via Tailwind `group-hover` + `group-focus-within` (focus-within ensures the tooltip also appears on Tab navigation).
 - Each `<Link>` carries `aria-label={item.label}` so screen readers announce the destination.
+- The tooltip `<span>` is marked `aria-hidden="true"` (purely visual; the `<Link>`'s `aria-label` is the AT-facing label). It does **not** use `role="tooltip"` because the WAI-ARIA tooltip pattern requires `aria-describedby` wiring from the trigger, which would duplicate the already-present `aria-label`.
 - The tooltip uses `pointer-events-none` to avoid intercepting clicks.
 - Style: `bg-slate-900 text-white text-xs px-2 py-1 rounded-md`; a flat pill with no arrow.
 
