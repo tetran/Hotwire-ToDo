@@ -284,9 +284,12 @@ options list 側 (`rolesApi.list` 等) の fetch 失敗は引き続き Save **en
 
 ### 全体構造
 
-- サイドバー: `w-[220px]` 固定、`bg-[#0f1117]`
-- メインコンテンツ: `flex-1`、`p-6`、`bg-[#f8f9fc]`
-- トップヘッダー: `h-14`、`bg-white`、`border-b border-slate-200`
+- サイドバー: dual-mode (`bg-sidebar`)
+  - **Desktop (≥ md / 768px)**: rail collapse 64px ⇄ expand 220px、`transition-[width] duration-200`
+  - **Mobile (< md)**: off-canvas drawer (`fixed inset-y-0 left-0 z-40 w-64`)、`translate-x-0` ⇄ `-translate-x-full`、`transition-transform duration-300 ease-out`
+  - Toggle/state 詳細・三 dismiss path・localStorage キー等は [`docs/design/admin/layouts/navigation.md`](../design/admin/layouts/navigation.md) 参照
+- メインコンテンツ: `flex-1`、`p-6`、`bg-surface`
+- トップヘッダー: `h-14`、`bg-white`、`border-b border-slate-200`、モバイル時は左にハンバーガー (`md:hidden`)
 
 ### グリッド
 
@@ -319,7 +322,7 @@ options list 側 (`rolesApi.list` 等) の fetch 失敗は引き続き Save **en
 | カード外枠 | `border border-slate-200` |
 | パネル区切り | `border-b border-slate-100` |
 | 行区切り | `divide-y divide-slate-50` |
-| サイドバー | `border-r border-[#1e2130]` |
+| サイドバー | `border-r border-sidebar-border` |
 
 ### ラディウス
 
