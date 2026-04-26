@@ -2,7 +2,12 @@
 
 ## Task Workflow
   - ALWAYS follow the workflow documented in `docs/process/WORKFLOW.md`. When you enter a new phase, make sure you are following the workflow.
-  - **Investigation → fix branch-fit check**: when an "investigate X" session starts producing Edits, check `git branch --show-current` before the **first** Edit. If the branch name contains `issue-\d+` or any scope marker, verify the change falls within that scope before writing. When a one-file fix grows into a two-file change, treat it as the scope-creep alarm bell — re-check fit before the second Edit lands. If the fix doesn't belong on the current branch, stop and offer: "this doesn't fit the current `issue-XXX` branch. Create a new branch from main, or bundle here?" — ask before proceeding.
+  - **Investigation → fix branch-fit check**: branch-fit must be re-checked at **multiple trigger points**, not only the first Edit. Single-trigger-point rules ("before first Edit") miss phases where Edits land normally as part of the session's stated work and only the *scope of what was edited* becomes problematic later. Trigger points:
+    1. **Before the first Edit** — when an "investigate X" session starts producing Edits, check `git branch --show-current`. If the branch name contains `issue-\d+` or any scope marker, verify the change falls within that scope.
+    2. **When a one-file fix grows into a two-file change** — treat as the scope-creep alarm bell, re-check fit before the second Edit lands.
+    3. **Before `gh pr create`** — run in parallel: `git status` (working tree representative?), `git branch --show-current` + `git log --oneline origin/main..HEAD` (branch name aligns with commits?), `gh pr list --head <branch> --state all` (already merged/open PR on this branch?). The PR-creation check catches "session drifted through multiple files, now we're shipping" cases that the first-Edit check missed.
+
+    A short user request like `"PRよろしく"` is permission to create the appropriate PR, not permission to skip the pre-check. If any trigger fires a mismatch (branch name vs content, merged branch with new changes, branch already has an open PR), stop and offer: "this doesn't fit the current `issue-XXX` branch. Create a new branch from main, or bundle here?" — ask before proceeding.
 
 ## Architecture Overview
 

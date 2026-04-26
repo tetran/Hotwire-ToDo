@@ -93,3 +93,39 @@ If `type` is only `["app", "build"]`, skip statusCode/method/path filters entire
 **"Empty result from `list_logs` is ambiguous"** — it can mean "no matches" or "filter syntax not supported". When empty + unsure, simplify the filter (drop regex, drop wildcards, drop optional labels) and retry.
 
 _Source findings: `rack-boundarytoolongerror-scanner-signature`, `render-mcp-log-query-quirks` (Apr 18, 2026)._
+
+---
+
+## CSP host wildcards match exactly one subdomain label
+
+A CSP host source wildcard (`*.example.com`) matches **exactly one** subdomain label — it is not a shell glob. Multi-region observability endpoints like Sentry (`o123.ingest.us.sentry.io`, `o456.ingest.de.sentry.io`, legacy `o789.ingest.sentry.io`) cannot be covered by a single wildcard: `*.ingest.sentry.io` does **not** match `o123.ingest.us.sentry.io` because the extra `us.` label is not absorbed.
+
+Browsers silently swallow CSP violations, so "it works in dev" is not evidence for production.
+
+### Checklist when adding a browser observability SDK
+
+- Enumerate **each** region's ingest host explicitly in `connect_src` — never rely on a single wildcard.
+- For Sentry specifically, list at minimum `https://*.ingest.sentry.io`, `https://*.ingest.us.sentry.io`, `https://*.ingest.de.sentry.io` (covers legacy + US + EU).
+- Add a manual verification step to the feature's local QA checklist: inspect DevTools Network panel for the SDK's outbound POST and confirm no CSP block report.
+- When CSP rules change, check **both** `config/initializers/content_security_policy.rb` (Rails) and any static CSP headers on the CDN / reverse proxy — they can override each other.
+
+_Source: issue #292 sentry truncation warning_
+
+---
+
+## Observability for intent-dependent signals belongs at the call site
+
+When the correctness of an observability signal (truncation, quota, rate-limit) depends on **caller intent**, place the helper at the **call site (page-level)**, not in the shared API layer (`app/javascript/admin/lib/api.ts`'s `*Api.list()` etc.). Same-shape API calls can carry different intents — e.g. dropdown full-fetch vs paginated index browsing both pass `per_page=100` — and the shared layer cannot distinguish them, so false positives drown the real signal.
+
+### Placement rule
+
+| Scenario | Placement |
+|---|---|
+| Correctness depends on caller **intent** (same data shape, different callers) | **Call site** |
+| Correctness depends only on **data shape** | Shared layer is fine |
+
+Align dedup-Set key granularity with the reporting granularity you actually want (e.g. `llm_models` alone vs `llm_models_<providerId>`). Mismatched granularity inflates false positives.
+
+The DRY violation (calling `reportTruncation` from 6 pages instead of 1 api.ts location) is cheaper than the correctness violation (false-positive noise). Prefer "explicit intent at the call site" over "clever discriminator in the shared layer".
+
+_Source: issue #292 sentry truncation warning_

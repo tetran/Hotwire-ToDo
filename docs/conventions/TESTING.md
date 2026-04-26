@@ -99,3 +99,16 @@ bin/rails test:all      # 両方（単一プロセス、Thor ビルトイン）
 3. ローカルの SQLite はデフォルトで FK 制約を強制しないため、ローカルで気づけず CI で爆発することがある。必ず grep して網羅する
 
 過去に `events` テーブル追加時、4ファイル（`user_test`, `role_permission_test`, `user_role_test`, `suggestion_request_test`）への追加漏れで CI が 56 errors になった。
+
+## UI label refactor の grep 範囲は dual test tree を網羅する
+
+このリポジトリは unit / component test と E2E test が **別ツリー** に分かれている: vitest は `app/javascript/**/__tests__/`（コードと co-located）、Playwright は top-level の `tests/admin/*.spec.ts`。UI ラベル / accessible name / button text / nav target を変更する PR で、**片方の grep だけ走らせて "no affected tests" と判断すると CI で確実に爆発する**（過去に PR #331 で `tests/admin/llm_providers.spec.ts:38` が "Back to list" を assert していて follow-up commit が必要になった）。
+
+UI 文言が変わる PR では grep 対象を明示的に揃える:
+
+```sh
+# 最低限スキャンすべき範囲
+rg -n 'Back to|Cancel' app/javascript/**/__tests__/ tests/ '**/*.spec.ts' '**/*.spec.tsx'
+```
+
+Plan の Testing Strategy セクションに `npx playwright test <affected>` を pre-push チェックとして列挙するか、CI に委ねる場合はその旨を記録する。Local Playwright は admin login 用 DB seed が自動化されていないので、**CI が事実上の唯一の E2E 経路** であることに留意。

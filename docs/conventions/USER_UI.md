@@ -341,6 +341,23 @@ scope.where(created_at: ..Time.zone.parse(params[:to]))
 scope.where(created_at: ..Time.zone.parse(params[:to]).end_of_day)
 ```
 
+### `simple_format` と `white-space: pre-wrap` は相互排他
+
+`simple_format(plain_text)` は string を `<p>` で wrap し、`\n` を `<br />` に変換する。CSS `white-space: pre-wrap` を併用しても二重 no-op になる: (1) `<p>` の default margin が行高を膨らませる、(2) literal newline が残らないので `pre-wrap` は無効。`<dl>` の dd 行が siblings より背高くなる症状が出たら、padding を疑う前に紛れ込んだ `simple_format` を疑う。
+
+- 段落セマンティクス（`<p>` auto-wrap）が欲しい場合のみ `simple_format`
+- 純粋な改行保持が欲しい場合は `<%= value %>` + コンテナ側 `white-space: pre-wrap` のみ
+- ERB の auto-escape は plain user input に対して十分（ActionText 以外）
+
+`ruby -e "require 'action_view'; include ActionView::Helpers::TextHelper; puts simple_format(\"a\\nb\\nc\")"` で出力形を確認できる。
+
+### turbo_frame は server-rendered コンテンツを「上に出す」なら form の上に配置
+
+`turbo_stream.replace` は対象 frame だけを差し替え、frame 外の DOM は無触。「submit → 結果が上、再 submit form は下」の UX を実現するなら、frame タグを form の **上** に配置する。空の frame は initial render で見えず、replace 後に form を自然に押し下げる。
+
+- DOM 順序 = 視覚順序。CSS（`flex-direction: column-reverse`, `order`）で逆転させない
+- 複数 submit を跨いで残すコンテンツは frame の **外** に。submit ごとに refresh するコンテンツは frame の **中** に
+
 ---
 
 ## 13. i18n ラベル

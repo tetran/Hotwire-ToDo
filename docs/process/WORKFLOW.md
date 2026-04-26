@@ -104,6 +104,7 @@ P3. **Create a plan** — Review the requirements and design the implementation 
      - **If the UI-change decision reverses**:
        - **no → yes** (UI change surfaces after P2 closed or after initial mockup approval): re-enter the UI Design Loop before finalizing the plan.
        - **yes → no** (it becomes clear during the loop that no UI change is actually needed): update the progress file P2 entry to `UI changes: no`, mark the P3 UI Design Loop sub-item as `- [x] UI Design Loop — N/A (UI changes: no)`, and proceed to the Plan Review Loop.
+     - **Approved mockup is the contract**: once the user approves the mockup, its visible UI element set is binding. The `Plan` agent iterates on details (tokens, copy, validation rules) within the approved element set; **adding new UI elements or removing required elements is a spec change, not a fill-in-detail**, and requires re-confirmation with the user before the plan is finalized. The mockup's branching ("default behavior + edge-case branch") is itself part of the contract — a "default + only-show-when-needed" pattern is meaningfully different from "always show". When the `Plan` agent's output proposes a UI shape change that conflicts with the mockup, pause and surface to the user **before** plan-review; pass the mockup gist URL to `plan-reviewer` in the review prompt's compliance context so it can run mockup-vs-plan integrity checks.
    - **Plan Review Loop (mandatory)**: Submit the plan to `plan-reviewer`. Address all actionable findings, then re-submit. Repeat until no actionable findings remain — every revision must be re-reviewed.
    - **Display element semantics**: Before designing badges, labels, icons, or status indicators, agree with the user on what they *semantically represent*. Implementation of display conditions follows from the semantic definition, not the other way around.
    - → **Done when** (all apply):
@@ -205,6 +206,28 @@ Quick rules (see `docs/process/DELEGATION.md` for the full contract):
 - **Fallback**: on schema-check failure, domain-test failure, Denylist violation, plan deviation, or blocker stop, the orchestrator re-delegates once or falls back to direct implementation (see DELEGATION.md → Fallback Procedure).
 
 ## Reference
+
+### Deferred-Decision Parking on GitHub Issues
+
+When investigation surfaces a non-urgent concern the user does not want to decide right now (e.g. "this flag is dead — retire or repurpose?"), **park the context in a GitHub issue**. The issue body carries the investigation so future-self / future-agent can reconstruct the reasoning without re-running the grep work.
+
+When the user says "残しておいて" / "後で決める" / "leave it for later" on an investigation finding, propose creating a GitHub issue rather than committing to code changes.
+
+#### Issue body structure
+
+1. **背景** — 1-2 sentence problem statement
+2. **調査サマリ** — grep / trace evidence with `file:line` references
+3. **経緯** — git history of the PR that introduced the feature and any PR that superseded it
+4. **検討事項** — Option A / Option B / Option C with the concrete steps each path requires, plus an explicit `決定しない — 対応時に判断` note
+5. **優先度** — explicit (低 / 中 / 高) with reasoning
+6. **参考ファイル** — list of files the future reader should open first
+
+#### Notes
+
+- **Do NOT write acceptance criteria or an implementation plan in the issue body** — the issue is a parking lot, not a ticket-ready spec. Those come at pick-up time.
+- Mark priority explicitly (e.g. "低 — 実害なし") so the issue does not accidentally get picked up as urgent during triage.
+- Use `gh issue create --title ... --body "$(cat <<'EOF' ... EOF)"` with heredoc to preserve markdown formatting.
+- Listing **multiple options** (rather than a single recommendation) suits deferred-decision parking — the issue is parked precisely because there is no strong preference yet.
 
 ### Branch Naming
 
