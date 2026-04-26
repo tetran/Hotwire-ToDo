@@ -1,0 +1,784 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Issue #351 — Admin Sidebar Open/Close (Client Review)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<style>
+  :root {
+    --color-sidebar:        #0f1117;
+    --color-sidebar-border: #1e2130;
+    --color-accent:         #6366f1;
+    --color-surface:        #f8f9fc;
+  }
+  html, body { background: #eef0f6; }
+  body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .font-syne   { font-family: "Syne", sans-serif; }
+  .font-mono-dm{ font-family: "DM Mono", ui-monospace, monospace; }
+
+  /* ------- Frame chrome (mock chrome around each scene) ------- */
+  .frame {
+    background: #ffffff;
+    border: 1px solid #e2e6ef;
+    border-radius: 16px;
+    box-shadow: 0 24px 60px -28px rgba(15, 17, 23, 0.18), 0 4px 12px -6px rgba(15, 17, 23, 0.08);
+    overflow: hidden;
+  }
+  .frame-bar {
+    display: flex; align-items: center; gap: 6px;
+    padding: 10px 14px; border-bottom: 1px solid #e9ecf3;
+    background: linear-gradient(180deg, #fafbfd, #f3f5fa);
+  }
+  .frame-dot { width: 10px; height: 10px; border-radius: 999px; }
+  .frame-url {
+    margin-left: 10px; flex: 1; height: 22px; display: flex; align-items: center; padding: 0 10px;
+    background: #ffffff; border: 1px solid #e2e6ef; border-radius: 6px;
+    font: 500 11px "DM Mono", monospace; color: #64748b; letter-spacing: 0.04em;
+  }
+  .frame-tag {
+    font: 600 10px "DM Mono", monospace; letter-spacing: 0.18em;
+    padding: 3px 8px; border-radius: 999px; text-transform: uppercase;
+  }
+
+  /* ------- Sidebar look (matches AdminLayout.tsx) ------- */
+  .sidebar {
+    background: var(--color-sidebar);
+    border-right: 1px solid var(--color-sidebar-border);
+    color: #cbd5e1;
+  }
+  .nav-item-active {
+    background: rgba(99, 102, 241, 0.15);
+    color: #6366f1;
+  }
+  .nav-item-active .nav-icon { color: #6366f1; }
+  .nav-item-inactive { color: #94a3b8; }
+  .nav-item-inactive .nav-icon { color: #475569; }
+  .nav-item-inactive:hover { background: rgba(255,255,255,0.05); color: #e2e8f0; }
+
+  .section-label {
+    font-family: "DM Mono", monospace;
+    font-size: 9px; font-weight: 600; letter-spacing: 0.15em;
+    color: #475569; text-transform: uppercase;
+  }
+  .logo-subtitle {
+    font-family: "DM Mono", monospace;
+    font-size: 9px; letter-spacing: 0.15em; color: #64748b;
+  }
+
+  /* Tooltip used in collapsed (rail) state */
+  .tooltip {
+    position: absolute; left: 100%; top: 50%; transform: translateY(-50%);
+    margin-left: 12px;
+    background: #0f172a; color: #ffffff;
+    font-size: 12px; font-weight: 500;
+    padding: 6px 10px; border-radius: 6px; white-space: nowrap;
+    box-shadow: 0 6px 16px -6px rgba(15, 17, 23, 0.5), 0 2px 4px rgba(15, 17, 23, 0.3);
+    z-index: 50;
+  }
+
+  /* Phone bezel */
+  .phone {
+    width: 360px; height: 720px; border-radius: 36px;
+    background: #0b0d12; padding: 12px;
+    box-shadow: 0 30px 80px -30px rgba(15, 17, 23, 0.45), inset 0 0 0 1.5px #2a2e3b;
+    position: relative;
+  }
+  .phone .notch {
+    position: absolute; top: 14px; left: 50%; transform: translateX(-50%);
+    width: 110px; height: 22px; background: #0b0d12; border-radius: 0 0 14px 14px; z-index: 60;
+  }
+  .phone-screen {
+    width: 100%; height: 100%; background: var(--color-surface);
+    border-radius: 26px; overflow: hidden; position: relative;
+  }
+
+  /* Slim scrollbar in mocks */
+  .nice-scroll::-webkit-scrollbar { width: 6px; }
+  .nice-scroll::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.25); border-radius: 999px; }
+
+  /* Reduced motion notice tag */
+  .pill { font-family: "DM Mono", monospace; }
+</style>
+</head>
+<body class="text-slate-700">
+
+<!-- ===================== HEADER ===================== -->
+<header class="mx-auto max-w-[1480px] px-8 pt-10 pb-6">
+  <div class="flex items-end justify-between gap-6 flex-wrap">
+    <div>
+      <p class="font-mono-dm text-[10px] font-semibold tracking-[0.25em] text-indigo-500 uppercase">Hobo Admin · Design Review</p>
+      <h1 class="font-syne text-3xl font-bold text-slate-900 mt-2">Issue #351 — Sidebar Open / Close</h1>
+      <p class="text-sm text-slate-500 mt-2 max-w-2xl">
+        Viewport-aware behavior for the Admin SPA sidebar. Four scenes cover the full state matrix:
+        desktop expanded (default), desktop collapsed (rail), mobile closed, and mobile drawer open.
+      </p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <span class="pill text-[10px] font-semibold tracking-[0.18em] uppercase px-3 py-1.5 rounded-full bg-slate-900 text-white">Surface · Admin</span>
+      <span class="pill text-[10px] font-semibold tracking-[0.18em] uppercase px-3 py-1.5 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100">Tokens · existing only</span>
+      <span class="pill text-[10px] font-semibold tracking-[0.18em] uppercase px-3 py-1.5 rounded-full bg-white text-slate-600 border border-slate-200">Motion · 200/300ms</span>
+      <span class="pill text-[10px] font-semibold tracking-[0.18em] uppercase px-3 py-1.5 rounded-full bg-white text-slate-600 border border-slate-200">A11y · prefers-reduced-motion</span>
+    </div>
+  </div>
+</header>
+
+<main class="mx-auto max-w-[1480px] px-8 pb-20 space-y-12">
+
+  <!-- ============================================================
+       SCENE A — Desktop expanded (default)
+       ============================================================ -->
+  <section>
+    <div class="flex items-center gap-3 mb-3">
+      <span class="frame-tag bg-indigo-600 text-white">Scene A</span>
+      <h2 class="font-syne text-lg font-semibold text-slate-900">Desktop · Expanded (default)</h2>
+      <span class="text-xs text-slate-500">220px sidebar · always visible · viewport ≥ md (768px)</span>
+    </div>
+
+    <div class="frame">
+      <div class="frame-bar">
+        <span class="frame-dot bg-rose-300"></span>
+        <span class="frame-dot bg-amber-300"></span>
+        <span class="frame-dot bg-emerald-300"></span>
+        <div class="frame-url">https://hobo.example.com/admin</div>
+        <span class="frame-tag bg-slate-900 text-white">1440 × 900</span>
+      </div>
+
+      <div class="flex" style="height: 700px;">
+        <!-- Sidebar (expanded, 220px) -->
+        <nav class="sidebar flex w-[220px] shrink-0 flex-col">
+          <!-- Logo block + collapse toggle -->
+          <div class="flex items-center gap-3 border-b border-[#1e2130] px-4 py-5 relative">
+            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#6366f1] shadow-md shadow-indigo-500/30">
+              <svg class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2v-4M9 21H5a2 2 0 01-2-2v-4m0 0h18"/></svg>
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="font-syne text-sm font-bold leading-none text-white">Hobo Admin</p>
+              <p class="logo-subtitle mt-1">CONTROL PANEL</p>
+            </div>
+            <!-- Collapse toggle (chevrons left) -->
+            <button title="Collapse sidebar" aria-label="Collapse sidebar"
+              class="absolute -right-3 top-6 h-6 w-6 rounded-full border border-[#2a2e3b] bg-[#0f1117] text-slate-400 hover:text-white hover:border-indigo-500/60 flex items-center justify-center shadow-md shadow-black/40 transition-colors">
+              <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+          </div>
+
+          <!-- Navigation -->
+          <div class="flex-1 overflow-y-auto py-4 nice-scroll">
+            <!-- NAVIGATION -->
+            <div class="mb-4 px-3">
+              <p class="section-label mb-2 px-2">NAVIGATION</p>
+              <ul class="space-y-0.5">
+                <li><a class="nav-item-active flex items-center gap-3 rounded-lg px-3 py-2 text-sm">
+                  <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg></span>
+                  Dashboard
+                </a></li>
+                <li><a class="nav-item-inactive flex items-center gap-3 rounded-lg px-3 py-2 text-sm">
+                  <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span>
+                  Event Logs
+                </a></li>
+                <li><a class="nav-item-inactive flex items-center gap-3 rounded-lg px-3 py-2 text-sm">
+                  <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg></span>
+                  System Info
+                </a></li>
+                <li><a class="nav-item-inactive flex items-center gap-3 rounded-lg px-3 py-2 text-sm">
+                  <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg></span>
+                  Users
+                </a></li>
+              </ul>
+            </div>
+            <!-- ADMIN -->
+            <div class="mb-4 px-3">
+              <p class="section-label mb-2 px-2">ADMIN</p>
+              <ul class="space-y-0.5">
+                <li><a class="nav-item-inactive flex items-center gap-3 rounded-lg px-3 py-2 text-sm">
+                  <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg></span>
+                  Admin Accounts
+                </a></li>
+                <li><a class="nav-item-inactive flex items-center gap-3 rounded-lg px-3 py-2 text-sm">
+                  <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg></span>
+                  Roles
+                </a></li>
+                <li><a class="nav-item-inactive flex items-center gap-3 rounded-lg px-3 py-2 text-sm">
+                  <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z"/></svg></span>
+                  Permissions
+                </a></li>
+              </ul>
+            </div>
+            <!-- AI INFRASTRUCTURE -->
+            <div class="mb-4 px-3">
+              <p class="section-label mb-2 px-2">AI INFRASTRUCTURE</p>
+              <ul class="space-y-0.5">
+                <li><a class="nav-item-inactive flex items-center gap-3 rounded-lg px-3 py-2 text-sm">
+                  <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25zm.75-12h9v9h-9v-9z"/></svg></span>
+                  LLM Providers
+                </a></li>
+                <li><a class="nav-item-inactive flex items-center gap-3 rounded-lg px-3 py-2 text-sm">
+                  <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg></span>
+                  Prompt Sets
+                </a></li>
+                <li><a class="nav-item-inactive flex items-center gap-3 rounded-lg px-3 py-2 text-sm">
+                  <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"/></svg></span>
+                  Suggestion Configs
+                </a></li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- User footer -->
+          <div class="border-t border-[#1e2130] px-3 py-4">
+            <div class="flex items-center gap-3 rounded-lg px-2 py-2">
+              <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-500/30 text-indigo-200 text-xs font-semibold">SA</div>
+              <div class="min-w-0 flex-1">
+                <p class="truncate text-xs font-medium text-slate-200">Sarah Admin</p>
+                <p class="text-[10px] text-slate-500">Super Admin</p>
+              </div>
+            </div>
+            <button class="mt-2 flex w-full items-center gap-2 rounded-lg px-2 py-2 text-xs text-slate-500 hover:bg-white/5 hover:text-slate-300 transition-colors">
+              <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/></svg>
+              Logout
+            </button>
+          </div>
+        </nav>
+
+        <!-- Main content -->
+        <div class="flex min-w-0 flex-1 flex-col" style="background: var(--color-surface);">
+          <header class="flex h-14 shrink-0 items-center border-b border-slate-200 bg-white px-6">
+            <div class="flex flex-1 items-center gap-2 text-sm text-slate-400">
+              <span class="text-slate-300">/</span>
+              <span class="font-medium text-slate-600">Dashboard</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="relative">
+                <input class="h-8 w-56 rounded-md border border-slate-200 bg-white px-3 pr-7 text-xs placeholder:text-slate-400 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none" placeholder="Search…" />
+                <span class="absolute right-2 top-1/2 -translate-y-1/2 text-slate-300">
+                  <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.3-4.3M11 19a8 8 0 100-16 8 8 0 000 16z"/></svg>
+                </span>
+              </div>
+              <span class="font-mono-dm text-[10px] tracking-[0.18em] text-slate-400 uppercase">v1.4.2</span>
+            </div>
+          </header>
+
+          <main class="flex-1 overflow-y-auto p-6">
+            <p class="font-mono-dm text-[10px] font-semibold tracking-[0.2em] text-slate-400 uppercase">OVERVIEW</p>
+            <h1 class="font-syne text-2xl font-bold text-slate-900 mt-1">Dashboard</h1>
+            <p class="text-sm text-slate-500 mt-1">Welcome back, Sarah. Here's what's happening across your tenant today.</p>
+
+            <div class="grid grid-cols-4 gap-4 mt-6">
+              <!-- StatCard x4 -->
+              <div class="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+                <p class="text-xs font-medium uppercase tracking-widest text-slate-500">Total Users</p>
+                <p class="font-syne mt-3 text-3xl font-bold text-slate-900">2,847</p>
+                <p class="text-xs text-emerald-600 mt-2">+12.4% this week</p>
+              </div>
+              <div class="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+                <p class="text-xs font-medium uppercase tracking-widest text-slate-500">Active Projects</p>
+                <p class="font-syne mt-3 text-3xl font-bold text-slate-900">412</p>
+                <p class="text-xs text-emerald-600 mt-2">+3.1% this week</p>
+              </div>
+              <div class="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+                <p class="text-xs font-medium uppercase tracking-widest text-slate-500">Tasks Completed</p>
+                <p class="font-syne mt-3 text-3xl font-bold text-slate-900">18,209</p>
+                <p class="text-xs text-emerald-600 mt-2">+24.7% this week</p>
+              </div>
+              <div class="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+                <p class="text-xs font-medium uppercase tracking-widest text-slate-500">LLM Calls</p>
+                <p class="font-syne mt-3 text-3xl font-bold text-slate-900">96.2k</p>
+                <p class="text-xs text-rose-600 mt-2">-1.4% this week</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4 mt-6">
+              <div class="col-span-2 rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+                <div class="flex items-center justify-between">
+                  <p class="font-syne text-sm font-semibold text-slate-900">Activity (Last 7 days)</p>
+                  <span class="font-mono-dm text-[10px] tracking-[0.18em] text-slate-400 uppercase">UTC</span>
+                </div>
+                <!-- Fake chart -->
+                <svg viewBox="0 0 600 160" class="mt-4 w-full h-32">
+                  <defs>
+                    <linearGradient id="g1" x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="0" stop-color="#6366f1" stop-opacity="0.45"/>
+                      <stop offset="1" stop-color="#6366f1" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M0,120 C60,100 100,60 160,70 C220,80 260,40 320,50 C380,60 420,90 480,75 C540,60 580,90 600,80 L600,160 L0,160 Z" fill="url(#g1)"/>
+                  <path d="M0,120 C60,100 100,60 160,70 C220,80 260,40 320,50 C380,60 420,90 480,75 C540,60 580,90 600,80" stroke="#6366f1" stroke-width="2" fill="none"/>
+                </svg>
+              </div>
+              <div class="rounded-xl border border-slate-100 bg-white p-5 shadow-sm">
+                <p class="font-syne text-sm font-semibold text-slate-900">Recent Sign-ups</p>
+                <ul class="mt-3 space-y-3 text-sm">
+                  <li class="flex items-center gap-3"><span class="h-7 w-7 rounded-full bg-emerald-100 text-emerald-700 text-xs flex items-center justify-center font-semibold">YT</span><div class="min-w-0 flex-1"><p class="font-medium text-slate-700 truncate">yuki.tanaka@…</p><p class="text-xs text-slate-400">2m ago</p></div></li>
+                  <li class="flex items-center gap-3"><span class="h-7 w-7 rounded-full bg-amber-100 text-amber-700 text-xs flex items-center justify-center font-semibold">MS</span><div class="min-w-0 flex-1"><p class="font-medium text-slate-700 truncate">marco.s@…</p><p class="text-xs text-slate-400">14m ago</p></div></li>
+                  <li class="flex items-center gap-3"><span class="h-7 w-7 rounded-full bg-indigo-100 text-indigo-700 text-xs flex items-center justify-center font-semibold">AK</span><div class="min-w-0 flex-1"><p class="font-medium text-slate-700 truncate">aki@…</p><p class="text-xs text-slate-400">38m ago</p></div></li>
+                </ul>
+              </div>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+
+    <!-- Annotations -->
+    <div class="grid grid-cols-3 gap-3 mt-4">
+      <div class="rounded-lg border border-slate-200 bg-white px-4 py-3 text-xs text-slate-600">
+        <p class="font-mono-dm text-[10px] tracking-[0.18em] text-indigo-500 uppercase font-semibold">Toggle</p>
+        <p class="mt-1">Pinned to the top-right edge of the sidebar header. Chevron points <strong>left</strong> when expanded (=collapse intent).</p>
+      </div>
+      <div class="rounded-lg border border-slate-200 bg-white px-4 py-3 text-xs text-slate-600">
+        <p class="font-mono-dm text-[10px] tracking-[0.18em] text-indigo-500 uppercase font-semibold">Width</p>
+        <p class="mt-1">220px fixed. Labels visible. Section headers visible. User footer shows full name + Super Admin label + Logout.</p>
+      </div>
+      <div class="rounded-lg border border-slate-200 bg-white px-4 py-3 text-xs text-slate-600">
+        <p class="font-mono-dm text-[10px] tracking-[0.18em] text-indigo-500 uppercase font-semibold">Persistence</p>
+        <p class="mt-1">Collapsed/expanded preference saved to <code class="font-mono-dm text-[10px] bg-slate-100 px-1 rounded">localStorage</code>. First-visit default: expanded.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       SCENE B — Desktop collapsed (rail) with tooltip
+       ============================================================ -->
+  <section>
+    <div class="flex items-center gap-3 mb-3">
+      <span class="frame-tag bg-indigo-600 text-white">Scene B</span>
+      <h2 class="font-syne text-lg font-semibold text-slate-900">Desktop · Collapsed (rail) — tooltip on hover</h2>
+      <span class="text-xs text-slate-500">64px rail · icons only · labels surface as tooltips</span>
+    </div>
+
+    <div class="frame">
+      <div class="frame-bar">
+        <span class="frame-dot bg-rose-300"></span>
+        <span class="frame-dot bg-amber-300"></span>
+        <span class="frame-dot bg-emerald-300"></span>
+        <div class="frame-url">https://hobo.example.com/admin/users</div>
+        <span class="frame-tag bg-slate-900 text-white">1440 × 900</span>
+      </div>
+
+      <div class="flex" style="height: 700px;">
+        <!-- Sidebar (collapsed rail, 64px) -->
+        <nav class="sidebar flex w-[64px] shrink-0 flex-col">
+          <!-- Logo block (badge only) + expand toggle -->
+          <div class="flex items-center justify-center border-b border-[#1e2130] px-2 py-5 relative">
+            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#6366f1] shadow-md shadow-indigo-500/30">
+              <svg class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2v-4M9 21H5a2 2 0 01-2-2v-4m0 0h18"/></svg>
+            </div>
+            <!-- Expand toggle (chevron right) -->
+            <button title="Expand sidebar" aria-label="Expand sidebar"
+              class="absolute -right-3 top-6 h-6 w-6 rounded-full border border-[#2a2e3b] bg-[#0f1117] text-slate-400 hover:text-white hover:border-indigo-500/60 flex items-center justify-center shadow-md shadow-black/40 transition-colors">
+              <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+
+          <!-- Navigation rail -->
+          <div class="flex-1 overflow-y-auto py-4 nice-scroll">
+            <!-- Section divider (no label in rail) -->
+            <div class="mb-2 px-3"><div class="h-px bg-[#1e2130]"></div></div>
+            <ul class="space-y-1 px-2">
+              <!-- Dashboard inactive -->
+              <li><a title="Dashboard" class="nav-item-inactive flex items-center justify-center rounded-lg p-2.5">
+                <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg></span>
+              </a></li>
+              <!-- Event Logs -->
+              <li><a title="Event Logs" class="nav-item-inactive flex items-center justify-center rounded-lg p-2.5">
+                <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span>
+              </a></li>
+              <!-- System Info -->
+              <li><a title="System Info" class="nav-item-inactive flex items-center justify-center rounded-lg p-2.5">
+                <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg></span>
+              </a></li>
+
+              <!-- Users (active + tooltip showing) -->
+              <li class="relative">
+                <a class="nav-item-active flex items-center justify-center rounded-lg p-2.5">
+                  <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg></span>
+                </a>
+                <!-- Visible tooltip demo -->
+                <span class="tooltip">Users</span>
+              </li>
+
+              <!-- Section divider -->
+              <li class="px-1 py-2"><div class="h-px bg-[#1e2130]"></div></li>
+
+              <!-- Admin Accounts -->
+              <li><a title="Admin Accounts" class="nav-item-inactive flex items-center justify-center rounded-lg p-2.5">
+                <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg></span>
+              </a></li>
+              <li><a title="Roles" class="nav-item-inactive flex items-center justify-center rounded-lg p-2.5">
+                <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg></span>
+              </a></li>
+              <li><a title="Permissions" class="nav-item-inactive flex items-center justify-center rounded-lg p-2.5">
+                <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z"/></svg></span>
+              </a></li>
+
+              <!-- Section divider -->
+              <li class="px-1 py-2"><div class="h-px bg-[#1e2130]"></div></li>
+
+              <li><a title="LLM Providers" class="nav-item-inactive flex items-center justify-center rounded-lg p-2.5">
+                <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25zm.75-12h9v9h-9v-9z"/></svg></span>
+              </a></li>
+              <li><a title="Prompt Sets" class="nav-item-inactive flex items-center justify-center rounded-lg p-2.5">
+                <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg></span>
+              </a></li>
+              <li><a title="Suggestion Configs" class="nav-item-inactive flex items-center justify-center rounded-lg p-2.5">
+                <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"/></svg></span>
+              </a></li>
+            </ul>
+          </div>
+
+          <!-- User footer (rail) -->
+          <div class="border-t border-[#1e2130] px-2 py-3 flex flex-col items-center gap-2">
+            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-500/30 text-indigo-200 text-xs font-semibold" title="Sarah Admin · Super Admin">SA</div>
+            <button title="Logout" class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 hover:bg-white/5 hover:text-slate-300 transition-colors">
+              <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/></svg>
+            </button>
+          </div>
+        </nav>
+
+        <!-- Main content (Users page) -->
+        <div class="flex min-w-0 flex-1 flex-col" style="background: var(--color-surface);">
+          <header class="flex h-14 shrink-0 items-center border-b border-slate-200 bg-white px-6">
+            <div class="flex flex-1 items-center gap-2 text-sm text-slate-400">
+              <span class="text-slate-300">/</span>
+              <span class="font-medium text-slate-600">Users</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <button class="h-8 px-3 rounded-md bg-indigo-600 text-white text-xs font-semibold shadow-sm shadow-indigo-500/30 hover:bg-indigo-700">+ Invite User</button>
+            </div>
+          </header>
+
+          <main class="flex-1 overflow-y-auto p-6">
+            <p class="font-mono-dm text-[10px] font-semibold tracking-[0.2em] text-slate-400 uppercase">MANAGEMENT</p>
+            <h1 class="font-syne text-2xl font-bold text-slate-900 mt-1">Users</h1>
+            <p class="text-sm text-slate-500 mt-1">2,847 total · 12 deactivated · last sync 2 minutes ago.</p>
+
+            <div class="mt-6 rounded-xl border border-slate-100 bg-white shadow-sm overflow-hidden">
+              <div class="flex items-center gap-2 border-b border-slate-100 px-5 py-3">
+                <div class="relative flex-1 max-w-xs">
+                  <input class="h-8 w-full rounded-md border border-slate-200 bg-white px-3 pr-7 text-xs placeholder:text-slate-400 focus:border-indigo-300 focus:ring-2 focus:ring-indigo-100 outline-none" placeholder="Search users…" />
+                </div>
+                <button class="h-8 px-3 rounded-md border border-slate-200 bg-white text-xs text-slate-600 hover:bg-slate-50">Filter</button>
+                <button class="h-8 px-3 rounded-md border border-slate-200 bg-white text-xs text-slate-600 hover:bg-slate-50">Export</button>
+              </div>
+              <table class="w-full text-sm">
+                <thead class="bg-slate-50">
+                  <tr class="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                    <th class="px-5 py-3 text-left">User</th>
+                    <th class="px-5 py-3 text-left">Email</th>
+                    <th class="px-5 py-3 text-left">Role</th>
+                    <th class="px-5 py-3 text-left">Status</th>
+                    <th class="px-5 py-3 text-left">Joined</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  <tr><td class="px-5 py-3"><div class="flex items-center gap-3"><span class="h-7 w-7 rounded-full bg-emerald-100 text-emerald-700 text-xs flex items-center justify-center font-semibold">YT</span><span class="font-medium text-slate-700">Yuki Tanaka</span></div></td><td class="px-5 py-3 text-slate-600">yuki.tanaka@example.com</td><td class="px-5 py-3"><span class="inline-flex h-5 items-center rounded-full bg-indigo-50 px-2 text-[11px] font-semibold text-indigo-600">Member</span></td><td class="px-5 py-3"><span class="inline-flex h-5 items-center rounded-full bg-emerald-50 px-2 text-[11px] font-semibold text-emerald-600">Active</span></td><td class="px-5 py-3 text-slate-500 text-xs">2025-08-12</td></tr>
+                  <tr><td class="px-5 py-3"><div class="flex items-center gap-3"><span class="h-7 w-7 rounded-full bg-amber-100 text-amber-700 text-xs flex items-center justify-center font-semibold">MS</span><span class="font-medium text-slate-700">Marco Silva</span></div></td><td class="px-5 py-3 text-slate-600">marco.s@example.com</td><td class="px-5 py-3"><span class="inline-flex h-5 items-center rounded-full bg-indigo-50 px-2 text-[11px] font-semibold text-indigo-600">Member</span></td><td class="px-5 py-3"><span class="inline-flex h-5 items-center rounded-full bg-emerald-50 px-2 text-[11px] font-semibold text-emerald-600">Active</span></td><td class="px-5 py-3 text-slate-500 text-xs">2025-09-04</td></tr>
+                  <tr><td class="px-5 py-3"><div class="flex items-center gap-3"><span class="h-7 w-7 rounded-full bg-indigo-100 text-indigo-700 text-xs flex items-center justify-center font-semibold">AK</span><span class="font-medium text-slate-700">Aki Kobayashi</span></div></td><td class="px-5 py-3 text-slate-600">aki@example.com</td><td class="px-5 py-3"><span class="inline-flex h-5 items-center rounded-full bg-slate-100 px-2 text-[11px] font-semibold text-slate-600">Owner</span></td><td class="px-5 py-3"><span class="inline-flex h-5 items-center rounded-full bg-rose-50 px-2 text-[11px] font-semibold text-rose-600">Deactivated</span></td><td class="px-5 py-3 text-slate-500 text-xs">2024-11-22</td></tr>
+                  <tr><td class="px-5 py-3"><div class="flex items-center gap-3"><span class="h-7 w-7 rounded-full bg-rose-100 text-rose-700 text-xs flex items-center justify-center font-semibold">PE</span><span class="font-medium text-slate-700">Priya E.</span></div></td><td class="px-5 py-3 text-slate-600">priya@example.com</td><td class="px-5 py-3"><span class="inline-flex h-5 items-center rounded-full bg-indigo-50 px-2 text-[11px] font-semibold text-indigo-600">Member</span></td><td class="px-5 py-3"><span class="inline-flex h-5 items-center rounded-full bg-emerald-50 px-2 text-[11px] font-semibold text-emerald-600">Active</span></td><td class="px-5 py-3 text-slate-500 text-xs">2025-10-01</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </main>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-3 mt-4">
+      <div class="rounded-lg border border-slate-200 bg-white px-4 py-3 text-xs text-slate-600">
+        <p class="font-mono-dm text-[10px] tracking-[0.18em] text-indigo-500 uppercase font-semibold">Tooltip</p>
+        <p class="mt-1">Slate-900 flat pill, 12px white text, no arrow. Appears 12px to the right of the icon. Z-index 50. 0ms on hover-in, 100ms delay on hover-out.</p>
+      </div>
+      <div class="rounded-lg border border-slate-200 bg-white px-4 py-3 text-xs text-slate-600">
+        <p class="font-mono-dm text-[10px] tracking-[0.18em] text-indigo-500 uppercase font-semibold">Section grouping</p>
+        <p class="mt-1">Section labels (NAVIGATION/ADMIN/AI INFRASTRUCTURE) are replaced by 1px dividers (<code class="font-mono-dm text-[10px] bg-slate-100 px-1 rounded">#1e2130</code>) so the visual rhythm survives.</p>
+      </div>
+      <div class="rounded-lg border border-slate-200 bg-white px-4 py-3 text-xs text-slate-600">
+        <p class="font-mono-dm text-[10px] tracking-[0.18em] text-indigo-500 uppercase font-semibold">User footer</p>
+        <p class="mt-1">Avatar only + iconified Logout, stacked vertically. Avatar tooltip shows full name + Super Admin label on hover.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       SCENES C & D — Mobile (< md)
+       ============================================================ -->
+  <section>
+    <div class="flex items-center gap-3 mb-3">
+      <span class="frame-tag bg-indigo-600 text-white">Scenes C / D</span>
+      <h2 class="font-syne text-lg font-semibold text-slate-900">Mobile · Off-canvas drawer (< 768px)</h2>
+      <span class="text-xs text-slate-500">Header gains a hamburger; drawer slides in from left over a 40% backdrop</span>
+    </div>
+
+    <div class="grid grid-cols-2 gap-8 justify-items-center">
+      <!-- ===== Scene C: Mobile closed ===== -->
+      <div class="flex flex-col items-center">
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="phone-screen">
+            <!-- Mobile header (with hamburger left) -->
+            <header class="flex h-14 shrink-0 items-center border-b border-slate-200 bg-white px-4 gap-3">
+              <button aria-label="Open navigation" class="h-9 w-9 -ml-1 flex items-center justify-center rounded-md text-slate-700 hover:bg-slate-100">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+              </button>
+              <div class="flex items-center gap-2">
+                <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#6366f1] shadow-sm shadow-indigo-500/30">
+                  <svg class="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2v-4M9 21H5a2 2 0 01-2-2v-4m0 0h18"/></svg>
+                </div>
+                <div>
+                  <p class="font-syne text-xs font-bold leading-none text-slate-900">Hobo Admin</p>
+                  <p class="logo-subtitle mt-0.5" style="color:#94a3b8">DASHBOARD</p>
+                </div>
+              </div>
+            </header>
+
+            <!-- Page content -->
+            <div class="p-4 overflow-y-auto" style="height: calc(100% - 56px);">
+              <p class="font-mono-dm text-[9px] font-semibold tracking-[0.2em] text-slate-400 uppercase">OVERVIEW</p>
+              <h1 class="font-syne text-xl font-bold text-slate-900 mt-1">Dashboard</h1>
+              <p class="text-xs text-slate-500 mt-1">Welcome back, Sarah.</p>
+
+              <div class="grid grid-cols-2 gap-3 mt-4">
+                <div class="rounded-lg border border-slate-100 bg-white p-3 shadow-sm">
+                  <p class="text-[10px] font-medium uppercase tracking-widest text-slate-500">Users</p>
+                  <p class="font-syne mt-1.5 text-xl font-bold text-slate-900">2,847</p>
+                  <p class="text-[10px] text-emerald-600 mt-1">+12.4%</p>
+                </div>
+                <div class="rounded-lg border border-slate-100 bg-white p-3 shadow-sm">
+                  <p class="text-[10px] font-medium uppercase tracking-widest text-slate-500">Projects</p>
+                  <p class="font-syne mt-1.5 text-xl font-bold text-slate-900">412</p>
+                  <p class="text-[10px] text-emerald-600 mt-1">+3.1%</p>
+                </div>
+                <div class="rounded-lg border border-slate-100 bg-white p-3 shadow-sm">
+                  <p class="text-[10px] font-medium uppercase tracking-widest text-slate-500">Tasks</p>
+                  <p class="font-syne mt-1.5 text-xl font-bold text-slate-900">18.2k</p>
+                  <p class="text-[10px] text-emerald-600 mt-1">+24.7%</p>
+                </div>
+                <div class="rounded-lg border border-slate-100 bg-white p-3 shadow-sm">
+                  <p class="text-[10px] font-medium uppercase tracking-widest text-slate-500">LLM</p>
+                  <p class="font-syne mt-1.5 text-xl font-bold text-slate-900">96.2k</p>
+                  <p class="text-[10px] text-rose-600 mt-1">-1.4%</p>
+                </div>
+              </div>
+
+              <div class="mt-4 rounded-lg border border-slate-100 bg-white p-3 shadow-sm">
+                <p class="font-syne text-xs font-semibold text-slate-900">Activity (7d)</p>
+                <svg viewBox="0 0 300 90" class="mt-2 w-full h-20">
+                  <defs><linearGradient id="g2" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#6366f1" stop-opacity="0.45"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></linearGradient></defs>
+                  <path d="M0,70 C30,60 50,30 80,40 C110,50 130,20 160,30 C190,40 210,55 240,45 C270,35 290,55 300,50 L300,90 L0,90 Z" fill="url(#g2)"/>
+                  <path d="M0,70 C30,60 50,30 80,40 C110,50 130,20 160,30 C190,40 210,55 240,45 C270,35 290,55 300,50" stroke="#6366f1" stroke-width="1.5" fill="none"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-3 flex items-center gap-2">
+          <span class="frame-tag bg-slate-200 text-slate-700">Scene C</span>
+          <p class="text-xs text-slate-500">Mobile · Drawer closed (default after first visit)</p>
+        </div>
+      </div>
+
+      <!-- ===== Scene D: Mobile drawer open ===== -->
+      <div class="flex flex-col items-center">
+        <div class="phone">
+          <div class="notch"></div>
+          <div class="phone-screen">
+            <!-- Same header underneath -->
+            <header class="flex h-14 shrink-0 items-center border-b border-slate-200 bg-white px-4 gap-3">
+              <button aria-label="Close navigation" class="h-9 w-9 -ml-1 flex items-center justify-center rounded-md text-slate-700 hover:bg-slate-100">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+              </button>
+              <div class="flex items-center gap-2">
+                <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#6366f1] shadow-sm shadow-indigo-500/30">
+                  <svg class="h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2v-4M9 21H5a2 2 0 01-2-2v-4m0 0h18"/></svg>
+                </div>
+                <div>
+                  <p class="font-syne text-xs font-bold leading-none text-slate-900">Hobo Admin</p>
+                  <p class="logo-subtitle mt-0.5" style="color:#94a3b8">DASHBOARD</p>
+                </div>
+              </div>
+            </header>
+            <!-- Faint page content underneath (greyed because drawer-open) -->
+            <div class="p-4">
+              <p class="font-mono-dm text-[9px] font-semibold tracking-[0.2em] text-slate-300 uppercase">OVERVIEW</p>
+              <h1 class="font-syne text-xl font-bold text-slate-300 mt-1">Dashboard</h1>
+              <div class="grid grid-cols-2 gap-3 mt-4">
+                <div class="rounded-lg border border-slate-100 bg-white/60 p-3 h-16"></div>
+                <div class="rounded-lg border border-slate-100 bg-white/60 p-3 h-16"></div>
+              </div>
+            </div>
+
+            <!-- Backdrop (z-30) -->
+            <div class="absolute inset-0" style="background: rgba(0,0,0,0.4); z-index: 30;"></div>
+
+            <!-- Drawer (z-40) -->
+            <aside class="absolute top-0 left-0 bottom-0 sidebar flex flex-col" style="width: 256px; z-index: 40; box-shadow: 12px 0 32px -8px rgba(0,0,0,0.4);">
+              <!-- Logo + close -->
+              <div class="flex items-center justify-between border-b border-[#1e2130] px-4 py-4">
+                <div class="flex items-center gap-3">
+                  <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#6366f1] shadow-md shadow-indigo-500/30">
+                    <svg class="h-4 w-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2v-4M9 21H5a2 2 0 01-2-2v-4m0 0h18"/></svg>
+                  </div>
+                  <div class="min-w-0">
+                    <p class="font-syne text-sm font-bold leading-none text-white">Hobo Admin</p>
+                    <p class="logo-subtitle mt-1">CONTROL PANEL</p>
+                  </div>
+                </div>
+                <button aria-label="Close navigation" class="h-8 w-8 flex items-center justify-center rounded-md text-slate-400 hover:bg-white/5 hover:text-white">
+                  <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+              </div>
+
+              <!-- Nav -->
+              <div class="flex-1 overflow-y-auto py-3 nice-scroll">
+                <div class="mb-3 px-3">
+                  <p class="section-label mb-2 px-2">NAVIGATION</p>
+                  <ul class="space-y-0.5">
+                    <li><a class="nav-item-active flex items-center gap-3 rounded-lg px-3 py-2 text-sm">
+                      <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg></span>
+                      Dashboard
+                    </a></li>
+                    <li><a class="nav-item-inactive flex items-center gap-3 rounded-lg px-3 py-2 text-sm">
+                      <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></span>
+                      Event Logs
+                    </a></li>
+                    <li><a class="nav-item-inactive flex items-center gap-3 rounded-lg px-3 py-2 text-sm">
+                      <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg></span>
+                      System Info
+                    </a></li>
+                    <li><a class="nav-item-inactive flex items-center gap-3 rounded-lg px-3 py-2 text-sm">
+                      <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg></span>
+                      Users
+                    </a></li>
+                  </ul>
+                </div>
+
+                <div class="mb-3 px-3">
+                  <p class="section-label mb-2 px-2">ADMIN</p>
+                  <ul class="space-y-0.5">
+                    <li><a class="nav-item-inactive flex items-center gap-3 rounded-lg px-3 py-2 text-sm">
+                      <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg></span>
+                      Admin Accounts
+                    </a></li>
+                    <li><a class="nav-item-inactive flex items-center gap-3 rounded-lg px-3 py-2 text-sm">
+                      <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg></span>
+                      Roles
+                    </a></li>
+                    <li><a class="nav-item-inactive flex items-center gap-3 rounded-lg px-3 py-2 text-sm">
+                      <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z"/></svg></span>
+                      Permissions
+                    </a></li>
+                  </ul>
+                </div>
+
+                <div class="mb-3 px-3">
+                  <p class="section-label mb-2 px-2">AI INFRASTRUCTURE</p>
+                  <ul class="space-y-0.5">
+                    <li><a class="nav-item-inactive flex items-center gap-3 rounded-lg px-3 py-2 text-sm">
+                      <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 002.25-2.25V6.75a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25zm.75-12h9v9h-9v-9z"/></svg></span>
+                      LLM Providers
+                    </a></li>
+                    <li><a class="nav-item-inactive flex items-center gap-3 rounded-lg px-3 py-2 text-sm">
+                      <span class="nav-icon"><svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg></span>
+                      Prompt Sets
+                    </a></li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- Footer -->
+              <div class="border-t border-[#1e2130] px-3 py-3">
+                <div class="flex items-center gap-3 rounded-lg px-2 py-2">
+                  <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-500/30 text-indigo-200 text-xs font-semibold">SA</div>
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate text-xs font-medium text-slate-200">Sarah Admin</p>
+                    <p class="text-[10px] text-slate-500">Super Admin</p>
+                  </div>
+                </div>
+                <button class="mt-1 flex w-full items-center gap-2 rounded-lg px-2 py-2 text-xs text-slate-500 hover:bg-white/5 hover:text-slate-300">
+                  <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/></svg>
+                  Logout
+                </button>
+              </div>
+            </aside>
+          </div>
+        </div>
+        <div class="mt-3 flex items-center gap-2">
+          <span class="frame-tag bg-slate-200 text-slate-700">Scene D</span>
+          <p class="text-xs text-slate-500">Mobile · Drawer open (256px) over 40% backdrop</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-3 mt-6 max-w-5xl mx-auto">
+      <div class="rounded-lg border border-slate-200 bg-white px-4 py-3 text-xs text-slate-600">
+        <p class="font-mono-dm text-[10px] tracking-[0.18em] text-indigo-500 uppercase font-semibold">Trigger / Dismiss</p>
+        <p class="mt-1">Hamburger (left of header) opens. Three dismiss paths: tap backdrop, ✕ inside drawer, or <kbd class="font-mono-dm text-[10px] bg-slate-100 px-1 rounded">Esc</kbd>.</p>
+      </div>
+      <div class="rounded-lg border border-slate-200 bg-white px-4 py-3 text-xs text-slate-600">
+        <p class="font-mono-dm text-[10px] tracking-[0.18em] text-indigo-500 uppercase font-semibold">Z-index stack</p>
+        <p class="mt-1">Backdrop <strong>30</strong> · Drawer <strong>40</strong> · Tooltip <strong>50</strong>. Body scroll locked while drawer open.</p>
+      </div>
+      <div class="rounded-lg border border-slate-200 bg-white px-4 py-3 text-xs text-slate-600">
+        <p class="font-mono-dm text-[10px] tracking-[0.18em] text-indigo-500 uppercase font-semibold">First-visit default</p>
+        <p class="mt-1">Mobile drawer is <strong>open</strong> on first visit so users see the full nav once, then defaults to closed on subsequent loads.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================================
+       Spec block — Motion, A11y, Tokens
+       ============================================================ -->
+  <section class="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+    <h2 class="font-syne text-lg font-semibold text-slate-900">Implementation Spec</h2>
+    <div class="grid grid-cols-3 gap-6 mt-5">
+      <div>
+        <p class="font-mono-dm text-[10px] tracking-[0.18em] text-indigo-500 uppercase font-semibold">Motion</p>
+        <ul class="mt-2 space-y-1.5 text-xs text-slate-600">
+          <li>· Desktop collapse/expand — <strong>200ms</strong> ease-out (width + label opacity)</li>
+          <li>· Mobile drawer slide — <strong>300ms</strong> ease-out (transform: translateX)</li>
+          <li>· Backdrop fade — <strong>200ms</strong> linear (opacity 0 → 0.4)</li>
+          <li>· Tooltip — instant in / 100ms out</li>
+          <li>· <code class="font-mono-dm bg-slate-100 px-1 rounded">@media (prefers-reduced-motion: reduce)</code> → all transitions become 0ms</li>
+        </ul>
+      </div>
+      <div>
+        <p class="font-mono-dm text-[10px] tracking-[0.18em] text-indigo-500 uppercase font-semibold">Accessibility</p>
+        <ul class="mt-2 space-y-1.5 text-xs text-slate-600">
+          <li>· Toggle button: <code class="font-mono-dm bg-slate-100 px-1 rounded">aria-expanded</code>, dynamic <code class="font-mono-dm bg-slate-100 px-1 rounded">aria-label</code></li>
+          <li>· Drawer: <code class="font-mono-dm bg-slate-100 px-1 rounded">role="dialog" aria-modal="true"</code> + focus trap</li>
+          <li>· Esc closes drawer; focus returns to hamburger</li>
+          <li>· Rail icons keep accessible names via tooltip + <code class="font-mono-dm bg-slate-100 px-1 rounded">aria-label</code></li>
+          <li>· Active item retains visual state (indigo bg + foreground) regardless of collapse</li>
+        </ul>
+      </div>
+      <div>
+        <p class="font-mono-dm text-[10px] tracking-[0.18em] text-indigo-500 uppercase font-semibold">Tokens used</p>
+        <ul class="mt-2 space-y-1.5 text-xs text-slate-600 font-mono-dm">
+          <li>· #0f1117 — sidebar bg</li>
+          <li>· #1e2130 — sidebar border / divider</li>
+          <li>· #6366f1 — accent (active fg, logo, focus)</li>
+          <li>· rgba(99,102,241,0.15) — active bg</li>
+          <li>· rgba(255,255,255,0.05) — hover bg</li>
+          <li>· #f8f9fc — content surface</li>
+          <li>· #0f172a — tooltip bg (slate-900)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="mx-auto max-w-[1480px] px-8 pb-12 text-center">
+  <p class="text-[11px] text-slate-400 font-mono-dm tracking-[0.18em] uppercase">Hobo Admin · Issue #351 · Mockup for client review</p>
+</footer>
+
+</body>
+</html>
+
