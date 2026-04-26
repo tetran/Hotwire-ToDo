@@ -1,6 +1,7 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
-import { AdminLayout, navSections } from '../../components/AdminLayout'
+import { AdminLayout } from '../../components/AdminLayout'
+import { navSections } from '../../lib/navConfig'
 
 // Mock useAuth
 const mockCan = vi.fn()
@@ -11,6 +12,20 @@ vi.mock('../../contexts/AuthContext', () => ({
     can: mockCan,
   }),
 }))
+
+// matchMedia helper
+function makeMatchMedia(isDesktop: boolean) {
+  return vi.fn().mockImplementation((query: string) => ({
+    matches: query === '(min-width: 768px)' ? isDesktop : false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  }))
+}
 
 describe('navSections', () => {
   it('has three sections: NAVIGATION, ADMIN, AI INFRASTRUCTURE', () => {
@@ -61,8 +76,15 @@ describe('AdminLayout', () => {
       </MemoryRouter>
     )
 
+  beforeEach(() => {
+    localStorage.clear()
+    // Default to desktop
+    window.matchMedia = makeMatchMedia(true)
+  })
+
   afterEach(() => {
     mockCan.mockReset()
+    vi.restoreAllMocks()
   })
 
   it('hides section header when all items are filtered out', () => {
@@ -104,5 +126,51 @@ describe('AdminLayout', () => {
 
     expect(screen.queryByText('Users')).not.toBeInTheDocument()
     expect(screen.getByText('Admin Accounts')).toBeInTheDocument()
+  })
+
+  // New case: clicking desktop toggle flips expanded state
+  it('clicking desktop toggle button changes aria-expanded', () => {
+    mockCan.mockReturnValue(true)
+
+    renderLayout()
+
+    // Initially expanded (localStorage empty = default expanded)
+    const toggleButton = screen.getByRole('button', { name: 'Collapse sidebar' })
+    expect(toggleButton).toHaveAttribute('aria-expanded', 'true')
+
+    fireEvent.click(toggleButton)
+
+    // After click: collapsed
+    expect(screen.getByRole('button', { name: 'Expand sidebar' })).toBeInTheDocument()
+  })
+
+  // New case: hamburger is present on mobile viewport
+  it('hamburger button is present in DOM (md:hidden controls visual display)', () => {
+    // Even on desktop matchMedia mock, the hamburger exists in DOM — md:hidden is CSS-only
+    mockCan.mockReturnValue(true)
+
+    renderLayout()
+
+    const hamburger = screen.getByRole('button', { name: 'Open navigation menu' })
+    expect(hamburger).toBeInTheDocument()
+  })
+
+  // New case: backdrop click closes mobile drawer
+  it('backdrop click closes mobile drawer', () => {
+    // Set mobile viewport and pre-open mobile drawer
+    window.matchMedia = makeMatchMedia(false)
+    localStorage.setItem('admin.sidebar.mobile', 'open')
+    mockCan.mockReturnValue(true)
+
+    renderLayout()
+
+    // Backdrop should be present (mobile + open)
+    const backdrop = document.querySelector('[aria-hidden="true"]') as HTMLElement
+    expect(backdrop).toBeInTheDocument()
+
+    fireEvent.click(backdrop)
+
+    // After click, backdrop should be gone (isMobileOpen = false)
+    expect(document.querySelector('[aria-hidden="true"]')).toBeNull()
   })
 })
