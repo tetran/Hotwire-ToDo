@@ -48,4 +48,9 @@ describe('StatCard', () => {
     expect(wrapper.className).not.toContain('hover:border-indigo-300')
     expect(wrapper.className).not.toContain('transition-colors')
   })
+
+  it('does not render the group-hover slide span when `to` is omitted', () => {
+    const { container } = renderCard({ ...baseProps, subtitle: '3 Roles Defined' })
+    expect(container.querySelector('.group-hover\\:translate-x-0\\.5')).toBeNull()
+  })
 })

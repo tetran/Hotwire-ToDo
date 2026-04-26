@@ -2,6 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { DashboardPage } from '@admin/pages/DashboardPage'
 import * as api from '@admin/lib/api'
+import * as AuthContextModule from '@admin/contexts/AuthContext'
 
 vi.mock('@admin/lib/api', async () => {
   const actual = await vi.importActual('@admin/lib/api')
@@ -15,6 +16,22 @@ vi.mock('@admin/lib/api', async () => {
     },
   }
 })
+
+vi.mock('@admin/contexts/AuthContext')
+const mockUseAuth = vi.mocked(AuthContextModule.useAuth)
+
+const mockAuth = (canReturn: boolean | ((resource: api.ResourceType, action: api.Action) => boolean) = true) => {
+  const canFn = typeof canReturn === 'function' ? canReturn : () => canReturn
+  mockUseAuth.mockReturnValue({
+    user: { id: 1, email: 'admin@test.com', name: 'Admin', is_admin: true, capabilities: {} },
+    loading: false,
+    refreshing: false,
+    login: vi.fn(),
+    logout: vi.fn(),
+    can: vi.fn(canFn),
+    isAdmin: true,
+  } as unknown as ReturnType<typeof AuthContextModule.useAuth>)
+}
 
 vi.mock('@admin/lib/sentry', () => ({
   reportTruncation: vi.fn(),
@@ -74,6 +91,7 @@ const renderPage = () =>
 describe('DashboardPage — partial failure', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockAuth(true)
   })
 
   it('shows SectionError with layout=stacked when providers fetch fails', async () => {
@@ -125,9 +143,14 @@ describe('DashboardPage — partial failure', () => {
 describe('DashboardPage — stat card link wiring', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockAuth(true)
   })
 
-  it('passes `to` only to Total Users and LLM Models cards', async () => {
+  const cardByLabel = (label: string) =>
+    screen.getAllByTestId('stat-card').find((el) => el.getAttribute('data-label') === label)!
+
+  it('passes `to` to Total Users and LLM Models cards when capabilities allow', async () => {
+    mockAuth(true)
     mockDashboardGet.mockResolvedValue(mockDashboardData)
     mockProvidersList.mockResolvedValue(mockProvidersResponse)
     renderPage()
@@ -136,12 +159,37 @@ describe('DashboardPage — stat card link wiring', () => {
       expect(screen.getAllByTestId('stat-card')).toHaveLength(4)
     })
 
-    const cardByLabel = (label: string) =>
-      screen.getAllByTestId('stat-card').find((el) => el.getAttribute('data-label') === label)!
-
     expect(cardByLabel('Total Users')).toHaveAttribute('data-to', '/admin/users')
     expect(cardByLabel('LLM Models')).toHaveAttribute('data-to', '/admin/llm-providers')
     expect(cardByLabel('Active Roles')).not.toHaveAttribute('data-to')
     expect(cardByLabel('LLM Providers')).not.toHaveAttribute('data-to')
+  })
+
+  it('omits `to` when the admin lacks the required capability', async () => {
+    mockAuth((resource, action) => !(action === 'read' && (resource === 'User' || resource === 'LlmProvider')))
+    mockDashboardGet.mockResolvedValue(mockDashboardData)
+    mockProvidersList.mockResolvedValue(mockProvidersResponse)
+    renderPage()
+
+    await waitFor(() => {
+      expect(screen.getAllByTestId('stat-card')).toHaveLength(4)
+    })
+
+    expect(cardByLabel('Total Users')).not.toHaveAttribute('data-to')
+    expect(cardByLabel('LLM Models')).not.toHaveAttribute('data-to')
+  })
+
+  it('gates Total Users and LLM Models independently', async () => {
+    mockAuth((resource, action) => action === 'read' && resource === 'User')
+    mockDashboardGet.mockResolvedValue(mockDashboardData)
+    mockProvidersList.mockResolvedValue(mockProvidersResponse)
+    renderPage()
+
+    await waitFor(() => {
+      expect(screen.getAllByTestId('stat-card')).toHaveLength(4)
+    })
+
+    expect(cardByLabel('Total Users')).toHaveAttribute('data-to', '/admin/users')
+    expect(cardByLabel('LLM Models')).not.toHaveAttribute('data-to')
   })
 })
