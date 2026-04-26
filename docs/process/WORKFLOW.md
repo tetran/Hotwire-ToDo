@@ -41,7 +41,15 @@ Standard Flow is structured in two phases:
 1. **Planning Phase** — From progress file creation to posting the plan as an issue comment.
 2. **Implementation Phase** — From branch creation to Review Response.
 
-**Do NOT proceed to Implementation Phase automatically after Planning Phase.** At the end of the Planning Phase, stop and propose `/clear` to the client. All state is persisted externally, so Implementation should be resumed in a fresh conversation. On resume, the Entry Protocol uses `.progress/issue-XXXXX.md` to locate the current phase and step.
+**Do NOT proceed to Implementation Phase automatically after Planning Phase.** At the end of the Planning Phase, stop and propose `/clear` to the user. All state is persisted externally, so Implementation should be resumed in a fresh conversation. On resume, the Entry Protocol uses `.progress/issue-XXXXX.md` to locate the current phase and step.
+
+#### Plans and User Stories Are Living Documents
+
+User stories (P2) and the implementation plan (P3) capture the **best understanding at planning time**, not a sealed contract. Implementation (I2) and reviews (I4 / I6) routinely surface issues, edge cases, or design improvements that no one foresaw during Planning. Treat the plan as a working hypothesis, not a frozen agreement.
+
+**Do not defer a finding solely because it is "not in the plan"**. Evaluate every finding on its own merit, from zero — would acting on it produce a better outcome? "Out of scope of the approved plan" is **not** a valid defer rationale on its own. If a deferral is genuinely warranted (effort vs. value, separable concern), agree it explicitly with the user and record the reasoning.
+
+When a finding meaningfully changes the user-story-level premise or the plan's design direction, update the source of truth on GitHub (issue body for user stories; the plan comment on the issue for plans). Re-sync `~/.claude/plans/issue-XXXXX.md` with the updated plan comment so local and remote stay in lock-step.
 
 Persisted artifacts at the Planning → Implementation boundary:
 - Issue number (encoded in `.progress/issue-XXXXX.md` filename)
@@ -65,7 +73,7 @@ ALWAYS update `.progress/issue-XXXXX.md` during work. Update the progress file *
   - What you've done in this step.
   - ...
 - [ ] P2 — Create user stories
-  - [ ] UI changes: yes / no (decided with client) — recorded: ___
+  - [ ] UI changes: yes / no (decided with user) — recorded: ___
 - [ ] P3 — Create a plan
   - [ ] UI Design Loop (if UI changes: yes) — Mockup gist URL: ___
   - [ ] Plan Review Loop
@@ -86,25 +94,25 @@ If `UI changes: no`, mark the `UI Design Loop` sub-item as `- [x] UI Design Loop
 
 P1. **Create a progress file** — Create an `issue-XXXXX.md` file in `.progress`. `XXXXX` is the issue number (5 digits with zero padding, e.g. `issue-00005.md` for issue #5). If the issue does not yet exist, create the GitHub Issue (`gh issue create`) first within this step to obtain the issue number, then create the progress file.
    - → **Done when**: the issue number is known, the progress file exists with the template filled in, and P1 is marked as completed.
-P2. **Create user stories** — Invoke the `user-story-creation` skill to clarify requirements and document them in the standard user story format (as the product owner). Reflect the resulting stories into the issue body. As part of the same client-alignment round, agree on whether this Issue involves UI changes, and record the decision (`yes` / `no`) in the progress file's P2 sub-item.
+P2. **Create user stories** — Invoke the `user-story-creation` skill to clarify requirements and document them in the standard user story format (as the product owner). Reflect the resulting stories into the issue body. As part of the same user-alignment round, agree on whether this Issue involves UI changes, and record the decision (`yes` / `no`) in the progress file's P2 sub-item.
    - → **Done when**: user stories are recorded on the issue AND the progress file's `UI changes:` entry is filled with `yes` or `no` (empty is not allowed).
-P3. **Create a plan** — Review the requirements and design the implementation approach. Invoke the built-in `Plan` agent (`subagent_type: Plan`) to draft the implementation plan, then save the returned plan body to `~/.claude/plans/issue-XXXXX.md` (5-digit zero-padded issue number) so `plan-reviewer` can read it and the file persists across sessions. Consult the client for any undecided specifications.
+P3. **Create a plan** — Review the requirements and design the implementation approach. Invoke the built-in `Plan` agent (`subagent_type: Plan`) to draft the implementation plan, then save the returned plan body to `~/.claude/plans/issue-XXXXX.md` (5-digit zero-padded issue number) so `plan-reviewer` can read it and the file persists across sessions. Consult the user for any undecided specifications.
    - **UI Design Loop (mandatory if UI changes: yes)** — runs **before** the Plan Review Loop:
      - **Invoke `ui-designer`**: start the agent with an instruction to read `docs/design/admin/README.md` and/or `docs/design/user/README.md` that matches the feature's surface. If the feature touches both surfaces, read both and state in the invocation which surface is primary.
-     - **Iterate until approval**: the agent produces an HTML mockup; present it to the client, re-invoke with any feedback, and repeat until the client approves.
+     - **Iterate until approval**: the agent produces an HTML mockup; present it to the user, re-invoke with any feedback, and repeat until the user approves.
      - **Save & post**: save the approved HTML to a **secret** GitHub Gist (`gh gist create <file>.html --desc "issue-<N> mockup"` — secret by default; do NOT pass `--public`), post the gist URL as a comment on the issue, and record the URL in the progress file.
      - **If the UI-change decision reverses**:
        - **no → yes** (UI change surfaces after P2 closed or after initial mockup approval): re-enter the UI Design Loop before finalizing the plan.
        - **yes → no** (it becomes clear during the loop that no UI change is actually needed): update the progress file P2 entry to `UI changes: no`, mark the P3 UI Design Loop sub-item as `- [x] UI Design Loop — N/A (UI changes: no)`, and proceed to the Plan Review Loop.
    - **Plan Review Loop (mandatory)**: Submit the plan to `plan-reviewer`. Address all actionable findings, then re-submit. Repeat until no actionable findings remain — every revision must be re-reviewed.
-   - **Display element semantics**: Before designing badges, labels, icons, or status indicators, agree with the client on what they *semantically represent*. Implementation of display conditions follows from the semantic definition, not the other way around.
+   - **Display element semantics**: Before designing badges, labels, icons, or status indicators, agree with the user on what they *semantically represent*. Implementation of display conditions follows from the semantic definition, not the other way around.
    - → **Done when** (all apply):
      - the plan file exists at `~/.claude/plans/issue-XXXXX.md` with the body returned by the `Plan` agent
-     - if `UI changes: yes` → UI Design Loop complete, mockup approved by the client, gist URL recorded in the progress file and posted on the issue
+     - if `UI changes: yes` → UI Design Loop complete, mockup approved by the user, gist URL recorded in the progress file and posted on the issue
      - the most recent `plan-reviewer` run produced no actionable findings
-P4. **Document the plan** — Document the plan in the issue as a comment. Include everything exactly as it is stated in `~/.claude/plans/issue-XXXXX.md`. Do NOT ask the client for approval before posting; the plan-reviewer sign-off in P3 is the gate, and the issue comment itself is the artifact the client reviews.
+P4. **Document the plan** — Document the plan in the issue as a comment. Include everything exactly as it is stated in `~/.claude/plans/issue-XXXXX.md`. No separate approval step is needed before posting — the user reviews the plan on the issue itself, and the `plan-reviewer` sign-off in P3 has already gated content quality. The plan posted here is the Planning-time best understanding; it may still evolve as Implementation surfaces new information.
    - → **Done when**: the plan is posted as a comment on the issue, verbatim from `~/.claude/plans/issue-XXXXX.md`.
-   - **Phase complete — STOP here.** Propose `/clear` to the client and wait for instruction. Do NOT proceed to I1 on your own.
+   - **Phase complete — STOP here.** Propose `/clear` to the user and wait for instruction. Do NOT proceed to I1 on your own.
    - **Quick start**: Use the `/start-implementation-phase` skill to handle the Entry Protocol, progress file update, branch creation (I1), and I2 delegation classification automatically. In a new session, paste:
      ```
      /start-implementation-phase <issue-number>
