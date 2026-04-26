@@ -20,7 +20,7 @@ describe('AdminSidebarBackdrop', () => {
     const onClose = vi.fn()
     render(<AdminSidebarBackdrop isOpen={true} isDesktop={false} onClose={onClose} />)
 
-    const backdrop = document.querySelector('[aria-hidden="true"]') as HTMLElement
+    const backdrop = document.querySelector('[data-testid="admin-sidebar-backdrop"]') as HTMLElement
     fireEvent.click(backdrop)
 
     expect(onClose).toHaveBeenCalledTimes(1)

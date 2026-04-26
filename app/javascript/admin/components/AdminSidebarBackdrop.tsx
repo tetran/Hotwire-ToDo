@@ -9,6 +9,7 @@ export function AdminSidebarBackdrop({ isOpen, isDesktop, onClose }: AdminSideba
 
   return (
     <div
+      data-testid="admin-sidebar-backdrop"
       className="fixed inset-0 z-30 bg-black/40 transition-opacity duration-200 motion-reduce:transition-none"
       aria-hidden="true"
       onClick={onClose}

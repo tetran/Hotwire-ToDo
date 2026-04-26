@@ -165,12 +165,12 @@ describe('AdminLayout', () => {
     renderLayout()
 
     // Backdrop should be present (mobile + open)
-    const backdrop = document.querySelector('[aria-hidden="true"]') as HTMLElement
+    const backdrop = document.querySelector('[data-testid="admin-sidebar-backdrop"]') as HTMLElement
     expect(backdrop).toBeInTheDocument()
 
     fireEvent.click(backdrop)
 
     // After click, backdrop should be gone (isMobileOpen = false)
-    expect(document.querySelector('[aria-hidden="true"]')).toBeNull()
+    expect(document.querySelector('[data-testid="admin-sidebar-backdrop"]')).toBeNull()
   })
 })

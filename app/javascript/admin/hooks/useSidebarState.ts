@@ -81,21 +81,6 @@ export function useSidebarState(): UseSidebarStateResult {
     }
   }, [])
 
-  // Esc key closes mobile drawer (no-op on desktop)
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isMobileOpen && !isDesktop) {
-        setIsMobileOpen(false)
-        writeStorage(KEY_MOBILE, false)
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [isMobileOpen, isDesktop])
-
   const toggleDesktop = useCallback(() => {
     setIsDesktopExpanded((prev) => {
       const next = !prev
@@ -116,6 +101,20 @@ export function useSidebarState(): UseSidebarStateResult {
     setIsMobileOpen(false)
     writeStorage(KEY_MOBILE, false)
   }, [])
+
+  // Esc key closes mobile drawer (no-op on desktop)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isMobileOpen && !isDesktop) {
+        closeMobile()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [isMobileOpen, isDesktop, closeMobile])
 
   return { isDesktop, isDesktopExpanded, isMobileOpen, toggleDesktop, toggleMobile, closeMobile }
 }
