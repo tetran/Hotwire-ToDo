@@ -44,7 +44,7 @@ Plan scope: multi-page React refactor + new component + convention doc + tests.
 | 2 | 5 follow-up (1 High Playwright strict-mode violation) | Downstream effects |
 | 3 | "No actionable findings" | Clean exit |
 
-Then post-PR claude[bot] review ran 5 rounds with severity descending: HIGH → reconsider scope → minor UX bug → cross-cutting SUGGESTION outside scope. Stop signal triggered at round 5 (SUGGESTION + outside scope + cross-cutting → defer as follow-up issue).
+Then post-PR claude[bot] review ran 5 rounds with severity descending: High → reconsider scope → minor UX bug → cross-cutting Informational outside scope. Stop signal triggered at round 5 (Informational + outside scope + cross-cutting → defer as follow-up issue).
 
 **Key takeaway**: pre-merge plan-reviewer iteration converged in 3 rounds; post-merge bot review ran 5 rounds and required orchestrator-owned stop criterion. Those are two separate loops with different exit criteria.
 
@@ -54,7 +54,7 @@ Plan scope: 6 actionable findings on v1, then 3 new low findings on v2 introduce
 
 | Round | Findings | Class |
 |---|---|---|
-| 1 | 6 actionable (1 Blocker, 2 High, 2 Medium, 1 Low) | Initial scrub |
+| 1 | 6 actionable (1 Critical, 2 High, 2 Medium, 1 Low) | Initial scrub |
 | 2 | 3 new low | Introduced by v1 fixes |
 | 3 | 1 stylistic wording nit, **explicitly labeled non-actionable by reviewer** | Exit signal |
 
@@ -113,7 +113,7 @@ None of these errors would have been caught by the orchestrator's own re-reading
 
 Plan scope: Admin SPA component (sidebar with drawer / tooltip / matchMedia) — 8 round-1 findings.
 
-Round 1: 1 Blocker + 3 Important + 4 Suggestion = 8 findings, latency ~160s.
+Round 1: 1 Critical + 3 High + 4 Informational = 8 findings, latency ~160s. (plan-reviewer at the time labelled them "Blocker / Important / Suggestion" — preserved verbatim in the v2 banner ID prefixes B1/I1/S1 below to reflect the actual prompt text the experiment used.)
 
 V2 plan included:
 - Banner at top: "Plan-reviewer round 1 findings addressed: B1 (in-drawer ✕), I1 (toggle position), I2 (matchMedia mock as definite EDIT), I3 (first-visit semantics clarified), S1 (race-condition tests), S2 (flat `components/` convention), S3 (split into 2 dispatches), S4 (design tokens via `@theme`)."

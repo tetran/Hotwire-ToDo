@@ -48,6 +48,8 @@ The exit conditions, in priority order:
 
 Record the round count and final severity profile in the progress file (`.progress/issue-XXXXX.md`) — useful for retrospective and signals reviewers on subsequent tickets what a "done" loop looks like.
 
+**Living-document boundary**: a clean exit from this loop is the **P3 final form** — not the immutable plan. Per WORKFLOW.md "Plans and User Stories Are Living Documents", I2 implementation, I4 review, and I6 PR review may surface findings that genuinely change the plan's design direction. When that happens, do **not** defer the finding solely because "the loop already exited" — update the GitHub issue's plan comment **and** re-sync `~/.claude/plans/issue-XXXXX.md` so local and remote stay in lock-step. The loop's exit signal is a checkpoint, not a freeze.
+
 ## Pre-submission checks — guard against orchestrator confabulation
 
 Library / component / SDK signature names invented mid-plan are the highest-frequency failure mode caught at round 1. The orchestrator generates plausible names from format patterns — "modern React app probably uses lucide-react", "every Rails app has has_secure_password" — and the plan reads sourced even when nothing was looked up.
@@ -57,6 +59,7 @@ Library / component / SDK signature names invented mid-plan are the highest-freq
 - [ ] **Library claims** (`use lucide-react`, `Button ghost variant`, `radix-ui`, `framer-motion`, etc.) → `grep -E "<name>" package.json` and write `verified at package.json:N` or `verified absent — proposing add`
 - [ ] **Component claims** (`existing Button`, `Modal helper`, `useToast` hook) → `ls app/javascript/<surface>/components/` and cite `app/javascript/admin/components/X.tsx:exists` or `verified absent`
 - [ ] **SDK / library signature claims** (`Service.method(arg, kw:)`, `Events::Recorder.record(...)`, `ActiveSupport::X`) → Read the actual file before final draft. The CLAUDE.md "verify before citing technical identifiers" rule applies to library APIs and component names, not just CVE IDs.
+- [ ] **Mockup compliance** (UI-changing Issues only) → if the progress file's `UI changes:` is `yes`, include the approved **mockup gist URL** in the `plan-reviewer` payload's compliance context. Per WORKFLOW.md P3 "Approved mockup is the contract", the reviewer should run mockup-vs-plan integrity checks (element-set divergence, branching-pattern divergence). Without the gist URL the gate is silently skipped — the reviewer has no anchor to compare against.
 
 Cite verification inline at the point of citation. This forces the check AND gives the reviewer a hook ("this assumption is grounded at file:line"). When summarizing a mockup into a plan, **prefer keeping the exact class strings** from the mockup over abstracting up to a "Button variant" — the abstraction step is where ungrounded names slip in.
 

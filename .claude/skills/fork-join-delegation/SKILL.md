@@ -261,6 +261,12 @@ E2E / integration tests that require both Rails and React layers are **inherentl
 
 In fork-join payloads, instruct the React agent: `DO NOT run Playwright. Edit spec files if needed. Orchestrator runs npx playwright test <path> post-join.`
 
+**UI-label-touching dispatches must include dual-tree grep guidance.** Vitest specs live in `app/javascript/**/__tests__/` (co-located with code); Playwright specs live in `tests/**/*.spec.ts`. A label / accessible name / button text / nav target change that greps only one tree will silently miss the other and break CI (see `docs/conventions/TESTING.md` "UI label refactor の grep 範囲"). Include the dual-tree grep in the React agent's payload Domain Tests section:
+
+```
+rg -n '<old-label>' app/javascript/**/__tests__/ tests/
+```
+
 Post-join verification sequence:
 
 1. Schema check each agent's response (`.claude/scripts/check-subagent-response.sh`)
@@ -284,6 +290,16 @@ When invoking `ui-designer` for an Admin or User mockup, the prompt structure th
 - [ ] **"Client review" framing close** — `The mockup is for client review — make it look like real Admin pages (faked Dashboard/Users content in main area)`. Pushes for production-grade fidelity.
 
 If revision is requested, treat it as new information, not as "ui-designer is bad at this" signal.
+
+### Post-approval: the mockup is a binding contract
+
+Once the user approves the mockup, the visible UI element set is **binding** (per `docs/process/WORKFLOW.md` P3 "Approved mockup is the contract"):
+
+- The `Plan` agent iterates on details (tokens, copy, validation rules) **within** the approved element set.
+- **Adding new UI elements or removing required elements is a spec change, not a fill-in-detail** — pause and re-confirm with the user before the plan is finalized.
+- The mockup's branching ("default behavior + edge-case branch") is itself part of the contract — a "default + only-show-when-needed" pattern is meaningfully different from "always show".
+- If the `Plan` agent's output proposes a UI shape change that conflicts with the mockup, **pause and surface to the user before plan-review** — do not let plan-reviewer adjudicate a spec change.
+- Pass the **mockup gist URL** to `plan-reviewer` in the review prompt's compliance context so it can run mockup-vs-plan integrity checks. See `plan-review-loop` skill's Pre-submission checks for the payload-side hook.
 
 Full prompt template: `references/ui-designer-pattern.md`.
 

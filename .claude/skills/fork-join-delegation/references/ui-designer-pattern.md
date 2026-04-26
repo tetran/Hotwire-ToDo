@@ -138,6 +138,16 @@ The mockup is for client review — make it look like real <Admin | User> pages
 
 **Expect approval on the first iteration when these rules are followed.** If the user wants a revision, treat it as **new information**, not as a "ui-designer is bad at this" signal. Update the prompt with whatever the new information adds (a missing scene, a new token, a different behavior decision) and re-dispatch — don't escalate to direct implementation reflexively.
 
+## After approval — the mockup is the contract
+
+Once the user approves the mockup, its visible UI element set becomes binding (per `docs/process/WORKFLOW.md` P3 "Approved mockup is the contract"):
+
+- The `Plan` agent fills in details (tokens, copy, validation rules) **within** the approved element set.
+- Adding new elements or removing required ones is a **spec change** — pause and re-confirm with the user before plan finalization.
+- The mockup's branching pattern ("default state + only-show-when-needed branch") is part of the contract; "always show" diverges from "default + edge-case".
+- When `Plan` agent output conflicts with the mockup, pause **before** invoking `plan-reviewer` and surface the conflict to the user.
+- The approved gist URL must be recorded in the progress file and posted on the issue (per WORKFLOW.md P3 "UI Design Loop"). When invoking `plan-reviewer` later, **pass the gist URL in the review prompt's compliance context** so the reviewer can run mockup-vs-plan integrity checks.
+
 ## Future formalization
 
 Issue #354 will formalize this into a `docs/design/MOCKUP_GUIDELINES.md` doc that the ui-designer agent reads at boot, eliminating the need to repeat the pattern in every prompt. Once that lands, this skill section becomes a pointer to that doc rather than a template.
