@@ -5,6 +5,9 @@
 # Universal denylist (all subagents):
 #   .progress/*, .claude/*, docs/*, CLAUDE.md
 #
+# Per-agent allowlist exceptions (run BEFORE the universal denylist):
+#   ui-designer: docs/design/mockups/** (agent's canonical output dir)
+#
 # Domain-specific denylist:
 #   rails-developer: app/javascript/**
 #   react-developer: app/controllers/**, app/models/**, app/services/**,
@@ -22,6 +25,14 @@ FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
 [ -z "$FILE_PATH" ] && exit 0
 
 REL_PATH="${FILE_PATH#$REPO_ROOT/}"
+
+# --- Per-agent allowlist exceptions (must precede universal denylist) ---
+if [ "$AGENT_TYPE" = "ui-designer" ]; then
+  case "$REL_PATH" in
+    docs/design/mockups/*)
+      exit 0 ;;
+  esac
+fi
 
 # --- Universal denylist ---
 case "$REL_PATH" in

@@ -72,9 +72,9 @@ Load Syne and DM Mono via Google Fonts in `<head>`:
 
 ## Output path convention
 
-**Save the mockup to `/tmp/issue-XXXXX-<feature-slug>-mockup.html`** (5-digit zero-padded issue number, kebab-case feature slug) by default. The `/tmp/` location is intentional — `docs/**` is orchestrator-owned per the Hooks-level denylist (`pre_tool_use_denylist.sh:34-36` blocks any subagent Write/Edit under `docs/*`), and in-repo persistence at `docs/design/mockups/issue-XXXXX-<feature-slug>-mockup.html` is the **orchestrator's responsibility** after user approval. Iteration rounds before approval do not need in-repo persistence — they live in `/tmp/` only.
+**Save the mockup to `docs/design/mockups/issue-XXXXX-<feature-slug>-mockup.html`** (5-digit zero-padded issue number, kebab-case feature slug). This is the canonical in-repo location — the `pre_tool_use_denylist.sh` hook has a narrow allowlist exception that permits **`ui-designer`** (and only this agent) to Write/Edit under `docs/design/mockups/**`. All other `docs/**` paths remain orchestrator-owned and hook-denied. Overwrite the same file across revision rounds; commit happens only after the user approves the final iteration.
 
-If the orchestrator's prompt names a different `/tmp/` path, respect it. Never attempt to write directly into `docs/` — the hook will block the call and the iteration cycle stalls.
+If the orchestrator's prompt names a different output path, respect it. Never attempt to write to other `docs/**` locations — the hook will block the call.
 
 ## Procedure
 
@@ -97,22 +97,20 @@ Once the user approves the mockup, the visible UI element set is **binding** (pe
 
 Your return summary must remind the orchestrator to perform these steps in order:
 
-1. **Copy the approved `/tmp/` HTML to in-repo persistence**: `cp /tmp/issue-XXXXX-<feature>-mockup.html docs/design/mockups/issue-XXXXX-<feature>-mockup.html`. This step is the orchestrator's responsibility because `docs/**` is denied to subagents at the hook layer.
-2. **`gh gist create --secret docs/design/mockups/issue-XXXXX-<feature>-mockup.html --desc "issue-XXXXX mockup"`** — secret by default; do NOT pass `--public`.
-3. **Post the gist URL as a comment on the issue** so the user has an externally-shareable link.
-4. **Record the gist URL in `.progress/issue-XXXXX.md`** under the P3 sub-item: `- [x] UI Design Loop — Mockup gist URL: <url>`.
-5. **Pass the gist URL to `plan-reviewer`** in the review prompt's compliance context so the reviewer can run mockup-vs-plan integrity checks.
+1. **`gh gist create --secret docs/design/mockups/issue-XXXXX-<feature>-mockup.html --desc "issue-XXXXX mockup"`** — secret by default; do NOT pass `--public`.
+2. **Post the gist URL as a comment on the issue** so the user has an externally-shareable link.
+3. **Record the gist URL in `.progress/issue-XXXXX.md`** under the P3 sub-item: `- [x] UI Design Loop — Mockup gist URL: <url>`.
+4. **Pass the gist URL to `plan-reviewer`** in the review prompt's compliance context so the reviewer can run mockup-vs-plan integrity checks.
 
-These five steps are the orchestrator's responsibility, not yours — but your return must surface them so the orchestrator does not skip any. The post-approval contract is the gate that makes a mockup binding rather than throwaway.
+These four steps are the orchestrator's responsibility, not yours — but your return must surface them so the orchestrator does not skip any. The post-approval contract is the gate that makes a mockup binding rather than throwaway.
 
-If the user requests revisions instead of approval, treat each revision as **new information**: update the prompt with the missing scene, new token, or different behavior decision, and re-render to the same `/tmp/` path. Do not escalate to direct implementation.
+If the user requests revisions instead of approval, treat each revision as **new information**: update the prompt with the missing scene, new token, or different behavior decision, and re-render (overwriting the same file). Do not escalate to direct implementation.
 
 ## Required Return Format
 
 ```
 ## File path
-/tmp/issue-XXXXX-<feature>-mockup.html
-(Orchestrator-owned in-repo persistence after approval: docs/design/mockups/issue-XXXXX-<feature>-mockup.html)
+docs/design/mockups/issue-XXXXX-<feature>-mockup.html
 
 ## Scenes depicted
 - A: <state name> — <one-line description>
@@ -130,11 +128,10 @@ If the user requests revisions instead of approval, treat each revision as **new
 
 ## Post-approval reminder
 Once the user approves, the orchestrator must:
-1. `cp /tmp/issue-XXXXX-<feature>-mockup.html docs/design/mockups/issue-XXXXX-<feature>-mockup.html` (in-repo persistence — orchestrator-owned because `docs/**` is hook-denied to subagents)
-2. `gh gist create --secret docs/design/mockups/issue-XXXXX-<feature>-mockup.html --desc "issue-XXXXX mockup"`
-3. Post the gist URL as an issue comment
-4. Record the gist URL in `.progress/issue-XXXXX.md` (P3 sub-item)
-5. Pass the gist URL to `plan-reviewer` in its compliance context
+1. `gh gist create --secret docs/design/mockups/issue-XXXXX-<feature>-mockup.html --desc "issue-XXXXX mockup"`
+2. Post the gist URL as an issue comment
+3. Record the gist URL in `.progress/issue-XXXXX.md` (P3 sub-item)
+4. Pass the gist URL to `plan-reviewer` in its compliance context
 
-If steps 3–4 are skipped, the **Mockup-approval gate** at the next I2 Pre-Fork dispatch will fail (no recorded gist URL → STOP, route back to UI Design Loop).
+If steps 2–3 are skipped, the **Mockup-approval gate** at the next I2 Pre-Fork dispatch will fail (no recorded gist URL → STOP, route back to UI Design Loop).
 ```
