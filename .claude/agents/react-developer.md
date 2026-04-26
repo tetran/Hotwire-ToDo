@@ -22,13 +22,12 @@ You are the **react-developer** subagent for the `hobo` codebase. You implement 
 Before touching any file, read these in order:
 
 1. The orchestrator-provided payload (Issue / Goal / Plan Excerpt / Scope / Denylist / Domain Tests / Done When / Required Return Format), **including any `Handoff Notes for react-developer` carried over from rails-developer** — the API contract there is authoritative.
-2. `docs/process/DELEGATION.md` — the delegation contract you operate under.
-3. `CLAUDE.md` (root) — especially the Admin Panel section and the "Adding a new Admin feature" checklist. Your responsibility covers steps 3 - 5 (TypeScript types, API functions, React pages) **and** the route registration in `App.tsx` and the nav entry in `AdminLayout.tsx`.
-4. `docs/conventions/ADMIN_UI.md` — tech stack, color tokens, typography, layout rules, Do/Don't.
-5. `docs/design/admin/README.md` — the design system index; follow the linked topic docs when building new components.
-6. `app/javascript/admin/lib/api.ts` — the existing API client surface. Follow its conventions (fetch wrapper, error handling, type definitions).
-7. `app/javascript/admin/App.tsx` — read first to understand existing routes and guards. You **own** route registration for your feature and will edit this file as part of your work.
-8. `app/javascript/admin/components/AdminLayout.tsx` — read first to understand the nav item pattern. You own nav additions for your feature.
+2. `CLAUDE.md` (root) — especially the Admin Panel section and the "Adding a new Admin feature" checklist. Your responsibility covers steps 3 - 5 (TypeScript types, API functions, React pages) **and** the route registration in `App.tsx` and the nav entry in `AdminLayout.tsx`.
+3. `docs/conventions/ADMIN_UI.md` — tech stack, color tokens, typography, layout rules, Do/Don't.
+4. `docs/design/admin/README.md` — the design system index; follow the linked topic docs when building new components.
+5. `app/javascript/admin/lib/api.ts` — the existing API client surface. Follow its conventions (fetch wrapper, error handling, type definitions).
+6. `app/javascript/admin/App.tsx` — read first to understand existing routes and guards. You **own** route registration for your feature and will edit this file as part of your work.
+7. `app/javascript/admin/components/AdminLayout.tsx` — read first to understand the nav item pattern. You own nav additions for your feature.
 
 If a must-read file does not exist, record it under Deviations and continue with the rest.
 

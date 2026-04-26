@@ -1,8 +1,8 @@
 # Delegation — 設計知見
 
-`docs/process/DELEGATION.md` で I2/I4 のサブエージェント運用ルールを定めた際、根拠として残しておきたい incident 観測値・段階的ロールアウト判断・pilot 振り返り規律をここに集約する。**通常の I2/I4 実行時にはこのドキュメントを参照する必要はない**。Dispatch caps の見直し、未知の subagent 強制停止の切り分け、過去の pilot 設計判断を辿りたい時にだけ開く。
+`subagent-delegation` skill (`.claude/skills/subagent-delegation/`) で I2/I4 のサブエージェント運用ルールを定めた際、根拠として残しておきたい incident 観測値・段階的ロールアウト判断・pilot 振り返り規律をここに集約する。**通常の I2/I4 実行時にはこのドキュメントを参照する必要はない**。Dispatch caps の見直し、未知の subagent 強制停止の切り分け、過去の pilot 設計判断を辿りたい時にだけ開く。
 
-ルール本体は `docs/process/DELEGATION.md` 側にあり、各ルール直下から本ドキュメントの該当章へリンクが張ってある。
+ルール本体は `subagent-delegation` skill 側（正本スキーマ: `references/contract.md`、運用 playbook: `SKILL.md`）にあり、各ルール直下から本ドキュメントの該当章へリンクが張ってある。
 
 ---
 
@@ -16,7 +16,7 @@
 - **`is_error` シグナルが orchestrator-visible なレイヤに上がってこなかった**。orchestrator が受け取ったのは in-flight `AssistantMessage` の途中（mid-sentence cutoff）テキストのみ。
 - 結果として、レスポンス本文を直接見るまで「途中で停止した」ことが判別できなかった。
 
-この観測から `docs/process/DELEGATION.md` の Dispatch Sizing と Completion Verification は **response-content signals を前提に組まれている**（フック発火に依存しない）。`.claude/scripts/check-subagent-response.sh` を毎回手動で実行する規律はこの incident が直接の動機。
+この観測から `subagent-delegation` skill の `references/contract.md` における Dispatch Sizing と Completion Verification は **response-content signals を前提に組まれている**（フック発火に依存しない）。`.claude/scripts/check-subagent-response.sh` を毎回手動で実行する規律はこの incident が直接の動機。
 
 ### Inferred, not officially confirmed
 
@@ -26,11 +26,11 @@
 - 公開ドキュメント上、closed-source CLI バイナリがこのフラグをいつセットするかの完全な条件は記述されていない。
 - Issue #332 の挙動が **すべての** `maxTurns` 強制停止に一般化できるかは未検証。条件次第ではフックが発火する場合もあり得る。
 
-DELEGATION.md のルールは保守的にこの不確実性をカバーする立場 — 「フックが必ず発火する」と仮定せず、orchestrator が常に観測できるレスポンス本文に依拠する。新しい挙動を観測した場合はこの章を更新する。
+`subagent-delegation` skill のルールは保守的にこの不確実性をカバーする立場 — 「フックが必ず発火する」と仮定せず、orchestrator が常に観測できるレスポンス本文に依拠する。新しい挙動を観測した場合はこの章を更新する。
 
 ## 2. Empirical bound — File caps の calibration ロジック
 
-`docs/process/DELEGATION.md` の File caps（uniform 15 / non-uniform 10）は理論モデルから導出したものではなく、**Issue #332 で観測された 1 つの bound**（19-file wholesale token-replacement dispatch が 50-turn cap に到達）から逆算で calibrate した数値である。
+`subagent-delegation` skill `references/contract.md` の File caps（uniform 15 / non-uniform 10）は理論モデルから導出したものではなく、**Issue #332 で観測された 1 つの bound**（19-file wholesale token-replacement dispatch が 50-turn cap に到達）から逆算で calibrate した数値である。
 
 closed-form turn model — 「N files の dispatch は M turns で終わる」と決定論的に予測する式 — は持っていない。理由は次のとおり：
 
@@ -62,13 +62,13 @@ Fork-join のような複合パターンを pilot した際、振り返りの書
 
 を明示的に分けて書く。fallback branch が pilot 範囲外だった場合は **untested** と明記し、その経路に関する一般化主張は避ける。
 
-この規律自体は pilot 期間が終わった現在も「観測してない経路は untested と書く」という一般則として `docs/process/DELEGATION.md` の Fallback Procedure 末尾に圧縮して残してある。pilot 期固有の言い回しと fork-join への適用例を、この章に保存する。
+この規律自体は pilot 期間が終わった現在も「観測してない経路は untested と書く」という一般則として `subagent-delegation` skill `references/contract.md` の Fallback Triggers 末尾に圧縮して残してある。pilot 期固有の言い回しと fork-join への適用例を、この章に保存する。
 
 ---
 
 ## Cross-references
 
-- 運用ルール本体: `docs/process/DELEGATION.md`
+- 運用ルール本体: `.claude/skills/subagent-delegation/` (`references/contract.md` + `SKILL.md`)
 - スキーマ検査スクリプト: `.claude/scripts/check-subagent-response.sh`
 - フック実装: `.claude/hooks/subagent_stop_format_check.sh`
 - Agent loop の turn 定義: [Claude Agent SDK — Agent loop](https://code.claude.com/docs/en/agent-sdk/agent-loop)
