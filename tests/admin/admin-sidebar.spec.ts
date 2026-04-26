@@ -129,8 +129,11 @@ test.describe('Admin Sidebar — Viewport transition', () => {
     expect(before).toBe('open')
 
     await page.setViewportSize(DESKTOP_VIEWPORT)
-    // give matchMedia change a tick
-    await page.waitForTimeout(200)
+
+    // Wait for the matchMedia transition to take effect (sidebar leftEdge changes when isDesktop flips),
+    // then assert the localStorage key was not mutated. Polling on a real DOM signal is more resilient
+    // than a fixed sleep under CI load.
+    await expect.poll(() => sidebarLeftEdge(page)).toBeGreaterThanOrEqual(0)
 
     const after = await page.evaluate((k) => localStorage.getItem(k), KEY_MOBILE)
     expect(after).toBe(before)

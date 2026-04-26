@@ -192,6 +192,7 @@ export function AdminSidebar({
           <div className="flex flex-col items-center gap-2">
             <Avatar name={user?.name ?? user?.email ?? 'A'} size="sm" />
             <button
+              type="button"
               onClick={logout}
               aria-label="Logout"
               className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-white/5 hover:text-slate-300"
@@ -211,6 +212,7 @@ export function AdminSidebar({
               </div>
             </div>
             <button
+              type="button"
               onClick={logout}
               className="mt-2 flex w-full items-center gap-2 rounded-lg px-2 py-2 text-xs text-slate-500 transition-colors hover:bg-white/5 hover:text-slate-300"
             >
