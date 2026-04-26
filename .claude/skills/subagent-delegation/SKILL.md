@@ -70,6 +70,7 @@ Categories that MUST be frozen at Pre-Fork:
 - [ ] **Helper signatures** — when one agent implements and another consumes via a parallel channel.
 - [ ] **API response shape** — including error shape (`{ errors, original_email_conflict }` for 422). Document inside the 501 stub controller's comments so the consuming agent can build UI branching against it.
 - [ ] **Routes** — Pre-Fork stub controller wired in `config/routes.rb`. Run `bin/rails routes | grep <resource>` to verify.
+- [ ] **Mockup-approval gate** — when Plan Excerpt touches Admin or User UI and the progress file says `UI changes: yes`, verify the approved mockup gist URL is recorded in `.progress/issue-XXXXX.md`. If absent, **STOP and route back to the UI Design Loop** (do not dispatch developers without an approved mockup — the visible element set is contract). Full rule: `docs/design/MOCKUP_GUIDELINES.md` § Approval gate; per `docs/process/WORKFLOW.md` P3 "Approved mockup is the contract".
 
 Sanity checks before dispatch:
 
@@ -306,7 +307,7 @@ Once the user approves the mockup, the visible UI element set is **binding** (pe
 - If the `Plan` agent's output proposes a UI shape change that conflicts with the mockup, **pause and surface to the user before plan-review** — do not let plan-reviewer adjudicate a spec change.
 - Pass the **mockup gist URL** to `plan-reviewer` in the review prompt's compliance context so it can run mockup-vs-plan integrity checks. See `plan-review-loop` skill's Pre-submission checks for the payload-side hook.
 
-Full prompt template: `references/ui-designer-pattern.md`.
+Full prompt template: `.claude/skills/mockup-creation/SKILL.md` (the canonical six-element pattern + post-approval contract). The orchestrator-side dispatch hooks (when to invoke `ui-designer`, payload structure for parallel review compliance context) remain in this section.
 
 ## ROI expectations
 
@@ -335,5 +336,6 @@ Full data: `references/roi-calibration.md`.
 | `references/dispatch-sizing.md` | Budget math worked examples, three-phase turn budget detail, Issue #272 / #332 force-stop incidents |
 | `references/payload-design.md` | Verbatim duplication rationale, Pre-Fork signature freeze full checklist, Issue #297 plan-reviewer round-2 evidence |
 | `references/recovery.md` | Format violation procedure, mid-reasoning extraction, react-developer truncation incident |
-| `references/ui-designer-pattern.md` | Full prompt template that produced "new baseline quality" mockup (Issue #351) |
+| `.claude/skills/mockup-creation/SKILL.md` | **Canonical** six-element prompt pattern, full prompt template, post-approval contract — read before authoring any `ui-designer` invocation |
+| `references/ui-designer-pattern.md` | Legacy pointer stub for back-compat with old cross-references; redirects to `mockup-creation` SKILL.md (no content of its own) |
 | `references/roi-calibration.md` | 6-agent pilot data, parallel multi-domain review qualitative gain, calibration template |
