@@ -57,7 +57,7 @@ test.describe('ナビゲーション capabilities フィルタリング', () => 
     await page.getByRole('button', { name: 'Login' }).click()
     await expect(page).toHaveURL('/admin', { timeout: 10000 })
 
-    await expect(page.getByRole('link', { name: 'Users' })).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Users', exact: true })).toBeVisible()
     await expect(page.getByRole('link', { name: 'LLM Providers' })).not.toBeVisible()
   })
 

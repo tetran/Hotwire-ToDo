@@ -10,7 +10,7 @@ The following Claude Code resources live in the user-global config (`~/.claude/`
 
 The following resources **are bundled** with this repository and available automatically:
 
-- **`rails-developer` / `react-developer` agents** (`.claude/agents/`) — optional I2 delegation targets; see [I2 Delegation](#i2-delegation-optional) and `docs/process/DELEGATION.md`.
+- **`rails-developer` / `react-developer` agents** (`.claude/agents/`) — optional I2 delegation targets; see [I2 Delegation](#i2-delegation-optional) and the `subagent-delegation` skill.
 - **`start-implementation-phase` skill** (`.claude/skills/`) — manual entry point for Standard Flow Implementation Phase.
 
 ## Entry Protocol (MANDATORY)
@@ -41,7 +41,15 @@ Standard Flow is structured in two phases:
 1. **Planning Phase** — From progress file creation to posting the plan as an issue comment.
 2. **Implementation Phase** — From branch creation to Review Response.
 
-**Do NOT proceed to Implementation Phase automatically after Planning Phase.** At the end of the Planning Phase, stop and propose `/clear` to the client. All state is persisted externally, so Implementation should be resumed in a fresh conversation. On resume, the Entry Protocol uses `.progress/issue-XXXXX.md` to locate the current phase and step.
+**Do NOT proceed to Implementation Phase automatically after Planning Phase.** At the end of the Planning Phase, stop and propose `/clear` to the user. All state is persisted externally, so Implementation should be resumed in a fresh conversation. On resume, the Entry Protocol uses `.progress/issue-XXXXX.md` to locate the current phase and step.
+
+#### Plans and User Stories Are Living Documents
+
+User stories (P2) and the implementation plan (P3) capture the **best understanding at planning time**, not a sealed contract. Implementation (I2) and reviews (I4 / I6) routinely surface issues, edge cases, or design improvements that no one foresaw during Planning. Treat the plan as a working hypothesis, not a frozen agreement.
+
+**Do not defer a finding solely because it is "not in the plan"**. Evaluate every finding on its own merit, from zero — would acting on it produce a better outcome? "Out of scope of the approved plan" is **not** a valid defer rationale on its own. If a deferral is genuinely warranted (effort vs. value, separable concern), agree it explicitly with the user and record the reasoning.
+
+When a finding meaningfully changes the user-story-level premise or the plan's design direction, update the source of truth on GitHub (issue body for user stories; the plan comment on the issue for plans). Re-sync `~/.claude/plans/issue-XXXXX.md` with the updated plan comment so local and remote stay in lock-step.
 
 Persisted artifacts at the Planning → Implementation boundary:
 - Issue number (encoded in `.progress/issue-XXXXX.md` filename)
@@ -65,7 +73,7 @@ ALWAYS update `.progress/issue-XXXXX.md` during work. Update the progress file *
   - What you've done in this step.
   - ...
 - [ ] P2 — Create user stories
-  - [ ] UI changes: yes / no (decided with client) — recorded: ___
+  - [ ] UI changes: yes / no (decided with user) — recorded: ___
 - [ ] P3 — Create a plan
   - [ ] UI Design Loop (if UI changes: yes) — Mockup gist URL: ___
   - [ ] Plan Review Loop
@@ -86,25 +94,26 @@ If `UI changes: no`, mark the `UI Design Loop` sub-item as `- [x] UI Design Loop
 
 P1. **Create a progress file** — Create an `issue-XXXXX.md` file in `.progress`. `XXXXX` is the issue number (5 digits with zero padding, e.g. `issue-00005.md` for issue #5). If the issue does not yet exist, create the GitHub Issue (`gh issue create`) first within this step to obtain the issue number, then create the progress file.
    - → **Done when**: the issue number is known, the progress file exists with the template filled in, and P1 is marked as completed.
-P2. **Create user stories** — Invoke the `user-story-creation` skill to clarify requirements and document them in the standard user story format (as the product owner). Reflect the resulting stories into the issue body. As part of the same client-alignment round, agree on whether this Issue involves UI changes, and record the decision (`yes` / `no`) in the progress file's P2 sub-item.
+P2. **Create user stories** — Invoke the `user-story-creation` skill to clarify requirements and document them in the standard user story format (as the product owner). Reflect the resulting stories into the issue body. As part of the same user-alignment round, agree on whether this Issue involves UI changes, and record the decision (`yes` / `no`) in the progress file's P2 sub-item.
    - → **Done when**: user stories are recorded on the issue AND the progress file's `UI changes:` entry is filled with `yes` or `no` (empty is not allowed).
-P3. **Create a plan** — Review the requirements and design the implementation approach. Invoke the built-in `Plan` agent (`subagent_type: Plan`) to draft the implementation plan, then save the returned plan body to `~/.claude/plans/issue-XXXXX.md` (5-digit zero-padded issue number) so `plan-reviewer` can read it and the file persists across sessions. Consult the client for any undecided specifications.
+P3. **Create a plan** — Review the requirements and design the implementation approach. Invoke the built-in `Plan` agent (`subagent_type: Plan`) to draft the implementation plan, then save the returned plan body to `~/.claude/plans/issue-XXXXX.md` (5-digit zero-padded issue number) so `plan-reviewer` can read it and the file persists across sessions. Consult the user for any undecided specifications.
    - **UI Design Loop (mandatory if UI changes: yes)** — runs **before** the Plan Review Loop:
      - **Invoke `ui-designer`**: start the agent with an instruction to read `docs/design/admin/README.md` and/or `docs/design/user/README.md` that matches the feature's surface. If the feature touches both surfaces, read both and state in the invocation which surface is primary.
-     - **Iterate until approval**: the agent produces an HTML mockup; present it to the client, re-invoke with any feedback, and repeat until the client approves.
+     - **Iterate until approval**: the agent produces an HTML mockup; present it to the user, re-invoke with any feedback, and repeat until the user approves.
      - **Save & post**: save the approved HTML to a **secret** GitHub Gist (`gh gist create <file>.html --desc "issue-<N> mockup"` — secret by default; do NOT pass `--public`), post the gist URL as a comment on the issue, and record the URL in the progress file.
      - **If the UI-change decision reverses**:
        - **no → yes** (UI change surfaces after P2 closed or after initial mockup approval): re-enter the UI Design Loop before finalizing the plan.
        - **yes → no** (it becomes clear during the loop that no UI change is actually needed): update the progress file P2 entry to `UI changes: no`, mark the P3 UI Design Loop sub-item as `- [x] UI Design Loop — N/A (UI changes: no)`, and proceed to the Plan Review Loop.
+     - **Approved mockup is the contract**: once the user approves the mockup, its visible UI element set is binding. The `Plan` agent iterates on details (tokens, copy, validation rules) within the approved element set; **adding new UI elements or removing required elements is a spec change, not a fill-in-detail**, and requires re-confirmation with the user before the plan is finalized. The mockup's branching ("default behavior + edge-case branch") is itself part of the contract — a "default + only-show-when-needed" pattern is meaningfully different from "always show". When the `Plan` agent's output proposes a UI shape change that conflicts with the mockup, pause and surface to the user **before** plan-review; pass the mockup gist URL to `plan-reviewer` in the review prompt's compliance context so it can run mockup-vs-plan integrity checks.
    - **Plan Review Loop (mandatory)**: Submit the plan to `plan-reviewer`. Address all actionable findings, then re-submit. Repeat until no actionable findings remain — every revision must be re-reviewed.
-   - **Display element semantics**: Before designing badges, labels, icons, or status indicators, agree with the client on what they *semantically represent*. Implementation of display conditions follows from the semantic definition, not the other way around.
+   - **Display element semantics**: Before designing badges, labels, icons, or status indicators, agree with the user on what they *semantically represent*. Implementation of display conditions follows from the semantic definition, not the other way around.
    - → **Done when** (all apply):
      - the plan file exists at `~/.claude/plans/issue-XXXXX.md` with the body returned by the `Plan` agent
-     - if `UI changes: yes` → UI Design Loop complete, mockup approved by the client, gist URL recorded in the progress file and posted on the issue
+     - if `UI changes: yes` → UI Design Loop complete, mockup approved by the user, gist URL recorded in the progress file and posted on the issue
      - the most recent `plan-reviewer` run produced no actionable findings
-P4. **Document the plan** — Document the plan in the issue as a comment. Include everything exactly as it is stated in `~/.claude/plans/issue-XXXXX.md`. Do NOT ask the client for approval before posting; the plan-reviewer sign-off in P3 is the gate, and the issue comment itself is the artifact the client reviews.
+P4. **Document the plan** — Document the plan in the issue as a comment. Include everything exactly as it is stated in `~/.claude/plans/issue-XXXXX.md`. No separate approval step is needed before posting — the user reviews the plan on the issue itself, and the `plan-reviewer` sign-off in P3 has already gated content quality. The plan posted here is the Planning-time best understanding; it may still evolve as Implementation surfaces new information.
    - → **Done when**: the plan is posted as a comment on the issue, verbatim from `~/.claude/plans/issue-XXXXX.md`.
-   - **Phase complete — STOP here.** Propose `/clear` to the client and wait for instruction. Do NOT proceed to I1 on your own.
+   - **Phase complete — STOP here.** Propose `/clear` to the user and wait for instruction. Do NOT proceed to I1 on your own.
    - **Quick start**: Use the `/start-implementation-phase` skill to handle the Entry Protocol, progress file update, branch creation (I1), and I2 delegation classification automatically. In a new session, paste:
      ```
      /start-implementation-phase <issue-number>
@@ -117,12 +126,12 @@ I1. **Create a Git Branch** — Create a feature branch for the issue. ALL featu
    - → **Done when**: a feature branch derived from the latest `main` is checked out.
 I2. **Implement** — Write code and tests. During development, run the domain test suite for the area you are changing (see `docs/conventions/TESTING.md`). Do not run the full test suite at this stage.
    - **Docs/config-only changes** (no application code or test files modified): domain test suite may be skipped.
-   - **Delegation option (recommended when applicable)**: If the Plan Excerpt spans Rails backend and React Admin SPA, the orchestrator may delegate implementation to the `rails-developer` and `react-developer` subagents. See [I2 Delegation](#i2-delegation-optional) below and `docs/process/DELEGATION.md` for the full contract. Delegation is opt-in — direct implementation remains valid.
+   - **Delegation option (recommended when applicable)**: If the Plan Excerpt spans Rails backend and React Admin SPA, the orchestrator may delegate implementation to the `rails-developer` and `react-developer` subagents. See [I2 Delegation](#i2-delegation-optional) below and the `subagent-delegation` skill for the full contract. Delegation is opt-in — direct implementation remains valid.
    - → **Done when**: the domain test suite for the changed area passes and the implementation matches the plan (or, for docs/config-only changes, the implementation matches the plan).
 I3. **Testing** — Run the full test suite (`bin/rails test:all`) once to ensure all tests pass. In Rails 8 this is a single-process invocation that runs every file matching `test/**/*_test.rb` (unit and system tests share the same process and database connection). The full suite takes 5+ minutes — run it via `Bash` with `run_in_background: true` and wait for the completion notification. Never re-run the suite before the previous run's result is confirmed.
    - **Docs/config-only changes**: skip this step entirely. Proceed directly to I4.
    - → **Done when**: `bin/rails test:all` exits 0 (or skipped for docs/config-only changes).
-I4. **Local Review** — Dispatch reviewer subagents for code review. See `docs/process/DELEGATION.md` § I4 Parallel Review for the full procedure.
+I4. **Local Review** — Dispatch reviewer subagents for code review. See the `subagent-delegation` skill (`## I4 parallel review` + `references/contract.md` Reviewer Dispatch Matrix) for the full procedure.
    - → **Done when**: all dispatched reviewers have returned, findings are deduplicated, and no critical/high-severity issues remain unaddressed (or the user has confirmed they can be deferred).
 I5. **Create a Pull Request** — Create a PR and request review.
    - → **Done when**: the PR exists with a proper title/description and CI has been triggered.
@@ -168,7 +177,7 @@ After creating the PR, an automated review runs within about 10 minutes. Execute
 If a step cannot complete, do NOT proceed. Return to the appropriate earlier step and re-run the flow from there.
 
 - **Standard I2 (Implement) tests fail** → stay on I2; fix the code or tests.
-- **Standard I2 delegation failure** → fall back to orchestrator direct implementation for the affected work. See `docs/process/DELEGATION.md` §Fallback Procedure.
+- **Standard I2 delegation failure** → fall back to orchestrator direct implementation for the affected work. See the `subagent-delegation` skill (`references/contract.md` § Fallback Triggers).
 - **Standard I3 (Testing) full suite fails** → return to I2.
 - **Standard I4 (Local Review) raises blocker-level issues** → return to I2.
 - **Standard I6 (Review Response) — user asks to act on findings** → return to I2.
@@ -186,17 +195,39 @@ If a step cannot complete, do NOT proceed. Return to the appropriate earlier ste
 
 I2 (Implement) may be delegated to the bundled `rails-developer` / `react-developer` subagents when the Plan Excerpt spans both Rails backend and React Admin SPA. Delegation is **opt-in and recommended**, never mandatory.
 
-Quick rules (see `docs/process/DELEGATION.md` for the full contract):
+Quick rules (see the `subagent-delegation` skill — `references/contract.md` for the full contract, `SKILL.md` for operational guidance):
 
 - **Scope**: subagents handle I2 code + tests + the domain test suite in their payload. They do **not** handle branches (I1), full-suite runs (I3), local review (I4), PRs (I5), Review Response (I6), or the progress file.
 - **Handoff contract**: every invocation passes a payload with Issue / Goal / Plan Excerpt / Scope / Denylist / Domain Tests / Done When / Required Return Format. `Scope` is an expected-files hint (not a hard limit); `Denylist` is strict (edit forbidden, reading allowed).
 - **Shared files are orchestrator-owned**: `config/routes.rb` (stub + temporary controller at Pre-Fork), `.progress/**`, `CLAUDE.md`, `docs/**`, `.claude/**` — orchestrator edits these directly and puts them in every subagent's Denylist. `App.tsx` and `AdminLayout.tsx` are owned by `react-developer`, not the orchestrator.
 - **Dispatch patterns**: sequential (Rails → React) for typical Admin features; parallel for independent work; single-domain for one-sided tasks; direct implementation when delegation overhead outweighs the benefit.
-- **Dispatch sizing**: each agent has a hard `maxTurns` cap (currently 100). Soft cap of ~30 useful turns / ≤ 15 files per dispatch (≤ 10 when changes are non-uniform). Wholesale edits across many page files must be split into Same-type parallel batches — see DELEGATION.md → Dispatch Sizing for the rule, and `docs/reference/DELEGATION_DESIGN_NOTES.md` §1–§2 for the calibration rationale and incident details.
+- **Dispatch sizing**: each agent has a hard `maxTurns` cap set in `.claude/agents/*.md` frontmatter (the agent files are the source of truth for the value). Formal file caps are ≤ 15 per dispatch (uniform changes) and ≤ 10 (non-uniform). Wholesale edits across many page files must be split into Same-type parallel batches — see the `subagent-delegation` skill: `references/contract.md` for the formal contract, `SKILL.md` `## maxTurns dispatch sizing` for empirical calibration (`≤ 8` when tests are included, three-phase turn budget pattern), and `docs/reference/DELEGATION_DESIGN_NOTES.md` §1–§2 for incident history.
 - **Post-receipt validation (mandatory)**: after each subagent returns, run `.claude/scripts/check-subagent-response.sh <agent_type>` (piping the verbatim response on stdin) plus the Completion Verification checklist. The script reuses the SubagentStop hook logic and is the only schema detector that runs even when the hook does not fire on `maxTurns` force-stop (詳細: `docs/reference/DELEGATION_DESIGN_NOTES.md` §1).
-- **Fallback**: on schema-check failure, domain-test failure, Denylist violation, plan deviation, or blocker stop, the orchestrator re-delegates once or falls back to direct implementation (see DELEGATION.md → Fallback Procedure).
+- **Fallback**: on schema-check failure, domain-test failure, Denylist violation, plan deviation, or blocker stop, the orchestrator re-delegates once or falls back to direct implementation (see the `subagent-delegation` skill — `references/contract.md` § Fallback Triggers).
 
 ## Reference
+
+### Deferred-Decision Parking on GitHub Issues
+
+When investigation surfaces a non-urgent concern the user does not want to decide right now (e.g. "this flag is dead — retire or repurpose?"), **park the context in a GitHub issue**. The issue body carries the investigation so future-self / future-agent can reconstruct the reasoning without re-running the grep work.
+
+When the user says "残しておいて" / "後で決める" / "leave it for later" on an investigation finding, propose creating a GitHub issue rather than committing to code changes.
+
+#### Issue body structure
+
+1. **背景** — 1-2 sentence problem statement
+2. **調査サマリ** — grep / trace evidence with `file:line` references
+3. **経緯** — git history of the PR that introduced the feature and any PR that superseded it
+4. **検討事項** — Option A / Option B / Option C with the concrete steps each path requires, plus an explicit `決定しない — 対応時に判断` note
+5. **優先度** — explicit (低 / 中 / 高) with reasoning
+6. **参考ファイル** — list of files the future reader should open first
+
+#### Notes
+
+- **Do NOT write acceptance criteria or an implementation plan in the issue body** — the issue is a parking lot, not a ticket-ready spec. Those come at pick-up time.
+- Mark priority explicitly (e.g. "低 — 実害なし") so the issue does not accidentally get picked up as urgent during triage.
+- Use `gh issue create --title ... --body "$(cat <<'EOF' ... EOF)"` with heredoc to preserve markdown formatting.
+- Listing **multiple options** (rather than a single recommendation) suits deferred-decision parking — the issue is parked precisely because there is no strong preference yet.
 
 ### Branch Naming
 

@@ -42,6 +42,20 @@
 
 症状の見分け方: テスト実行時間が異常に短い（例: 159テストが3.7秒 vs 正常時24秒）、かつ全コントローラテストが一律同一ステータス。
 
+## 並列起動と DB ファイル分離
+
+別ターミナルで `bin/rails test:auth` と `bin/rails test:task` のように複数の `bin/rails test:*` を同時起動しても **`database is locked` で落ちない**。`test/test_helper.rb` が起動ごとに `storage/test_<pid>.sqlite3` を使うので、プロセス間で DB ファイルが衝突しない（Rails の `parallelize(workers:)` は同一プロセス内のワーカー DB しか分離しないため、本仕組みでプロセス間衝突を別途解消している）。
+
+通常終了時は `at_exit` で `storage/test_<pid>.sqlite3*`（worker 用 `-1`/`-2`、SQLite の `-shm`/`-wal` 含む）が自動掃除される。**強制終了**（`kill -9`、OS crash 等）時は `at_exit` が走らず orphan が残るので、必要に応じて `rm -f storage/test_*.sqlite3*` で手動掃除する。
+
+固定 DB パスを使いたい場合は `TEST_DATABASE_PATH` を export する:
+
+```sh
+TEST_DATABASE_PATH=storage/test.sqlite3 bin/rails test:auth   # 従来挙動（並列起動時は衝突する点に注意）
+```
+
+**注意**: `db:test:prepare` / `db:seed:replant` 等 `test_helper.rb` を読まない rake タスクは `TEST_DATABASE_PATH` を尊重しない。常にデフォルトの `storage/test.sqlite3` に作用する。
+
 ## Rails 8 `bin/rails test:*` の dispatch 罠
 
 Rails 7+/8 では `bin/rails test:*` コマンドは **Rake をバイパスして `Rails::Command::TestCommand` (Thor) に直送される**。以下の地雷に注意。
@@ -85,3 +99,16 @@ bin/rails test:all      # 両方（単一プロセス、Thor ビルトイン）
 3. ローカルの SQLite はデフォルトで FK 制約を強制しないため、ローカルで気づけず CI で爆発することがある。必ず grep して網羅する
 
 過去に `events` テーブル追加時、4ファイル（`user_test`, `role_permission_test`, `user_role_test`, `suggestion_request_test`）への追加漏れで CI が 56 errors になった。
+
+## UI label refactor の grep 範囲は dual test tree を網羅する
+
+このリポジトリは unit / component test と E2E test が **別ツリー** に分かれている: vitest は `app/javascript/**/__tests__/`（コードと co-located）、Playwright は top-level の `tests/admin/*.spec.ts`。UI ラベル / accessible name / button text / nav target を変更する PR で、**片方の grep だけ走らせて "no affected tests" と判断すると CI で確実に爆発する**（過去に PR #331 で `tests/admin/llm_providers.spec.ts:38` が "Back to list" を assert していて follow-up commit が必要になった）。
+
+UI 文言が変わる PR では grep 対象を明示的に揃える:
+
+```sh
+# 最低限スキャンすべき範囲
+rg -n 'Back to|Cancel' app/javascript/**/__tests__/ tests/ '**/*.spec.ts' '**/*.spec.tsx'
+```
+
+Plan の Testing Strategy セクションに `npx playwright test <affected>` を pre-push チェックとして列挙するか、CI に委ねる場合はその旨を記録する。Local Playwright は admin login 用 DB seed が自動化されていないので、**CI が事実上の唯一の E2E 経路** であることに留意。
