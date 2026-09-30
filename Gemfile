@@ -58,6 +58,8 @@ gem "redis-session-store"
 gem "google-cloud-storage"
 
 gem "vite_rails"
+# Not 2.x: vite_ruby's DevServerProxy is only verified against rack-proxy 1.0 (vite_ruby 3.10.5).
+gem "rack-proxy", "~> 1.0", ">= 1.0.3"
 
 gem "rack-attack"
 

@@ -262,8 +262,8 @@ GEM
     rack (3.2.6)
     rack-attack (6.8.0)
       rack (>= 1.0, < 4)
-    rack-proxy (0.7.7)
-      rack
+    rack-proxy (1.0.3)
+      rack (>= 2.0, < 4)
     rack-session (2.1.2)
       base64 (>= 0.1.0)
       rack (>= 3.0.0)
@@ -419,11 +419,11 @@ GEM
     vite_rails (3.10.0)
       railties (>= 5.1, < 9)
       vite_ruby (~> 3.0, >= 3.2.2)
-    vite_ruby (3.10.0)
+    vite_ruby (3.10.6)
       dry-cli (>= 0.7, < 2)
       logger (~> 1.6)
       mutex_m
-      rack-proxy (~> 0.6, >= 0.6.1)
+      rack-proxy (>= 0.6.1)
       zeitwerk (~> 2.2)
     web-console (4.2.1)
       actionview (>= 6.0.0)
@@ -471,6 +471,7 @@ DEPENDENCIES
   pagy (~> 9.0)
   puma (>= 5.0)
   rack-attack
+  rack-proxy (~> 1.0, >= 1.0.3)
   rails (~> 8.1.0)
   redis (>= 4.0.1)
   redis-session-store
