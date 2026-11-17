@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   brakeman:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,7 +26,7 @@ jobs:
         run: bundle exec brakeman --no-pager -q -w2
 
   bundler-audit:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -39,3 +39,4 @@ jobs:
 
       - name: Run bundler-audit
         run: bundle exec bundle-audit check --update
+

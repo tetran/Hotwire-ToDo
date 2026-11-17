@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   system-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     services:
       redis:
@@ -64,3 +64,4 @@ jobs:
 
       - name: Run system tests
         run: bin/rails test:system
+
