@@ -30,7 +30,7 @@ jobs:
         run: npm test
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     services:
       redis:
@@ -80,3 +80,4 @@ jobs:
 
       - name: Run tests
         run: bin/rails test
+

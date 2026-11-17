@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   e2e-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     services:
       redis:
@@ -72,3 +72,4 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+
