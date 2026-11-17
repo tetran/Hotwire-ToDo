@@ -35,7 +35,7 @@ module Account
     # contains the deactivation link. Without `data-turbo-frame="_top"` on the link, Turbo
     # tries to find a matching `modal` frame in the response and renders "Content missing"
     # because `account/deactivations/new` is a full-page view. Cancelling from the full-page
-    # deactivation view must also land on a real page (root_path), not a stranded modal frame.
+    # deactivation view must also land on the inbox (via root_path), not a stranded modal frame.
     test "self-deactivation link inside user settings modal navigates full-page (not 'Content missing')" do
       user = users(:regular_user)
 
@@ -53,7 +53,9 @@ module Account
       assert_selector "h1", text: I18n.t("account.deactivations.new.title")
 
       click_link I18n.t("account.deactivations.new.cancel")
-      assert_current_path root_path
+      assert_current_path project_path(user.inbox_project)
+      assert_no_text "Content missing"
     end
   end
 end
+
